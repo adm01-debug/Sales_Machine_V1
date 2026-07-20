@@ -19,6 +19,7 @@ import { Route as AuthenticatedCompaniesIdRouteImport } from './routes/_authenti
 import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
 import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
 import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
+import { Route as ApiPublicHooksTickCadenceRouteImport } from './routes/api/public/hooks/tick-cadence'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
 
 const AuthRoute = AuthRouteImport.update({
@@ -71,6 +72,12 @@ const ApiPublicWebhooksFatorxRoute = ApiPublicWebhooksFatorxRouteImport.update({
   path: '/api/public/webhooks/fatorx',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksTickCadenceRoute =
+  ApiPublicHooksTickCadenceRouteImport.update({
+    id: '/api/public/hooks/tick-cadence',
+    path: '/api/public/hooks/tick-cadence',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicAgentToolsSendMessageRoute =
   ApiPublicAgentToolsSendMessageRouteImport.update({
     id: '/api/public/agent-tools/send-message',
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
+  '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
@@ -98,6 +106,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
+  '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
@@ -112,6 +121,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
+  '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/companies/$id'
     | '/api/public/agent-tools/send-message'
+    | '/api/public/hooks/tick-cadence'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/companies/$id'
     | '/api/public/agent-tools/send-message'
+    | '/api/public/hooks/tick-cadence'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
@@ -151,6 +163,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/companies/$id'
     | '/api/public/agent-tools/send-message'
+    | '/api/public/hooks/tick-cadence'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
@@ -161,6 +174,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiPublicAgentToolsSendMessageRoute: typeof ApiPublicAgentToolsSendMessageRoute
+  ApiPublicHooksTickCadenceRoute: typeof ApiPublicHooksTickCadenceRoute
   ApiPublicWebhooksFatorxRoute: typeof ApiPublicWebhooksFatorxRoute
   ApiPublicWebhooksLuxRoute: typeof ApiPublicWebhooksLuxRoute
   ApiPublicWebhooksSinguRoute: typeof ApiPublicWebhooksSinguRoute
@@ -238,6 +252,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksFatorxRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/tick-cadence': {
+      id: '/api/public/hooks/tick-cadence'
+      path: '/api/public/hooks/tick-cadence'
+      fullPath: '/api/public/hooks/tick-cadence'
+      preLoaderRoute: typeof ApiPublicHooksTickCadenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/agent-tools/send-message': {
       id: '/api/public/agent-tools/send-message'
       path: '/api/public/agent-tools/send-message'
@@ -282,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiPublicAgentToolsSendMessageRoute: ApiPublicAgentToolsSendMessageRoute,
+  ApiPublicHooksTickCadenceRoute: ApiPublicHooksTickCadenceRoute,
   ApiPublicWebhooksFatorxRoute: ApiPublicWebhooksFatorxRoute,
   ApiPublicWebhooksLuxRoute: ApiPublicWebhooksLuxRoute,
   ApiPublicWebhooksSinguRoute: ApiPublicWebhooksSinguRoute,
