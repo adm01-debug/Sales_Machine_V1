@@ -1,13 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 /**
- * Cadence worker — called by pg_cron every minute.
- * Reads `campaign_targets` due for a step, resolves the next channel from the
- * campaign's `cadence_rule.steps` array, and dispatches via the agent-tool
- * endpoint (which handles SINGU + stubs uniformly).
+ * Cadence worker — chamado por pg_cron a cada minuto.
  *
- * Auth: Supabase `apikey` header (bypasses public route to keep infra simple).
+ * Faz, em um único tick, para cada target elegível:
+ *  1. Trava linha via `locked_until` (idempotência entre ticks concorrentes)
+ *  2. Verifica cooldown de conta (anti-carpet-bombing)
+ *  3. Se canal = email, respeita `compute_daily_cap`
+ *  4. Pede mensagem ao FATOR X
+ *  5. Se `requires_human_approval` da campanha, cria touchpoint `pending_approval`
+ *  6. Senão: adapter social (LI/IG) OU singu (whatsapp/sms), com retry/backoff
+ *  7. Avança step ou marca dead_letter/completed
  */
+
+const BACKOFF_MINUTES = [1, 5, 30, 120, 480];
+
+function nextRetryAt(attempts: number): string {
+  const idx = Math.min(attempts, BACKOFF_MINUTES.length - 1);
+  return new Date(Date.now() + BACKOFF_MINUTES[idx] * 60_000).toISOString();
+}
+
 export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
   server: {
     handlers: {
@@ -22,12 +34,12 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const nowIso = new Date().toISOString();
 
-        // Pull a small batch of due targets to avoid long-running invocations.
         const { data: due, error } = await supabaseAdmin
           .from("campaign_targets")
-          .select("id, entity_id, campaign_id, current_step")
-          .eq("status", "queued")
+          .select("id, entity_id, campaign_id, current_step, attempts, max_attempts, locked_until")
+          .in("state", ["queued", "running"])
           .lte("next_run_at", nowIso)
+          .or(`locked_until.is.null,locked_until.lt.${nowIso}`)
           .order("next_run_at", { ascending: true })
           .limit(10);
         if (error) {
@@ -39,10 +51,25 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
         }
 
         let processed = 0;
+        let skipped_cooldown = 0;
+        let dead_lettered = 0;
+        let queued_approval = 0;
+
         for (const target of due) {
+          // Lock por 5min para evitar dupla execução
+          const lockUntil = new Date(Date.now() + 5 * 60_000).toISOString();
+          const { data: locked } = await supabaseAdmin
+            .from("campaign_targets")
+            .update({ locked_until: lockUntil, state: "running" })
+            .eq("id", target.id)
+            .or(`locked_until.is.null,locked_until.lt.${nowIso}`)
+            .select("id")
+            .maybeSingle();
+          if (!locked) continue;
+
           const { data: campaign } = await supabaseAdmin
             .from("campaigns_orchestration")
-            .select("id, name, channels, fatorx_agent_id, cadence_rule_id")
+            .select("id, name, channels, fatorx_agent_id, cadence_rule_id, requires_human_approval, account_cooldown_hours")
             .eq("id", target.campaign_id)
             .maybeSingle();
           if (!campaign) continue;
@@ -64,7 +91,27 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
           if (!step) {
             await supabaseAdmin
               .from("campaign_targets")
-              .update({ status: "completed" })
+              .update({ state: "completed", locked_until: null })
+              .eq("id", target.id);
+            continue;
+          }
+
+          // Cooldown de conta (item 5)
+          const cooldownHours = campaign.account_cooldown_hours ?? 48;
+          const { data: hasRecent } = await supabaseAdmin.rpc("has_recent_account_touchpoint", {
+            _entity_id: target.entity_id,
+            _hours: cooldownHours,
+          });
+          if (hasRecent === true) {
+            skipped_cooldown++;
+            await supabaseAdmin
+              .from("campaign_targets")
+              .update({
+                next_run_at: new Date(Date.now() + 24 * 3600_000).toISOString(),
+                locked_until: null,
+                state: "queued",
+                last_error: `account cooldown ${cooldownHours}h`,
+              })
               .eq("id", target.id);
             continue;
           }
@@ -99,8 +146,50 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
             console.error("[tick-cadence] fatorx failed", err);
           }
 
-          // Dispatch via singu (or stub for LI/IG). Record touchpoint inline.
-          const isStub = step.channel === "linkedin" || step.channel === "instagram";
+          // Approval gate (item 4)
+          const isSocial = step.channel === "linkedin" || step.channel === "instagram";
+          if (campaign.requires_human_approval) {
+            await supabaseAdmin.from("contact_touchpoints").insert({
+              entity_id: entity.id,
+              campaign_id: campaign.id,
+              channel: step.channel as never,
+              direction: "outbound",
+              status: "pending_approval",
+              fatorx_thread_id: threadId,
+              payload: { message: messageText, current_step: target.current_step } as never,
+            });
+            queued_approval++;
+            // avança step normalmente; envio real ocorre no approve
+            await advanceTarget(supabaseAdmin, target.id, target.current_step, steps);
+            continue;
+          }
+
+          // Email cap (item 6)
+          if (step.channel === "email") {
+            const senderId = campaign.fatorx_agent_id ?? "default";
+            const { data: capData } = await supabaseAdmin.rpc("compute_daily_cap", { _sender_id: senderId });
+            const cap = typeof capData === "number" ? capData : 50;
+            const today = new Date().toISOString().slice(0, 10);
+            const { data: health } = await supabaseAdmin
+              .from("sender_health")
+              .select("sent")
+              .eq("sender_id", senderId)
+              .eq("day", today)
+              .maybeSingle();
+            if ((health?.sent ?? 0) >= cap) {
+              await supabaseAdmin
+                .from("campaign_targets")
+                .update({
+                  next_run_at: new Date(Date.now() + 3600_000).toISOString(),
+                  locked_until: null,
+                  state: "queued",
+                  last_error: `email cap ${cap} atingido`,
+                })
+                .eq("id", target.id);
+              continue;
+            }
+          }
+
           const { data: tp } = await supabaseAdmin
             .from("contact_touchpoints")
             .insert({
@@ -108,14 +197,32 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
               campaign_id: campaign.id,
               channel: step.channel as never,
               direction: "outbound",
-              status: isStub ? "pending_provider" : "queued",
+              status: "queued",
               fatorx_thread_id: threadId,
               payload: { message: messageText, current_step: target.current_step } as never,
             })
             .select("id")
             .single();
 
-          if (!isStub) {
+          // Envio real
+          if (isSocial) {
+            const { getSocialSender } = await import("@/integrations/social/types");
+            const sender = getSocialSender(step.channel as "linkedin" | "instagram");
+            const res = await sender.send(step.channel as "linkedin" | "instagram", {
+              entity_id: entity.id,
+              message: messageText,
+            });
+            if (tp) {
+              await supabaseAdmin
+                .from("contact_touchpoints")
+                .update({
+                  status: res.status,
+                  error: res.error ?? null,
+                  payload: { message: messageText, current_step: target.current_step, provider: res.provider } as never,
+                })
+                .eq("id", tp.id);
+            }
+          } else {
             try {
               const { data: ent2 } = await supabaseAdmin
                 .from("entity_map")
@@ -129,45 +236,84 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                 } else if (step.channel === "sms") {
                   await singuClient.sendSms({ contact_id: ent2.singu_id, message: messageText });
                 }
-                // email: sequence_processor needs a sequence_id — leave queued for a manual link.
                 if (tp && step.channel !== "email") {
                   await supabaseAdmin
                     .from("contact_touchpoints")
                     .update({ status: "sent" })
                     .eq("id", tp.id);
                 }
+                // Email health increment
+                if (step.channel === "email") {
+                  const senderId = campaign.fatorx_agent_id ?? "default";
+                  const today = new Date().toISOString().slice(0, 10);
+                  await supabaseAdmin.rpc("increment_sender_sent", { _sender_id: senderId, _day: today }).then(() => {}, async () => {
+                    // fallback: upsert manual
+                    await supabaseAdmin.from("sender_health").upsert({ sender_id: senderId, day: today, sent: 1 }, { onConflict: "sender_id,day", ignoreDuplicates: false });
+                  });
+                }
               }
             } catch (err) {
               const emsg = err instanceof Error ? err.message : String(err);
-              if (tp) {
+              // Retry/backoff (item 3)
+              const attempts = (target.attempts ?? 0) + 1;
+              const maxAttempts = target.max_attempts ?? 5;
+              if (attempts >= maxAttempts) {
+                dead_lettered++;
+                if (tp) await supabaseAdmin.from("contact_touchpoints").update({ status: "dead_letter", error: emsg }).eq("id", tp.id);
                 await supabaseAdmin
-                  .from("contact_touchpoints")
-                  .update({ status: "failed", error: emsg })
-                  .eq("id", tp.id);
+                  .from("campaign_targets")
+                  .update({ state: "dead_letter", locked_until: null, attempts, last_error: emsg })
+                  .eq("id", target.id);
+                continue;
               }
+              if (tp) await supabaseAdmin.from("contact_touchpoints").update({ status: "failed", error: emsg, attempts, next_retry_at: nextRetryAt(attempts) }).eq("id", tp.id);
+              await supabaseAdmin
+                .from("campaign_targets")
+                .update({
+                  attempts,
+                  next_run_at: nextRetryAt(attempts),
+                  locked_until: null,
+                  state: "queued",
+                  last_error: emsg,
+                })
+                .eq("id", target.id);
+              continue;
             }
           }
 
-          // Advance the target
-          const nextIdx = target.current_step + 1;
-          const nextStep = steps[nextIdx];
-          if (nextStep) {
-            const nextRunAt = new Date(Date.now() + (nextStep.delay_days ?? 1) * 86400_000).toISOString();
-            await supabaseAdmin
-              .from("campaign_targets")
-              .update({ current_step: nextIdx, next_run_at: nextRunAt })
-              .eq("id", target.id);
-          } else {
-            await supabaseAdmin
-              .from("campaign_targets")
-              .update({ status: "completed" })
-              .eq("id", target.id);
-          }
+          await advanceTarget(supabaseAdmin, target.id, target.current_step, steps);
           processed++;
         }
 
-        return Response.json({ ok: true, processed });
+        return Response.json({ ok: true, processed, skipped_cooldown, dead_lettered, queued_approval });
       },
     },
   },
 });
+
+async function advanceTarget(
+  admin: Awaited<ReturnType<typeof getAdmin>>,
+  targetId: string,
+  currentStep: number,
+  steps: Array<{ channel: string; delay_days: number }>,
+): Promise<void> {
+  const nextIdx = currentStep + 1;
+  const nextStep = steps[nextIdx];
+  if (nextStep) {
+    const nextRunAt = new Date(Date.now() + (nextStep.delay_days ?? 1) * 86400_000).toISOString();
+    await admin
+      .from("campaign_targets")
+      .update({ current_step: nextIdx, next_run_at: nextRunAt, locked_until: null, state: "queued", attempts: 0 })
+      .eq("id", targetId);
+  } else {
+    await admin
+      .from("campaign_targets")
+      .update({ state: "completed", locked_until: null })
+      .eq("id", targetId);
+  }
+}
+
+async function getAdmin() {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  return supabaseAdmin;
+}
