@@ -245,6 +245,7 @@ export type Database = {
       }
       contact_touchpoints: {
         Row: {
+          attempts: number
           campaign_id: string | null
           channel: Database["public"]["Enums"]["sm_channel"]
           created_at: string
@@ -253,12 +254,15 @@ export type Database = {
           error: string | null
           fatorx_thread_id: string | null
           id: string
+          max_attempts: number
+          next_retry_at: string | null
           payload: Json
           singu_interaction_id: string | null
           status: Database["public"]["Enums"]["sm_touchpoint_status"]
           updated_at: string
         }
         Insert: {
+          attempts?: number
           campaign_id?: string | null
           channel: Database["public"]["Enums"]["sm_channel"]
           created_at?: string
@@ -267,12 +271,15 @@ export type Database = {
           error?: string | null
           fatorx_thread_id?: string | null
           id?: string
+          max_attempts?: number
+          next_retry_at?: string | null
           payload?: Json
           singu_interaction_id?: string | null
           status?: Database["public"]["Enums"]["sm_touchpoint_status"]
           updated_at?: string
         }
         Update: {
+          attempts?: number
           campaign_id?: string | null
           channel?: Database["public"]["Enums"]["sm_channel"]
           created_at?: string
@@ -281,6 +288,8 @@ export type Database = {
           error?: string | null
           fatorx_thread_id?: string | null
           id?: string
+          max_attempts?: number
+          next_retry_at?: string | null
           payload?: Json
           singu_interaction_id?: string | null
           status?: Database["public"]["Enums"]["sm_touchpoint_status"]
@@ -440,6 +449,8 @@ export type Database = {
         | "failed"
         | "opted_out"
         | "pending_provider"
+        | "dead_letter"
+        | "pending_approval"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -599,6 +610,8 @@ export const Constants = {
         "failed",
         "opted_out",
         "pending_provider",
+        "dead_letter",
+        "pending_approval",
       ],
     },
   },
