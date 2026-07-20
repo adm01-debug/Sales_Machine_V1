@@ -246,10 +246,18 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                 if (step.channel === "email") {
                   const senderId = campaign.fatorx_agent_id ?? "default";
                   const today = new Date().toISOString().slice(0, 10);
-                  await supabaseAdmin.rpc("increment_sender_sent", { _sender_id: senderId, _day: today }).then(() => {}, async () => {
-                    // fallback: upsert manual
-                    await supabaseAdmin.from("sender_health").upsert({ sender_id: senderId, day: today, sent: 1 }, { onConflict: "sender_id,day", ignoreDuplicates: false });
-                  });
+                  const { data: existing } = await supabaseAdmin
+                    .from("sender_health")
+                    .select("sent")
+                    .eq("sender_id", senderId)
+                    .eq("day", today)
+                    .maybeSingle();
+                  await supabaseAdmin
+                    .from("sender_health")
+                    .upsert(
+                      { sender_id: senderId, day: today, sent: (existing?.sent ?? 0) + 1 },
+                      { onConflict: "sender_id,day" },
+                    );
                 }
               }
             } catch (err) {
