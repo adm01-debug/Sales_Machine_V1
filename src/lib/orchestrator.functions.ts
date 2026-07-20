@@ -375,7 +375,7 @@ export const decideApproval = createServerFn({ method: "POST" })
     if (data.decision === "reject") {
       await context.supabase
         .from("contact_touchpoints")
-        .update({ status: "rejected" })
+        .update({ status: "failed", error: "rejected by reviewer" })
         .eq("id", data.touchpoint_id);
       return { ok: true, decision: "rejected" };
     }
@@ -435,7 +435,7 @@ export const listEvalCases = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("agent_eval_cases")
-      .select("id, name, channel, prompt, expected_criteria, created_at")
+      .select("id, name, expected_channel, expected_intent, signal_json, agent_id, created_at")
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return data ?? [];
@@ -447,9 +447,10 @@ export const createEvalCase = createServerFn({ method: "POST" })
     z
       .object({
         name: z.string().min(1),
-        channel: z.enum(["whatsapp", "email", "sms", "linkedin", "instagram"]),
-        prompt: z.string().min(1),
-        expected_criteria: z.string().min(1),
+        expected_channel: z.enum(["whatsapp", "email", "sms", "linkedin", "instagram"]).optional(),
+        expected_intent: z.string().min(1),
+        signal_json: z.record(z.string(), z.unknown()).default({}),
+        agent_id: z.string().optional(),
       })
       .parse(input),
   )
@@ -458,10 +459,10 @@ export const createEvalCase = createServerFn({ method: "POST" })
       .from("agent_eval_cases")
       .insert({
         name: data.name,
-        channel: data.channel,
-        prompt: data.prompt,
-        expected_criteria: data.expected_criteria,
-        owner_id: context.userId,
+        expected_channel: data.expected_channel ?? null,
+        expected_intent: data.expected_intent,
+        signal_json: data.signal_json as never,
+        agent_id: data.agent_id ?? null,
       })
       .select("id")
       .single();
@@ -477,7 +478,7 @@ export const runEvalCase = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: c, error } = await context.supabase
       .from("agent_eval_cases")
-      .select("id, prompt, channel, expected_criteria")
+      .select("id, expected_intent, expected_channel, agent_id, signal_json")
       .eq("id", data.case_id)
       .single();
     if (error) throw new Error(error.message);
@@ -489,13 +490,12 @@ export const runEvalCase = createServerFn({ method: "POST" })
     let errMsg: string | null = null;
     try {
       const res = await fatorxClient.runAgent({
-        agent_id: data.agent_id,
+        agent_id: data.agent_id ?? c.agent_id ?? undefined,
         thread_id: `eval_${c.id}_${Date.now()}`,
-        input: `[EVAL / canal=${c.channel}] ${c.prompt}`,
+        input: `[EVAL canal=${c.expected_channel ?? "any"}] Intent esperado: ${c.expected_intent}. Sinal: ${JSON.stringify(c.signal_json)}`,
       });
       const r = res as { message?: string; output?: string; text?: string } | null;
       output = r?.message ?? r?.output ?? r?.text ?? "";
-      // heurística simples: passa se saída não vazia e menor que 800 chars
       ok = output.length > 0 && output.length < 800;
     } catch (e) {
       errMsg = e instanceof Error ? e.message : String(e);
@@ -504,11 +504,11 @@ export const runEvalCase = createServerFn({ method: "POST" })
       .from("agent_eval_runs")
       .insert({
         case_id: c.id,
-        agent_id: data.agent_id ?? null,
-        output,
+        actual_output: { output } as never,
         passed: ok,
         latency_ms: Date.now() - started,
         error: errMsg,
+        ran_by: context.userId,
       })
       .select("id")
       .single();
