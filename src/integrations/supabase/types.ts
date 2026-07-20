@@ -14,6 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_eval_cases: {
+        Row: {
+          agent_id: string | null
+          created_at: string
+          expected_channel: Database["public"]["Enums"]["sm_channel"] | null
+          expected_intent: string
+          id: string
+          name: string
+          notes: string | null
+          signal_json: Json
+          updated_at: string
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string
+          expected_channel?: Database["public"]["Enums"]["sm_channel"] | null
+          expected_intent: string
+          id?: string
+          name: string
+          notes?: string | null
+          signal_json: Json
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string
+          expected_channel?: Database["public"]["Enums"]["sm_channel"] | null
+          expected_intent?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          signal_json?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      agent_eval_runs: {
+        Row: {
+          actual_output: Json
+          case_id: string
+          error: string | null
+          id: string
+          latency_ms: number | null
+          passed: boolean
+          ran_at: string
+          ran_by: string | null
+        }
+        Insert: {
+          actual_output?: Json
+          case_id: string
+          error?: string | null
+          id?: string
+          latency_ms?: number | null
+          passed: boolean
+          ran_at?: string
+          ran_by?: string | null
+        }
+        Update: {
+          actual_output?: Json
+          case_id?: string
+          error?: string | null
+          id?: string
+          latency_ms?: number | null
+          passed?: boolean
+          ran_at?: string
+          ran_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_eval_runs_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "agent_eval_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cadence_rules: {
         Row: {
           created_at: string
@@ -159,6 +236,7 @@ export type Database = {
       }
       campaigns_orchestration: {
         Row: {
+          account_cooldown_hours: number
           cadence_preset: Database["public"]["Enums"]["sm_cadence_preset"]
           cadence_rule_id: string | null
           channels: Database["public"]["Enums"]["sm_channel"][]
@@ -174,6 +252,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          account_cooldown_hours?: number
           cadence_preset?: Database["public"]["Enums"]["sm_cadence_preset"]
           cadence_rule_id?: string | null
           channels?: Database["public"]["Enums"]["sm_channel"][]
@@ -189,6 +268,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          account_cooldown_hours?: number
           cadence_preset?: Database["public"]["Enums"]["sm_cadence_preset"]
           cadence_rule_id?: string | null
           channels?: Database["public"]["Enums"]["sm_channel"][]
@@ -250,6 +330,9 @@ export type Database = {
           channel: Database["public"]["Enums"]["sm_channel"]
           created_at: string
           direction: Database["public"]["Enums"]["sm_direction"]
+          email_in_reply_to: string | null
+          email_message_id: string | null
+          email_references: string[] | null
           entity_id: string
           error: string | null
           fatorx_thread_id: string | null
@@ -267,6 +350,9 @@ export type Database = {
           channel: Database["public"]["Enums"]["sm_channel"]
           created_at?: string
           direction: Database["public"]["Enums"]["sm_direction"]
+          email_in_reply_to?: string | null
+          email_message_id?: string | null
+          email_references?: string[] | null
           entity_id: string
           error?: string | null
           fatorx_thread_id?: string | null
@@ -284,6 +370,9 @@ export type Database = {
           channel?: Database["public"]["Enums"]["sm_channel"]
           created_at?: string
           direction?: Database["public"]["Enums"]["sm_direction"]
+          email_in_reply_to?: string | null
+          email_message_id?: string | null
+          email_references?: string[] | null
           entity_id?: string
           error?: string | null
           fatorx_thread_id?: string | null
@@ -384,6 +473,66 @@ export type Database = {
         }
         Relationships: []
       }
+      sender_health: {
+        Row: {
+          bounced: number
+          created_at: string
+          daily_cap: number
+          day: string
+          id: string
+          replied: number
+          sender_id: string
+          sent: number
+          spam_reports: number
+          updated_at: string
+        }
+        Insert: {
+          bounced?: number
+          created_at?: string
+          daily_cap?: number
+          day?: string
+          id?: string
+          replied?: number
+          sender_id: string
+          sent?: number
+          spam_reports?: number
+          updated_at?: string
+        }
+        Update: {
+          bounced?: number
+          created_at?: string
+          daily_cap?: number
+          day?: string
+          id?: string
+          replied?: number
+          sender_id?: string
+          sent?: number
+          spam_reports?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      signal_weights: {
+        Row: {
+          event_type: string
+          half_life_hours: number
+          updated_at: string
+          weight: number
+        }
+        Insert: {
+          event_type: string
+          half_life_hours?: number
+          updated_at?: string
+          weight?: number
+        }
+        Update: {
+          event_type?: string
+          half_life_hours?: number
+          updated_at?: string
+          weight?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -410,6 +559,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      compute_daily_cap: { Args: { _sender_id: string }; Returns: number }
+      has_recent_account_touchpoint: {
+        Args: { _entity_id: string; _hours: number }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -417,6 +571,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      signal_score: { Args: { _entity_id: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "operator" | "viewer"
