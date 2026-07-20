@@ -270,7 +270,7 @@ export const enqueueBatchProspection = createServerFn({ method: "POST" })
       enqueued++;
     }
     await context.supabase.from("sales_machine_events").insert({
-      source: "sales_machine",
+      source: "manual",
       event_type: "batch_enqueued",
       payload: { campaign_id: data.campaign_id, enqueued, skipped } as never,
     });
