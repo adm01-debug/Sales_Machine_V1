@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/evals'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
 import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
@@ -36,6 +37,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedEvalsRoute = AuthenticatedEvalsRouteImport.update({
+  id: '/evals',
+  path: '/evals',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/campaigns': typeof AuthenticatedCampaignsRoute
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/evals': typeof AuthenticatedEvalsRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/campaigns': typeof AuthenticatedCampaignsRoute
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/evals': typeof AuthenticatedEvalsRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/_authenticated/campaigns': typeof AuthenticatedCampaignsRoute
   '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/evals': typeof AuthenticatedEvalsRoute
   '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/campaigns'
     | '/companies'
     | '/dashboard'
+    | '/evals'
     | '/companies/$id'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/campaigns'
     | '/companies'
     | '/dashboard'
+    | '/evals'
     | '/companies/$id'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/_authenticated/campaigns'
     | '/_authenticated/companies'
     | '/_authenticated/dashboard'
+    | '/_authenticated/evals'
     | '/_authenticated/companies/$id'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
@@ -214,6 +226,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/evals': {
+      id: '/_authenticated/evals'
+      path: '/evals'
+      fullPath: '/evals'
+      preLoaderRoute: typeof AuthenticatedEvalsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
@@ -307,6 +326,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCampaignsRoute: typeof AuthenticatedCampaignsRoute
   AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedEvalsRoute: typeof AuthenticatedEvalsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -314,6 +334,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCampaignsRoute: AuthenticatedCampaignsRoute,
   AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedEvalsRoute: AuthenticatedEvalsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
