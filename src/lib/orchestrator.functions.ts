@@ -334,3 +334,183 @@ export const listCadenceRules = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return data ?? [];
   });
+
+// ============================================================
+// APROVAÇÕES (human-in-the-loop) — Item 4
+// ============================================================
+
+export const listPendingApprovals = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("contact_touchpoints")
+      .select("id, entity_id, campaign_id, channel, payload, created_at")
+      .eq("status", "pending_approval")
+      .order("created_at", { ascending: true })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+export const decideApproval = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        touchpoint_id: z.string().uuid(),
+        decision: z.enum(["approve", "reject"]),
+        edited_message: z.string().optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: tp, error: fetchErr } = await context.supabase
+      .from("contact_touchpoints")
+      .select("id, entity_id, channel, payload")
+      .eq("id", data.touchpoint_id)
+      .eq("status", "pending_approval")
+      .single();
+    if (fetchErr) throw new Error(fetchErr.message);
+
+    if (data.decision === "reject") {
+      await context.supabase
+        .from("contact_touchpoints")
+        .update({ status: "failed", error: "rejected by reviewer" })
+        .eq("id", data.touchpoint_id);
+      return { ok: true, decision: "rejected" };
+    }
+
+    const payload = (tp.payload ?? {}) as { message?: string };
+    const finalMessage = data.edited_message ?? payload.message ?? "";
+
+    // Dispatch real via singu/social
+    const isSocial = tp.channel === "linkedin" || tp.channel === "instagram";
+    try {
+      if (isSocial) {
+        const { getSocialSender } = await import("@/integrations/social/types");
+        const sender = getSocialSender(tp.channel as "linkedin" | "instagram");
+        const res = await sender.send(tp.channel as "linkedin" | "instagram", {
+          entity_id: tp.entity_id,
+          message: finalMessage,
+        });
+        await context.supabase
+          .from("contact_touchpoints")
+          .update({ status: res.status, error: res.error ?? null, payload: { ...payload, message: finalMessage, provider: res.provider } as never })
+          .eq("id", tp.id);
+      } else {
+        const { data: ent } = await context.supabase
+          .from("entity_map")
+          .select("singu_id")
+          .eq("id", tp.entity_id)
+          .maybeSingle();
+        if (ent?.singu_id) {
+          const { singuClient } = await import("@/integrations/external/singu.server");
+          if (tp.channel === "whatsapp") {
+            await singuClient.sendWhatsapp({ contact_id: ent.singu_id, message: finalMessage });
+          } else if (tp.channel === "sms") {
+            await singuClient.sendSms({ contact_id: ent.singu_id, message: finalMessage });
+          }
+          await context.supabase
+            .from("contact_touchpoints")
+            .update({ status: "sent", payload: { ...payload, message: finalMessage } as never })
+            .eq("id", tp.id);
+        }
+      }
+    } catch (err) {
+      const emsg = err instanceof Error ? err.message : String(err);
+      await context.supabase
+        .from("contact_touchpoints")
+        .update({ status: "failed", error: emsg })
+        .eq("id", tp.id);
+    }
+    return { ok: true, decision: "approved" };
+  });
+
+// ============================================================
+// EVAL HARNESS — Item 9
+// ============================================================
+
+export const listEvalCases = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("agent_eval_cases")
+      .select("id, name, expected_channel, expected_intent, signal_json, agent_id, created_at")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+export const createEvalCase = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        name: z.string().min(1),
+        expected_channel: z.enum(["whatsapp", "email", "sms", "linkedin", "instagram"]).optional(),
+        expected_intent: z.string().min(1),
+        signal_json: z.record(z.string(), z.unknown()).default({}),
+        agent_id: z.string().optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase
+      .from("agent_eval_cases")
+      .insert({
+        name: data.name,
+        expected_channel: data.expected_channel ?? null,
+        expected_intent: data.expected_intent,
+        signal_json: data.signal_json as never,
+        agent_id: data.agent_id ?? null,
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    return { id: row.id };
+  });
+
+export const runEvalCase = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ case_id: z.string().uuid(), agent_id: z.string().optional() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: c, error } = await context.supabase
+      .from("agent_eval_cases")
+      .select("id, expected_intent, expected_channel, agent_id, signal_json")
+      .eq("id", data.case_id)
+      .single();
+    if (error) throw new Error(error.message);
+
+    const { fatorxClient } = await import("@/integrations/external/fatorx.server");
+    const started = Date.now();
+    let output = "";
+    let ok = false;
+    let errMsg: string | null = null;
+    try {
+      const res = await fatorxClient.runAgent({
+        agent_id: data.agent_id ?? c.agent_id ?? undefined,
+        thread_id: `eval_${c.id}_${Date.now()}`,
+        input: `[EVAL canal=${c.expected_channel ?? "any"}] Intent esperado: ${c.expected_intent}. Sinal: ${JSON.stringify(c.signal_json)}`,
+      });
+      const r = res as { message?: string; output?: string; text?: string } | null;
+      output = r?.message ?? r?.output ?? r?.text ?? "";
+      ok = output.length > 0 && output.length < 800;
+    } catch (e) {
+      errMsg = e instanceof Error ? e.message : String(e);
+    }
+    const { data: run } = await context.supabase
+      .from("agent_eval_runs")
+      .insert({
+        case_id: c.id,
+        actual_output: { output } as never,
+        passed: ok,
+        latency_ms: Date.now() - started,
+        error: errMsg,
+        ran_by: context.userId,
+      })
+      .select("id")
+      .single();
+    return { run_id: run?.id, passed: ok, output, error: errMsg };
+  });
