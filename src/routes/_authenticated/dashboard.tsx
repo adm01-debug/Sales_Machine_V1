@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listRecentEvents, listCampaigns } from "@/lib/orchestrator.functions";
@@ -45,9 +45,11 @@ function DashboardPage() {
               Cockpit de prospecção orquestrada — LUX · SINGU · FATOR X
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={signOut}>
-            Sair
-          </Button>
+          <div className="flex gap-2">
+            <Link to="/companies"><Button variant="outline" size="sm">Empresas</Button></Link>
+            <Link to="/campaigns"><Button variant="outline" size="sm">Campanhas</Button></Link>
+            <Button variant="outline" size="sm" onClick={signOut}>Sair</Button>
+          </div>
         </header>
 
         <section className="grid gap-4 md:grid-cols-3">
