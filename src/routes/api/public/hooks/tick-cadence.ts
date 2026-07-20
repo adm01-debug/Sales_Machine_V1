@@ -25,7 +25,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
         // Pull a small batch of due targets to avoid long-running invocations.
         const { data: due, error } = await supabaseAdmin
           .from("campaign_targets")
-          .select("id, entity_id, campaign_id, step_index")
+          .select("id, entity_id, campaign_id, current_step")
           .eq("status", "queued")
           .lte("next_run_at", nowIso)
           .order("next_run_at", { ascending: true })
@@ -60,7 +60,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
             { channel: "email", delay_days: 2 },
           ];
 
-          const step = steps[target.step_index];
+          const step = steps[target.current_step];
           if (!step) {
             await supabaseAdmin
               .from("campaign_targets")
@@ -84,8 +84,8 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
             const agentRes = await fatorxClient.runAgent({
               agent_id: campaign.fatorx_agent_id ?? undefined,
               thread_id: threadId,
-              input: `Passo ${target.step_index + 1}/${steps.length} da cadência "${campaign.name}" para "${entity.display_name}". Canal: ${step.channel}. Gere UMA mensagem curta, natural, adequada ao canal.`,
-              metadata: { campaign_id: campaign.id, entity_id: entity.id, step: target.step_index },
+              input: `Passo ${target.current_step + 1}/${steps.length} da cadência "${campaign.name}" para "${entity.display_name}". Canal: ${step.channel}. Gere UMA mensagem curta, natural, adequada ao canal.`,
+              metadata: { campaign_id: campaign.id, entity_id: entity.id, step: target.current_step },
             });
             const extracted =
               (agentRes as { message?: string; output?: string; text?: string } | null)?.message ??
@@ -110,7 +110,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
               direction: "outbound",
               status: isStub ? "pending_provider" : "queued",
               fatorx_thread_id: threadId,
-              payload: { message: messageText, step_index: target.step_index } as never,
+              payload: { message: messageText, current_step: target.current_step } as never,
             })
             .select("id")
             .single();
@@ -149,18 +149,18 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
           }
 
           // Advance the target
-          const nextIdx = target.step_index + 1;
+          const nextIdx = target.current_step + 1;
           const nextStep = steps[nextIdx];
           if (nextStep) {
             const nextRunAt = new Date(Date.now() + (nextStep.delay_days ?? 1) * 86400_000).toISOString();
             await supabaseAdmin
               .from("campaign_targets")
-              .update({ step_index: nextIdx, next_run_at: nextRunAt, last_run_at: nowIso })
+              .update({ current_step: nextIdx, next_run_at: nextRunAt })
               .eq("id", target.id);
           } else {
             await supabaseAdmin
               .from("campaign_targets")
-              .update({ status: "completed", last_run_at: nowIso })
+              .update({ status: "completed" })
               .eq("id", target.id);
           }
           processed++;
