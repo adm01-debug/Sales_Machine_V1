@@ -9,16 +9,33 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
 import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
 import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ApiPublicWebhooksSinguRoute = ApiPublicWebhooksSinguRouteImport.update({
   id: '/api/public/webhooks/singu',
@@ -44,6 +61,8 @@ const ApiPublicAgentToolsSendMessageRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
@@ -51,6 +70,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
@@ -59,6 +80,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
@@ -68,6 +92,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
+    | '/dashboard'
     | '/api/public/agent-tools/send-message'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
@@ -75,6 +101,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
+    | '/dashboard'
     | '/api/public/agent-tools/send-message'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
@@ -82,6 +110,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/dashboard'
     | '/api/public/agent-tools/send-message'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
@@ -90,6 +121,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   ApiPublicAgentToolsSendMessageRoute: typeof ApiPublicAgentToolsSendMessageRoute
   ApiPublicWebhooksFatorxRoute: typeof ApiPublicWebhooksFatorxRoute
   ApiPublicWebhooksLuxRoute: typeof ApiPublicWebhooksLuxRoute
@@ -98,12 +131,33 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/webhooks/singu': {
       id: '/api/public/webhooks/singu'
@@ -136,8 +190,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   ApiPublicAgentToolsSendMessageRoute: ApiPublicAgentToolsSendMessageRoute,
   ApiPublicWebhooksFatorxRoute: ApiPublicWebhooksFatorxRoute,
   ApiPublicWebhooksLuxRoute: ApiPublicWebhooksLuxRoute,
