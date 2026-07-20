@@ -1,24 +1,87 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Sales Machine · Prospecção orquestrada com IA" },
+      {
+        name: "description",
+        content:
+          "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS.",
+      },
+      { property: "og:title", content: "Sales Machine" },
+      {
+        property: "og:description",
+        content: "Prospecção multicanal orquestrada por agentes de IA treinados.",
+      },
+      { property: "og:type", content: "website" },
+    ],
+  }),
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+const PILLARS = [
+  {
+    name: "LUX",
+    role: "ICP Discovery",
+    body: "Encontra empresas que se encaixam no perfil de cliente ideal e enriquece decisores.",
+  },
+  {
+    name: "SINGU",
+    role: "CRM + Canais",
+    body: "Armazena contatos, analisa comportamento e dispara WhatsApp, Email e SMS.",
+  },
+  {
+    name: "FATOR X",
+    role: "Agentes de IA",
+    body: "Executa conversas com decisores usando agentes treinados e ferramentas.",
+  },
+  {
+    name: "Sales Machine",
+    role: "Orquestrador",
+    body: "Une tudo: cadências, quotas por canal, auditoria e cockpit único.",
+  },
+];
+
+function Landing() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="min-h-screen bg-background">
+      <section className="mx-auto max-w-5xl px-6 py-24 text-center">
+        <p className="text-sm font-medium uppercase tracking-widest text-primary">
+          Prospecção orquestrada
+        </p>
+        <h1 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">
+          Sales Machine
+        </h1>
+        <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+          O cockpit que integra LUX, SINGU e FATOR X para prospectar decisores em
+          LinkedIn, WhatsApp, Instagram, Email e SMS com agentes de IA treinados.
+        </p>
+        <div className="mt-8 flex justify-center gap-3">
+          <Button asChild size="lg">
+            <Link to="/dashboard">Abrir cockpit</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link to="/auth">Entrar</Link>
+          </Button>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-24">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {PILLARS.map((p) => (
+            <Card key={p.name}>
+              <CardHeader>
+                <CardTitle>{p.name}</CardTitle>
+                <CardDescription>{p.role}</CardDescription>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">{p.body}</CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }
