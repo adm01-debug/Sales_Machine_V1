@@ -10,7 +10,7 @@ import { singuClient } from "@/integrations/external/singu.server";
  */
 const Schema = z.object({
   entity_id: z.string().uuid(),
-  channel: z.enum(["whatsapp", "sms", "email"]),
+  channel: z.enum(["whatsapp", "sms", "email", "linkedin", "instagram"]),
   message: z.string().min(1),
   campaign_id: z.string().uuid().optional(),
   fatorx_thread_id: z.string().optional(),
@@ -35,13 +35,17 @@ export const Route = createFileRoute("/api/public/agent-tools/send-message")({
         const input = parsed.data;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        // Resolve entity -> singu contact
+        const isStubChannel = input.channel === "linkedin" || input.channel === "instagram";
+        // Resolve entity (singu mapping only required for singu-backed channels)
         const { data: entity, error: entityErr } = await supabaseAdmin
           .from("entity_map")
           .select("id, singu_id")
           .eq("id", input.entity_id)
           .maybeSingle();
-        if (entityErr || !entity?.singu_id) {
+        if (entityErr || !entity) {
+          return Response.json({ ok: false, error: "entity not found" }, { status: 404 });
+        }
+        if (!isStubChannel && !entity.singu_id) {
           return Response.json(
             { ok: false, error: "entity not mapped to singu contact" },
             { status: 422 },
@@ -56,22 +60,33 @@ export const Route = createFileRoute("/api/public/agent-tools/send-message")({
             campaign_id: input.campaign_id ?? null,
             channel: input.channel,
             direction: "outbound",
-            status: "queued",
+            status: isStubChannel ? "pending_provider" : "queued",
             fatorx_thread_id: input.fatorx_thread_id ?? null,
             payload: { message: input.message },
           })
           .select("id")
           .single();
 
+        // LinkedIn/Instagram: stub. Touchpoint stays as pending_provider until a real provider is wired.
+        if (isStubChannel) {
+          return Response.json({
+            ok: true,
+            touchpoint_id: tp?.id,
+            status: "pending_provider",
+            note: `Channel "${input.channel}" is a stub in v1. Configure a provider (Unipile/Phantombuster/etc) to activate delivery.`,
+          });
+        }
+
         try {
+          const singuContactId = entity.singu_id as string;
           if (input.channel === "whatsapp") {
-            await singuClient.sendWhatsapp({ contact_id: entity.singu_id, message: input.message });
+            await singuClient.sendWhatsapp({ contact_id: singuContactId, message: input.message });
           } else if (input.channel === "sms") {
-            await singuClient.sendSms({ contact_id: entity.singu_id, message: input.message });
+            await singuClient.sendSms({ contact_id: singuContactId, message: input.message });
           } else if (input.channel === "email") {
             if (!input.sequence_id) throw new Error("sequence_id required for email channel");
             await singuClient.runEmailSequence({
-              contact_id: entity.singu_id,
+              contact_id: singuContactId,
               sequence_id: input.sequence_id,
             });
           }

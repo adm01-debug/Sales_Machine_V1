@@ -104,3 +104,233 @@ export const dispatchAgentTurn = createServerFn({ method: "POST" })
 
     return { thread_id: threadId, agent_result: result };
   });
+
+/** List ICP companies from LUX, marking Sales Machine status via entity_map join. */
+export const listIcpCompanies = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ icp_id: z.string().optional(), limit: z.number().int().min(1).max(200).optional() }).parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    const { luxClient } = await import("@/integrations/external/lux.server");
+    let companies: Array<Record<string, unknown>> = [];
+    try {
+      const res = await luxClient.listCompanies({ icp_id: data.icp_id, limit: data.limit ?? 50 });
+      const raw = (res as { data?: unknown; companies?: unknown } | null) ?? {};
+      const arr = Array.isArray(raw) ? raw : (raw.data ?? raw.companies ?? []);
+      companies = Array.isArray(arr) ? (arr as Array<Record<string, unknown>>) : [];
+    } catch (err) {
+      return { companies: [], error: err instanceof Error ? err.message : String(err) };
+    }
+
+    const luxIds = companies
+      .map((c) => String(c.id ?? c.company_id ?? ""))
+      .filter(Boolean);
+
+    const statusByLux = new Map<string, { entity_id: string; in_campaign: boolean }>();
+    if (luxIds.length > 0) {
+      const { data: mapped } = await context.supabase
+        .from("entity_map")
+        .select("id, lux_id")
+        .eq("kind", "company")
+        .in("lux_id", luxIds);
+      const entityIds = (mapped ?? []).map((m) => m.id);
+      const { data: targets } = entityIds.length
+        ? await context.supabase
+            .from("campaign_targets")
+            .select("entity_id, status")
+            .in("entity_id", entityIds)
+            .in("status", ["queued", "running"])
+        : { data: [] as Array<{ entity_id: string; status: string }> };
+      const activeSet = new Set((targets ?? []).map((t) => t.entity_id));
+      for (const m of mapped ?? []) {
+        if (m.lux_id) {
+          statusByLux.set(m.lux_id, { entity_id: m.id, in_campaign: activeSet.has(m.id) });
+        }
+      }
+    }
+
+    return {
+      companies: companies.map((c) => {
+        const luxId = String(c.id ?? c.company_id ?? "");
+        const s = statusByLux.get(luxId);
+        return {
+          lux_id: luxId,
+          name: String(c.name ?? c.display_name ?? c.razao_social ?? "—"),
+          industry: (c.industry ?? c.ramo ?? c.setor ?? null) as string | null,
+          size: (c.size ?? c.porte ?? c.employees ?? null) as string | number | null,
+          entity_id: s?.entity_id ?? null,
+          in_campaign: s?.in_campaign ?? false,
+        };
+      }),
+      error: null,
+    };
+  });
+
+/** Full dossier for a company: LUX profile + decisors, SINGU history/NBA, FATOR X suggestion. */
+export const getCompanyDossier = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ lux_company_id: z.string().min(1), display_name: z.string().optional() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    // Ensure entity exists (upsert lightweight)
+    const { data: entity } = await context.supabase
+      .from("entity_map")
+      .upsert(
+        {
+          kind: "company",
+          lux_id: data.lux_company_id,
+          display_name: data.display_name ?? data.lux_company_id,
+        },
+        { onConflict: "kind,lux_id" },
+      )
+      .select("id, singu_id, fatorx_thread_id, display_name")
+      .single();
+
+    const [luxRes, singuRes, fatorxRes] = await Promise.allSettled([
+      (async () => {
+        const { luxClient } = await import("@/integrations/external/lux.server");
+        return luxClient.searchDecisors({ company_id: data.lux_company_id });
+      })(),
+      (async () => {
+        if (!entity?.singu_id) return null;
+        const { singuClient } = await import("@/integrations/external/singu.server");
+        return singuClient.nextBestAction({ contact_id: entity.singu_id });
+      })(),
+      (async () => {
+        const { fatorxClient } = await import("@/integrations/external/fatorx.server");
+        return fatorxClient.quickTest({
+          message: `Sugira uma abordagem inicial de prospecção para a empresa "${data.display_name ?? data.lux_company_id}". Formato: 3 mensagens curtas, uma para WhatsApp, uma para Email e uma para LinkedIn.`,
+        });
+      })(),
+    ]);
+
+    // Recent local touchpoints
+    const { data: recentTouchpoints } = entity
+      ? await context.supabase
+          .from("contact_touchpoints")
+          .select("id, channel, direction, status, created_at, payload")
+          .eq("entity_id", entity.id)
+          .order("created_at", { ascending: false })
+          .limit(10)
+      : { data: [] };
+
+    return {
+      entity,
+      decisors: luxRes.status === "fulfilled" ? luxRes.value : { error: String(luxRes.reason) },
+      singu: singuRes.status === "fulfilled" ? singuRes.value : { error: String(singuRes.reason) },
+      agent_suggestion: fatorxRes.status === "fulfilled" ? fatorxRes.value : { error: String(fatorxRes.reason) },
+      recent_touchpoints: recentTouchpoints ?? [],
+    };
+  });
+
+/** Enqueue a batch of companies (by LUX id) into a campaign as targets. */
+export const enqueueBatchProspection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        campaign_id: z.string().uuid(),
+        companies: z
+          .array(z.object({ lux_id: z.string().min(1), display_name: z.string().min(1) }))
+          .min(1)
+          .max(200),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    let enqueued = 0;
+    let skipped = 0;
+    for (const c of data.companies) {
+      const { data: ent, error: entErr } = await context.supabase
+        .from("entity_map")
+        .upsert(
+          { kind: "company", lux_id: c.lux_id, display_name: c.display_name },
+          { onConflict: "kind,lux_id" },
+        )
+        .select("id")
+        .single();
+      if (entErr || !ent) {
+        skipped++;
+        continue;
+      }
+      const { error: tgtErr } = await context.supabase
+        .from("campaign_targets")
+        .insert({
+          campaign_id: data.campaign_id,
+          entity_id: ent.id,
+          next_run_at: new Date().toISOString(),
+          status: "queued",
+        });
+      if (tgtErr) {
+        skipped++;
+        continue;
+      }
+      enqueued++;
+    }
+    await context.supabase.from("sales_machine_events").insert({
+      source: "manual",
+      event_type: "batch_enqueued",
+      payload: { campaign_id: data.campaign_id, enqueued, skipped } as never,
+    });
+    return { enqueued, skipped };
+  });
+
+/** List campaigns for pickers. */
+export const listCampaignsForPicker = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("campaigns_orchestration")
+      .select("id, name, status, channels, fatorx_agent_id")
+      .in("status", ["draft", "active"])
+      .order("updated_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+/** Create a new campaign. */
+export const createCampaign = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        name: z.string().min(1).max(120),
+        description: z.string().optional(),
+        channels: z.array(z.enum(["whatsapp", "email", "sms", "linkedin", "instagram"])).min(1),
+        fatorx_agent_id: z.string().optional(),
+        cadence_rule_id: z.string().uuid().optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase
+      .from("campaigns_orchestration")
+      .insert({
+        name: data.name,
+        description: data.description ?? null,
+        channels: data.channels,
+        fatorx_agent_id: data.fatorx_agent_id ?? null,
+        cadence_rule_id: data.cadence_rule_id ?? null,
+        status: "active",
+        owner_id: context.userId,
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    return { id: row.id };
+  });
+
+/** List cadence rules for pickers. */
+export const listCadenceRules = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("cadence_rules")
+      .select("id, name, description, steps")
+      .eq("is_active", true)
+      .order("name");
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });

@@ -13,9 +13,13 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
+import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
+import { Route as AuthenticatedCompaniesIdRouteImport } from './routes/_authenticated/companies.$id'
 import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
 import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
 import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
+import { Route as ApiPublicHooksTickCadenceRouteImport } from './routes/api/public/hooks/tick-cadence'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
 
 const AuthRoute = AuthRouteImport.update({
@@ -37,6 +41,22 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCompaniesRoute = AuthenticatedCompaniesRouteImport.update({
+  id: '/companies',
+  path: '/companies',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCampaignsRoute = AuthenticatedCampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCompaniesIdRoute =
+  AuthenticatedCompaniesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedCompaniesRoute,
+  } as any)
 const ApiPublicWebhooksSinguRoute = ApiPublicWebhooksSinguRouteImport.update({
   id: '/api/public/webhooks/singu',
   path: '/api/public/webhooks/singu',
@@ -52,6 +72,12 @@ const ApiPublicWebhooksFatorxRoute = ApiPublicWebhooksFatorxRouteImport.update({
   path: '/api/public/webhooks/fatorx',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksTickCadenceRoute =
+  ApiPublicHooksTickCadenceRouteImport.update({
+    id: '/api/public/hooks/tick-cadence',
+    path: '/api/public/hooks/tick-cadence',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicAgentToolsSendMessageRoute =
   ApiPublicAgentToolsSendMessageRouteImport.update({
     id: '/api/public/agent-tools/send-message',
@@ -62,8 +88,12 @@ const ApiPublicAgentToolsSendMessageRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/campaigns': typeof AuthenticatedCampaignsRoute
+  '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
+  '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
@@ -71,8 +101,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/campaigns': typeof AuthenticatedCampaignsRoute
+  '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
+  '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
@@ -82,8 +116,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/campaigns': typeof AuthenticatedCampaignsRoute
+  '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
+  '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
@@ -93,8 +131,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/campaigns'
+    | '/companies'
     | '/dashboard'
+    | '/companies/$id'
     | '/api/public/agent-tools/send-message'
+    | '/api/public/hooks/tick-cadence'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
@@ -102,8 +144,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/campaigns'
+    | '/companies'
     | '/dashboard'
+    | '/companies/$id'
     | '/api/public/agent-tools/send-message'
+    | '/api/public/hooks/tick-cadence'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
@@ -112,8 +158,12 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/campaigns'
+    | '/_authenticated/companies'
     | '/_authenticated/dashboard'
+    | '/_authenticated/companies/$id'
     | '/api/public/agent-tools/send-message'
+    | '/api/public/hooks/tick-cadence'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
@@ -124,6 +174,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiPublicAgentToolsSendMessageRoute: typeof ApiPublicAgentToolsSendMessageRoute
+  ApiPublicHooksTickCadenceRoute: typeof ApiPublicHooksTickCadenceRoute
   ApiPublicWebhooksFatorxRoute: typeof ApiPublicWebhooksFatorxRoute
   ApiPublicWebhooksLuxRoute: typeof ApiPublicWebhooksLuxRoute
   ApiPublicWebhooksSinguRoute: typeof ApiPublicWebhooksSinguRoute
@@ -159,6 +210,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/companies': {
+      id: '/_authenticated/companies'
+      path: '/companies'
+      fullPath: '/companies'
+      preLoaderRoute: typeof AuthenticatedCompaniesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/campaigns': {
+      id: '/_authenticated/campaigns'
+      path: '/campaigns'
+      fullPath: '/campaigns'
+      preLoaderRoute: typeof AuthenticatedCampaignsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/companies/$id': {
+      id: '/_authenticated/companies/$id'
+      path: '/$id'
+      fullPath: '/companies/$id'
+      preLoaderRoute: typeof AuthenticatedCompaniesIdRouteImport
+      parentRoute: typeof AuthenticatedCompaniesRoute
+    }
     '/api/public/webhooks/singu': {
       id: '/api/public/webhooks/singu'
       path: '/api/public/webhooks/singu'
@@ -180,6 +252,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksFatorxRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/tick-cadence': {
+      id: '/api/public/hooks/tick-cadence'
+      path: '/api/public/hooks/tick-cadence'
+      fullPath: '/api/public/hooks/tick-cadence'
+      preLoaderRoute: typeof ApiPublicHooksTickCadenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/agent-tools/send-message': {
       id: '/api/public/agent-tools/send-message'
       path: '/api/public/agent-tools/send-message'
@@ -190,11 +269,29 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedCompaniesRouteChildren {
+  AuthenticatedCompaniesIdRoute: typeof AuthenticatedCompaniesIdRoute
+}
+
+const AuthenticatedCompaniesRouteChildren: AuthenticatedCompaniesRouteChildren =
+  {
+    AuthenticatedCompaniesIdRoute: AuthenticatedCompaniesIdRoute,
+  }
+
+const AuthenticatedCompaniesRouteWithChildren =
+  AuthenticatedCompaniesRoute._addFileChildren(
+    AuthenticatedCompaniesRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCampaignsRoute: typeof AuthenticatedCampaignsRoute
+  AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCampaignsRoute: AuthenticatedCampaignsRoute,
+  AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
 }
 
@@ -206,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiPublicAgentToolsSendMessageRoute: ApiPublicAgentToolsSendMessageRoute,
+  ApiPublicHooksTickCadenceRoute: ApiPublicHooksTickCadenceRoute,
   ApiPublicWebhooksFatorxRoute: ApiPublicWebhooksFatorxRoute,
   ApiPublicWebhooksLuxRoute: ApiPublicWebhooksLuxRoute,
   ApiPublicWebhooksSinguRoute: ApiPublicWebhooksSinguRoute,
@@ -213,13 +311,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
