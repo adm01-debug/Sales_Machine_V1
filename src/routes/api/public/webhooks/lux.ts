@@ -34,7 +34,7 @@ export const Route = createFileRoute("/api/public/webhooks/lux")({
             source: "lux",
             event_type: parsed.data.event_type,
             external_id: parsed.data.external_id ?? null,
-            payload: parsed.data.payload,
+            payload: parsed.data.payload as never,
           })
           .select("id")
           .single();
