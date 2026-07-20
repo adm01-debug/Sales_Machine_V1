@@ -78,14 +78,15 @@ export const Route = createFileRoute("/api/public/agent-tools/send-message")({
         }
 
         try {
+          const singuContactId = entity.singu_id as string;
           if (input.channel === "whatsapp") {
-            await singuClient.sendWhatsapp({ contact_id: entity.singu_id, message: input.message });
+            await singuClient.sendWhatsapp({ contact_id: singuContactId, message: input.message });
           } else if (input.channel === "sms") {
-            await singuClient.sendSms({ contact_id: entity.singu_id, message: input.message });
+            await singuClient.sendSms({ contact_id: singuContactId, message: input.message });
           } else if (input.channel === "email") {
             if (!input.sequence_id) throw new Error("sequence_id required for email channel");
             await singuClient.runEmailSequence({
-              contact_id: entity.singu_id,
+              contact_id: singuContactId,
               sequence_id: input.sequence_id,
             });
           }
