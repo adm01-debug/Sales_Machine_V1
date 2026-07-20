@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
 import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
 import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
 import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
@@ -35,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCompaniesRoute = AuthenticatedCompaniesRouteImport.update({
+  id: '/companies',
+  path: '/companies',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ApiPublicWebhooksSinguRoute = ApiPublicWebhooksSinguRouteImport.update({
@@ -62,6 +68,7 @@ const ApiPublicAgentToolsSendMessageRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/companies': typeof AuthenticatedCompaniesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/companies': typeof AuthenticatedCompaniesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
@@ -82,6 +90,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/companies': typeof AuthenticatedCompaniesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
@@ -93,6 +102,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/companies'
     | '/dashboard'
     | '/api/public/agent-tools/send-message'
     | '/api/public/webhooks/fatorx'
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/companies'
     | '/dashboard'
     | '/api/public/agent-tools/send-message'
     | '/api/public/webhooks/fatorx'
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/companies'
     | '/_authenticated/dashboard'
     | '/api/public/agent-tools/send-message'
     | '/api/public/webhooks/fatorx'
@@ -159,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/companies': {
+      id: '/_authenticated/companies'
+      path: '/companies'
+      fullPath: '/companies'
+      preLoaderRoute: typeof AuthenticatedCompaniesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/webhooks/singu': {
       id: '/api/public/webhooks/singu'
       path: '/api/public/webhooks/singu'
@@ -191,10 +210,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCompaniesRoute: AuthenticatedCompaniesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
 }
 
