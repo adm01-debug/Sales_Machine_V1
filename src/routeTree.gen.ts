@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
+import { Route as AuthenticatedCompaniesIdRouteImport } from './routes/_authenticated/companies.$id'
 import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
 import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
 import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
@@ -43,6 +44,12 @@ const AuthenticatedCompaniesRoute = AuthenticatedCompaniesRouteImport.update({
   path: '/companies',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCompaniesIdRoute =
+  AuthenticatedCompaniesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedCompaniesRoute,
+  } as any)
 const ApiPublicWebhooksSinguRoute = ApiPublicWebhooksSinguRouteImport.update({
   id: '/api/public/webhooks/singu',
   path: '/api/public/webhooks/singu',
@@ -68,8 +75,9 @@ const ApiPublicAgentToolsSendMessageRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/companies': typeof AuthenticatedCompaniesRoute
+  '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
@@ -78,8 +86,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/companies': typeof AuthenticatedCompaniesRoute
+  '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
@@ -90,8 +99,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/companies': typeof AuthenticatedCompaniesRoute
+  '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/companies'
     | '/dashboard'
+    | '/companies/$id'
     | '/api/public/agent-tools/send-message'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/companies'
     | '/dashboard'
+    | '/companies/$id'
     | '/api/public/agent-tools/send-message'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
@@ -125,6 +137,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/companies'
     | '/_authenticated/dashboard'
+    | '/_authenticated/companies/$id'
     | '/api/public/agent-tools/send-message'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCompaniesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/companies/$id': {
+      id: '/_authenticated/companies/$id'
+      path: '/$id'
+      fullPath: '/companies/$id'
+      preLoaderRoute: typeof AuthenticatedCompaniesIdRouteImport
+      parentRoute: typeof AuthenticatedCompaniesRoute
+    }
     '/api/public/webhooks/singu': {
       id: '/api/public/webhooks/singu'
       path: '/api/public/webhooks/singu'
@@ -209,13 +229,27 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedCompaniesRouteChildren {
+  AuthenticatedCompaniesIdRoute: typeof AuthenticatedCompaniesIdRoute
+}
+
+const AuthenticatedCompaniesRouteChildren: AuthenticatedCompaniesRouteChildren =
+  {
+    AuthenticatedCompaniesIdRoute: AuthenticatedCompaniesIdRoute,
+  }
+
+const AuthenticatedCompaniesRouteWithChildren =
+  AuthenticatedCompaniesRoute._addFileChildren(
+    AuthenticatedCompaniesRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRoute
+  AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedCompaniesRoute: AuthenticatedCompaniesRoute,
+  AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
 }
 
