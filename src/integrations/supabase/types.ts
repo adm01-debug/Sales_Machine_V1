@@ -47,6 +47,57 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_targets: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          current_step: number
+          entity_id: string
+          id: string
+          last_error: string | null
+          next_run_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          current_step?: number
+          entity_id: string
+          id?: string
+          last_error?: string | null
+          next_run_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          current_step?: number
+          entity_id?: string
+          id?: string
+          last_error?: string | null
+          next_run_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_targets_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns_orchestration"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_targets_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity_map"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns_orchestration: {
         Row: {
           cadence_rule_id: string | null
