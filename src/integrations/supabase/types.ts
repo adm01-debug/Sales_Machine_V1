@@ -22,6 +22,7 @@ export type Database = {
           is_active: boolean
           name: string
           owner_id: string | null
+          preset: Database["public"]["Enums"]["sm_cadence_preset"]
           steps: Json
           updated_at: string
         }
@@ -32,6 +33,7 @@ export type Database = {
           is_active?: boolean
           name: string
           owner_id?: string | null
+          preset?: Database["public"]["Enums"]["sm_cadence_preset"]
           steps?: Json
           updated_at?: string
         }
@@ -42,6 +44,7 @@ export type Database = {
           is_active?: boolean
           name?: string
           owner_id?: string | null
+          preset?: Database["public"]["Enums"]["sm_cadence_preset"]
           steps?: Json
           updated_at?: string
         }
@@ -156,6 +159,7 @@ export type Database = {
       }
       campaigns_orchestration: {
         Row: {
+          cadence_preset: Database["public"]["Enums"]["sm_cadence_preset"]
           cadence_rule_id: string | null
           channels: Database["public"]["Enums"]["sm_channel"][]
           created_at: string
@@ -170,6 +174,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          cadence_preset?: Database["public"]["Enums"]["sm_cadence_preset"]
           cadence_rule_id?: string | null
           channels?: Database["public"]["Enums"]["sm_channel"][]
           created_at?: string
@@ -184,6 +189,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          cadence_preset?: Database["public"]["Enums"]["sm_cadence_preset"]
           cadence_rule_id?: string | null
           channels?: Database["public"]["Enums"]["sm_channel"][]
           created_at?: string
@@ -405,6 +411,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "operator" | "viewer"
+      sm_cadence_preset: "aggressive" | "standard" | "enterprise" | "custom"
       sm_campaign_status: "draft" | "active" | "paused" | "archived"
       sm_channel: "linkedin" | "whatsapp" | "email" | "sms" | "instagram"
       sm_direction: "outbound" | "inbound"
@@ -561,6 +568,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "operator", "viewer"],
+      sm_cadence_preset: ["aggressive", "standard", "enterprise", "custom"],
       sm_campaign_status: ["draft", "active", "paused", "archived"],
       sm_channel: ["linkedin", "whatsapp", "email", "sms", "instagram"],
       sm_direction: ["outbound", "inbound"],
