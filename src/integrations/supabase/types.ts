@@ -47,37 +47,93 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_target_events: {
+        Row: {
+          actor: string
+          created_at: string
+          from_state: Database["public"]["Enums"]["sm_target_state"] | null
+          id: string
+          payload: Json
+          reason: string | null
+          target_id: string
+          to_state: Database["public"]["Enums"]["sm_target_state"]
+        }
+        Insert: {
+          actor?: string
+          created_at?: string
+          from_state?: Database["public"]["Enums"]["sm_target_state"] | null
+          id?: string
+          payload?: Json
+          reason?: string | null
+          target_id: string
+          to_state: Database["public"]["Enums"]["sm_target_state"]
+        }
+        Update: {
+          actor?: string
+          created_at?: string
+          from_state?: Database["public"]["Enums"]["sm_target_state"] | null
+          id?: string
+          payload?: Json
+          reason?: string | null
+          target_id?: string
+          to_state?: Database["public"]["Enums"]["sm_target_state"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_target_events_target_id_fkey"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_targets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_targets: {
         Row: {
+          attempts: number
           campaign_id: string
           created_at: string
           current_step: number
           entity_id: string
           id: string
           last_error: string | null
+          last_transition_at: string
+          locked_until: string | null
+          max_attempts: number
           next_run_at: string
+          state: Database["public"]["Enums"]["sm_target_state"]
           status: string
           updated_at: string
         }
         Insert: {
+          attempts?: number
           campaign_id: string
           created_at?: string
           current_step?: number
           entity_id: string
           id?: string
           last_error?: string | null
+          last_transition_at?: string
+          locked_until?: string | null
+          max_attempts?: number
           next_run_at?: string
+          state?: Database["public"]["Enums"]["sm_target_state"]
           status?: string
           updated_at?: string
         }
         Update: {
+          attempts?: number
           campaign_id?: string
           created_at?: string
           current_step?: number
           entity_id?: string
           id?: string
           last_error?: string | null
+          last_transition_at?: string
+          locked_until?: string | null
+          max_attempts?: number
           next_run_at?: string
+          state?: Database["public"]["Enums"]["sm_target_state"]
           status?: string
           updated_at?: string
         }
@@ -359,6 +415,15 @@ export type Database = {
         | "error"
         | "ignored"
       sm_source: "lux" | "singu" | "fatorx" | "manual"
+      sm_target_state:
+        | "queued"
+        | "running"
+        | "paused"
+        | "replied"
+        | "stopped"
+        | "lost"
+        | "completed"
+        | "dead_letter"
       sm_touchpoint_status:
         | "queued"
         | "sent"
@@ -507,6 +572,16 @@ export const Constants = {
         "ignored",
       ],
       sm_source: ["lux", "singu", "fatorx", "manual"],
+      sm_target_state: [
+        "queued",
+        "running",
+        "paused",
+        "replied",
+        "stopped",
+        "lost",
+        "completed",
+        "dead_letter",
+      ],
       sm_touchpoint_status: [
         "queued",
         "sent",
