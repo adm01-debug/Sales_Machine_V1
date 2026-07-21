@@ -11,10 +11,10 @@ export const Route = createFileRoute("/")({
         content:
           "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS.",
       },
-      { property: "og:title", content: "Sales Machine" },
+      { property: "og:title", content: "Sales Machine · Prospecção orquestrada com IA" },
       {
         property: "og:description",
-        content: "Prospecção multicanal orquestrada por agentes de IA treinados.",
+        content: "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS.",
       },
       { property: "og:type", content: "website" },
     ],
