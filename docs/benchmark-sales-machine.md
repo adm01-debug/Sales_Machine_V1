@@ -1,3 +1,30 @@
+
+---
+
+## STATUS FINAL: 10/10 ✅ (fechado em 2026-07-21)
+
+| # | Gap | Status | Implementação |
+|---|---|---|---|
+| 1 | Máquina de estados + audit log | ✅ | enum `sm_target_state`, `campaign_target_events`, triggers `trg_log_target_state_change` / `trg_sync_target_status` |
+| 2 | Presets de cadência | ✅ | `cadence_rules.preset` + seeds aggressive/standard/enterprise |
+| 3 | Retry/backoff + dead-letter | ✅ | `contact_touchpoints.attempts/next_retry_at`, backoff exponencial em `src/routes/api/public/hooks/tick-cadence.ts` |
+| 4 | Approval gate | ✅ | `campaigns_orchestration.requires_human_approval`, status `pending_approval`, tela `/_authenticated/approvals` |
+| 5 | Coordenador por conta | ✅ | `has_recent_account_touchpoint()`, `account_cooldown_hours` |
+| 6 | Sender warmup | ✅ | tabela `sender_health`, `compute_daily_cap()` |
+| 7 | Adapter social | ✅ | `src/integrations/social/types.ts` (Stub + Unipile/Phantombuster skeletons) |
+| 8 | Scoring com decay | ✅ | `signal_weights` (8 pesos), `signal_score()` com meia-vida exponencial |
+| 9 | Eval harness | ✅ | `agent_eval_cases`, `agent_eval_runs`, tela `/_authenticated/evals` |
+| 10 | Threading email | ✅ | `contact_touchpoints.email_message_id / email_in_reply_to / email_references` |
+
+### Auditoria final
+- `supabase--linter`: 2 warnings pré-existentes (extension in public, security definer executable) — não bloqueantes.
+- `supabase--slow_queries`: todas as top queries <3ms.
+- 5 novas tabelas com RLS + GRANTs ✓ | 3 presets seed ✓ | 8 pesos seed ✓ | triggers de state machine anexados ✓.
+
+### Próximos passos operacionais (fora de código)
+- Configurar `UNIPILE_URL` / `UNIPILE_API_KEY` quando contratar provedor social real.
+- Popular `agent_eval_cases` com ~10 casos representativos e rodar a suite em `/evals`.
+- Review semanal de `sender_health` (bounce rate, ramp-up de cap).
 # Benchmark SALES MACHINE vs. OSS de referência
 
 Comparação técnica entre o **SALES MACHINE** (nossa stack: LUX + SINGU + FATOR X orquestrados por TanStack Start + Supabase) e três projetos open source do segmento "outbound / SDR com IA multicanal".
