@@ -120,7 +120,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
           const { fatorxClient } = await import("@/integrations/external/fatorx.server");
           const { data: entity } = await supabaseAdmin
             .from("entity_map")
-            .select("id, display_name, fatorx_thread_id")
+            .select("id, display_name, fatorx_thread_id, metadata")
             .eq("id", target.entity_id)
             .maybeSingle();
           if (!entity) continue;
@@ -166,6 +166,16 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
 
           // Email cap (item 6)
           if (step.channel === "email") {
+            // Skip entities marked as hard_bounce
+            const meta = (entity.metadata as Record<string, unknown>) ?? {};
+            if (meta.hard_bounce === true) {
+              await supabaseAdmin.from("campaign_targets").update({
+                state: "stopped",
+                last_error: "email hard_bounce — canal desativado para este contato",
+                locked_until: null,
+              }).eq("id", target.id);
+              continue;
+            }
             const senderId = campaign.fatorx_agent_id ?? "default";
             const { data: capData } = await supabaseAdmin.rpc("compute_daily_cap", { _sender_id: senderId });
             const cap = typeof capData === "number" ? capData : 50;

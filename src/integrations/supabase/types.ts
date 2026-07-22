@@ -323,6 +323,47 @@ export type Database = {
         }
         Relationships: []
       }
+      consent_ledger: {
+        Row: {
+          channel: Database["public"]["Enums"]["sm_channel"]
+          created_at: string
+          entity_id: string
+          evidence: Json
+          id: string
+          reason: string | null
+          source: string
+          status: string
+        }
+        Insert: {
+          channel: Database["public"]["Enums"]["sm_channel"]
+          created_at?: string
+          entity_id: string
+          evidence?: Json
+          id?: string
+          reason?: string | null
+          source: string
+          status: string
+        }
+        Update: {
+          channel?: Database["public"]["Enums"]["sm_channel"]
+          created_at?: string
+          entity_id?: string
+          evidence?: Json
+          id?: string
+          reason?: string | null
+          source?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_ledger_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity_map"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_touchpoints: {
         Row: {
           attempts: number
@@ -397,6 +438,54 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: false
             referencedRelation: "entity_map"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_deliverability_events: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          event_type: string
+          external_id: string | null
+          id: string
+          provider: string
+          raw: Json
+          touchpoint_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          event_type: string
+          external_id?: string | null
+          id?: string
+          provider: string
+          raw?: Json
+          touchpoint_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          event_type?: string
+          external_id?: string | null
+          id?: string
+          provider?: string
+          raw?: Json
+          touchpoint_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_deliverability_events_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity_map"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_deliverability_events_touchpoint_id_fkey"
+            columns: ["touchpoint_id"]
+            isOneToOne: false
+            referencedRelation: "contact_touchpoints"
             referencedColumns: ["id"]
           },
         ]
@@ -598,9 +687,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      v_pipeline_health: {
+        Row: {
+          completed: number | null
+          dead_letter: number | null
+          lost: number | null
+          opt_outs_7d: number | null
+          paused: number | null
+          queued: number | null
+          refreshed_at: string | null
+          replied: number | null
+          replies_24h: number | null
+          running: number | null
+          sent_24h: number | null
+          stopped: number | null
+          total: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      check_consent: {
+        Args: {
+          _channel: Database["public"]["Enums"]["sm_channel"]
+          _entity_id: string
+        }
+        Returns: boolean
+      }
       compute_daily_cap: { Args: { _sender_id: string }; Returns: number }
       has_recent_account_touchpoint: {
         Args: { _entity_id: string; _hours: number }
@@ -613,6 +726,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      refresh_pipeline_health: { Args: never; Returns: undefined }
       signal_score: { Args: { _entity_id: string }; Returns: number }
     }
     Enums: {
