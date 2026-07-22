@@ -49,6 +49,7 @@ function DashboardPage() {
             <Link to="/companies"><Button variant="outline" size="sm">Empresas</Button></Link>
             <Link to="/campaigns"><Button variant="outline" size="sm">Campanhas</Button></Link>
             <Link to="/composer"><Button variant="outline" size="sm">Compositor</Button></Link>
+            <Link to="/ops"><Button variant="outline" size="sm">Operações</Button></Link>
             <Link to="/approvals"><Button variant="outline" size="sm">Aprovações</Button></Link>
             <Link to="/evals"><Button variant="outline" size="sm">Evals</Button></Link>
             <Button variant="outline" size="sm" onClick={signOut}>Sair</Button>
