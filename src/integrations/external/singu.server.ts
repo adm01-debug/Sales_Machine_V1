@@ -54,6 +54,18 @@ export const singuClient = {
       body: JSON.stringify(input),
     }),
 
+  sendEmail: (input: {
+    contact_id: string;
+    subject: string;
+    body: string;
+    in_reply_to?: string;
+    references?: string[];
+  }) =>
+    singuFetch("/functions/v1/send-email", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
+
   runEmailSequence: (input: { contact_id: string; sequence_id: string }) =>
     singuFetch("/functions/v1/sequence-processor", {
       method: "POST",

@@ -257,12 +257,15 @@ export const enqueueBatchProspection = createServerFn({ method: "POST" })
       }
       const { error: tgtErr } = await context.supabase
         .from("campaign_targets")
-        .insert({
-          campaign_id: data.campaign_id,
-          entity_id: ent.id,
-          next_run_at: new Date().toISOString(),
-          status: "queued",
-        });
+        .upsert(
+          {
+            campaign_id: data.campaign_id,
+            entity_id: ent.id,
+            next_run_at: new Date().toISOString(),
+            status: "queued",
+          },
+          { onConflict: "campaign_id,entity_id", ignoreDuplicates: true },
+        );
       if (tgtErr) {
         skipped++;
         continue;
