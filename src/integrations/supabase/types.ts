@@ -577,7 +577,14 @@ export type Database = {
       app_role: "admin" | "operator" | "viewer"
       sm_cadence_preset: "aggressive" | "standard" | "enterprise" | "custom"
       sm_campaign_status: "draft" | "active" | "paused" | "archived"
-      sm_channel: "linkedin" | "whatsapp" | "email" | "sms" | "instagram"
+      sm_channel:
+        | "linkedin"
+        | "whatsapp"
+        | "email"
+        | "sms"
+        | "instagram"
+        | "rcs"
+        | "mms"
       sm_direction: "outbound" | "inbound"
       sm_event_status:
         | "received"
@@ -736,7 +743,15 @@ export const Constants = {
       app_role: ["admin", "operator", "viewer"],
       sm_cadence_preset: ["aggressive", "standard", "enterprise", "custom"],
       sm_campaign_status: ["draft", "active", "paused", "archived"],
-      sm_channel: ["linkedin", "whatsapp", "email", "sms", "instagram"],
+      sm_channel: [
+        "linkedin",
+        "whatsapp",
+        "email",
+        "sms",
+        "instagram",
+        "rcs",
+        "mms",
+      ],
       sm_direction: ["outbound", "inbound"],
       sm_event_status: [
         "received",
