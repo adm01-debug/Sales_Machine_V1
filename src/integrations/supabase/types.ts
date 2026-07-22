@@ -437,6 +437,48 @@ export type Database = {
         }
         Relationships: []
       }
+      message_templates: {
+        Row: {
+          archived: boolean
+          body: string
+          channel: Database["public"]["Enums"]["sm_channel"]
+          created_at: string
+          created_by: string | null
+          id: string
+          media_url: string | null
+          name: string
+          rcs_payload: Json | null
+          updated_at: string
+          variables: Json
+        }
+        Insert: {
+          archived?: boolean
+          body: string
+          channel: Database["public"]["Enums"]["sm_channel"]
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          media_url?: string | null
+          name: string
+          rcs_payload?: Json | null
+          updated_at?: string
+          variables?: Json
+        }
+        Update: {
+          archived?: boolean
+          body?: string
+          channel?: Database["public"]["Enums"]["sm_channel"]
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          media_url?: string | null
+          name?: string
+          rcs_payload?: Json | null
+          updated_at?: string
+          variables?: Json
+        }
+        Relationships: []
+      }
       sales_machine_events: {
         Row: {
           error: string | null
