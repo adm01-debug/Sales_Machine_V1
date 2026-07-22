@@ -54,6 +54,28 @@ export const singuClient = {
       body: JSON.stringify(input),
     }),
 
+  /** SMS com mídia (MMS). O SINGU roteia para provedores que suportam MMS. */
+  sendMms: (input: { contact_id: string; message: string; media_url: string }) =>
+    singuFetch("/api/mms/send", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
+
+  /**
+   * RCS (Rich Communication Services): mensagens ricas com cards, imagens e
+   * suggested actions. `rcs_payload` segue o formato:
+   * { type: "rich_card", title, description, image_url, suggestions: [...] }
+   */
+  sendRcs: (input: {
+    contact_id: string;
+    message: string;
+    rcs_payload?: Record<string, unknown>;
+  }) =>
+    singuFetch("/api/rcs/send", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
+
   sendEmail: (input: {
     contact_id: string;
     subject: string;
