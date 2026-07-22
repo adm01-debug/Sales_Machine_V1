@@ -437,6 +437,48 @@ export type Database = {
         }
         Relationships: []
       }
+      message_templates: {
+        Row: {
+          archived: boolean
+          body: string
+          channel: Database["public"]["Enums"]["sm_channel"]
+          created_at: string
+          created_by: string | null
+          id: string
+          media_url: string | null
+          name: string
+          rcs_payload: Json | null
+          updated_at: string
+          variables: Json
+        }
+        Insert: {
+          archived?: boolean
+          body: string
+          channel: Database["public"]["Enums"]["sm_channel"]
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          media_url?: string | null
+          name: string
+          rcs_payload?: Json | null
+          updated_at?: string
+          variables?: Json
+        }
+        Update: {
+          archived?: boolean
+          body?: string
+          channel?: Database["public"]["Enums"]["sm_channel"]
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          media_url?: string | null
+          name?: string
+          rcs_payload?: Json | null
+          updated_at?: string
+          variables?: Json
+        }
+        Relationships: []
+      }
       sales_machine_events: {
         Row: {
           error: string | null
@@ -577,7 +619,14 @@ export type Database = {
       app_role: "admin" | "operator" | "viewer"
       sm_cadence_preset: "aggressive" | "standard" | "enterprise" | "custom"
       sm_campaign_status: "draft" | "active" | "paused" | "archived"
-      sm_channel: "linkedin" | "whatsapp" | "email" | "sms" | "instagram"
+      sm_channel:
+        | "linkedin"
+        | "whatsapp"
+        | "email"
+        | "sms"
+        | "instagram"
+        | "rcs"
+        | "mms"
       sm_direction: "outbound" | "inbound"
       sm_event_status:
         | "received"
@@ -736,7 +785,15 @@ export const Constants = {
       app_role: ["admin", "operator", "viewer"],
       sm_cadence_preset: ["aggressive", "standard", "enterprise", "custom"],
       sm_campaign_status: ["draft", "active", "paused", "archived"],
-      sm_channel: ["linkedin", "whatsapp", "email", "sms", "instagram"],
+      sm_channel: [
+        "linkedin",
+        "whatsapp",
+        "email",
+        "sms",
+        "instagram",
+        "rcs",
+        "mms",
+      ],
       sm_direction: ["outbound", "inbound"],
       sm_event_status: [
         "received",

@@ -231,10 +231,51 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                 .maybeSingle();
               if (ent2?.singu_id) {
                 const { singuClient } = await import("@/integrations/external/singu.server");
+                const payloadExtras = ((): { media_url?: string; rcs_payload?: Record<string, unknown> } => {
+                  const raw = (step as unknown as { media_url?: string; rcs_payload?: Record<string, unknown> });
+                  return {
+                    media_url: raw.media_url,
+                    rcs_payload: raw.rcs_payload,
+                  };
+                })();
                 if (step.channel === "whatsapp") {
                   await singuClient.sendWhatsapp({ contact_id: ent2.singu_id, message: messageText });
                 } else if (step.channel === "sms") {
                   await singuClient.sendSms({ contact_id: ent2.singu_id, message: messageText });
+                } else if (step.channel === "mms") {
+                  const mediaUrl = payloadExtras.media_url;
+                  if (!mediaUrl) throw new Error("MMS step sem media_url");
+                  await singuClient.sendMms({
+                    contact_id: ent2.singu_id,
+                    message: messageText,
+                    media_url: mediaUrl,
+                  });
+                } else if (step.channel === "rcs") {
+                  try {
+                    await singuClient.sendRcs({
+                      contact_id: ent2.singu_id,
+                      message: messageText,
+                      rcs_payload: payloadExtras.rcs_payload,
+                    });
+                  } catch (rcsErr) {
+                    const emsg = rcsErr instanceof Error ? rcsErr.message : String(rcsErr);
+                    // Fallback automático: se provedor RCS falhar por não suportado,
+                    // reenvia como SMS reusando o mesmo texto.
+                    if (/not[_ ]?support|unavailable|404|405/i.test(emsg)) {
+                      await singuClient.sendSms({ contact_id: ent2.singu_id, message: messageText });
+                      if (tp) {
+                        await supabaseAdmin
+                          .from("contact_touchpoints")
+                          .update({
+                            status: "sent",
+                            error: `RCS fallback→SMS: ${emsg.slice(0, 200)}`,
+                          })
+                          .eq("id", tp.id);
+                      }
+                    } else {
+                      throw rcsErr;
+                    }
+                  }
                 } else if (step.channel === "email") {
                   // QA-013 fix (F10): canal email era no-op; agora dispara via SINGU.
                   const subject = `Contato de ${campaign.name}`.slice(0, 120);

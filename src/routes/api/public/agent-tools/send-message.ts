@@ -10,11 +10,13 @@ import { singuClient } from "@/integrations/external/singu.server";
  */
 const Schema = z.object({
   entity_id: z.string().uuid(),
-  channel: z.enum(["whatsapp", "sms", "email", "linkedin", "instagram"]),
+  channel: z.enum(["whatsapp", "sms", "mms", "rcs", "email", "linkedin", "instagram"]),
   message: z.string().min(1),
   campaign_id: z.string().uuid().optional(),
   fatorx_thread_id: z.string().optional(),
   sequence_id: z.string().optional(),
+  media_url: z.string().url().optional(),
+  rcs_payload: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const Route = createFileRoute("/api/public/agent-tools/send-message")({
@@ -33,6 +35,9 @@ export const Route = createFileRoute("/api/public/agent-tools/send-message")({
           return Response.json({ ok: false, error: parsed.error.flatten() }, { status: 400 });
         }
         const input = parsed.data;
+        if (input.channel === "mms" && !input.media_url) {
+          return Response.json({ ok: false, error: "media_url é obrigatório para MMS" }, { status: 400 });
+        }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const isStubChannel = input.channel === "linkedin" || input.channel === "instagram";
@@ -62,7 +67,11 @@ export const Route = createFileRoute("/api/public/agent-tools/send-message")({
             direction: "outbound",
             status: isStubChannel ? "pending_provider" : "queued",
             fatorx_thread_id: input.fatorx_thread_id ?? null,
-            payload: { message: input.message },
+            payload: {
+              message: input.message,
+              media_url: input.media_url ?? null,
+              rcs_payload: (input.rcs_payload ?? null) as never,
+            } as never,
           })
           .select("id")
           .single();
@@ -83,6 +92,18 @@ export const Route = createFileRoute("/api/public/agent-tools/send-message")({
             await singuClient.sendWhatsapp({ contact_id: singuContactId, message: input.message });
           } else if (input.channel === "sms") {
             await singuClient.sendSms({ contact_id: singuContactId, message: input.message });
+          } else if (input.channel === "mms") {
+            await singuClient.sendMms({
+              contact_id: singuContactId,
+              message: input.message,
+              media_url: input.media_url as string,
+            });
+          } else if (input.channel === "rcs") {
+            await singuClient.sendRcs({
+              contact_id: singuContactId,
+              message: input.message,
+              rcs_payload: input.rcs_payload,
+            });
           } else if (input.channel === "email") {
             if (!input.sequence_id) throw new Error("sequence_id required for email channel");
             await singuClient.runEmailSequence({

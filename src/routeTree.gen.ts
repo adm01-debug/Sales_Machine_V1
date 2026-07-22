@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/evals'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedComposerRouteImport } from './routes/_authenticated/composer'
 import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
 import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
 import { Route as AuthenticatedApprovalsRouteImport } from './routes/_authenticated/approvals'
@@ -46,6 +47,11 @@ const AuthenticatedEvalsRoute = AuthenticatedEvalsRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedComposerRoute = AuthenticatedComposerRouteImport.update({
+  id: '/composer',
+  path: '/composer',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCompaniesRoute = AuthenticatedCompaniesRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/approvals': typeof AuthenticatedApprovalsRoute
   '/campaigns': typeof AuthenticatedCampaignsRoute
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
+  '/composer': typeof AuthenticatedComposerRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/evals': typeof AuthenticatedEvalsRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/approvals': typeof AuthenticatedApprovalsRoute
   '/campaigns': typeof AuthenticatedCampaignsRoute
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
+  '/composer': typeof AuthenticatedComposerRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/evals': typeof AuthenticatedEvalsRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/_authenticated/approvals': typeof AuthenticatedApprovalsRoute
   '/_authenticated/campaigns': typeof AuthenticatedCampaignsRoute
   '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
+  '/_authenticated/composer': typeof AuthenticatedComposerRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/evals': typeof AuthenticatedEvalsRoute
   '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/approvals'
     | '/campaigns'
     | '/companies'
+    | '/composer'
     | '/dashboard'
     | '/evals'
     | '/companies/$id'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/approvals'
     | '/campaigns'
     | '/companies'
+    | '/composer'
     | '/dashboard'
     | '/evals'
     | '/companies/$id'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/_authenticated/approvals'
     | '/_authenticated/campaigns'
     | '/_authenticated/companies'
+    | '/_authenticated/composer'
     | '/_authenticated/dashboard'
     | '/_authenticated/evals'
     | '/_authenticated/companies/$id'
@@ -239,6 +251,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/composer': {
+      id: '/_authenticated/composer'
+      path: '/composer'
+      fullPath: '/composer'
+      preLoaderRoute: typeof AuthenticatedComposerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/companies': {
@@ -325,6 +344,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedApprovalsRoute: typeof AuthenticatedApprovalsRoute
   AuthenticatedCampaignsRoute: typeof AuthenticatedCampaignsRoute
   AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
+  AuthenticatedComposerRoute: typeof AuthenticatedComposerRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEvalsRoute: typeof AuthenticatedEvalsRoute
 }
@@ -333,6 +353,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApprovalsRoute: AuthenticatedApprovalsRoute,
   AuthenticatedCampaignsRoute: AuthenticatedCampaignsRoute,
   AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
+  AuthenticatedComposerRoute: AuthenticatedComposerRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEvalsRoute: AuthenticatedEvalsRoute,
 }
@@ -353,13 +374,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
