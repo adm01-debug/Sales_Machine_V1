@@ -70,8 +70,8 @@ export const Route = createFileRoute("/api/public/agent-tools/send-message")({
             payload: {
               message: input.message,
               media_url: input.media_url ?? null,
-              rcs_payload: input.rcs_payload ?? null,
-            },
+              rcs_payload: (input.rcs_payload ?? null) as never,
+            } as never,
           })
           .select("id")
           .single();
