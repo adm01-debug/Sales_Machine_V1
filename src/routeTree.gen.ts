@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedOpsRouteImport } from './routes/_authenticated/ops'
 import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/evals'
+import { Route as AuthenticatedDeliverabilityRouteImport } from './routes/_authenticated/deliverability'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedComposerRouteImport } from './routes/_authenticated/composer'
 import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
@@ -54,6 +55,12 @@ const AuthenticatedEvalsRoute = AuthenticatedEvalsRouteImport.update({
   path: '/evals',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDeliverabilityRoute =
+  AuthenticatedDeliverabilityRouteImport.update({
+    id: '/deliverability',
+    path: '/deliverability',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -143,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/composer': typeof AuthenticatedComposerRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
   '/ops': typeof AuthenticatedOpsRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
@@ -164,6 +172,7 @@ export interface FileRoutesByTo {
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/composer': typeof AuthenticatedComposerRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
   '/ops': typeof AuthenticatedOpsRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
@@ -187,6 +196,7 @@ export interface FileRoutesById {
   '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/_authenticated/composer': typeof AuthenticatedComposerRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/_authenticated/evals': typeof AuthenticatedEvalsRoute
   '/_authenticated/ops': typeof AuthenticatedOpsRoute
   '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/companies'
     | '/composer'
     | '/dashboard'
+    | '/deliverability'
     | '/evals'
     | '/ops'
     | '/companies/$id'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/companies'
     | '/composer'
     | '/dashboard'
+    | '/deliverability'
     | '/evals'
     | '/ops'
     | '/companies/$id'
@@ -253,6 +265,7 @@ export interface FileRouteTypes {
     | '/_authenticated/companies'
     | '/_authenticated/composer'
     | '/_authenticated/dashboard'
+    | '/_authenticated/deliverability'
     | '/_authenticated/evals'
     | '/_authenticated/ops'
     | '/_authenticated/companies/$id'
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/evals'
       fullPath: '/evals'
       preLoaderRoute: typeof AuthenticatedEvalsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/deliverability': {
+      id: '/_authenticated/deliverability'
+      path: '/deliverability'
+      fullPath: '/deliverability'
+      preLoaderRoute: typeof AuthenticatedDeliverabilityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -447,6 +467,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
   AuthenticatedComposerRoute: typeof AuthenticatedComposerRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDeliverabilityRoute: typeof AuthenticatedDeliverabilityRoute
   AuthenticatedEvalsRoute: typeof AuthenticatedEvalsRoute
   AuthenticatedOpsRoute: typeof AuthenticatedOpsRoute
 }
@@ -457,6 +478,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
   AuthenticatedComposerRoute: AuthenticatedComposerRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDeliverabilityRoute: AuthenticatedDeliverabilityRoute,
   AuthenticatedEvalsRoute: AuthenticatedEvalsRoute,
   AuthenticatedOpsRoute: AuthenticatedOpsRoute,
 }
