@@ -12,16 +12,22 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedOpsRouteImport } from './routes/_authenticated/ops'
 import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/evals'
+import { Route as AuthenticatedDeliverabilityRouteImport } from './routes/_authenticated/deliverability'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedComposerRouteImport } from './routes/_authenticated/composer'
 import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
 import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
 import { Route as AuthenticatedApprovalsRouteImport } from './routes/_authenticated/approvals'
+import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
 import { Route as AuthenticatedCompaniesIdRouteImport } from './routes/_authenticated/companies.$id'
+import { Route as ApiPublicWebhooksSinguBounceRouteImport } from './routes/api/public/webhooks/singu-bounce'
 import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
 import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
 import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
+import { Route as ApiPublicTrackOpenDotgifRouteImport } from './routes/api/public/track/open[.]gif'
+import { Route as ApiPublicTrackClickRouteImport } from './routes/api/public/track/click'
 import { Route as ApiPublicHooksTickCadenceRouteImport } from './routes/api/public/hooks/tick-cadence'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
 
@@ -39,11 +45,22 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedOpsRoute = AuthenticatedOpsRouteImport.update({
+  id: '/ops',
+  path: '/ops',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedEvalsRoute = AuthenticatedEvalsRouteImport.update({
   id: '/evals',
   path: '/evals',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDeliverabilityRoute =
+  AuthenticatedDeliverabilityRouteImport.update({
+    id: '/deliverability',
+    path: '/deliverability',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -69,11 +86,22 @@ const AuthenticatedApprovalsRoute = AuthenticatedApprovalsRouteImport.update({
   path: '/approvals',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicUnsubscribeRoute = ApiPublicUnsubscribeRouteImport.update({
+  id: '/api/public/unsubscribe',
+  path: '/api/public/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedCompaniesIdRoute =
   AuthenticatedCompaniesIdRouteImport.update({
     id: '/$id',
     path: '/$id',
     getParentRoute: () => AuthenticatedCompaniesRoute,
+  } as any)
+const ApiPublicWebhooksSinguBounceRoute =
+  ApiPublicWebhooksSinguBounceRouteImport.update({
+    id: '/api/public/webhooks/singu-bounce',
+    path: '/api/public/webhooks/singu-bounce',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicWebhooksSinguRoute = ApiPublicWebhooksSinguRouteImport.update({
   id: '/api/public/webhooks/singu',
@@ -88,6 +116,17 @@ const ApiPublicWebhooksLuxRoute = ApiPublicWebhooksLuxRouteImport.update({
 const ApiPublicWebhooksFatorxRoute = ApiPublicWebhooksFatorxRouteImport.update({
   id: '/api/public/webhooks/fatorx',
   path: '/api/public/webhooks/fatorx',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicTrackOpenDotgifRoute =
+  ApiPublicTrackOpenDotgifRouteImport.update({
+    id: '/api/public/track/open.gif',
+    path: '/api/public/track/open.gif',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicTrackClickRoute = ApiPublicTrackClickRouteImport.update({
+  id: '/api/public/track/click',
+  path: '/api/public/track/click',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicHooksTickCadenceRoute =
@@ -111,13 +150,19 @@ export interface FileRoutesByFullPath {
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/composer': typeof AuthenticatedComposerRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
+  '/ops': typeof AuthenticatedOpsRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
+  '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/track/click': typeof ApiPublicTrackClickRoute
+  '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
+  '/api/public/webhooks/singu-bounce': typeof ApiPublicWebhooksSinguBounceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -127,13 +172,19 @@ export interface FileRoutesByTo {
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/composer': typeof AuthenticatedComposerRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
+  '/ops': typeof AuthenticatedOpsRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
+  '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/track/click': typeof ApiPublicTrackClickRoute
+  '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
+  '/api/public/webhooks/singu-bounce': typeof ApiPublicWebhooksSinguBounceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -145,13 +196,19 @@ export interface FileRoutesById {
   '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/_authenticated/composer': typeof AuthenticatedComposerRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/_authenticated/evals': typeof AuthenticatedEvalsRoute
+  '/_authenticated/ops': typeof AuthenticatedOpsRoute
   '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
+  '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/track/click': typeof ApiPublicTrackClickRoute
+  '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
+  '/api/public/webhooks/singu-bounce': typeof ApiPublicWebhooksSinguBounceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -163,13 +220,19 @@ export interface FileRouteTypes {
     | '/companies'
     | '/composer'
     | '/dashboard'
+    | '/deliverability'
     | '/evals'
+    | '/ops'
     | '/companies/$id'
+    | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/track/click'
+    | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
+    | '/api/public/webhooks/singu-bounce'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -179,13 +242,19 @@ export interface FileRouteTypes {
     | '/companies'
     | '/composer'
     | '/dashboard'
+    | '/deliverability'
     | '/evals'
+    | '/ops'
     | '/companies/$id'
+    | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/track/click'
+    | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
+    | '/api/public/webhooks/singu-bounce'
   id:
     | '__root__'
     | '/'
@@ -196,24 +265,34 @@ export interface FileRouteTypes {
     | '/_authenticated/companies'
     | '/_authenticated/composer'
     | '/_authenticated/dashboard'
+    | '/_authenticated/deliverability'
     | '/_authenticated/evals'
+    | '/_authenticated/ops'
     | '/_authenticated/companies/$id'
+    | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/track/click'
+    | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
+    | '/api/public/webhooks/singu-bounce'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicUnsubscribeRoute: typeof ApiPublicUnsubscribeRoute
   ApiPublicAgentToolsSendMessageRoute: typeof ApiPublicAgentToolsSendMessageRoute
   ApiPublicHooksTickCadenceRoute: typeof ApiPublicHooksTickCadenceRoute
+  ApiPublicTrackClickRoute: typeof ApiPublicTrackClickRoute
+  ApiPublicTrackOpenDotgifRoute: typeof ApiPublicTrackOpenDotgifRoute
   ApiPublicWebhooksFatorxRoute: typeof ApiPublicWebhooksFatorxRoute
   ApiPublicWebhooksLuxRoute: typeof ApiPublicWebhooksLuxRoute
   ApiPublicWebhooksSinguRoute: typeof ApiPublicWebhooksSinguRoute
+  ApiPublicWebhooksSinguBounceRoute: typeof ApiPublicWebhooksSinguBounceRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -239,11 +318,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/ops': {
+      id: '/_authenticated/ops'
+      path: '/ops'
+      fullPath: '/ops'
+      preLoaderRoute: typeof AuthenticatedOpsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/evals': {
       id: '/_authenticated/evals'
       path: '/evals'
       fullPath: '/evals'
       preLoaderRoute: typeof AuthenticatedEvalsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/deliverability': {
+      id: '/_authenticated/deliverability'
+      path: '/deliverability'
+      fullPath: '/deliverability'
+      preLoaderRoute: typeof AuthenticatedDeliverabilityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -281,12 +374,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedApprovalsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/unsubscribe': {
+      id: '/api/public/unsubscribe'
+      path: '/api/public/unsubscribe'
+      fullPath: '/api/public/unsubscribe'
+      preLoaderRoute: typeof ApiPublicUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/companies/$id': {
       id: '/_authenticated/companies/$id'
       path: '/$id'
       fullPath: '/companies/$id'
       preLoaderRoute: typeof AuthenticatedCompaniesIdRouteImport
       parentRoute: typeof AuthenticatedCompaniesRoute
+    }
+    '/api/public/webhooks/singu-bounce': {
+      id: '/api/public/webhooks/singu-bounce'
+      path: '/api/public/webhooks/singu-bounce'
+      fullPath: '/api/public/webhooks/singu-bounce'
+      preLoaderRoute: typeof ApiPublicWebhooksSinguBounceRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/webhooks/singu': {
       id: '/api/public/webhooks/singu'
@@ -307,6 +414,20 @@ declare module '@tanstack/react-router' {
       path: '/api/public/webhooks/fatorx'
       fullPath: '/api/public/webhooks/fatorx'
       preLoaderRoute: typeof ApiPublicWebhooksFatorxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/track/open.gif': {
+      id: '/api/public/track/open.gif'
+      path: '/api/public/track/open.gif'
+      fullPath: '/api/public/track/open.gif'
+      preLoaderRoute: typeof ApiPublicTrackOpenDotgifRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/track/click': {
+      id: '/api/public/track/click'
+      path: '/api/public/track/click'
+      fullPath: '/api/public/track/click'
+      preLoaderRoute: typeof ApiPublicTrackClickRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/tick-cadence': {
@@ -346,7 +467,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
   AuthenticatedComposerRoute: typeof AuthenticatedComposerRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDeliverabilityRoute: typeof AuthenticatedDeliverabilityRoute
   AuthenticatedEvalsRoute: typeof AuthenticatedEvalsRoute
+  AuthenticatedOpsRoute: typeof AuthenticatedOpsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -355,7 +478,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
   AuthenticatedComposerRoute: AuthenticatedComposerRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDeliverabilityRoute: AuthenticatedDeliverabilityRoute,
   AuthenticatedEvalsRoute: AuthenticatedEvalsRoute,
+  AuthenticatedOpsRoute: AuthenticatedOpsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -365,11 +490,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicUnsubscribeRoute: ApiPublicUnsubscribeRoute,
   ApiPublicAgentToolsSendMessageRoute: ApiPublicAgentToolsSendMessageRoute,
   ApiPublicHooksTickCadenceRoute: ApiPublicHooksTickCadenceRoute,
+  ApiPublicTrackClickRoute: ApiPublicTrackClickRoute,
+  ApiPublicTrackOpenDotgifRoute: ApiPublicTrackOpenDotgifRoute,
   ApiPublicWebhooksFatorxRoute: ApiPublicWebhooksFatorxRoute,
   ApiPublicWebhooksLuxRoute: ApiPublicWebhooksLuxRoute,
   ApiPublicWebhooksSinguRoute: ApiPublicWebhooksSinguRoute,
+  ApiPublicWebhooksSinguBounceRoute: ApiPublicWebhooksSinguBounceRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
