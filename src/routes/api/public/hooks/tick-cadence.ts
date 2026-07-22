@@ -235,8 +235,16 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                   await singuClient.sendWhatsapp({ contact_id: ent2.singu_id, message: messageText });
                 } else if (step.channel === "sms") {
                   await singuClient.sendSms({ contact_id: ent2.singu_id, message: messageText });
+                } else if (step.channel === "email") {
+                  // QA-013 fix (F10): canal email era no-op; agora dispara via SINGU.
+                  const subject = `Contato de ${campaign.name}`.slice(0, 120);
+                  await singuClient.sendEmail({
+                    contact_id: ent2.singu_id,
+                    subject,
+                    body: messageText,
+                  });
                 }
-                if (tp && step.channel !== "email") {
+                if (tp) {
                   await supabaseAdmin
                     .from("contact_touchpoints")
                     .update({ status: "sent" })
