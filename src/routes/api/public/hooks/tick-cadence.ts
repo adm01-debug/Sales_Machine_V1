@@ -60,6 +60,12 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
         let dead_lettered = 0;
         let queued_approval = 0;
         let blocked_consent = 0;
+        let blocked_budget = 0;
+
+        // Guardrail financeiro: apurado uma vez por tick (não por target) para
+        // não multiplicar a varredura de touchpoints. Fail-open em caso de erro.
+        const { loadBlockedChannels } = await import("@/lib/budget.server");
+        const budgetBlockedChannels = await loadBlockedChannels(supabaseAdmin);
 
         for (const target of due) {
           // Lock por 5min para evitar dupla execução
@@ -160,6 +166,8 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
             emailSentToday,
             emailDailyCap,
             requiresHumanApproval: campaign.requires_human_approval === true,
+            budgetBlocked: pendingStep ? budgetBlockedChannels.has(pendingStep.channel) : false,
+            budgetReason: "teto de orçamento atingido",
           });
 
           if (decision.action === "complete") {
@@ -179,6 +187,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
           }
           if (decision.action === "defer") {
             if (decision.reason.startsWith("account cooldown")) skipped_cooldown++;
+            if (decision.reason.startsWith("orçamento do canal")) blocked_budget++;
             await supabaseAdmin
               .from("campaign_targets")
               .update({
