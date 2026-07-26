@@ -157,6 +157,12 @@ function ComposerPage() {
       if (channel === "mms" && !mediaUrl) throw new Error("MMS requer mídia");
       if (channel === "email" && !subject.trim())
         throw new Error("Templates de e-mail exigem assunto");
+      if (channel === "email") {
+        const report = preflightEmailContent({ subject, blocks: emailBlocks, body: finalBody });
+        const blockers = blockingFindings(report);
+        if (blockers.length > 0)
+          throw new Error(`Pré-voo bloqueou o salvamento: ${blockers[0].message}`);
+      }
       if (finalBody.length > CHANNEL_BODY_LIMIT[channel])
         throw new Error(
           `Limite de ${CHANNEL_BODY_LIMIT[channel]} caracteres excedido para ${channel}`,
