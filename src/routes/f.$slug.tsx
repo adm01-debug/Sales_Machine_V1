@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { getPublicLeadForm, submitLeadForm } from "@/lib/lead-forms.functions";
-import { HONEYPOT_KEY, parseFieldsSafe } from "@/lib/lead-form-fields";
+import { HONEYPOT_KEY, parseFieldsSafe } from "@/lib/lead-forms";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
