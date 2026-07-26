@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedProspectingRouteImport } from './routes/_authenticated/prospecting'
 import { Route as AuthenticatedOpsRouteImport } from './routes/_authenticated/ops'
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
+import { Route as AuthenticatedJourneysRouteImport } from './routes/_authenticated/journeys'
 import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/evals'
 import { Route as AuthenticatedDeliverabilityRouteImport } from './routes/_authenticated/deliverability'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -70,6 +71,11 @@ const AuthenticatedOpsRoute = AuthenticatedOpsRouteImport.update({
 const AuthenticatedLibraryRoute = AuthenticatedLibraryRouteImport.update({
   id: '/library',
   path: '/library',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedJourneysRoute = AuthenticatedJourneysRouteImport.update({
+  id: '/journeys',
+  path: '/journeys',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedEvalsRoute = AuthenticatedEvalsRouteImport.update({
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
+  '/journeys': typeof AuthenticatedJourneysRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/ops': typeof AuthenticatedOpsRoute
   '/prospecting': typeof AuthenticatedProspectingRoute
@@ -259,6 +266,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
+  '/journeys': typeof AuthenticatedJourneysRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/ops': typeof AuthenticatedOpsRoute
   '/prospecting': typeof AuthenticatedProspectingRoute
@@ -294,6 +302,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/_authenticated/evals': typeof AuthenticatedEvalsRoute
+  '/_authenticated/journeys': typeof AuthenticatedJourneysRoute
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/ops': typeof AuthenticatedOpsRoute
   '/_authenticated/prospecting': typeof AuthenticatedProspectingRoute
@@ -329,6 +338,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deliverability'
     | '/evals'
+    | '/journeys'
     | '/library'
     | '/ops'
     | '/prospecting'
@@ -362,6 +372,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deliverability'
     | '/evals'
+    | '/journeys'
     | '/library'
     | '/ops'
     | '/prospecting'
@@ -396,6 +407,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/deliverability'
     | '/_authenticated/evals'
+    | '/_authenticated/journeys'
     | '/_authenticated/library'
     | '/_authenticated/ops'
     | '/_authenticated/prospecting'
@@ -481,6 +493,13 @@ declare module '@tanstack/react-router' {
       path: '/library'
       fullPath: '/library'
       preLoaderRoute: typeof AuthenticatedLibraryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/journeys': {
+      id: '/_authenticated/journeys'
+      path: '/journeys'
+      fullPath: '/journeys'
+      preLoaderRoute: typeof AuthenticatedJourneysRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/evals': {
@@ -732,6 +751,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDeliverabilityRoute: typeof AuthenticatedDeliverabilityRoute
   AuthenticatedEvalsRoute: typeof AuthenticatedEvalsRoute
+  AuthenticatedJourneysRoute: typeof AuthenticatedJourneysRoute
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedOpsRoute: typeof AuthenticatedOpsRoute
   AuthenticatedProspectingRoute: typeof AuthenticatedProspectingRoute
@@ -746,6 +766,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDeliverabilityRoute: AuthenticatedDeliverabilityRoute,
   AuthenticatedEvalsRoute: AuthenticatedEvalsRoute,
+  AuthenticatedJourneysRoute: AuthenticatedJourneysRoute,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedOpsRoute: AuthenticatedOpsRoute,
   AuthenticatedProspectingRoute: AuthenticatedProspectingRoute,

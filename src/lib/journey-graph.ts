@@ -7,7 +7,13 @@
  */
 
 import { z } from "zod";
-import type { JourneyEdge, JourneyNode, JourneyNodeKind } from "./journey-engine";
+import {
+  validateJourney,
+  type JourneyEdge,
+  type JourneyIssue,
+  type JourneyNode,
+  type JourneyNodeKind,
+} from "./journey-engine";
 
 export const JOURNEY_NODE_KINDS = [
   "trigger",
@@ -135,4 +141,36 @@ export function branchesForKind(kind: JourneyNodeKind, config: Record<string, un
   }
   if (kind === "goal" || kind === "exit") return [];
   return ["default"];
+}
+
+/**
+ * Validação completa do grafo: regras do motor + coerência dos ramos por tipo
+ * de etapa + janela de envio. Pura, para rodar igual no editor e no servidor.
+ */
+export function validateGraphInput(graph: JourneyGraphInput): JourneyIssue[] {
+  const issues = validateJourney(toEngineNodes(graph.nodes), toEngineEdges(graph.edges));
+
+  for (const node of graph.nodes) {
+    const allowed = branchesForKind(node.kind, node.config);
+    for (const edge of graph.edges.filter((e) => e.from_node_id === node.id)) {
+      if (allowed.length === 0) {
+        issues.push({
+          level: "error",
+          nodeId: node.id,
+          message: `A etapa "${node.label || node.kind}" é terminal e não pode ter saída.`,
+        });
+      } else if (!allowed.includes(edge.branch)) {
+        issues.push({
+          level: "error",
+          nodeId: node.id,
+          message: `Ramo "${edge.branch}" não existe na etapa "${node.label || node.kind}".`,
+        });
+      }
+    }
+  }
+
+  if (graph.settings.send_window_start >= graph.settings.send_window_end) {
+    issues.push({ level: "error", message: "A janela de envio precisa começar antes de terminar." });
+  }
+  return issues;
 }
