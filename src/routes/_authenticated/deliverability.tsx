@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -12,6 +13,7 @@ import {
   runFuxicoEmailTest,
   sendTestFuxicoWebhook,
   getCampaignDeliverabilityReport,
+  getTrackingIntegrityReport,
 } from "@/lib/deliverability.functions";
 
 export const Route = createFileRoute("/_authenticated/deliverability")({
@@ -81,6 +83,8 @@ function Page() {
       <FuxicoE2ESection />
       <FuxicoWebhookTestSection />
       <CampaignReportSection />
+
+      <TrackingIntegritySection />
     </div>
   );
 }
@@ -339,6 +343,122 @@ function CampaignReportSection() {
           </table>
         </div>
       )}
+    </section>
+  );
+}
+
+const SEVERITY_STYLES: Record<string, string> = {
+  ok: "border-primary/30 bg-primary/5 text-primary",
+  warning: "border-amber-500/40 bg-amber-500/5 text-amber-600 dark:text-amber-400",
+  error: "border-destructive/40 bg-destructive/5 text-destructive",
+};
+
+/**
+ * Auditoria de duplicidade e cobertura do rastreio (fuxico_tracking_id).
+ * Expõe as quatro anomalias que contaminam as métricas de e-mail.
+ */
+function TrackingIntegritySection() {
+  const [days, setDays] = useState<number>(7);
+  const fn = useServerFn(getTrackingIntegrityReport);
+  const audit = useQuery({
+    queryKey: ["fuxico-tracking-integrity", days],
+    queryFn: () => fn({ data: { days } }),
+  });
+
+  const data = audit.data;
+
+  return (
+    <section className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold text-foreground">Auditoria de rastreio</h2>
+        <div className="flex items-center gap-2">
+          {PERIODS.map((p) => (
+            <Button
+              key={p}
+              type="button"
+              variant={days === p ? "default" : "outline"}
+              size="sm"
+              onClick={() => setDays(p)}
+            >
+              {p}d
+            </Button>
+          ))}
+        </div>
+      </div>
+      <p className="text-sm text-muted-foreground">
+        Verifica se cada e-mail enviado tem código de rastreio único e se os eventos recebidos do
+        FUXICO não foram contados duas vezes.
+      </p>
+
+      {audit.isPending ? (
+        <p className="text-sm text-muted-foreground">Analisando...</p>
+      ) : audit.error ? (
+        <p className="text-sm text-destructive">{(audit.error as Error).message}</p>
+      ) : data ? (
+        <div className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-lg border bg-card p-4">
+              <p className="text-xs uppercase text-muted-foreground">Envios de e-mail</p>
+              <p className="text-2xl font-semibold text-foreground">{data.sends}</p>
+            </div>
+            <div className="rounded-lg border bg-card p-4">
+              <p className="text-xs uppercase text-muted-foreground">Eventos recebidos</p>
+              <p className="text-2xl font-semibold text-foreground">{data.events}</p>
+            </div>
+            <div className="rounded-lg border bg-card p-4">
+              <p className="text-xs uppercase text-muted-foreground">Cobertura de rastreio</p>
+              <p className="text-2xl font-semibold text-foreground">{data.coverageRate}%</p>
+            </div>
+          </div>
+
+          <ul className="space-y-2">
+            {data.checks.map((c) => (
+              <li
+                key={c.id}
+                className={cn("rounded-lg border p-3 text-sm", SEVERITY_STYLES[c.severity])}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-medium">{c.label}</span>
+                  <span className="tabular-nums">
+                    {c.count}
+                    {c.total > 0 ? ` / ${c.total}` : ""}
+                  </span>
+                </div>
+                {c.count > 0 ? (
+                  <p className="mt-1 text-xs text-muted-foreground">{c.hint}</p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+
+          {data.samples.length ? (
+            <div className="overflow-x-auto rounded-lg border bg-card">
+              <table className="w-full text-sm">
+                <thead className="border-b bg-muted/50 text-left text-xs uppercase text-muted-foreground">
+                  <tr>
+                    <th className="px-3 py-2">Envio (touchpoint)</th>
+                    <th className="px-3 py-2">Evento</th>
+                    <th className="px-3 py-2 text-right">Ocorrências</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.samples.map((s) => (
+                    <tr key={`${s.touchpointId}-${s.eventType}`} className="border-b last:border-0">
+                      <td className="px-3 py-2 font-mono text-xs text-muted-foreground">
+                        {s.touchpointId}
+                      </td>
+                      <td className="px-3 py-2 text-foreground">{s.eventType}</td>
+                      <td className="px-3 py-2 text-right tabular-nums text-foreground">
+                        {s.occurrences}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </section>
   );
 }

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { buildTrackingIntegrityReport } from "@/lib/tracking-integrity";
 
 type DohAnswer = { name: string; type: number; TTL: number; data: string };
 
@@ -396,4 +397,42 @@ export const getCampaignDeliverabilityReport = createServerFn({ method: "GET" })
     );
 
     return { since, days: data.days, rows, totals };
+  });
+
+/**
+ * Auditoria de integridade do rastreamento por `fuxico_tracking_id`.
+ * Detecta lacunas de cobertura, colisões de código, eventos órfãos e
+ * reentregas do webhook — as quatro formas de contaminar as métricas.
+ */
+export const getTrackingIntegrityReport = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ days: z.coerce.number().int().min(1).max(90).default(7) }).parse(d ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    const since = new Date(Date.now() - data.days * 86_400_000).toISOString();
+    const supabase = context.supabase;
+
+    const [tp, ev] = await Promise.all([
+      supabase
+        .from("contact_touchpoints")
+        .select("id, fuxico_tracking_id, created_at")
+        .eq("channel", "email")
+        .eq("direction", "outbound")
+        .gte("created_at", since)
+        .limit(20000),
+      supabase
+        .from("email_deliverability_events")
+        .select("touchpoint_id, event_type, external_id, created_at")
+        .gte("created_at", since)
+        .limit(50000),
+    ]);
+    if (tp.error) throw new Error(tp.error.message);
+    if (ev.error) throw new Error(ev.error.message);
+
+    return {
+      since,
+      days: data.days,
+      ...buildTrackingIntegrityReport(tp.data ?? [], ev.data ?? []),
+    };
   });
