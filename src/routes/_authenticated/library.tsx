@@ -13,6 +13,10 @@ import {
   getMediaSignedUrl,
 } from "@/lib/templates.functions";
 import { analyzeSms } from "@/lib/sms-segments";
+import { CHANNELS, type Channel } from "@/lib/audience-rules";
+import { CHANNEL_BODY_LIMIT } from "@/lib/campaign-validation";
+import { extractVariables as extractTemplateVars, unknownVariables } from "@/lib/template-vars";
+import { MessagePreview } from "@/components/message-preview";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,14 +37,13 @@ export const Route = createFileRoute("/_authenticated/library")({
       { title: "Compositor · Sales Machine" },
       {
         name: "description",
-        content: "Crie mensagens SMS, RCS e MMS com preview e envio de teste via SINGU.",
+        content: "Crie criativos multicanal com variáveis, preview e envio de teste via SINGU.",
       },
     ],
   }),
   component: ComposerPage,
 });
 
-type Channel = "sms" | "rcs" | "mms";
 
 interface Suggestion {
   type: "reply" | "openUrl" | "dial";
@@ -74,6 +77,7 @@ function ComposerPage() {
   const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [channel, setChannel] = useState<Channel>("sms");
+  const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [mediaUrl, setMediaUrl] = useState<string | null>(null);
   const [mediaPath, setMediaPath] = useState<string | null>(null);
@@ -94,6 +98,7 @@ function ComposerPage() {
     setId(null);
     setName("");
     setChannel("sms");
+    setSubject("");
     setBody("");
     setMediaUrl(null);
     setMediaPath(null);
@@ -104,6 +109,7 @@ function ComposerPage() {
     setId(t.id);
     setName(t.name);
     setChannel(t.channel as Channel);
+    setSubject((t as { subject?: string | null }).subject ?? "");
     setBody(t.body);
     setMediaUrl(t.media_url ?? null);
     setMediaPath(null);
@@ -118,14 +124,24 @@ function ComposerPage() {
       if (!name.trim()) throw new Error("Dê um nome ao template");
       if (!body.trim()) throw new Error("Corpo da mensagem é obrigatório");
       if (channel === "mms" && !mediaUrl) throw new Error("MMS requer mídia");
+      if (channel === "email" && !subject.trim())
+        throw new Error("Templates de e-mail exigem assunto");
+      if (body.length > CHANNEL_BODY_LIMIT[channel])
+        throw new Error(
+          `Limite de ${CHANNEL_BODY_LIMIT[channel]} caracteres excedido para ${channel}`,
+        );
+      const unknown = unknownVariables(`${subject}\n${body}`);
+      if (unknown.length > 0)
+        throw new Error(`Variáveis desconhecidas: ${unknown.map((v) => `{{${v}}}`).join(", ")}`);
       const payload = {
         id: id ?? undefined,
         name,
         channel,
+        subject: channel === "email" ? subject : null,
         body,
         media_url: channel === "sms" ? null : mediaUrl,
         rcs_payload: channel === "rcs" ? rcs : null,
-        variables: extractVariables(body),
+        variables: extractTemplateVars(`${subject}\n${body}`),
       };
       return upsert({ data: payload });
     },
@@ -143,7 +159,7 @@ function ComposerPage() {
       const res = await sendTest({
         data: {
           entity_id: testEntityId,
-          channel,
+          channel: channel as "sms" | "rcs" | "mms",
           body,
           media_url: channel !== "sms" ? mediaUrl : null,
           rcs_payload: channel === "rcs" ? rcs : null,
@@ -219,12 +235,27 @@ function ComposerPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="sms">SMS</SelectItem>
-                      <SelectItem value="rcs">RCS (rico)</SelectItem>
-                      <SelectItem value="mms">MMS (com mídia)</SelectItem>
+                      {CHANNELS.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c.toUpperCase()}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
+
+                {channel === "email" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="tpl-subject">Assunto</Label>
+                    <Input
+                      id="tpl-subject"
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                      maxLength={200}
+                      placeholder="Assunto do e-mail — aceita {{empresa}}"
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label>Mensagem</Label>
@@ -232,10 +263,15 @@ function ComposerPage() {
                     value={body}
                     onChange={(e) => setBody(e.target.value)}
                     rows={5}
-                    maxLength={1000}
+                    maxLength={CHANNEL_BODY_LIMIT[channel]}
                     placeholder="Olá {{nome}}, tudo bem?"
                   />
                   <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <span>
+                      {body.length}/{CHANNEL_BODY_LIMIT[channel]} caracteres
+                    </span>
+                    {(channel === "sms" || channel === "mms") && (
+                    <>
                     <Badge variant="secondary">{segments.encoding}</Badge>
                     <span>
                       {segments.chars} chars · {segments.segments} segmento
@@ -243,9 +279,11 @@ function ComposerPage() {
                     </span>
                     <span>· {segments.remaining} até próximo segmento</span>
                     {segments.segments > 1 && (
-                      <span className="text-amber-600">
+                      <span className="text-muted-foreground">
                         · custo x{segments.segments}
                       </span>
+                    )}
+                    </>
                     )}
                   </div>
                 </div>
@@ -298,7 +336,10 @@ function ComposerPage() {
                     <Button
                       variant="secondary"
                       onClick={() => testMut.mutate()}
-                      disabled={testMut.isPending}
+                      disabled={
+                        testMut.isPending ||
+                        !(channel === "sms" || channel === "rcs" || channel === "mms")
+                      }
                     >
                       {testMut.isPending ? "Enviando…" : "Enviar"}
                     </Button>
@@ -307,7 +348,29 @@ function ComposerPage() {
               </CardContent>
             </Card>
 
-            <PhonePreview channel={channel} body={body} mediaUrl={mediaUrl} rcs={rcs} />
+            {channel === "sms" || channel === "rcs" || channel === "mms" ? (
+              <PhonePreview
+                channel={channel}
+                body={body}
+                mediaUrl={mediaUrl}
+                rcs={rcs}
+              />
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Preview</CardTitle>
+                  <CardDescription>Variáveis resolvidas com dados de exemplo.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MessagePreview
+                    channel={channel}
+                    subject={subject}
+                    body={body}
+                    mediaUrl={mediaUrl}
+                  />
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Sidebar de templates salvos */}
@@ -399,7 +462,7 @@ function PhonePreview({
   mediaUrl,
   rcs,
 }: {
-  channel: Channel;
+  channel: "sms" | "rcs" | "mms";
   body: string;
   mediaUrl: string | null;
   rcs: RcsPayload;
