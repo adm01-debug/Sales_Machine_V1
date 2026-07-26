@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getManualInterventions } from "@/lib/ops.functions";
+import { toCsv, csvFilename, downloadCsv, type CsvColumn } from "@/lib/csv-export";
 import { cn } from "@/lib/utils";
 
 /** Recortes temporais oferecidos; `null` = todo o histórico retido (90 dias). */
@@ -10,6 +11,30 @@ const PERIODS: Array<{ label: string; days: number | null }> = [
   { label: "7d", days: 7 },
   { label: "30d", days: 30 },
   { label: "Tudo", days: null },
+];
+
+type InterventionRow = {
+  id: string | number;
+  target_id: string | number;
+  from_state: string | null;
+  to_state: string;
+  reason: string | null;
+  actor: string;
+  created_at: string;
+};
+
+/**
+ * Colunas da exportação. Mantemos o `target_id` inteiro (a UI trunca em 8
+ * chars por espaço, mas a auditoria externa precisa do UUID completo) e a data
+ * em ISO-8601 UTC, que é comparável entre fusos.
+ */
+const CSV_COLUMNS: Array<CsvColumn<InterventionRow>> = [
+  { key: "created_at", header: "data_utc", value: (r) => new Date(r.created_at).toISOString() },
+  { key: "target_id", header: "alvo_id", value: (r) => r.target_id },
+  { key: "from_state", header: "estado_origem", value: (r) => r.from_state },
+  { key: "to_state", header: "estado_destino", value: (r) => r.to_state },
+  { key: "reason", header: "motivo", value: (r) => r.reason },
+  { key: "actor", header: "ator", value: (r) => r.actor },
 ];
 
 /**
@@ -33,6 +58,15 @@ export function ManualInterventions() {
   });
 
   const events = query.data ?? [];
+
+  function handleExport() {
+    if (events.length === 0) return;
+    const scope = days ? `${days}d` : "tudo";
+    downloadCsv(
+      csvFilename(`auditoria-intervencoes-${scope}`),
+      toCsv(events as InterventionRow[], CSV_COLUMNS),
+    );
+  }
 
   return (
     <section>
@@ -94,6 +128,15 @@ export function ManualInterventions() {
               </button>
             ) : null}
           </form>
+          <button
+            type="button"
+            onClick={handleExport}
+            disabled={events.length === 0}
+            title="Exportar a trilha filtrada em CSV"
+            className="rounded-md border px-2 py-1 text-xs text-foreground hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Exportar CSV
+          </button>
         </div>
       </div>
       {query.isLoading ? (
