@@ -7,6 +7,8 @@
 import type { Channel } from "@/lib/audience-rules";
 import { analyzeSms } from "@/lib/sms-segments";
 import { parseVariables, unknownVariables } from "@/lib/template-vars";
+import type { EmailBlock } from "@/lib/email-blocks";
+import { preflightEmailContent } from "@/lib/email-preflight";
 
 export interface ValidationIssue {
   /** `error` bloqueia o lançamento; `warning` apenas alerta. */
@@ -25,6 +27,8 @@ export interface VariantForValidation {
   split_percent: number;
   /** Canal do template de origem, quando a variante veio da Biblioteca. */
   source_channel?: Channel | null;
+  /** Blocos do editor visual, quando o criativo de e-mail foi montado neles. */
+  email_blocks?: EmailBlock[] | null;
 }
 
 export interface CampaignForValidation {
@@ -176,6 +180,25 @@ export function validateCampaign(input: CampaignForValidation): ValidationIssue[
         scope,
         message: `Criativo veio de um template de ${variant.source_channel}, mas a campanha é ${channel}.`,
       });
+    }
+
+    // Pré-voo de entregabilidade reaproveitado do Compositor (somente e-mail).
+    if (channel === "email") {
+      const report = preflightEmailContent({
+        subject: variant.subject ?? "",
+        blocks: variant.email_blocks ?? null,
+        body,
+      });
+      for (const finding of report.findings) {
+        if (finding.severity === "info") continue;
+        // O assunto vazio já é reportado acima; evita mensagem duplicada.
+        if (finding.code === "subject_missing") continue;
+        issues.push({
+          level: finding.severity === "error" ? "error" : "warning",
+          scope: `${scope} · entregabilidade`,
+          message: finding.hint ? `${finding.message} ${finding.hint}` : finding.message,
+        });
+      }
     }
   }
 
