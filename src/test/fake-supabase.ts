@@ -19,9 +19,15 @@ export interface FakeSupabaseOptions {
 }
 
 interface Filter {
-  kind: "eq" | "in" | "lte" | "gte";
+  kind: "eq" | "in" | "lte" | "gte" | "is" | "ilike";
   column: string;
   value: unknown;
+}
+
+/** Converte um padrão PostgREST (`%texto%`) em RegExp case-insensitive. */
+function likeToRegex(pattern: string): RegExp {
+  const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/%/g, ".*");
+  return new RegExp(`^${escaped}$`, "i");
 }
 
 function matches(row: Row, filters: Filter[]): boolean {
@@ -30,6 +36,8 @@ function matches(row: Row, filters: Filter[]): boolean {
     if (f.kind === "eq") return v === f.value;
     if (f.kind === "in") return (f.value as unknown[]).includes(v);
     if (f.kind === "gte") return v != null && String(v) >= String(f.value);
+    if (f.kind === "is") return f.value === null ? v === null || v === undefined : v === f.value;
+    if (f.kind === "ilike") return v != null && likeToRegex(String(f.value)).test(String(v));
     return v != null && String(v) <= String(f.value);
   });
 }
@@ -91,6 +99,14 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
         filters.push({ kind: "gte", column, value });
         return api;
       },
+      is(column: string, value: unknown) {
+        filters.push({ kind: "is", column, value });
+        return api;
+      },
+      ilike(column: string, value: unknown) {
+        filters.push({ kind: "ilike", column, value });
+        return api;
+      },
       or() {
         return api;
       },
@@ -101,12 +117,19 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
         limit = n;
         return api;
       },
-      insert(values: Row) {
+      insert(values: Row | Row[]) {
         mode = "insert";
-        payload = values;
-        inserted = { id: `fake-${++idSeq}`, ...values };
-        (tables[table] ??= []).push(inserted);
-        calls.push({ op: "insert", table, payload: { ...values } });
+        // PostgREST aceita linha única ou lote; o fake precisa dos dois para
+        // que inserções em lote não virem uma linha com índices numéricos.
+        const list = Array.isArray(values) ? values : [values];
+        const rows = (tables[table] ??= []);
+        for (const v of list) {
+          const row = { id: `fake-${++idSeq}`, ...v };
+          rows.push(row);
+          inserted = row;
+          calls.push({ op: "insert", table, payload: { ...v } });
+        }
+        payload = list[0] ?? {};
         return api;
       },
       update(values: Row) {
