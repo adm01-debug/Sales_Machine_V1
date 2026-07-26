@@ -37,7 +37,7 @@ export const Route = createFileRoute("/api/public/hooks/alert-sweep")({
         // 2. Entregabilidade dos últimos 7 dias.
         const { data: events } = await supabaseAdmin
           .from("email_deliverability_events")
-          .select("event_type, created_at, provider_event_id, touchpoint_id")
+          .select("event_type, created_at, external_id, touchpoint_id")
           .gte("created_at", since7d);
         const counts: Record<string, number> = {};
         for (const row of events ?? []) {
@@ -51,9 +51,11 @@ export const Route = createFileRoute("/api/public/hooks/alert-sweep")({
           .eq("direction", "outbound")
           .gte("created_at", since7d);
         const tracking = buildTrackingIntegrityReport(
-          (touchpoints ?? []) as never,
-          (events ?? []) as never,
+          (touchpoints ?? []) as unknown as RawTouchpoint[],
+          (events ?? []) as unknown as RawDeliveryEvent[],
         );
+        const checkCount = (id: string) =>
+          tracking.checks.find((c) => c.id === id)?.count ?? 0;
 
         const active = buildOpsAlerts({
           health: (health ?? null) as never,
@@ -64,10 +66,10 @@ export const Route = createFileRoute("/api/public/hooks/alert-sweep")({
             complaint: counts.complaint ?? 0,
           },
           tracking: {
-            sends: tracking.totalSends,
+            sends: tracking.sends,
             coverageRate: tracking.coverageRate,
-            collisions: tracking.collisions.length,
-            redeliveries: tracking.redeliveries.length,
+            collisions: checkCount("collisions"),
+            redeliveries: checkCount("redeliveries"),
           },
         });
 
