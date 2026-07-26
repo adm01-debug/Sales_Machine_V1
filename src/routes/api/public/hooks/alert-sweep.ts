@@ -4,7 +4,7 @@ import { buildTrackingIntegrityReport } from "@/lib/tracking-integrity";
 import { planAlertDispatch, buildNotificationPayload } from "@/lib/alert-dispatch";
 
 /**
- * Varredura de alertas operacionais — chamada por pg_cron (sugestão: */15 * * * *).
+ * Varredura de alertas operacionais — chamada por pg_cron (sugestão: a cada 15 minutos).
  *
  * Avalia as mesmas regras exibidas em /ops e notifica ativamente um webhook
  * externo (OPS_ALERT_WEBHOOK_URL) quando um alerta abre, persiste além do
