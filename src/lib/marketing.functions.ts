@@ -152,7 +152,7 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: campaign, error } = await context.supabase
       .from("marketing_campaigns")
-      .select("id, channel, audience_id, status, scheduled_at")
+      .select("id, name, channel, audience_id, status, scheduled_at")
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -161,7 +161,7 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
 
     const { data: variants } = await context.supabase
       .from("campaign_variants")
-      .select("id, split_percent, label")
+      .select("id, split_percent, label, subject, body, media_url, rcs_payload")
       .eq("campaign_id", data.id)
       .order("label");
     if (!variants || variants.length === 0) throw new Error("Crie ao menos uma variante");
@@ -172,6 +172,28 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
       .eq("audience_id", campaign.audience_id);
     if (!members || members.length === 0) {
       throw new Error("A audiência está vazia — atualize os membros antes de lançar");
+    }
+
+    // Autoridade final: a mesma validação do editor roda aqui antes de materializar.
+    const issues = validateCampaign({
+      name: campaign.name ?? "campanha",
+      channel: campaign.channel as never,
+      audience_id: campaign.audience_id,
+      audience_size: members.length,
+      variants: variants.map((v) => ({
+        label: v.label,
+        subject: v.subject,
+        body: v.body,
+        media_url: v.media_url,
+        rcs_payload: v.rcs_payload as Record<string, unknown> | null,
+        split_percent: v.split_percent,
+      })),
+    });
+    if (hasBlockingIssues(issues)) {
+      const errs = issues.filter((i) => i.level === "error");
+      throw new Error(
+        `Corrija antes de lançar — ${errs.map((i) => `${i.scope}: ${i.message}`).join(" · ")}`,
+      );
     }
 
     // Distribuição determinística por índice, respeitando os percentuais.
