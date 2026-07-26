@@ -61,6 +61,18 @@ export const Route = createFileRoute("/api/public/hooks/alert-sweep")({
         const checkCount = (id: string) =>
           tracking.checks.find((c) => c.id === id)?.count ?? 0;
 
+        // 3b. Compliance: bloqueios do gate de consentimento no período.
+        const { count: blockedTargets } = await supabaseAdmin
+          .from("campaign_targets")
+          .select("id", { count: "exact", head: true })
+          .eq("state", "stopped")
+          .ilike("last_error", "%consentimento%");
+        const { count: skippedSends } = await supabaseAdmin
+          .from("campaign_sends")
+          .select("id", { count: "exact", head: true })
+          .eq("state", "skipped")
+          .ilike("last_error", "%opt-out%");
+
         const active = buildOpsAlerts({
           health: (health ?? null) as never,
           deliverability: {
@@ -74,6 +86,10 @@ export const Route = createFileRoute("/api/public/hooks/alert-sweep")({
             coverageRate: tracking.coverageRate,
             collisions: checkCount("collisions"),
             redeliveries: checkCount("redeliveries"),
+          },
+          compliance: {
+            blockedByConsent: (blockedTargets ?? 0) + (skippedSends ?? 0),
+            deliveryAttempts: tracking.sends,
           },
         });
 

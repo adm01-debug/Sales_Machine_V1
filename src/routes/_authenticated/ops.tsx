@@ -106,6 +106,12 @@ function OpsPage() {
           redeliveries: tracking.data.checks.find((c) => c.id === "redeliveries")?.count ?? 0,
         }
       : null,
+    compliance: compliance.data
+      ? {
+          blockedByConsent: compliance.data.blockedByConsent,
+          deliveryAttempts: tracking.data?.sends ?? health.data?.sent_24h ?? 0,
+        }
+      : null,
   });
 
   return (

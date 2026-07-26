@@ -125,3 +125,30 @@ describe("ordenação", () => {
     expect(a.map((x) => x.level)).toEqual(["critical", "warning", "warning"]);
   });
 });
+describe("regra de bloqueio por consentimento", () => {
+  it("silencia quando não há bloqueios", () => {
+    const alerts = buildOpsAlerts({ compliance: { blockedByConsent: 0, deliveryAttempts: 500 } });
+    expect(alerts).toHaveLength(0);
+  });
+
+  it("silencia em amostra pequena mesmo com taxa alta", () => {
+    const alerts = buildOpsAlerts({ compliance: { blockedByConsent: 3, deliveryAttempts: 2 } });
+    expect(alerts).toHaveLength(0);
+  });
+
+  it("alerta como warning acima de 10%", () => {
+    const alerts = buildOpsAlerts({ compliance: { blockedByConsent: 15, deliveryAttempts: 85 } });
+    expect(alerts).toHaveLength(1);
+    expect(alerts[0]).toMatchObject({ id: "consent_block_rate", level: "warning" });
+  });
+
+  it("escala para crítico acima de 25%", () => {
+    const alerts = buildOpsAlerts({ compliance: { blockedByConsent: 40, deliveryAttempts: 60 } });
+    expect(alerts[0]).toMatchObject({ id: "consent_block_rate_critical", level: "critical" });
+  });
+
+  it("nunca emite as duas variantes ao mesmo tempo", () => {
+    const alerts = buildOpsAlerts({ compliance: { blockedByConsent: 50, deliveryAttempts: 50 } });
+    expect(alerts.filter((a) => a.id.startsWith("consent_block"))).toHaveLength(1);
+  });
+});

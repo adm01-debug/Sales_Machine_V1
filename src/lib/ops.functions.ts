@@ -66,6 +66,13 @@ export const getComplianceStats = createServerFn({ method: "GET" })
       .ilike("last_error", "%consentimento%");
     if (blockedErr) throw new Error(blockedErr.message);
 
+    const { data: skippedRows, error: skippedErr } = await context.supabase
+      .from("campaign_sends")
+      .select("id")
+      .eq("state", "skipped")
+      .ilike("last_error", "%opt-out%");
+    if (skippedErr) throw new Error(skippedErr.message);
+
     const { data: consentRows, error: consentErr } = await context.supabase
       .from("consent_ledger")
       .select("channel, status, created_at")
@@ -84,7 +91,7 @@ export const getComplianceStats = createServerFn({ method: "GET" })
     }
 
     return {
-      blockedByConsent: blockedRows?.length ?? 0,
+      blockedByConsent: (blockedRows?.length ?? 0) + (skippedRows?.length ?? 0),
       optIns7d: optIns,
       optOuts7d: Object.values(optOutsByChannel).reduce((a, b) => a + b, 0),
       optOutsByChannel,

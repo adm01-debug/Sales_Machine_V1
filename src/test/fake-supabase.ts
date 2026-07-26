@@ -19,7 +19,7 @@ export interface FakeSupabaseOptions {
 }
 
 interface Filter {
-  kind: "eq" | "in" | "lte";
+  kind: "eq" | "in" | "lte" | "gte";
   column: string;
   value: unknown;
 }
@@ -29,6 +29,7 @@ function matches(row: Row, filters: Filter[]): boolean {
     const v = row[f.column];
     if (f.kind === "eq") return v === f.value;
     if (f.kind === "in") return (f.value as unknown[]).includes(v);
+    if (f.kind === "gte") return v != null && String(v) >= String(f.value);
     return v != null && String(v) <= String(f.value);
   });
 }
@@ -48,8 +49,9 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
     let payload: Row = {};
     let limit: number | null = null;
     let inserted: Row | null = null;
+    let countMode = false;
 
-    const run = (): { data: unknown; error: null } => {
+    const run = (): { data: unknown; error: null; count?: number } => {
       const rows = (tables[table] ??= []);
       if (mode === "insert" || mode === "upsert") {
         return { data: inserted ? [inserted] : [], error: null };
@@ -63,12 +65,14 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
         return { data: matched, error: null };
       }
       let out = rows.filter((r) => matches(r, filters));
+      if (countMode) return { data: null, error: null, count: out.length };
       if (limit != null) out = out.slice(0, limit);
       return { data: out, error: null };
     };
 
     const api = {
-      select() {
+      select(_columns?: string, opts?: { count?: string; head?: boolean }) {
+        if (opts?.head || opts?.count) countMode = true;
         return api;
       },
       eq(column: string, value: unknown) {
@@ -81,6 +85,10 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
       },
       lte(column: string, value: unknown) {
         filters.push({ kind: "lte", column, value });
+        return api;
+      },
+      gte(column: string, value: unknown) {
+        filters.push({ kind: "gte", column, value });
         return api;
       },
       or() {
