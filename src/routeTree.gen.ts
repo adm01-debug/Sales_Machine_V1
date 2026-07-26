@@ -29,6 +29,7 @@ import { Route as AuthenticatedAudiencesRouteImport } from './routes/_authentica
 import { Route as AuthenticatedApprovalsRouteImport } from './routes/_authenticated/approvals'
 import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
 import { Route as AuthenticatedJourneysIdRouteImport } from './routes/_authenticated/journeys.$id'
+import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticated/forms.$id'
 import { Route as AuthenticatedContactsIdRouteImport } from './routes/_authenticated/contacts.$id'
 import { Route as AuthenticatedCompaniesIdRouteImport } from './routes/_authenticated/companies.$id'
 import { Route as AuthenticatedCampaignsIdRouteImport } from './routes/_authenticated/campaigns.$id'
@@ -148,6 +149,11 @@ const AuthenticatedJourneysIdRoute = AuthenticatedJourneysIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthenticatedJourneysRoute,
 } as any)
+const AuthenticatedFormsIdRoute = AuthenticatedFormsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedFormsRoute,
+} as any)
 const AuthenticatedContactsIdRoute = AuthenticatedContactsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -257,7 +263,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
-  '/forms': typeof AuthenticatedFormsRoute
+  '/forms': typeof AuthenticatedFormsRouteWithChildren
   '/journeys': typeof AuthenticatedJourneysRouteWithChildren
   '/library': typeof AuthenticatedLibraryRoute
   '/ops': typeof AuthenticatedOpsRoute
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/contacts/$id': typeof AuthenticatedContactsIdRoute
+  '/forms/$id': typeof AuthenticatedFormsIdRoute
   '/journeys/$id': typeof AuthenticatedJourneysIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
@@ -295,7 +302,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
-  '/forms': typeof AuthenticatedFormsRoute
+  '/forms': typeof AuthenticatedFormsRouteWithChildren
   '/journeys': typeof AuthenticatedJourneysRouteWithChildren
   '/library': typeof AuthenticatedLibraryRoute
   '/ops': typeof AuthenticatedOpsRoute
@@ -305,6 +312,7 @@ export interface FileRoutesByTo {
   '/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/contacts/$id': typeof AuthenticatedContactsIdRoute
+  '/forms/$id': typeof AuthenticatedFormsIdRoute
   '/journeys/$id': typeof AuthenticatedJourneysIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
@@ -335,7 +343,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/_authenticated/evals': typeof AuthenticatedEvalsRoute
-  '/_authenticated/forms': typeof AuthenticatedFormsRoute
+  '/_authenticated/forms': typeof AuthenticatedFormsRouteWithChildren
   '/_authenticated/journeys': typeof AuthenticatedJourneysRouteWithChildren
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/ops': typeof AuthenticatedOpsRoute
@@ -345,6 +353,7 @@ export interface FileRoutesById {
   '/_authenticated/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
   '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/_authenticated/contacts/$id': typeof AuthenticatedContactsIdRoute
+  '/_authenticated/forms/$id': typeof AuthenticatedFormsIdRoute
   '/_authenticated/journeys/$id': typeof AuthenticatedJourneysIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
@@ -385,6 +394,7 @@ export interface FileRouteTypes {
     | '/campaigns/$id'
     | '/companies/$id'
     | '/contacts/$id'
+    | '/forms/$id'
     | '/journeys/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
@@ -423,6 +433,7 @@ export interface FileRouteTypes {
     | '/campaigns/$id'
     | '/companies/$id'
     | '/contacts/$id'
+    | '/forms/$id'
     | '/journeys/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
@@ -462,6 +473,7 @@ export interface FileRouteTypes {
     | '/_authenticated/campaigns/$id'
     | '/_authenticated/companies/$id'
     | '/_authenticated/contacts/$id'
+    | '/_authenticated/forms/$id'
     | '/_authenticated/journeys/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
@@ -643,6 +655,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJourneysIdRouteImport
       parentRoute: typeof AuthenticatedJourneysRoute
     }
+    '/_authenticated/forms/$id': {
+      id: '/_authenticated/forms/$id'
+      path: '/$id'
+      fullPath: '/forms/$id'
+      preLoaderRoute: typeof AuthenticatedFormsIdRouteImport
+      parentRoute: typeof AuthenticatedFormsRoute
+    }
     '/_authenticated/contacts/$id': {
       id: '/_authenticated/contacts/$id'
       path: '/$id'
@@ -820,6 +839,17 @@ const AuthenticatedContactsRouteWithChildren =
     AuthenticatedContactsRouteChildren,
   )
 
+interface AuthenticatedFormsRouteChildren {
+  AuthenticatedFormsIdRoute: typeof AuthenticatedFormsIdRoute
+}
+
+const AuthenticatedFormsRouteChildren: AuthenticatedFormsRouteChildren = {
+  AuthenticatedFormsIdRoute: AuthenticatedFormsIdRoute,
+}
+
+const AuthenticatedFormsRouteWithChildren =
+  AuthenticatedFormsRoute._addFileChildren(AuthenticatedFormsRouteChildren)
+
 interface AuthenticatedJourneysRouteChildren {
   AuthenticatedJourneysIdRoute: typeof AuthenticatedJourneysIdRoute
 }
@@ -842,7 +872,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDeliverabilityRoute: typeof AuthenticatedDeliverabilityRoute
   AuthenticatedEvalsRoute: typeof AuthenticatedEvalsRoute
-  AuthenticatedFormsRoute: typeof AuthenticatedFormsRoute
+  AuthenticatedFormsRoute: typeof AuthenticatedFormsRouteWithChildren
   AuthenticatedJourneysRoute: typeof AuthenticatedJourneysRouteWithChildren
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedOpsRoute: typeof AuthenticatedOpsRoute
@@ -858,7 +888,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDeliverabilityRoute: AuthenticatedDeliverabilityRoute,
   AuthenticatedEvalsRoute: AuthenticatedEvalsRoute,
-  AuthenticatedFormsRoute: AuthenticatedFormsRoute,
+  AuthenticatedFormsRoute: AuthenticatedFormsRouteWithChildren,
   AuthenticatedJourneysRoute: AuthenticatedJourneysRouteWithChildren,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedOpsRoute: AuthenticatedOpsRoute,

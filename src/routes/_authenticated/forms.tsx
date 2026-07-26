@@ -121,7 +121,15 @@ function FormsPage() {
             <Card key={form.id}>
               <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
                 <div className="space-y-1">
-                  <CardTitle className="text-base">{form.name}</CardTitle>
+                  <CardTitle className="text-base">
+                    <Link
+                      to="/forms/$id"
+                      params={{ id: form.id }}
+                      className="hover:underline focus-visible:underline"
+                    >
+                      {form.name}
+                    </Link>
+                  </CardTitle>
                   <CardDescription>/f/{form.slug}</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
