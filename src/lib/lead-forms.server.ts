@@ -1,8 +1,8 @@
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import {
   HONEYPOT_KEY,
-  leadFieldSchema,
   normalizePhone,
+  parseFieldsSafe,
   validateSubmission,
   type LeadField,
 } from "./lead-forms";
@@ -27,10 +27,7 @@ export function safeEqualHex(a: string, b: string): boolean {
   return timingSafeEqual(ba, bb);
 }
 
-export function parseFields(raw: unknown): LeadField[] {
-  const parsed = leadFieldSchema.array().safeParse(raw);
-  return parsed.success ? parsed.data : [];
-}
+export const parseFields = (raw: unknown): LeadField[] => parseFieldsSafe(raw);
 
 export interface SubmitOutcome {
   status: "confirmed" | "pending" | "ignored";
