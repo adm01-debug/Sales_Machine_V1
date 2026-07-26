@@ -2,15 +2,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { CHANNELS } from "@/lib/audience-rules";
+import { validateCampaign, hasBlockingIssues } from "@/lib/campaign-validation";
+import { buildVarValues, extractVariables } from "@/lib/template-vars";
 
 const channelEnum = z.enum(CHANNELS);
 
 const variantSchema = z.object({
   label: z.string().min(1).max(8),
-  subject: z.string().max(200).optional(),
+  subject: z.string().max(200).nullish(),
   body: z.string().min(1).max(4000),
-  media_url: z.string().url().optional(),
-  rcs_payload: z.record(z.string(), z.unknown()).optional(),
+  media_url: z.string().url().nullish(),
+  rcs_payload: z.record(z.string(), z.unknown()).nullish(),
   split_percent: z.number().int().min(0).max(100),
 });
 
@@ -81,6 +83,24 @@ export const saveMarketingCampaign = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
+    // Validação de autoria: erros bloqueiam a gravação de criativos inválidos.
+    const issues = validateCampaign({
+      name: data.name,
+      channel: data.channel,
+      audience_id: data.audience_id ?? null,
+      variants: data.variants.map((v) => ({
+        label: v.label,
+        subject: v.subject ?? null,
+        body: v.body,
+        media_url: v.media_url ?? null,
+        rcs_payload: (v.rcs_payload ?? null) as Record<string, unknown> | null,
+        split_percent: v.split_percent,
+      })),
+    }).filter((i) => i.level === "error" && i.scope !== "Audiência");
+    if (issues.length > 0) {
+      throw new Error(issues.map((i) => `${i.scope}: ${i.message}`).join(" · "));
+    }
+
     const base = {
       name: data.name,
       objective: data.objective,
