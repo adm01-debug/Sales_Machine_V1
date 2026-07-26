@@ -32,7 +32,7 @@ export const listJourneys = createServerFn({ method: "GET" })
       const rows = (enrollments ?? []).filter((e) => e.journey_id === j.id);
       return {
         ...j,
-        active_count: rows.filter((r) => r.state === "running" || r.state === "waiting").length,
+        active_count: rows.filter((r) => r.state === "active" || r.state === "waiting").length,
         total_count: rows.length,
       };
     });
