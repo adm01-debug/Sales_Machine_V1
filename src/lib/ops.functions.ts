@@ -48,3 +48,45 @@ export const getAlertNotifications = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return data ?? [];
   });
+
+/**
+ * Métricas de compliance da cadência 1:1: quantos alvos o worker interrompeu
+ * por falta de consentimento (LGPD) e quantos opt-outs entraram por canal.
+ * Serve como prova auditável de que o gate de consentimento está ativo.
+ */
+export const getComplianceStats = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const since = new Date(Date.now() - 7 * 24 * 3600_000).toISOString();
+
+    const { data: blockedRows, error: blockedErr } = await context.supabase
+      .from("campaign_targets")
+      .select("id")
+      .eq("state", "stopped")
+      .ilike("last_error", "%consentimento%");
+    if (blockedErr) throw new Error(blockedErr.message);
+
+    const { data: consentRows, error: consentErr } = await context.supabase
+      .from("consent_ledger")
+      .select("channel, status, created_at")
+      .gte("created_at", since);
+    if (consentErr) throw new Error(consentErr.message);
+
+    const optOutsByChannel: Record<string, number> = {};
+    let optIns = 0;
+    for (const row of consentRows ?? []) {
+      if (row.status === "opt_in") {
+        optIns++;
+        continue;
+      }
+      const channel = row.channel ?? "desconhecido";
+      optOutsByChannel[channel] = (optOutsByChannel[channel] ?? 0) + 1;
+    }
+
+    return {
+      blockedByConsent: blockedRows?.length ?? 0,
+      optIns7d: optIns,
+      optOuts7d: Object.values(optOutsByChannel).reduce((a, b) => a + b, 0),
+      optOutsByChannel,
+    };
+  });
