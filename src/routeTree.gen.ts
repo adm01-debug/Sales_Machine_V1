@@ -34,6 +34,7 @@ import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/we
 import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
 import { Route as ApiPublicTrackOpenDotgifRouteImport } from './routes/api/public/track/open[.]gif'
 import { Route as ApiPublicTrackClickRouteImport } from './routes/api/public/track/click'
+import { Route as ApiPublicHooksTickMarketingRouteImport } from './routes/api/public/hooks/tick-marketing'
 import { Route as ApiPublicHooksTickCadenceRouteImport } from './routes/api/public/hooks/tick-cadence'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
 
@@ -168,6 +169,12 @@ const ApiPublicTrackClickRoute = ApiPublicTrackClickRouteImport.update({
   path: '/api/public/track/click',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksTickMarketingRoute =
+  ApiPublicHooksTickMarketingRouteImport.update({
+    id: '/api/public/hooks/tick-marketing',
+    path: '/api/public/hooks/tick-marketing',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksTickCadenceRoute =
   ApiPublicHooksTickCadenceRouteImport.update({
     id: '/api/public/hooks/tick-cadence',
@@ -202,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
@@ -230,6 +238,7 @@ export interface FileRoutesByTo {
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
@@ -260,6 +269,7 @@ export interface FileRoutesById {
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
@@ -290,6 +300,7 @@ export interface FileRouteTypes {
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
@@ -318,6 +329,7 @@ export interface FileRouteTypes {
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
@@ -347,6 +359,7 @@ export interface FileRouteTypes {
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
@@ -362,6 +375,7 @@ export interface RootRouteChildren {
   ApiPublicUnsubscribeRoute: typeof ApiPublicUnsubscribeRoute
   ApiPublicAgentToolsSendMessageRoute: typeof ApiPublicAgentToolsSendMessageRoute
   ApiPublicHooksTickCadenceRoute: typeof ApiPublicHooksTickCadenceRoute
+  ApiPublicHooksTickMarketingRoute: typeof ApiPublicHooksTickMarketingRoute
   ApiPublicTrackClickRoute: typeof ApiPublicTrackClickRoute
   ApiPublicTrackOpenDotgifRoute: typeof ApiPublicTrackOpenDotgifRoute
   ApiPublicWebhooksFatorxRoute: typeof ApiPublicWebhooksFatorxRoute
@@ -547,6 +561,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTrackClickRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/tick-marketing': {
+      id: '/api/public/hooks/tick-marketing'
+      path: '/api/public/hooks/tick-marketing'
+      fullPath: '/api/public/hooks/tick-marketing'
+      preLoaderRoute: typeof ApiPublicHooksTickMarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/tick-cadence': {
       id: '/api/public/hooks/tick-cadence'
       path: '/api/public/hooks/tick-cadence'
@@ -657,6 +678,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicUnsubscribeRoute: ApiPublicUnsubscribeRoute,
   ApiPublicAgentToolsSendMessageRoute: ApiPublicAgentToolsSendMessageRoute,
   ApiPublicHooksTickCadenceRoute: ApiPublicHooksTickCadenceRoute,
+  ApiPublicHooksTickMarketingRoute: ApiPublicHooksTickMarketingRoute,
   ApiPublicTrackClickRoute: ApiPublicTrackClickRoute,
   ApiPublicTrackOpenDotgifRoute: ApiPublicTrackOpenDotgifRoute,
   ApiPublicWebhooksFatorxRoute: ApiPublicWebhooksFatorxRoute,
