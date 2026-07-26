@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { renderForContact } from "@/lib/template-vars";
 
 /**
  * Cadence worker — chamado por pg_cron a cada minuto.
@@ -145,6 +146,12 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
           } catch (err) {
             console.error("[tick-cadence] fatorx failed", err);
           }
+
+          // Resolve variáveis {{...}} eventualmente presentes na mensagem gerada.
+          messageText = renderForContact(messageText, {
+            display_name: entity.display_name,
+            metadata: entity.metadata as Record<string, unknown> | null,
+          });
 
           // Approval gate (item 4)
           const isSocial = step.channel === "linkedin" || step.channel === "instagram";
