@@ -281,13 +281,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                 .maybeSingle();
               if (ent2?.singu_id) {
                 const { singuClient } = await import("@/integrations/external/singu.server");
-                const payloadExtras = ((): { media_url?: string; rcs_payload?: Record<string, unknown> } => {
-                  const raw = (step as unknown as { media_url?: string; rcs_payload?: Record<string, unknown> });
-                  return {
-                    media_url: raw.media_url,
-                    rcs_payload: raw.rcs_payload,
-                  };
-                })();
+                const payloadExtras = { media_url: step.media_url, rcs_payload: step.rcs_payload };
                 if (step.channel === "whatsapp") {
                   await singuClient.sendWhatsapp({ contact_id: ent2.singu_id, message: messageText });
                 } else if (step.channel === "sms") {
@@ -311,7 +305,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                     const emsg = rcsErr instanceof Error ? rcsErr.message : String(rcsErr);
                     // Fallback automático: se provedor RCS falhar por não suportado,
                     // reenvia como SMS reusando o mesmo texto.
-                    if (/not[_ ]?support|unavailable|404|405/i.test(emsg)) {
+                    if (isRcsFallbackError(emsg)) {
                       await singuClient.sendSms({ contact_id: ent2.singu_id, message: messageText });
                       if (tp) {
                         await supabaseAdmin
@@ -358,8 +352,6 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                 }
                 // Email health increment
                 if (step.channel === "email") {
-                  const senderId = campaign.fatorx_agent_id ?? "default";
-                  const today = new Date().toISOString().slice(0, 10);
                   const { data: existing } = await supabaseAdmin
                     .from("sender_health")
                     .select("sent")
@@ -376,10 +368,9 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
               }
             } catch (err) {
               const emsg = err instanceof Error ? err.message : String(err);
-              // Retry/backoff (item 3)
-              const attempts = (target.attempts ?? 0) + 1;
-              const maxAttempts = target.max_attempts ?? 5;
-              if (attempts >= maxAttempts) {
+              const outcome = decideFailureOutcome(target.attempts ?? 0, target.max_attempts ?? 5, emsg);
+              const attempts = outcome.attempts;
+              if (outcome.action === "dead_letter") {
                 dead_lettered++;
                 if (tp) await supabaseAdmin.from("contact_touchpoints").update({ status: "dead_letter", error: emsg }).eq("id", tp.id);
                 await supabaseAdmin
@@ -388,12 +379,12 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                   .eq("id", target.id);
                 continue;
               }
-              if (tp) await supabaseAdmin.from("contact_touchpoints").update({ status: "failed", error: emsg, attempts, next_retry_at: nextRetryAt(attempts) }).eq("id", tp.id);
+              if (tp) await supabaseAdmin.from("contact_touchpoints").update({ status: "failed", error: emsg, attempts, next_retry_at: outcome.nextRunAt }).eq("id", tp.id);
               await supabaseAdmin
                 .from("campaign_targets")
                 .update({
                   attempts,
-                  next_run_at: nextRetryAt(attempts),
+                  next_run_at: outcome.nextRunAt,
                   locked_until: null,
                   state: "queued",
                   last_error: emsg,
@@ -407,7 +398,14 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
           processed++;
         }
 
-        return Response.json({ ok: true, processed, skipped_cooldown, dead_lettered, queued_approval });
+        return Response.json({
+          ok: true,
+          processed,
+          skipped_cooldown,
+          dead_lettered,
+          queued_approval,
+          blocked_consent,
+        });
       },
     },
   },
@@ -417,15 +415,19 @@ async function advanceTarget(
   admin: Awaited<ReturnType<typeof getAdmin>>,
   targetId: string,
   currentStep: number,
-  steps: Array<{ channel: string; delay_days: number }>,
+  steps: CadenceStep[],
 ): Promise<void> {
-  const nextIdx = currentStep + 1;
-  const nextStep = steps[nextIdx];
-  if (nextStep) {
-    const nextRunAt = new Date(Date.now() + (nextStep.delay_days ?? 1) * 86400_000).toISOString();
+  const plan = advancePlan(currentStep, steps);
+  if (!plan.done) {
     await admin
       .from("campaign_targets")
-      .update({ current_step: nextIdx, next_run_at: nextRunAt, locked_until: null, state: "queued", attempts: 0 })
+      .update({
+        current_step: plan.nextStep,
+        next_run_at: plan.nextRunAt,
+        locked_until: null,
+        state: "queued",
+        attempts: 0,
+      })
       .eq("id", targetId);
   } else {
     await admin
