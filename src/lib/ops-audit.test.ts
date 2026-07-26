@@ -129,7 +129,7 @@ describe("collectManualInterventions (exportação paginada)", () => {
   }
 
   it("devolve conjunto vazio quando não há intervenções", async () => {
-    const db = createFakeSupabase({ campaign_target_events: [] });
+    const db = createFakeSupabase({ tables: { campaign_target_events: [] } });
     const res = await collectManualInterventions(db as never);
     expect(res.rows).toEqual([]);
     expect(res.truncated).toBe(false);
@@ -137,7 +137,7 @@ describe("collectManualInterventions (exportação paginada)", () => {
 
   it("atravessa múltiplas páginas sem duplicar linhas", async () => {
     const total = AUDIT_EXPORT_PAGE_SIZE * 2 + 17;
-    const db = createFakeSupabase({ campaign_target_events: manyEvents(total) });
+    const db = createFakeSupabase({ tables: { campaign_target_events: manyEvents(total) } });
     const res = await collectManualInterventions(db as never);
     expect(res.rows).toHaveLength(total);
     expect(new Set(res.rows.map((r) => r.id)).size).toBe(total);
@@ -149,7 +149,7 @@ describe("collectManualInterventions (exportação paginada)", () => {
     const rows = Array.from({ length: AUDIT_EXPORT_PAGE_SIZE + 5 }, (_, i) =>
       event(`dup-${i}`, { created_at: stamp }),
     );
-    const db = createFakeSupabase({ campaign_target_events: rows });
+    const db = createFakeSupabase({ tables: { campaign_target_events: rows } });
     const res = await collectManualInterventions(db as never);
     // A página se repete integralmente; encerramos sem progresso, sem travar.
     expect(res.rows.length).toBeGreaterThan(0);
@@ -157,8 +157,7 @@ describe("collectManualInterventions (exportação paginada)", () => {
   });
 
   it("marca truncated ao bater o teto de linhas", async () => {
-    const db = createFakeSupabase({
-      campaign_target_events: manyEvents(AUDIT_EXPORT_MAX_ROWS + AUDIT_EXPORT_PAGE_SIZE),
+    const db = createFakeSupabase({ tables: { campaign_target_events: manyEvents(AUDIT_EXPORT_MAX_ROWS + AUDIT_EXPORT_PAGE_SIZE),
     });
     const res = await collectManualInterventions(db as never);
     expect(res.rows).toHaveLength(AUDIT_EXPORT_MAX_ROWS);
@@ -166,31 +165,28 @@ describe("collectManualInterventions (exportação paginada)", () => {
   });
 
   it("ignora eventos automáticos do worker", async () => {
-    const db = createFakeSupabase({
-      campaign_target_events: [
+    const db = createFakeSupabase({ tables: { campaign_target_events: [
         event("a"),
         event("b", { actor: "system" }),
       ],
-    });
+    } });
     const res = await collectManualInterventions(db as never);
     expect(res.rows.map((r) => r.id)).toEqual(["a"]);
   });
 
   it("aplica o recorte temporal", async () => {
-    const db = createFakeSupabase({
-      campaign_target_events: [event("recente"), event("antigo", { created_at: daysAgo(40) })],
+    const db = createFakeSupabase({ tables: { campaign_target_events: [event("recente"), event("antigo", { created_at: daysAgo(40) })],
     });
     const res = await collectManualInterventions(db as never, { days: 7 });
     expect(res.rows.map((r) => r.id)).toEqual(["recente"]);
   });
 
   it("aplica o filtro por prefixo de alvo e ignora curingas", async () => {
-    const db = createFakeSupabase({
-      campaign_target_events: [
+    const db = createFakeSupabase({ tables: { campaign_target_events: [
         event("x"),
         event("y", { target_id: "bbbbbbbb-1111-2222-3333-444444444444" }),
       ],
-    });
+    } });
     const filtered = await collectManualInterventions(db as never, { targetId: "aaaaaaaa" });
     expect(filtered.rows.map((r) => r.id)).toEqual(["x"]);
 
