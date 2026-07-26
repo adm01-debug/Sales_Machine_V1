@@ -23,6 +23,7 @@ import {
 } from "@/lib/template-vars";
 import { MessagePreview } from "@/components/message-preview";
 import { EmailBlockEditor } from "@/components/email/EmailBlockEditor";
+import { EmailPreflightPanel } from "@/components/email/EmailPreflightPanel";
 import {
   parseBlocks,
   renderEmailHtml,
@@ -427,6 +428,7 @@ function ComposerPage() {
                           {issue.message}
                         </p>
                       ))}
+                      <EmailPreflightPanel subject={subject} blocks={emailBlocks} />
                     </div>
                   ) : (
                     <MessagePreview
