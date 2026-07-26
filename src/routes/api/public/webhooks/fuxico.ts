@@ -37,11 +37,39 @@ export const Route = createFileRoute("/api/public/webhooks/fuxico")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const startedAt = Date.now();
+        const requestId =
+          request.headers.get("x-request-id") ??
+          request.headers.get("x-fuxico-delivery") ??
+          crypto.randomUUID();
+        /** Log estruturado (uma linha JSON) sempre correlacionado por request_id + tracking_id. */
+        const log = (
+          level: "info" | "warn" | "error",
+          stage: string,
+          fields: Record<string, unknown> = {},
+        ) => {
+          const line = JSON.stringify({
+            scope: "webhooks/fuxico",
+            request_id: requestId,
+            stage,
+            elapsed_ms: Date.now() - startedAt,
+            ...fields,
+          });
+          if (level === "error") console.error(line);
+          else if (level === "warn") console.warn(line);
+          else console.log(line);
+        };
+
         const secret = process.env.FUXICO_WEBHOOK_SECRET;
         const raw = await request.text();
         const signature =
           request.headers.get("x-webhook-signature") ?? request.headers.get("x-signature");
         if (!verifyHmac(raw, signature, secret)) {
+          log("warn", "signature_rejected", {
+            has_signature: Boolean(signature),
+            has_secret: Boolean(secret),
+            body_bytes: raw.length,
+          });
           return new Response("invalid signature", { status: 401 });
         }
 
@@ -49,10 +77,14 @@ export const Route = createFileRoute("/api/public/webhooks/fuxico")({
         try {
           json = JSON.parse(raw || "{}");
         } catch {
+          log("warn", "invalid_json", { body_bytes: raw.length });
           return new Response("invalid json", { status: 400 });
         }
         const parsed = Schema.safeParse(json);
-        if (!parsed.success) return new Response("invalid payload", { status: 400 });
+        if (!parsed.success) {
+          log("warn", "invalid_payload", { issues: parsed.error.issues.slice(0, 5) });
+          return new Response("invalid payload", { status: 400 });
+        }
 
         const eventType = EVENT_MAP[parsed.data.event.toLowerCase()];
         const payload = parsed.data.data as Record<string, unknown>;
@@ -61,15 +93,38 @@ export const Route = createFileRoute("/api/public/webhooks/fuxico")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-        // Registro bruto sempre — auditoria e signal scoring.
-        await supabaseAdmin.from("sales_machine_events").insert({
-          source: "fuxico" as never,
-          event_type: parsed.data.event,
-          external_id: trackingId ? `${parsed.data.event}:${trackingId}:${parsed.data.timestamp ?? ""}` : null,
-          payload: { ...payload, tracking_id: trackingId } as never,
+        log("info", "received", {
+          event: parsed.data.event,
+          mapped_event_type: eventType ?? null,
+          tracking_id: trackingId,
+          timestamp: parsed.data.timestamp ?? null,
         });
 
-        if (!eventType) return Response.json({ ok: true, ignored: parsed.data.event });
+        // Registro bruto sempre — auditoria e signal scoring.
+        const rawExternalId = trackingId
+          ? `${parsed.data.event}:${trackingId}:${parsed.data.timestamp ?? ""}`
+          : null;
+        const { error: rawErr } = await supabaseAdmin.from("sales_machine_events").insert({
+          source: "fuxico" as never,
+          event_type: parsed.data.event,
+          external_id: rawExternalId,
+          payload: { ...payload, tracking_id: trackingId, request_id: requestId } as never,
+        });
+        if (rawErr) {
+          // 23505 = UNIQUE(source, external_id): reentrega do mesmo evento bruto.
+          log(rawErr.code === "23505" ? "info" : "error", "raw_event_insert", {
+            tracking_id: trackingId,
+            external_id: rawExternalId,
+            duplicate: rawErr.code === "23505",
+            error_code: rawErr.code,
+            error: rawErr.code === "23505" ? undefined : rawErr.message,
+          });
+        }
+
+        if (!eventType) {
+          log("info", "ignored_event", { event: parsed.data.event, tracking_id: trackingId });
+          return Response.json({ ok: true, ignored: parsed.data.event, request_id: requestId });
+        }
 
         // Resolve touchpoint / entidade pelo tracking id.
         let touchpointId: string | null = null;
@@ -93,6 +148,12 @@ export const Route = createFileRoute("/api/public/webhooks/fuxico")({
             .maybeSingle();
           entityId = em?.id ?? null;
         }
+        log("info", "resolved", {
+          tracking_id: trackingId,
+          touchpoint_id: touchpointId,
+          entity_id: entityId,
+          resolution: touchpointId ? "tracking_id" : entityId ? "recipient_email" : "unresolved",
+        });
 
         const externalId = `fuxico:${trackingId ?? "na"}:${eventType}:${parsed.data.timestamp ?? new Date().toISOString()}`;
         const { error: insErr } = await supabaseAdmin.from("email_deliverability_events").insert({
@@ -104,8 +165,23 @@ export const Route = createFileRoute("/api/public/webhooks/fuxico")({
           raw: payload as never,
         });
         // Índice único em external_id: reentregas duplicadas caem aqui e são ignoradas.
-        if (insErr && insErr.code !== "23505") {
-          console.error("[webhooks/fuxico] insert event", insErr);
+        const duplicate = insErr?.code === "23505";
+        if (insErr && !duplicate) {
+          log("error", "deliverability_insert_failed", {
+            tracking_id: trackingId,
+            external_id: externalId,
+            event_type: eventType,
+            error_code: insErr.code,
+            error: insErr.message,
+          });
+        } else {
+          log("info", duplicate ? "duplicate_ignored" : "persisted", {
+            tracking_id: trackingId,
+            external_id: externalId,
+            event_type: eventType,
+            entity_id: entityId,
+            touchpoint_id: touchpointId,
+          });
         }
 
         // Supressão: bounce/complaint/unsubscribe desativam o canal e-mail.
@@ -134,11 +210,24 @@ export const Route = createFileRoute("/api/public/webhooks/fuxico")({
             status: "opt_out",
             source: eventType === "unsubscribe" ? "unsubscribe_link" : "bounce",
             reason: `${eventType} from fuxico`,
-            evidence: { tracking_id: trackingId } as never,
+            evidence: { tracking_id: trackingId, request_id: requestId } as never,
+          });
+          log("info", "suppression_applied", {
+            tracking_id: trackingId,
+            entity_id: entityId,
+            event_type: eventType,
           });
         }
 
-        return Response.json({ ok: true, event_type: eventType });
+        log("info", "done", { tracking_id: trackingId, event_type: eventType, duplicate });
+        return Response.json({
+          ok: true,
+          event_type: eventType,
+          duplicate,
+          external_id: externalId,
+          tracking_id: trackingId,
+          request_id: requestId,
+        });
       },
     },
   },
