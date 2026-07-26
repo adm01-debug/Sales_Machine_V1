@@ -44,7 +44,8 @@ export function analyzeSms(text: string): SegmentInfo {
     const remaining = segments * perSegment - chars;
     return { encoding: "GSM-7", chars, segments, perSegment, remaining };
   }
-  const chars = [...text].length;
+  // UCS-2 conta unidades de código UTF-16: um emoji fora do BMP custa 2.
+  const chars = text.length;
   const single = 70;
   const multi = 67;
   const segments = chars <= single ? 1 : Math.ceil(chars / multi);
