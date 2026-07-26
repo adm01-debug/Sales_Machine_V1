@@ -117,12 +117,19 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
         limit = n;
         return api;
       },
-      insert(values: Row) {
+      insert(values: Row | Row[]) {
         mode = "insert";
-        payload = values;
-        inserted = { id: `fake-${++idSeq}`, ...values };
-        (tables[table] ??= []).push(inserted);
-        calls.push({ op: "insert", table, payload: { ...values } });
+        // PostgREST aceita linha única ou lote; o fake precisa dos dois para
+        // que inserções em lote não virem uma linha com índices numéricos.
+        const list = Array.isArray(values) ? values : [values];
+        const rows = (tables[table] ??= []);
+        for (const v of list) {
+          const row = { id: `fake-${++idSeq}`, ...v };
+          rows.push(row);
+          inserted = row;
+          calls.push({ op: "insert", table, payload: { ...v } });
+        }
+        payload = list[0] ?? {};
         return api;
       },
       update(values: Row) {
