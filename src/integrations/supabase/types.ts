@@ -610,6 +610,7 @@ export type Database = {
           entity_id: string
           error: string | null
           fatorx_thread_id: string | null
+          fuxico_tracking_id: string | null
           id: string
           max_attempts: number
           next_retry_at: string | null
@@ -630,6 +631,7 @@ export type Database = {
           entity_id: string
           error?: string | null
           fatorx_thread_id?: string | null
+          fuxico_tracking_id?: string | null
           id?: string
           max_attempts?: number
           next_retry_at?: string | null
@@ -650,6 +652,7 @@ export type Database = {
           entity_id?: string
           error?: string | null
           fatorx_thread_id?: string | null
+          fuxico_tracking_id?: string | null
           id?: string
           max_attempts?: number
           next_retry_at?: string | null
@@ -742,6 +745,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           fatorx_thread_id: string | null
+          fuxico_id: string | null
           id: string
           kind: string
           lux_id: string | null
@@ -753,6 +757,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           fatorx_thread_id?: string | null
+          fuxico_id?: string | null
           id?: string
           kind: string
           lux_id?: string | null
@@ -764,6 +769,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           fatorx_thread_id?: string | null
+          fuxico_id?: string | null
           id?: string
           kind?: string
           lux_id?: string | null
@@ -1114,7 +1120,7 @@ export type Database = {
         | "processed"
         | "error"
         | "ignored"
-      sm_source: "lux" | "singu" | "fatorx" | "manual"
+      sm_source: "lux" | "singu" | "fatorx" | "manual" | "fuxico"
       sm_target_state:
         | "queued"
         | "running"
@@ -1282,7 +1288,7 @@ export const Constants = {
         "error",
         "ignored",
       ],
-      sm_source: ["lux", "singu", "fatorx", "manual"],
+      sm_source: ["lux", "singu", "fatorx", "manual", "fuxico"],
       sm_target_state: [
         "queued",
         "running",
