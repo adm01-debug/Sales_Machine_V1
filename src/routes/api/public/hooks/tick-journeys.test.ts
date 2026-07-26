@@ -53,7 +53,7 @@ function baseTables(
         journey_id: "j1",
         entity_id: "e1",
         current_node_id: null,
-        state: "running",
+        state: "active",
         attempts: 0,
         context: {},
         locked_until: null,
@@ -153,7 +153,7 @@ describe("tick-journeys (integração)", () => {
     expect(actions).toContain("sent");
     expect(fake.tables.journey_enrollments[0]).toMatchObject({
       current_node_id: "n3",
-      state: "running",
+      state: "active",
       locked_until: null,
     });
   });
@@ -201,13 +201,16 @@ describe("tick-journeys (integração)", () => {
     expect(fake.tables.contact_touchpoints[0]).toMatchObject({ status: "pending_approval" });
   });
 
-  it("pausa a inscrição quando a jornada não está ativa", async () => {
+  it("suspende a inscrição quando a jornada não está ativa", async () => {
     fake = createFakeSupabase({
       tables: baseTables({ journey: { status: "paused" } }),
       rpc: { check_consent: () => true },
     });
     await tick();
-    expect(fake.tables.journey_enrollments[0]).toMatchObject({ state: "paused" });
+    expect(fake.tables.journey_enrollments[0]).toMatchObject({
+      state: "waiting",
+      last_error: "jornada não está ativa",
+    });
     expect(sent).toHaveLength(0);
   });
 

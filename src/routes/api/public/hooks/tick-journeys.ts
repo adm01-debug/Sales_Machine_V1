@@ -44,7 +44,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-journeys")({
         const { data: due, error } = await db
           .from("journey_enrollments")
           .select("id, journey_id, entity_id, current_node_id, state, attempts, context")
-          .in("state", ["running", "waiting"])
+          .in("state", ["active", "waiting"])
           .lte("next_run_at", nowIso)
           .or(`locked_until.is.null,locked_until.lt.${nowIso}`)
           .order("next_run_at", { ascending: true })
@@ -84,7 +84,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-journeys")({
           const lockUntil = new Date(Date.now() + LOCK_MS).toISOString();
           const { data: locked } = await db
             .from("journey_enrollments")
-            .update({ locked_until: lockUntil, state: "running" })
+            .update({ locked_until: lockUntil, state: "active" })
             .eq("id", enrollment.id)
             .or(`locked_until.is.null,locked_until.lt.${nowIso}`)
             .select("id")
@@ -105,7 +105,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-journeys")({
               .from("journey_enrollments")
               .update({
                 locked_until: null,
-                state: "paused",
+                state: "waiting",
                 last_error: "jornada não está ativa",
                 next_run_at: new Date(Date.now() + 3_600_000).toISOString(),
               })
@@ -459,7 +459,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-journeys")({
                 current_node_id: currentId,
                 attempts: 0,
                 locked_until: null,
-                state: "running",
+                state: "active",
                 next_run_at: new Date().toISOString(),
                 last_error: null,
               })
@@ -474,7 +474,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-journeys")({
               .update({
                 current_node_id: currentId,
                 locked_until: null,
-                state: "running",
+                state: "active",
                 next_run_at: new Date(Date.now() + 60_000).toISOString(),
                 last_error: "limite de etapas por ciclo atingido",
               })

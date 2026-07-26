@@ -19,7 +19,7 @@ export interface FakeSupabaseOptions {
 }
 
 interface Filter {
-  kind: "eq" | "in" | "lte" | "lt" | "gte" | "is" | "ilike" | "like";
+  kind: "eq" | "in" | "lte" | "lt" | "gte" | "is" | "ilike" | "like" | "not_in" | "neq";
   column: string;
   value: unknown;
 }
@@ -35,6 +35,8 @@ function matches(row: Row, filters: Filter[]): boolean {
     const v = row[f.column];
     if (f.kind === "eq") return v === f.value;
     if (f.kind === "in") return (f.value as unknown[]).includes(v);
+    if (f.kind === "not_in") return !(f.value as unknown[]).includes(v);
+    if (f.kind === "neq") return v !== f.value;
     if (f.kind === "gte") return v != null && String(v) >= String(f.value);
     if (f.kind === "lt") return v != null && String(v) < String(f.value);
     if (f.kind === "is") return f.value === null ? v === null || v === undefined : v === f.value;
@@ -55,7 +57,7 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
 
   function builder(table: string) {
     const filters: Filter[] = [];
-    let mode: "select" | "insert" | "update" | "upsert" = "select";
+    let mode: "select" | "insert" | "update" | "upsert" | "delete" = "select";
     let payload: Row = {};
     let limit: number | null = null;
     let inserted: Row | null = null;
@@ -66,6 +68,12 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
       const rows = (tables[table] ??= []);
       if (mode === "insert" || mode === "upsert") {
         return { data: inserted ? [inserted] : [], error: null };
+      }
+      if (mode === "delete") {
+        const removed = rows.filter((r) => matches(r, filters));
+        tables[table] = rows.filter((r) => !matches(r, filters));
+        calls.push({ op: "delete", table });
+        return { data: removed, error: null };
       }
       if (mode === "update") {
         const matched = rows.filter((r) => matches(r, filters));
@@ -101,6 +109,25 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
       },
       in(column: string, value: unknown[]) {
         filters.push({ kind: "in", column, value });
+        return api;
+      },
+      neq(column: string, value: unknown) {
+        filters.push({ kind: "neq", column, value });
+        return api;
+      },
+      /** Suporta apenas `not(col, "in", "(a,b)")`, o único uso real no código. */
+      not(column: string, operator: string, value: unknown) {
+        const list = String(value).replace(/^\(|\)$/g, "");
+        const parsed = list.length > 0 ? list.split(",").map((v) => v.trim()) : [];
+        filters.push({
+          kind: operator === "in" ? "not_in" : "neq",
+          column,
+          value: operator === "in" ? parsed : value,
+        });
+        return api;
+      },
+      delete() {
+        mode = "delete";
         return api;
       },
       lte(column: string, value: unknown) {
@@ -158,16 +185,21 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
         payload = values;
         return api;
       },
-      upsert(values: Row) {
+      upsert(values: Row | Row[], opts?: { onConflict?: string }) {
         mode = "upsert";
-        payload = values;
+        const list = Array.isArray(values) ? values : [values];
         const rows = (tables[table] ??= []);
-        const key = Object.keys(values).filter((k) => k !== "sent");
-        const existing = rows.find((r) => key.every((k) => r[k] === values[k]));
-        if (existing) Object.assign(existing, values);
-        else rows.push({ ...values });
-        inserted = existing ?? values;
-        calls.push({ op: "upsert", table, payload: { ...values } });
+        for (const v of list) {
+          const key = opts?.onConflict
+            ? opts.onConflict.split(",").map((k) => k.trim())
+            : Object.keys(v).filter((k) => k !== "sent");
+          const existing = rows.find((r) => key.every((k) => r[k] === v[k]));
+          if (existing) Object.assign(existing, v);
+          else rows.push({ ...v });
+          inserted = existing ?? v;
+          calls.push({ op: "upsert", table, payload: { ...v } });
+        }
+        payload = list[0] ?? {};
         return api;
       },
       maybeSingle() {
