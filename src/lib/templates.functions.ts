@@ -33,6 +33,7 @@ const BaseTemplate = z.object({
   body: z.string().trim().min(1).max(4000),
   media_url: z.string().url().nullish(),
   rcs_payload: RcsPayload.nullish(),
+  email_blocks: z.array(z.record(z.string(), z.unknown())).max(60).nullish(),
   variables: z.array(z.string()).default([]).optional(),
 });
 
@@ -42,7 +43,7 @@ export const listTemplates = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("message_templates")
       .select(
-        "id, name, channel, subject, body, media_url, rcs_payload, variables, archived, updated_at",
+        "id, name, channel, subject, body, media_url, rcs_payload, email_blocks, variables, archived, updated_at",
       )
       .order("updated_at", { ascending: false });
     if (error) throw new Error(error.message);
@@ -75,6 +76,7 @@ export const upsertTemplate = createServerFn({ method: "POST" })
       body: data.body,
       media_url: data.media_url ?? null,
       rcs_payload: (data.rcs_payload ?? null) as never,
+      email_blocks: (data.channel === "email" ? (data.email_blocks ?? null) : null) as never,
       variables: extractVariables(`${data.subject ?? ""}\n${data.body}`) as never,
       created_by: context.userId,
     };
@@ -115,7 +117,7 @@ export const duplicateTemplate = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: src, error } = await context.supabase
       .from("message_templates")
-      .select("name, channel, subject, body, media_url, rcs_payload, variables")
+      .select("name, channel, subject, body, media_url, rcs_payload, email_blocks, variables")
       .eq("id", data.id)
       .single();
     if (error) throw new Error(error.message);
@@ -128,6 +130,7 @@ export const duplicateTemplate = createServerFn({ method: "POST" })
         body: src.body,
         media_url: src.media_url,
         rcs_payload: src.rcs_payload as never,
+        email_blocks: src.email_blocks as never,
         variables: src.variables as never,
         created_by: context.userId,
       })
