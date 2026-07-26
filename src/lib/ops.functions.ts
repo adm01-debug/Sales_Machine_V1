@@ -158,3 +158,17 @@ export const exportManualInterventions = createServerFn({ method: "GET" })
       targetId: data.targetId,
     });
   });
+
+/**
+ * Impacto financeiro por canal: converte os touchpoints outbound do período em
+ * custo estimado e destaca quanto foi desperdiçado (opt-out / dead-letter).
+ */
+export const getSpendBreakdown = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { days?: number | null } | undefined) => ({
+    days: input?.days ?? null,
+  }))
+  .handler(async ({ context, data }) => {
+    const { buildSpendReport } = await import("./ops-spend.server");
+    return buildSpendReport(context.supabase, { days: data.days });
+  });
