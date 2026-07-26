@@ -78,7 +78,14 @@ function OpsPage() {
 
   const alerts = buildOpsAlerts({
     health: health.data ?? null,
-    deliverability: deliv.data ?? null,
+    deliverability: deliv.data
+      ? {
+          opened: deliv.data.opened ?? 0,
+          clicked: deliv.data.clicked ?? 0,
+          hard_bounce: deliv.data.hard_bounce ?? 0,
+          complaint: deliv.data.complaint ?? 0,
+        }
+      : null,
     tracking: tracking.data
       ? {
           sends: tracking.data.sends,
