@@ -347,7 +347,12 @@ function CampaignDetailPage() {
               {variants.map((v, i) => (
                 <div key={i} className="space-y-2 rounded-md border border-border p-3">
                   <div className="flex items-center justify-between gap-2">
-                    <Badge>{v.label}</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge>{v.label}</Badge>
+                      <Button size="sm" variant="outline" onClick={() => setPickerFor(i)}>
+                        Usar template
+                      </Button>
+                    </div>
                     <div className="flex items-center gap-2">
                       <Input
                         type="number"
@@ -384,13 +389,101 @@ function CampaignDetailPage() {
                     value={v.body}
                     onChange={(e) => updateVariant(i, { body: e.target.value })}
                   />
+                  {channel === "mms" || channel === "rcs" || channel === "instagram" ? (
+                    <Input
+                      placeholder="URL da mídia (https://…)"
+                      value={v.media_url ?? ""}
+                      onChange={(e) => updateVariant(i, { media_url: e.target.value })}
+                    />
+                  ) : null}
+                  <div className="flex flex-wrap gap-1.5">
+                    {TEMPLATE_VARS.map((def) => (
+                      <Button
+                        key={def.key}
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 px-2 text-xs"
+                        onClick={() => insertVar(i, def.key)}
+                        aria-label={`Inserir variável ${def.label}`}
+                      >
+                        {`{{${def.key}}}`}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               ))}
             </CardContent>
           </Card>
+
+          <CampaignValidationPanel issues={issues} />
         </div>
 
-        <Card className="h-fit lg:sticky lg:top-6">
+        <div className="space-y-4 lg:sticky lg:top-6 lg:h-fit">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Prévia</CardTitle>
+            <CardDescription>Como o contato recebe a mensagem.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Select
+                value={String(previewVariant)}
+                onValueChange={(v) => setPreviewVariant(Number(v))}
+              >
+                <SelectTrigger aria-label="Variante da prévia">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {variants.map((v, i) => (
+                    <SelectItem key={v.label} value={String(i)}>
+                      Variante {v.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={previewContactId} onValueChange={setPreviewContactId}>
+                <SelectTrigger aria-label="Contato da prévia">
+                  <SelectValue placeholder="Dados de exemplo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(sample.data ?? []).map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.display_name || c.id.slice(0, 8)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {activeVariant ? (
+              <MessagePreview
+                channel={channel as never}
+                subject={activeVariant.subject}
+                body={activeVariant.body}
+                mediaUrl={activeVariant.media_url}
+                values={previewContact?.values}
+                contactName={previewContact?.display_name || undefined}
+              />
+            ) : null}
+
+            {coverage.data && coverage.data.coverage.length > 0 ? (
+              <div className="space-y-1 border-t border-border pt-3">
+                <p className="text-xs font-medium">
+                  Cobertura das variáveis ({coverage.data.sample} contatos)
+                </p>
+                {coverage.data.coverage.map((c) => (
+                  <div key={c.key} className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">{`{{${c.key}}}`}</span>
+                    <span className={c.pct < 80 ? "text-destructive" : ""}>{c.pct}%</span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </CardContent>
+        </Card>
+
+        <Card>
           <CardHeader>
             <CardTitle className="text-base">Desempenho</CardTitle>
             <CardDescription>Envios materializados desta campanha.</CardDescription>
@@ -408,7 +501,17 @@ function CampaignDetailPage() {
             </ul>
           </CardContent>
         </Card>
+        </div>
       </div>
+
+      <TemplatePickerDialog
+        open={pickerFor !== null}
+        onOpenChange={(o) => setPickerFor(o ? pickerFor : null)}
+        channel={channel as never}
+        onSelect={(tpl) => {
+          if (pickerFor !== null) applyTemplate(pickerFor, tpl);
+        }}
+      />
     </div>
   );
 }
