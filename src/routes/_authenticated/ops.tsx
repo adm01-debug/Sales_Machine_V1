@@ -5,6 +5,7 @@ import {
   getPipelineHealth,
   getDeliverabilityStats,
   getAlertNotifications,
+  getComplianceStats,
 } from "@/lib/ops.functions";
 import { getTrackingIntegrityReport } from "@/lib/deliverability.functions";
 import { buildOpsAlerts } from "@/lib/ops-alerts";
@@ -75,6 +76,12 @@ function OpsPage() {
   const health = useQuery({ queryKey: ["ops", "health"], queryFn: () => fetchHealth(), refetchInterval: 30_000 });
   const deliv = useQuery({ queryKey: ["ops", "deliv"], queryFn: () => fetchDeliv(), refetchInterval: 60_000 });
   const fetchTracking = useServerFn(getTrackingIntegrityReport);
+  const fetchCompliance = useServerFn(getComplianceStats);
+  const compliance = useQuery({
+    queryKey: ["ops", "compliance"],
+    queryFn: () => fetchCompliance(),
+    refetchInterval: 120_000,
+  });
   const tracking = useQuery({
     queryKey: ["ops", "tracking"],
     queryFn: () => fetchTracking({ data: { days: 7 } }),
@@ -156,6 +163,30 @@ function OpsPage() {
                 label="Cobertura de rastreio"
                 value={tracking.data ? `${tracking.data.coverageRate}%` : "—"}
                 hint="meta ≥ 90%"
+              />
+            </div>
+          </section>
+
+          <section>
+            <h2 className="mb-3 text-sm font-medium text-muted-foreground">
+              Compliance e consentimento (7d)
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Stat
+                label="Bloqueios por consentimento"
+                value={compliance.data?.blockedByConsent ?? 0}
+                hint="alvos interrompidos antes do envio"
+              />
+              <Stat label="Novos opt-ins" value={compliance.data?.optIns7d ?? 0} />
+              <Stat label="Novos opt-outs" value={compliance.data?.optOuts7d ?? 0} />
+              <Stat
+                label="Canal com mais opt-outs"
+                value={
+                  Object.entries(compliance.data?.optOutsByChannel ?? {}).sort(
+                    (a, b) => b[1] - a[1],
+                  )[0]?.[0] ?? "—"
+                }
+                hint="revisar criativo e frequência"
               />
             </div>
           </section>
