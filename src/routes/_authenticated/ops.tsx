@@ -1,7 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getPipelineHealth, getDeliverabilityStats } from "@/lib/ops.functions";
+import {
+  getPipelineHealth,
+  getDeliverabilityStats,
+  getAlertNotifications,
+} from "@/lib/ops.functions";
 import { getTrackingIntegrityReport } from "@/lib/deliverability.functions";
 import { buildOpsAlerts } from "@/lib/ops-alerts";
 import { cn } from "@/lib/utils";
