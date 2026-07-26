@@ -115,6 +115,8 @@ function OpsPage() {
         <AlertsBanner alerts={alerts} />
       </section>
 
+      <AlertHistory />
+
       {health.isLoading ? (
         <div className="text-muted-foreground">Carregando...</div>
       ) : health.data ? (
