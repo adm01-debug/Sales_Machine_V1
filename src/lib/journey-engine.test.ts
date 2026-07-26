@@ -430,6 +430,31 @@ describe("validateJourney", () => {
     expect(issues.some((i) => i.message.includes("duração zero"))).toBe(true);
   });
 
+  it("exige conteúdo ou template na etapa de envio", () => {
+    const { nodes, edges } = valid();
+    const semConteudo = nodes.map((n) =>
+      n.id === "s" ? { ...n, config: { channel: "email" } } : n,
+    );
+    expect(
+      validateJourney(semConteudo, edges).some((i) =>
+        i.message.includes("não tem mensagem nem template"),
+      ),
+    ).toBe(true);
+  });
+
+  it("aplica o pré-voo de entregabilidade em e-mail escrito no nó", () => {
+    const { nodes, edges } = valid();
+    const inline = nodes.map((n) =>
+      n.id === "s"
+        ? { ...n, config: { channel: "email", subject: "Oferta", body: "Clique aqui" } }
+        : n,
+    );
+    const issues = validateJourney(inline, edges);
+    expect(issues.some((i) => i.level === "error" && i.message.includes("Entregabilidade"))).toBe(
+      true,
+    );
+  });
+
   it("aponta ligação para etapa inexistente", () => {
     const { nodes, edges } = valid();
     const issues = validateJourney(nodes, [...edges, { from_node_id: "s", to_node_id: "zzz", branch: "x" }]);
