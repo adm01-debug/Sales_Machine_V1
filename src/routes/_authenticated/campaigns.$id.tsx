@@ -16,6 +16,7 @@ import { TEMPLATE_VARS } from "@/lib/template-vars";
 import { TemplatePickerDialog, type PickedTemplate } from "@/components/template-picker-dialog";
 import { upsertTemplate } from "@/lib/templates.functions";
 import { CampaignValidationPanel } from "@/components/campaign-validation-panel";
+import { CostPreflightCard } from "@/components/campaigns/cost-preflight";
 import { MessagePreview } from "@/components/message-preview";
 import { CHANNELS } from "@/lib/audience-rules";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -450,6 +451,11 @@ function CampaignDetailPage() {
           </Card>
 
           <CampaignValidationPanel issues={issues} />
+
+          <CostPreflightCard
+            campaignId={id}
+            revision={`${channel}|${audienceId}|${variants.map((v) => `${v.label}:${v.split_percent}:${v.body.length}`).join(",")}`}
+          />
         </div>
 
         <div className="space-y-4 lg:sticky lg:top-6 lg:h-fit">
