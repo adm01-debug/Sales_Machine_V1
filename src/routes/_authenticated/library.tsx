@@ -22,6 +22,14 @@ import {
   unknownVariables,
 } from "@/lib/template-vars";
 import { MessagePreview } from "@/components/message-preview";
+import { EmailBlockEditor } from "@/components/email/EmailBlockEditor";
+import {
+  parseBlocks,
+  renderEmailHtml,
+  renderEmailText,
+  validateBlocks,
+  type EmailBlock,
+} from "@/lib/email-blocks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -93,11 +101,20 @@ function ComposerPage() {
     image_url: "",
     suggestions: [],
   });
+  const [emailBlocks, setEmailBlocks] = useState<EmailBlock[]>([]);
   const [testEntityId, setTestEntityId] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const segments = useMemo(() => analyzeSms(body), [body]);
+  const emailIssues = useMemo(
+    () => (channel === "email" && emailBlocks.length > 0 ? validateBlocks(emailBlocks) : []),
+    [channel, emailBlocks],
+  );
+  const emailHtml = useMemo(
+    () => renderEmailHtml(emailBlocks, { subject }),
+    [emailBlocks, subject],
+  );
 
   const resetForm = () => {
     setId(null);
@@ -108,6 +125,7 @@ function ComposerPage() {
     setMediaUrl(null);
     setMediaPath(null);
     setRcs({ type: "rich_card", title: "", description: "", image_url: "", suggestions: [] });
+    setEmailBlocks([]);
   };
 
   const loadTemplate = (t: (typeof templatesQ.data extends (infer U)[] | undefined ? U : never)) => {
@@ -122,20 +140,27 @@ function ComposerPage() {
     setRcs(
       p ?? { type: "rich_card", title: "", description: "", image_url: "", suggestions: [] },
     );
+    setEmailBlocks(parseBlocks((t as { email_blocks?: unknown }).email_blocks));
   };
 
   const saveMut = useMutation({
     mutationFn: async () => {
       if (!name.trim()) throw new Error("Dê um nome ao template");
-      if (!body.trim()) throw new Error("Corpo da mensagem é obrigatório");
+      const useBlocks = channel === "email" && emailBlocks.length > 0;
+      if (useBlocks) {
+        const issues = validateBlocks(emailBlocks);
+        if (issues.length > 0) throw new Error(issues[0].message);
+      }
+      const finalBody = useBlocks ? renderEmailText(emailBlocks) : body;
+      if (!finalBody.trim()) throw new Error("Corpo da mensagem é obrigatório");
       if (channel === "mms" && !mediaUrl) throw new Error("MMS requer mídia");
       if (channel === "email" && !subject.trim())
         throw new Error("Templates de e-mail exigem assunto");
-      if (body.length > CHANNEL_BODY_LIMIT[channel])
+      if (finalBody.length > CHANNEL_BODY_LIMIT[channel])
         throw new Error(
           `Limite de ${CHANNEL_BODY_LIMIT[channel]} caracteres excedido para ${channel}`,
         );
-      const unknown = unknownVariables(`${subject}\n${body}`);
+      const unknown = unknownVariables(`${subject}\n${finalBody}`);
       if (unknown.length > 0)
         throw new Error(`Variáveis desconhecidas: ${unknown.map((v) => `{{${v}}}`).join(", ")}`);
       const payload = {
@@ -143,10 +168,11 @@ function ComposerPage() {
         name,
         channel,
         subject: channel === "email" ? subject : null,
-        body,
+        body: finalBody,
         media_url: channel === "sms" ? null : mediaUrl,
         rcs_payload: channel === "rcs" ? rcs : null,
-        variables: extractTemplateVars(`${subject}\n${body}`),
+        email_blocks: useBlocks ? (emailBlocks as unknown as Record<string, unknown>[]) : null,
+        variables: extractTemplateVars(`${subject}\n${finalBody}`),
       };
       return upsert({ data: payload });
     },
@@ -262,11 +288,31 @@ function ComposerPage() {
                   </div>
                 )}
 
+                {channel === "email" && (
+                  <div className="space-y-2 border-t pt-4">
+                    <Label>Blocos do e-mail</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Com blocos, o HTML responsivo é gerado automaticamente e o texto abaixo vira
+                      apenas o fallback.
+                    </p>
+                    <EmailBlockEditor blocks={emailBlocks} onChange={setEmailBlocks} />
+                  </div>
+                )}
+
                 <div className="space-y-2">
-                  <Label>Mensagem</Label>
+                  <Label>
+                    {channel === "email" && emailBlocks.length > 0
+                      ? "Fallback texto (gerado dos blocos)"
+                      : "Mensagem"}
+                  </Label>
                   <Textarea
-                    value={body}
+                    value={
+                      channel === "email" && emailBlocks.length > 0
+                        ? renderEmailText(emailBlocks)
+                        : body
+                    }
                     onChange={(e) => setBody(e.target.value)}
+                    readOnly={channel === "email" && emailBlocks.length > 0}
                     rows={5}
                     maxLength={CHANNEL_BODY_LIMIT[channel]}
                     placeholder="Olá {{nome}}, tudo bem?"
@@ -367,12 +413,29 @@ function ComposerPage() {
                   <CardDescription>Variáveis resolvidas com dados de exemplo.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <MessagePreview
-                    channel={channel}
-                    subject={subject}
-                    body={body}
-                    mediaUrl={mediaUrl}
-                  />
+                  {channel === "email" && emailBlocks.length > 0 ? (
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">{subject || "(sem assunto)"}</p>
+                      <iframe
+                        title="Preview do e-mail"
+                        srcDoc={renderPreviewHtml(emailHtml)}
+                        sandbox=""
+                        className="h-[460px] w-full rounded-md border bg-background"
+                      />
+                      {emailIssues.map((issue) => (
+                        <p key={`${issue.blockId}-${issue.message}`} className="text-xs text-destructive">
+                          {issue.message}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <MessagePreview
+                      channel={channel}
+                      subject={subject}
+                      body={body}
+                      mediaUrl={mediaUrl}
+                    />
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -450,6 +513,11 @@ function ComposerPage() {
 function renderPreview(body: string): string {
   // Preview do telefone usa o mesmo motor de variáveis dos workers.
   return renderTemplate(body, sampleVarValues()).text;
+}
+
+function renderPreviewHtml(html: string): string {
+  // O preview resolve variáveis com dados de exemplo, igual aos workers.
+  return renderTemplate(html, sampleVarValues()).text;
 }
 
 function PhonePreview({

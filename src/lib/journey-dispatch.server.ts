@@ -50,12 +50,20 @@ export async function resolveJourneyMessage(
   if (!body && templateId) {
     const { data: tpl } = await client
       .from("message_templates")
-      .select("subject, body, media_url, rcs_payload")
+      .select("subject, body, media_url, rcs_payload, email_blocks")
       .eq("id", templateId)
       .maybeSingle();
     if (tpl) {
       subject = subject ?? (tpl.subject as string | null);
       body = String(tpl.body ?? "").trim();
+      // Template de e-mail com design em blocos: envia o HTML gerado.
+      if (tpl.email_blocks) {
+        const { parseBlocks, renderEmailHtml } = await import("@/lib/email-blocks");
+        const blocks = parseBlocks(tpl.email_blocks);
+        if (blocks.length > 0) {
+          body = renderEmailHtml(blocks, { subject: subject ?? undefined });
+        }
+      }
       mediaUrl = mediaUrl ?? (tpl.media_url as string | null);
       rcsPayload = rcsPayload ?? ((tpl.rcs_payload as Record<string, unknown> | null) ?? null);
     }

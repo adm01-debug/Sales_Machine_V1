@@ -1,0 +1,2 @@
+ALTER TABLE public.message_templates ADD COLUMN IF NOT EXISTS email_blocks jsonb;
+COMMENT ON COLUMN public.message_templates.email_blocks IS 'Design em blocos do editor visual de e-mail; body guarda o fallback texto.';
