@@ -81,3 +81,45 @@ export const getFuxicoStatus = createServerFn({ method: "GET" })
     }
     return { configured, webhookSecretSet, counts, error: null as string | null };
   });
+
+/**
+ * Status detalhado de cada segredo do FUXICO (nunca devolve valores),
+ * com validação de formato da URL.
+ */
+export const getFuxicoConfig = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    const url = process.env.FUXICO_URL ?? "";
+    let urlValid = false;
+    try {
+      urlValid = !!url && new URL(url).protocol === "https:";
+    } catch {
+      urlValid = false;
+    }
+    return {
+      url: { set: !!url, valid: urlValid, preview: url ? url.replace(/\/$/, "") : null },
+      serviceKey: { set: !!process.env.FUXICO_SERVICE_KEY },
+      webhookSecret: { set: !!process.env.FUXICO_WEBHOOK_SECRET },
+    };
+  });
+
+/** Faz uma chamada real ao FUXICO para validar URL + service key. */
+export const testFuxicoConnection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    if (!process.env.FUXICO_URL) {
+      return { ok: false as const, message: "FUXICO_URL não configurada." };
+    }
+    try {
+      const { fuxicoClient } = await import("@/integrations/external/fuxico.server");
+      const stats = (await fuxicoClient.getStats({ limit: 1 })) as unknown;
+      return {
+        ok: true as const,
+        message: "Conexão estabelecida com o FUXICO.",
+        sample: stats ? "resposta recebida" : "resposta vazia",
+      };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Falha desconhecida";
+      return { ok: false as const, message: message.slice(0, 300) };
+    }
+  });
