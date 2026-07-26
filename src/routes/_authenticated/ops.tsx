@@ -12,6 +12,7 @@ import { getTrackingIntegrityReport } from "@/lib/deliverability.functions";
 import { buildOpsAlerts } from "@/lib/ops-alerts";
 import { AlertHistory } from "@/components/ops/alert-history";
 import { ManualInterventions } from "@/components/ops/manual-interventions";
+import { SpendBreakdown } from "@/components/ops/spend-breakdown";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/ops")({
@@ -179,6 +180,8 @@ function OpsPage() {
       {health.data ? <DeadLetterRecovery count={health.data.dead_letter ?? 0} /> : null}
 
       <AlertHistory />
+
+      <SpendBreakdown />
 
       <ManualInterventions />
 
