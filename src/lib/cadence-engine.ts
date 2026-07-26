@@ -79,6 +79,13 @@ export interface CadenceFacts {
   /** `compute_daily_cap(sender)`. */
   emailDailyCap: number;
   requiresHumanApproval: boolean;
+  /**
+   * Canal sem orçamento disponível (teto diário/mensal atingido ou canal
+   * desativado em `channel_budgets`). Opcional: ausência = sem guardrail.
+   */
+  budgetBlocked?: boolean;
+  /** Motivo legível do bloqueio de orçamento, para a trilha de auditoria. */
+  budgetReason?: string | null;
 }
 
 export type CadenceDecision =
@@ -90,6 +97,8 @@ export type CadenceDecision =
 
 export const COOLDOWN_DEFER_MS = 24 * 3_600_000;
 export const EMAIL_CAP_DEFER_MS = 3_600_000;
+/** Adiamento quando o canal está sem orçamento — reavalia na próxima hora. */
+export const BUDGET_DEFER_MS = 3_600_000;
 
 /**
  * Decide a próxima ação para um target travado.
@@ -99,9 +108,10 @@ export const EMAIL_CAP_DEFER_MS = 3_600_000;
  *  2. Consentimento negado → stopped (LGPD: nunca reagendar quem pediu opt-out)
  *  3. Cooldown de conta → adia 24h
  *  4. Hard bounce em e-mail → stopped
- *  5. Cap diário de e-mail → adia 1h
- *  6. Gate humano → pending_approval
- *  7. Envio
+ *  5. Orçamento do canal esgotado → adia 1h
+ *  6. Cap diário de e-mail → adia 1h
+ *  7. Gate humano → pending_approval
+ *  8. Envio
  */
 export function decideCadenceAction(facts: CadenceFacts): CadenceDecision {
   const step = facts.steps[facts.currentStep];
@@ -125,6 +135,19 @@ export function decideCadenceAction(facts: CadenceFacts): CadenceDecision {
     if (facts.emailHardBounce) {
       return { action: "stop", reason: "email hard_bounce — canal desativado para este contato" };
     }
+  }
+
+  // Guardrail financeiro: nunca é motivo para encerrar o target, apenas para
+  // adiar — o orçamento volta a existir no próximo dia/mês.
+  if (facts.budgetBlocked === true) {
+    return {
+      action: "defer",
+      reason: `orçamento do canal ${step.channel}: ${facts.budgetReason ?? "teto atingido"}`,
+      delayMs: BUDGET_DEFER_MS,
+    };
+  }
+
+  if (step.channel === "email") {
     if (facts.emailSentToday >= facts.emailDailyCap) {
       return {
         action: "defer",
