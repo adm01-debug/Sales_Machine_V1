@@ -71,6 +71,12 @@ export type LeadFormInput = z.infer<typeof leadFormSchema>;
 /** Nome do campo-armadilha: preenchido apenas por robôs. */
 export const HONEYPOT_KEY = "_hp";
 
+/** Interpreta a definição de campos vinda do banco, ignorando lixo. */
+export function parseFieldsSafe(raw: unknown): LeadField[] {
+  const parsed = leadFieldSchema.array().safeParse(raw);
+  return parsed.success ? parsed.data : [];
+}
+
 export function slugify(input: string): string {
   return input
     .normalize("NFD")
