@@ -305,3 +305,126 @@ export const getMarketingOverview = createServerFn({ method: "GET" })
       reach: (audiencesRes.data ?? []).reduce((acc, a) => acc + (a.member_count ?? 0), 0),
     };
   });
+
+/**
+ * Cobertura das variáveis usadas nos criativos sobre a audiência escolhida.
+ * Amostra até 500 membros para manter a consulta barata.
+ */
+export const getVariableCoverage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        audience_id: z.string().uuid(),
+        texts: z.array(z.string()).max(10),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const keys = [...new Set(data.texts.flatMap((t) => extractVariables(t)))];
+    if (keys.length === 0) return { sample: 0, coverage: [] as { key: string; pct: number }[] };
+
+    const { data: members } = await context.supabase
+      .from("audience_members")
+      .select("entity_id")
+      .eq("audience_id", data.audience_id)
+      .limit(500);
+    const ids = (members ?? []).map((m) => m.entity_id);
+    if (ids.length === 0) return { sample: 0, coverage: keys.map((key) => ({ key, pct: 0 })) };
+
+    const { data: rows } = await context.supabase
+      .from("entity_map")
+      .select("id, display_name, metadata")
+      .in("id", ids);
+
+    const filled: Record<string, number> = {};
+    for (const row of rows ?? []) {
+      const values = buildVarValues({
+        display_name: row.display_name,
+        metadata: row.metadata as Record<string, unknown> | null,
+      });
+      for (const key of keys) {
+        if (values[key]) filled[key] = (filled[key] ?? 0) + 1;
+      }
+    }
+
+    const sample = (rows ?? []).length;
+    return {
+      sample,
+      coverage: keys.map((key) => ({
+        key,
+        pct: sample === 0 ? 0 : Math.round(((filled[key] ?? 0) / sample) * 100),
+      })),
+    };
+  });
+
+/** Contatos da audiência para o preview com dados reais. */
+export const listAudienceSample = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ audience_id: z.string().uuid(), limit: z.number().int().min(1).max(25).default(10) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: members } = await context.supabase
+      .from("audience_members")
+      .select("entity_id")
+      .eq("audience_id", data.audience_id)
+      .limit(data.limit);
+    const ids = (members ?? []).map((m) => m.entity_id);
+    if (ids.length === 0) return [];
+    const { data: rows, error } = await context.supabase
+      .from("entity_map")
+      .select("id, display_name, metadata")
+      .in("id", ids);
+    if (error) throw new Error(error.message);
+    return (rows ?? []).map((r) => ({
+      id: r.id,
+      display_name: r.display_name,
+      metadata: (r.metadata ?? {}) as Record<string, unknown>,
+    }));
+  });
+
+const _legacyOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const since = new Date(Date.now() - 30 * 86400_000).toISOString();
+    const [campaignsRes, sendsRes, touchRes, audiencesRes] = await Promise.all([
+      context.supabase.from("marketing_campaigns").select("id, name, status, channel, updated_at"),
+      context.supabase.from("campaign_sends").select("state, campaign_id"),
+      context.supabase
+        .from("contact_touchpoints")
+        .select("channel, direction, status, created_at")
+        .gte("created_at", since),
+      context.supabase.from("audiences").select("id, name, member_count").eq("archived", false),
+    ]);
+
+    const sendsByState: Record<string, number> = {};
+    const sendsByCampaign: Record<string, number> = {};
+    for (const s of sendsRes.data ?? []) {
+      sendsByState[s.state] = (sendsByState[s.state] ?? 0) + 1;
+      sendsByCampaign[s.campaign_id] = (sendsByCampaign[s.campaign_id] ?? 0) + 1;
+    }
+
+    const byChannel: Record<string, { sent: number; replies: number }> = {};
+    for (const t of touchRes.data ?? []) {
+      const bucket = (byChannel[t.channel] ??= { sent: 0, replies: 0 });
+      if (t.direction === "outbound" && t.status === "sent") bucket.sent += 1;
+      if (t.direction === "inbound") bucket.replies += 1;
+    }
+
+    const campaigns = (campaignsRes.data ?? []).map((c) => ({
+      ...c,
+      sends: sendsByCampaign[c.id] ?? 0,
+    }));
+
+    return {
+      campaigns: campaigns.sort((a, b) => b.sends - a.sends).slice(0, 6),
+      campaign_count: campaigns.length,
+      running: campaigns.filter((c) => c.status === "running").length,
+      sends_by_state: sendsByState,
+      by_channel: byChannel,
+      audiences: (audiencesRes.data ?? []).slice(0, 6),
+      audience_count: (audiencesRes.data ?? []).length,
+      reach: (audiencesRes.data ?? []).reduce((acc, a) => acc + (a.member_count ?? 0), 0),
+    };
+  });
