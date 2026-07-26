@@ -19,7 +19,7 @@ export interface FakeSupabaseOptions {
 }
 
 interface Filter {
-  kind: "eq" | "in" | "lte" | "gte" | "is" | "ilike" | "like";
+  kind: "eq" | "in" | "lte" | "lt" | "gte" | "is" | "ilike" | "like";
   column: string;
   value: unknown;
 }
@@ -36,6 +36,7 @@ function matches(row: Row, filters: Filter[]): boolean {
     if (f.kind === "eq") return v === f.value;
     if (f.kind === "in") return (f.value as unknown[]).includes(v);
     if (f.kind === "gte") return v != null && String(v) >= String(f.value);
+    if (f.kind === "lt") return v != null && String(v) < String(f.value);
     if (f.kind === "is") return f.value === null ? v === null || v === undefined : v === f.value;
     if (f.kind === "ilike") return v != null && likeToRegex(String(f.value)).test(String(v));
     if (f.kind === "like") return v != null && likeToRegex(String(f.value), false).test(String(v));
@@ -104,6 +105,10 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
       },
       lte(column: string, value: unknown) {
         filters.push({ kind: "lte", column, value });
+        return api;
+      },
+      lt(column: string, value: unknown) {
+        filters.push({ kind: "lt", column, value });
         return api;
       },
       gte(column: string, value: unknown) {
