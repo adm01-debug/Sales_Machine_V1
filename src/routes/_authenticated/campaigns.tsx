@@ -1,185 +1,125 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import {
-  listCampaigns,
-  createCampaign,
-  listCadenceRules,
-} from "@/lib/orchestrator.functions";
+import { toast } from "sonner";
+import { listMarketingCampaigns, saveMarketingCampaign } from "@/lib/marketing.functions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { toast } from "sonner";
-
-const CHANNELS = ["whatsapp", "email", "sms", "linkedin", "instagram"] as const;
-type Channel = (typeof CHANNELS)[number];
+import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/_authenticated/campaigns")({
   head: () => ({
     meta: [
       { title: "Campanhas · Sales Machine" },
-      { name: "description", content: "Configure cadências multicanal com agentes do FATOR X." },
+      {
+        name: "description",
+        content: "Campanhas de marketing multicanal com audiências, variantes A/B e agendamento.",
+      },
     ],
   }),
   component: CampaignsPage,
 });
 
+const STATUS_VARIANT: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
+  running: "default",
+  scheduled: "secondary",
+  draft: "outline",
+  paused: "secondary",
+  completed: "secondary",
+  cancelled: "destructive",
+};
+
 function CampaignsPage() {
-  const qc = useQueryClient();
-  const fetchCampaigns = useServerFn(listCampaigns);
-  const fetchRules = useServerFn(listCadenceRules);
-  const create = useServerFn(createCampaign);
-
-  const campaignsQ = useQuery({ queryKey: ["sm", "campaigns"], queryFn: () => fetchCampaigns() });
-  const rulesQ = useQuery({ queryKey: ["sm", "cadence-rules"], queryFn: () => fetchRules() });
-
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const fetchCampaigns = useServerFn(listMarketingCampaigns);
+  const save = useServerFn(saveMarketingCampaign);
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [agentId, setAgentId] = useState("");
-  const [cadenceId, setCadenceId] = useState("");
-  const [channels, setChannels] = useState<Record<Channel, boolean>>({
-    whatsapp: true,
-    email: true,
-    sms: false,
-    linkedin: false,
-    instagram: false,
+
+  const campaigns = useQuery({
+    queryKey: ["mkt", "campaigns"],
+    queryFn: () => fetchCampaigns(),
   });
 
-  const createMut = useMutation({
+  const createMutation = useMutation({
     mutationFn: () =>
-      create({
+      save({
         data: {
-          name,
-          description: description || undefined,
-          channels: CHANNELS.filter((c) => channels[c]),
-          fatorx_agent_id: agentId || undefined,
-          cadence_rule_id: cadenceId || undefined,
+          name: name.trim(),
+          objective: "engagement",
+          channel: "email",
+          daily_cap: 500,
+          requires_human_approval: false,
+          variants: [{ label: "A", body: "Escreva sua mensagem aqui.", split_percent: 100 }],
         },
       }),
-    onSuccess: () => {
-      toast.success("Campanha criada");
+    onSuccess: (res) => {
       setName("");
-      setDescription("");
-      setAgentId("");
-      setCadenceId("");
-      qc.invalidateQueries({ queryKey: ["sm", "campaigns"] });
-      qc.invalidateQueries({ queryKey: ["sm", "campaigns", "picker"] });
+      queryClient.invalidateQueries({ queryKey: ["mkt", "campaigns"] });
+      navigate({ to: "/campaigns/$id", params: { id: res.id! } });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Falha ao criar"),
+    onError: (e: Error) => toast.error(e.message),
   });
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="mx-auto max-w-5xl space-y-6">
-        <header className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Campanhas</h1>
-            <p className="text-sm text-muted-foreground">
-              Cada campanha define canais + agente + cadência.
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Link to="/companies"><Button variant="outline" size="sm">Empresas</Button></Link>
-            <Link to="/dashboard"><Button variant="outline" size="sm">Cockpit</Button></Link>
-          </div>
-        </header>
+    <div className="mx-auto max-w-5xl space-y-6">
+      <header>
+        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Campanhas</h1>
+        <p className="text-sm text-muted-foreground">
+          Disparos 1:many para audiências, com variantes e controle de cadência de envio.
+        </p>
+      </header>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Nova campanha</CardTitle>
-            <CardDescription>Ativa imediatamente após criar.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Nome</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex: Q4 · CTOs Fintech" />
-            </div>
-            <div className="space-y-2">
-              <Label>Agente FATOR X (ID)</Label>
-              <Input value={agentId} onChange={(e) => setAgentId(e.target.value)} placeholder="opcional · usa default" />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label>Descrição</Label>
-              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
-            </div>
-            <div className="space-y-2">
-              <Label>Regra de cadência</Label>
-              <Select value={cadenceId} onValueChange={setCadenceId}>
-                <SelectTrigger><SelectValue placeholder="Selecione…" /></SelectTrigger>
-                <SelectContent>
-                  {(rulesQ.data ?? []).map((r) => (
-                    <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Canais ativos</Label>
-              <div className="flex flex-wrap gap-3">
-                {CHANNELS.map((c) => (
-                  <label key={c} className="flex items-center gap-2 text-sm">
-                    <Checkbox
-                      checked={channels[c]}
-                      onCheckedChange={(v) => setChannels((s) => ({ ...s, [c]: Boolean(v) }))}
-                    />
-                    {c}
-                    {(c === "linkedin" || c === "instagram") && (
-                      <Badge variant="outline" className="text-[10px]">stub</Badge>
-                    )}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div className="md:col-span-2">
-              <Button
-                onClick={() => createMut.mutate()}
-                disabled={createMut.isPending || !name || CHANNELS.every((c) => !channels[c])}
-              >
-                Criar campanha
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Nova campanha</CardTitle>
+          <CardDescription>Configure audiência, canal e conteúdo na tela seguinte.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2 sm:flex-row">
+          <Input
+            value={name}
+            placeholder="ex.: Lançamento catálogo Q3"
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Button onClick={() => createMutation.mutate()} disabled={!name.trim() || createMutation.isPending}>
+            {createMutation.isPending ? "Criando…" : "Criar"}
+          </Button>
+        </CardContent>
+      </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Campanhas existentes</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {campaignsQ.isLoading ? (
-              <p className="text-sm text-muted-foreground">Carregando…</p>
-            ) : (campaignsQ.data ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">Nenhuma campanha ainda.</p>
-            ) : (
-              <ul className="space-y-2 text-sm">
-                {(campaignsQ.data ?? []).map((c) => (
-                  <li key={c.id} className="flex items-center justify-between border-b py-2 last:border-0">
-                    <div>
-                      <p className="font-medium">{c.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Canais: {Array.isArray(c.channels) ? c.channels.join(", ") : "—"}
-                      </p>
-                    </div>
-                    <Badge>{c.status}</Badge>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Todas as campanhas</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {campaigns.isLoading ? (
+            <p className="text-sm text-muted-foreground">Carregando…</p>
+          ) : (campaigns.data ?? []).length === 0 ? (
+            <p className="text-sm text-muted-foreground">Nenhuma campanha de marketing ainda.</p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {(campaigns.data ?? []).map((c) => (
+                <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
+                  <div className="min-w-0">
+                    <Link to="/campaigns/$id" params={{ id: c.id }} className="font-medium hover:underline">
+                      {c.name}
+                    </Link>
+                    <p className="text-xs text-muted-foreground">
+                      {c.audiences?.name ?? "Sem audiência"} · {c.objective}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">{c.channel}</Badge>
+                    <Badge variant={STATUS_VARIANT[c.status] ?? "outline"}>{c.status}</Badge>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -12,22 +12,29 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedProspectingRouteImport } from './routes/_authenticated/prospecting'
 import { Route as AuthenticatedOpsRouteImport } from './routes/_authenticated/ops'
+import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/evals'
 import { Route as AuthenticatedDeliverabilityRouteImport } from './routes/_authenticated/deliverability'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedComposerRouteImport } from './routes/_authenticated/composer'
+import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
 import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
 import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
+import { Route as AuthenticatedAudiencesRouteImport } from './routes/_authenticated/audiences'
 import { Route as AuthenticatedApprovalsRouteImport } from './routes/_authenticated/approvals'
 import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
+import { Route as AuthenticatedContactsIdRouteImport } from './routes/_authenticated/contacts.$id'
 import { Route as AuthenticatedCompaniesIdRouteImport } from './routes/_authenticated/companies.$id'
+import { Route as AuthenticatedCampaignsIdRouteImport } from './routes/_authenticated/campaigns.$id'
+import { Route as AuthenticatedAudiencesIdRouteImport } from './routes/_authenticated/audiences.$id'
 import { Route as ApiPublicWebhooksSinguBounceRouteImport } from './routes/api/public/webhooks/singu-bounce'
 import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
 import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
 import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
 import { Route as ApiPublicTrackOpenDotgifRouteImport } from './routes/api/public/track/open[.]gif'
 import { Route as ApiPublicTrackClickRouteImport } from './routes/api/public/track/click'
+import { Route as ApiPublicHooksTickMarketingRouteImport } from './routes/api/public/hooks/tick-marketing'
 import { Route as ApiPublicHooksTickCadenceRouteImport } from './routes/api/public/hooks/tick-cadence'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
 
@@ -45,9 +52,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedProspectingRoute =
+  AuthenticatedProspectingRouteImport.update({
+    id: '/prospecting',
+    path: '/prospecting',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedOpsRoute = AuthenticatedOpsRouteImport.update({
   id: '/ops',
   path: '/ops',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLibraryRoute = AuthenticatedLibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedEvalsRoute = AuthenticatedEvalsRouteImport.update({
@@ -66,9 +84,9 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedComposerRoute = AuthenticatedComposerRouteImport.update({
-  id: '/composer',
-  path: '/composer',
+const AuthenticatedContactsRoute = AuthenticatedContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCompaniesRoute = AuthenticatedCompaniesRouteImport.update({
@@ -81,6 +99,11 @@ const AuthenticatedCampaignsRoute = AuthenticatedCampaignsRouteImport.update({
   path: '/campaigns',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAudiencesRoute = AuthenticatedAudiencesRouteImport.update({
+  id: '/audiences',
+  path: '/audiences',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedApprovalsRoute = AuthenticatedApprovalsRouteImport.update({
   id: '/approvals',
   path: '/approvals',
@@ -91,11 +114,28 @@ const ApiPublicUnsubscribeRoute = ApiPublicUnsubscribeRouteImport.update({
   path: '/api/public/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedContactsIdRoute = AuthenticatedContactsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedContactsRoute,
+} as any)
 const AuthenticatedCompaniesIdRoute =
   AuthenticatedCompaniesIdRouteImport.update({
     id: '/$id',
     path: '/$id',
     getParentRoute: () => AuthenticatedCompaniesRoute,
+  } as any)
+const AuthenticatedCampaignsIdRoute =
+  AuthenticatedCampaignsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedCampaignsRoute,
+  } as any)
+const AuthenticatedAudiencesIdRoute =
+  AuthenticatedAudiencesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAudiencesRoute,
   } as any)
 const ApiPublicWebhooksSinguBounceRoute =
   ApiPublicWebhooksSinguBounceRouteImport.update({
@@ -129,6 +169,12 @@ const ApiPublicTrackClickRoute = ApiPublicTrackClickRouteImport.update({
   path: '/api/public/track/click',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksTickMarketingRoute =
+  ApiPublicHooksTickMarketingRouteImport.update({
+    id: '/api/public/hooks/tick-marketing',
+    path: '/api/public/hooks/tick-marketing',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksTickCadenceRoute =
   ApiPublicHooksTickCadenceRouteImport.update({
     id: '/api/public/hooks/tick-cadence',
@@ -146,17 +192,24 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/approvals': typeof AuthenticatedApprovalsRoute
-  '/campaigns': typeof AuthenticatedCampaignsRoute
+  '/audiences': typeof AuthenticatedAudiencesRouteWithChildren
+  '/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
-  '/composer': typeof AuthenticatedComposerRoute
+  '/contacts': typeof AuthenticatedContactsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
+  '/library': typeof AuthenticatedLibraryRoute
   '/ops': typeof AuthenticatedOpsRoute
+  '/prospecting': typeof AuthenticatedProspectingRoute
+  '/audiences/$id': typeof AuthenticatedAudiencesIdRoute
+  '/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
+  '/contacts/$id': typeof AuthenticatedContactsIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
@@ -168,17 +221,24 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/approvals': typeof AuthenticatedApprovalsRoute
-  '/campaigns': typeof AuthenticatedCampaignsRoute
+  '/audiences': typeof AuthenticatedAudiencesRouteWithChildren
+  '/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
-  '/composer': typeof AuthenticatedComposerRoute
+  '/contacts': typeof AuthenticatedContactsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
+  '/library': typeof AuthenticatedLibraryRoute
   '/ops': typeof AuthenticatedOpsRoute
+  '/prospecting': typeof AuthenticatedProspectingRoute
+  '/audiences/$id': typeof AuthenticatedAudiencesIdRoute
+  '/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
+  '/contacts/$id': typeof AuthenticatedContactsIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
@@ -192,17 +252,24 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/approvals': typeof AuthenticatedApprovalsRoute
-  '/_authenticated/campaigns': typeof AuthenticatedCampaignsRoute
+  '/_authenticated/audiences': typeof AuthenticatedAudiencesRouteWithChildren
+  '/_authenticated/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
   '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
-  '/_authenticated/composer': typeof AuthenticatedComposerRoute
+  '/_authenticated/contacts': typeof AuthenticatedContactsRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/_authenticated/evals': typeof AuthenticatedEvalsRoute
+  '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/ops': typeof AuthenticatedOpsRoute
+  '/_authenticated/prospecting': typeof AuthenticatedProspectingRoute
+  '/_authenticated/audiences/$id': typeof AuthenticatedAudiencesIdRoute
+  '/_authenticated/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
   '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
+  '/_authenticated/contacts/$id': typeof AuthenticatedContactsIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
@@ -216,17 +283,24 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/approvals'
+    | '/audiences'
     | '/campaigns'
     | '/companies'
-    | '/composer'
+    | '/contacts'
     | '/dashboard'
     | '/deliverability'
     | '/evals'
+    | '/library'
     | '/ops'
+    | '/prospecting'
+    | '/audiences/$id'
+    | '/campaigns/$id'
     | '/companies/$id'
+    | '/contacts/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
@@ -238,17 +312,24 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/approvals'
+    | '/audiences'
     | '/campaigns'
     | '/companies'
-    | '/composer'
+    | '/contacts'
     | '/dashboard'
     | '/deliverability'
     | '/evals'
+    | '/library'
     | '/ops'
+    | '/prospecting'
+    | '/audiences/$id'
+    | '/campaigns/$id'
     | '/companies/$id'
+    | '/contacts/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
@@ -261,17 +342,24 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/approvals'
+    | '/_authenticated/audiences'
     | '/_authenticated/campaigns'
     | '/_authenticated/companies'
-    | '/_authenticated/composer'
+    | '/_authenticated/contacts'
     | '/_authenticated/dashboard'
     | '/_authenticated/deliverability'
     | '/_authenticated/evals'
+    | '/_authenticated/library'
     | '/_authenticated/ops'
+    | '/_authenticated/prospecting'
+    | '/_authenticated/audiences/$id'
+    | '/_authenticated/campaigns/$id'
     | '/_authenticated/companies/$id'
+    | '/_authenticated/contacts/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
@@ -287,6 +375,7 @@ export interface RootRouteChildren {
   ApiPublicUnsubscribeRoute: typeof ApiPublicUnsubscribeRoute
   ApiPublicAgentToolsSendMessageRoute: typeof ApiPublicAgentToolsSendMessageRoute
   ApiPublicHooksTickCadenceRoute: typeof ApiPublicHooksTickCadenceRoute
+  ApiPublicHooksTickMarketingRoute: typeof ApiPublicHooksTickMarketingRoute
   ApiPublicTrackClickRoute: typeof ApiPublicTrackClickRoute
   ApiPublicTrackOpenDotgifRoute: typeof ApiPublicTrackOpenDotgifRoute
   ApiPublicWebhooksFatorxRoute: typeof ApiPublicWebhooksFatorxRoute
@@ -318,11 +407,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/prospecting': {
+      id: '/_authenticated/prospecting'
+      path: '/prospecting'
+      fullPath: '/prospecting'
+      preLoaderRoute: typeof AuthenticatedProspectingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/ops': {
       id: '/_authenticated/ops'
       path: '/ops'
       fullPath: '/ops'
       preLoaderRoute: typeof AuthenticatedOpsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/library': {
+      id: '/_authenticated/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof AuthenticatedLibraryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/evals': {
@@ -346,11 +449,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/composer': {
-      id: '/_authenticated/composer'
-      path: '/composer'
-      fullPath: '/composer'
-      preLoaderRoute: typeof AuthenticatedComposerRouteImport
+    '/_authenticated/contacts': {
+      id: '/_authenticated/contacts'
+      path: '/contacts'
+      fullPath: '/contacts'
+      preLoaderRoute: typeof AuthenticatedContactsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/companies': {
@@ -367,6 +470,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/audiences': {
+      id: '/_authenticated/audiences'
+      path: '/audiences'
+      fullPath: '/audiences'
+      preLoaderRoute: typeof AuthenticatedAudiencesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/approvals': {
       id: '/_authenticated/approvals'
       path: '/approvals'
@@ -381,12 +491,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/contacts/$id': {
+      id: '/_authenticated/contacts/$id'
+      path: '/$id'
+      fullPath: '/contacts/$id'
+      preLoaderRoute: typeof AuthenticatedContactsIdRouteImport
+      parentRoute: typeof AuthenticatedContactsRoute
+    }
     '/_authenticated/companies/$id': {
       id: '/_authenticated/companies/$id'
       path: '/$id'
       fullPath: '/companies/$id'
       preLoaderRoute: typeof AuthenticatedCompaniesIdRouteImport
       parentRoute: typeof AuthenticatedCompaniesRoute
+    }
+    '/_authenticated/campaigns/$id': {
+      id: '/_authenticated/campaigns/$id'
+      path: '/$id'
+      fullPath: '/campaigns/$id'
+      preLoaderRoute: typeof AuthenticatedCampaignsIdRouteImport
+      parentRoute: typeof AuthenticatedCampaignsRoute
+    }
+    '/_authenticated/audiences/$id': {
+      id: '/_authenticated/audiences/$id'
+      path: '/$id'
+      fullPath: '/audiences/$id'
+      preLoaderRoute: typeof AuthenticatedAudiencesIdRouteImport
+      parentRoute: typeof AuthenticatedAudiencesRoute
     }
     '/api/public/webhooks/singu-bounce': {
       id: '/api/public/webhooks/singu-bounce'
@@ -430,6 +561,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTrackClickRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/tick-marketing': {
+      id: '/api/public/hooks/tick-marketing'
+      path: '/api/public/hooks/tick-marketing'
+      fullPath: '/api/public/hooks/tick-marketing'
+      preLoaderRoute: typeof ApiPublicHooksTickMarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/tick-cadence': {
       id: '/api/public/hooks/tick-cadence'
       path: '/api/public/hooks/tick-cadence'
@@ -447,6 +585,34 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAudiencesRouteChildren {
+  AuthenticatedAudiencesIdRoute: typeof AuthenticatedAudiencesIdRoute
+}
+
+const AuthenticatedAudiencesRouteChildren: AuthenticatedAudiencesRouteChildren =
+  {
+    AuthenticatedAudiencesIdRoute: AuthenticatedAudiencesIdRoute,
+  }
+
+const AuthenticatedAudiencesRouteWithChildren =
+  AuthenticatedAudiencesRoute._addFileChildren(
+    AuthenticatedAudiencesRouteChildren,
+  )
+
+interface AuthenticatedCampaignsRouteChildren {
+  AuthenticatedCampaignsIdRoute: typeof AuthenticatedCampaignsIdRoute
+}
+
+const AuthenticatedCampaignsRouteChildren: AuthenticatedCampaignsRouteChildren =
+  {
+    AuthenticatedCampaignsIdRoute: AuthenticatedCampaignsIdRoute,
+  }
+
+const AuthenticatedCampaignsRouteWithChildren =
+  AuthenticatedCampaignsRoute._addFileChildren(
+    AuthenticatedCampaignsRouteChildren,
+  )
+
 interface AuthenticatedCompaniesRouteChildren {
   AuthenticatedCompaniesIdRoute: typeof AuthenticatedCompaniesIdRoute
 }
@@ -461,26 +627,45 @@ const AuthenticatedCompaniesRouteWithChildren =
     AuthenticatedCompaniesRouteChildren,
   )
 
+interface AuthenticatedContactsRouteChildren {
+  AuthenticatedContactsIdRoute: typeof AuthenticatedContactsIdRoute
+}
+
+const AuthenticatedContactsRouteChildren: AuthenticatedContactsRouteChildren = {
+  AuthenticatedContactsIdRoute: AuthenticatedContactsIdRoute,
+}
+
+const AuthenticatedContactsRouteWithChildren =
+  AuthenticatedContactsRoute._addFileChildren(
+    AuthenticatedContactsRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedApprovalsRoute: typeof AuthenticatedApprovalsRoute
-  AuthenticatedCampaignsRoute: typeof AuthenticatedCampaignsRoute
+  AuthenticatedAudiencesRoute: typeof AuthenticatedAudiencesRouteWithChildren
+  AuthenticatedCampaignsRoute: typeof AuthenticatedCampaignsRouteWithChildren
   AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
-  AuthenticatedComposerRoute: typeof AuthenticatedComposerRoute
+  AuthenticatedContactsRoute: typeof AuthenticatedContactsRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDeliverabilityRoute: typeof AuthenticatedDeliverabilityRoute
   AuthenticatedEvalsRoute: typeof AuthenticatedEvalsRoute
+  AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedOpsRoute: typeof AuthenticatedOpsRoute
+  AuthenticatedProspectingRoute: typeof AuthenticatedProspectingRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApprovalsRoute: AuthenticatedApprovalsRoute,
-  AuthenticatedCampaignsRoute: AuthenticatedCampaignsRoute,
+  AuthenticatedAudiencesRoute: AuthenticatedAudiencesRouteWithChildren,
+  AuthenticatedCampaignsRoute: AuthenticatedCampaignsRouteWithChildren,
   AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
-  AuthenticatedComposerRoute: AuthenticatedComposerRoute,
+  AuthenticatedContactsRoute: AuthenticatedContactsRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDeliverabilityRoute: AuthenticatedDeliverabilityRoute,
   AuthenticatedEvalsRoute: AuthenticatedEvalsRoute,
+  AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedOpsRoute: AuthenticatedOpsRoute,
+  AuthenticatedProspectingRoute: AuthenticatedProspectingRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -493,6 +678,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicUnsubscribeRoute: ApiPublicUnsubscribeRoute,
   ApiPublicAgentToolsSendMessageRoute: ApiPublicAgentToolsSendMessageRoute,
   ApiPublicHooksTickCadenceRoute: ApiPublicHooksTickCadenceRoute,
+  ApiPublicHooksTickMarketingRoute: ApiPublicHooksTickMarketingRoute,
   ApiPublicTrackClickRoute: ApiPublicTrackClickRoute,
   ApiPublicTrackOpenDotgifRoute: ApiPublicTrackOpenDotgifRoute,
   ApiPublicWebhooksFatorxRoute: ApiPublicWebhooksFatorxRoute,
@@ -503,13 +689,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

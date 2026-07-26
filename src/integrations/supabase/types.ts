@@ -91,6 +91,91 @@ export type Database = {
           },
         ]
       }
+      audience_members: {
+        Row: {
+          audience_id: string
+          created_at: string
+          entity_id: string
+          id: string
+          snapshot: Json
+        }
+        Insert: {
+          audience_id: string
+          created_at?: string
+          entity_id: string
+          id?: string
+          snapshot?: Json
+        }
+        Update: {
+          audience_id?: string
+          created_at?: string
+          entity_id?: string
+          id?: string
+          snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audience_members_audience_id_fkey"
+            columns: ["audience_id"]
+            isOneToOne: false
+            referencedRelation: "audiences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audience_members_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity_map"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audience_members_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "v_contact_profiles"
+            referencedColumns: ["entity_id"]
+          },
+        ]
+      }
+      audiences: {
+        Row: {
+          archived: boolean
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          last_refreshed_at: string | null
+          member_count: number
+          name: string
+          rules: Json
+          updated_at: string
+        }
+        Insert: {
+          archived?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          last_refreshed_at?: string | null
+          member_count?: number
+          name: string
+          rules?: Json
+          updated_at?: string
+        }
+        Update: {
+          archived?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          last_refreshed_at?: string | null
+          member_count?: number
+          name?: string
+          rules?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cadence_rules: {
         Row: {
           created_at: string
@@ -126,6 +211,93 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      campaign_sends: {
+        Row: {
+          attempts: number
+          campaign_id: string
+          created_at: string
+          entity_id: string
+          id: string
+          last_error: string | null
+          locked_until: string | null
+          max_attempts: number
+          next_run_at: string
+          sent_at: string | null
+          state: string
+          touchpoint_id: string | null
+          updated_at: string
+          variant_id: string | null
+        }
+        Insert: {
+          attempts?: number
+          campaign_id: string
+          created_at?: string
+          entity_id: string
+          id?: string
+          last_error?: string | null
+          locked_until?: string | null
+          max_attempts?: number
+          next_run_at?: string
+          sent_at?: string | null
+          state?: string
+          touchpoint_id?: string | null
+          updated_at?: string
+          variant_id?: string | null
+        }
+        Update: {
+          attempts?: number
+          campaign_id?: string
+          created_at?: string
+          entity_id?: string
+          id?: string
+          last_error?: string | null
+          locked_until?: string | null
+          max_attempts?: number
+          next_run_at?: string
+          sent_at?: string | null
+          state?: string
+          touchpoint_id?: string | null
+          updated_at?: string
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_sends_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_sends_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity_map"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_sends_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "v_contact_profiles"
+            referencedColumns: ["entity_id"]
+          },
+          {
+            foreignKeyName: "campaign_sends_touchpoint_id_fkey"
+            columns: ["touchpoint_id"]
+            isOneToOne: false
+            referencedRelation: "contact_touchpoints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_sends_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_variants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       campaign_target_events: {
         Row: {
@@ -230,6 +402,60 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: false
             referencedRelation: "entity_map"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_targets_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "v_contact_profiles"
+            referencedColumns: ["entity_id"]
+          },
+        ]
+      }
+      campaign_variants: {
+        Row: {
+          body: string
+          campaign_id: string
+          created_at: string
+          id: string
+          label: string
+          media_url: string | null
+          rcs_payload: Json | null
+          split_percent: number
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          campaign_id: string
+          created_at?: string
+          id?: string
+          label?: string
+          media_url?: string | null
+          rcs_payload?: Json | null
+          split_percent?: number
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          label?: string
+          media_url?: string | null
+          rcs_payload?: Json | null
+          split_percent?: number
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_variants_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_campaigns"
             referencedColumns: ["id"]
           },
         ]
@@ -362,6 +588,13 @@ export type Database = {
             referencedRelation: "entity_map"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "consent_ledger_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "v_contact_profiles"
+            referencedColumns: ["entity_id"]
+          },
         ]
       }
       contact_touchpoints: {
@@ -440,6 +673,13 @@ export type Database = {
             referencedRelation: "entity_map"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "contact_touchpoints_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "v_contact_profiles"
+            referencedColumns: ["entity_id"]
+          },
         ]
       }
       email_deliverability_events: {
@@ -480,6 +720,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "entity_map"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_deliverability_events_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "v_contact_profiles"
+            referencedColumns: ["entity_id"]
           },
           {
             foreignKeyName: "email_deliverability_events_touchpoint_id_fkey"
@@ -525,6 +772,74 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      marketing_campaigns: {
+        Row: {
+          audience_id: string | null
+          channel: Database["public"]["Enums"]["sm_channel"]
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          daily_cap: number
+          id: string
+          metadata: Json
+          name: string
+          objective: string
+          requires_human_approval: boolean
+          scheduled_at: string | null
+          send_window_end: string | null
+          send_window_start: string | null
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          audience_id?: string | null
+          channel: Database["public"]["Enums"]["sm_channel"]
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          daily_cap?: number
+          id?: string
+          metadata?: Json
+          name: string
+          objective?: string
+          requires_human_approval?: boolean
+          scheduled_at?: string | null
+          send_window_end?: string | null
+          send_window_start?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          audience_id?: string | null
+          channel?: Database["public"]["Enums"]["sm_channel"]
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          daily_cap?: number
+          id?: string
+          metadata?: Json
+          name?: string
+          objective?: string
+          requires_human_approval?: boolean
+          scheduled_at?: string | null
+          send_window_end?: string | null
+          send_window_start?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_campaigns_audience_id_fkey"
+            columns: ["audience_id"]
+            isOneToOne: false
+            referencedRelation: "audiences"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       message_templates: {
         Row: {
@@ -687,6 +1002,57 @@ export type Database = {
       }
     }
     Views: {
+      v_contact_profiles: {
+        Row: {
+          audience_count: number | null
+          consent_by_channel: Json | null
+          created_at: string | null
+          display_name: string | null
+          entity_id: string | null
+          fatorx_thread_id: string | null
+          inbound_count: number | null
+          kind: string | null
+          last_touch_at: string | null
+          lux_id: string | null
+          metadata: Json | null
+          signal_score: number | null
+          singu_id: string | null
+          touchpoint_count: number | null
+        }
+        Insert: {
+          audience_count?: never
+          consent_by_channel?: never
+          created_at?: string | null
+          display_name?: string | null
+          entity_id?: string | null
+          fatorx_thread_id?: string | null
+          inbound_count?: never
+          kind?: string | null
+          last_touch_at?: never
+          lux_id?: string | null
+          metadata?: Json | null
+          signal_score?: never
+          singu_id?: string | null
+          touchpoint_count?: never
+        }
+        Update: {
+          audience_count?: never
+          consent_by_channel?: never
+          created_at?: string | null
+          display_name?: string | null
+          entity_id?: string | null
+          fatorx_thread_id?: string | null
+          inbound_count?: never
+          kind?: string | null
+          last_touch_at?: never
+          lux_id?: string | null
+          metadata?: Json | null
+          signal_score?: never
+          singu_id?: string | null
+          touchpoint_count?: never
+        }
+        Relationships: []
+      }
       v_pipeline_health: {
         Row: {
           completed: number | null

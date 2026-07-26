@@ -1,0 +1,349 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import {
+  getMarketingCampaign,
+  launchMarketingCampaign,
+  saveMarketingCampaign,
+  setCampaignStatus,
+} from "@/lib/marketing.functions";
+import { listAudiences } from "@/lib/audiences.functions";
+import { CHANNELS } from "@/lib/audience-rules";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+export const Route = createFileRoute("/_authenticated/campaigns/$id")({
+  head: () => ({
+    meta: [
+      { title: "Editar campanha · Sales Machine" },
+      {
+        name: "description",
+        content: "Defina audiência, canal, variantes A/B e lance a campanha de marketing.",
+      },
+    ],
+  }),
+  component: CampaignDetailPage,
+});
+
+const OBJECTIVES = ["awareness", "engagement", "conversion", "reactivation", "announcement"] as const;
+
+interface VariantDraft {
+  label: string;
+  subject?: string;
+  body: string;
+  split_percent: number;
+}
+
+function CampaignDetailPage() {
+  const { id } = Route.useParams();
+  const queryClient = useQueryClient();
+  const fetchCampaign = useServerFn(getMarketingCampaign);
+  const fetchAudiences = useServerFn(listAudiences);
+  const save = useServerFn(saveMarketingCampaign);
+  const launch = useServerFn(launchMarketingCampaign);
+  const changeStatus = useServerFn(setCampaignStatus);
+
+  const [name, setName] = useState("");
+  const [objective, setObjective] = useState<(typeof OBJECTIVES)[number]>("engagement");
+  const [channel, setChannel] = useState<string>("email");
+  const [audienceId, setAudienceId] = useState<string>("");
+  const [dailyCap, setDailyCap] = useState(500);
+  const [requiresApproval, setRequiresApproval] = useState(false);
+  const [variants, setVariants] = useState<VariantDraft[]>([
+    { label: "A", body: "", split_percent: 100 },
+  ]);
+
+  const campaign = useQuery({
+    queryKey: ["mkt", "campaign", id],
+    queryFn: () => fetchCampaign({ data: { id } }),
+  });
+  const audiences = useQuery({ queryKey: ["mkt", "audiences"], queryFn: () => fetchAudiences() });
+
+  useEffect(() => {
+    const c = campaign.data?.campaign;
+    if (!c) return;
+    setName(c.name);
+    setObjective(c.objective as (typeof OBJECTIVES)[number]);
+    setChannel(c.channel);
+    setAudienceId(c.audience_id ?? "");
+    setDailyCap(c.daily_cap ?? 500);
+    setRequiresApproval(!!c.requires_human_approval);
+    const v = campaign.data?.variants ?? [];
+    if (v.length > 0) {
+      setVariants(
+        v.map((x) => ({
+          label: x.label,
+          subject: x.subject ?? undefined,
+          body: x.body,
+          split_percent: x.split_percent,
+        })),
+      );
+    }
+  }, [campaign.data]);
+
+  const saveMutation = useMutation({
+    mutationFn: () =>
+      save({
+        data: {
+          id,
+          name: name.trim(),
+          objective,
+          channel: channel as never,
+          audience_id: audienceId || undefined,
+          daily_cap: dailyCap,
+          requires_human_approval: requiresApproval,
+          variants,
+        },
+      }),
+    onSuccess: () => {
+      toast.success("Campanha salva");
+      queryClient.invalidateQueries({ queryKey: ["mkt", "campaign", id] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const launchMutation = useMutation({
+    mutationFn: () => launch({ data: { id } }),
+    onSuccess: (res) => {
+      toast.success(`${res.queued} envios materializados`);
+      queryClient.invalidateQueries({ queryKey: ["mkt", "campaign", id] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: (status: string) => changeStatus({ data: { id, status: status as never } }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["mkt", "campaign", id] }),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const totalSplit = variants.reduce((a, v) => a + v.split_percent, 0);
+  const status = campaign.data?.campaign.status ?? "draft";
+
+  const updateVariant = (idx: number, patch: Partial<VariantDraft>) =>
+    setVariants((prev) => prev.map((v, i) => (i === idx ? { ...v, ...patch } : v)));
+
+  if (campaign.isLoading) return <p className="text-sm text-muted-foreground">Carregando…</p>;
+  if (campaign.error)
+    return <p className="text-sm text-destructive">{(campaign.error as Error).message}</p>;
+
+  return (
+    <div className="mx-auto max-w-5xl space-y-6">
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <Link to="/campaigns" className="text-xs text-muted-foreground hover:underline">
+            ← Campanhas
+          </Link>
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{name || "Campanha"}</h1>
+          <Badge variant="secondary" className="mt-1">{status}</Badge>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
+            Salvar
+          </Button>
+          {status === "running" ? (
+            <Button variant="outline" onClick={() => statusMutation.mutate("paused")}>
+              Pausar
+            </Button>
+          ) : null}
+          <Button
+            onClick={() => launchMutation.mutate()}
+            disabled={launchMutation.isPending || !audienceId}
+          >
+            {launchMutation.isPending ? "Lançando…" : "Lançar campanha"}
+          </Button>
+        </div>
+      </header>
+
+      <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Configuração</CardTitle>
+              <CardDescription>Audiência, canal e ritmo de disparo.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="c-name">Nome</Label>
+                <Input id="c-name" value={name} onChange={(e) => setName(e.target.value)} />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Audiência</Label>
+                <Select value={audienceId} onValueChange={setAudienceId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione uma audiência" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(audiences.data ?? []).map((a) => (
+                      <SelectItem key={a.id} value={a.id}>
+                        {a.name} ({a.member_count})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Canal</Label>
+                <Select value={channel} onValueChange={setChannel}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CHANNELS.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Objetivo</Label>
+                <Select
+                  value={objective}
+                  onValueChange={(v) => setObjective(v as (typeof OBJECTIVES)[number])}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {OBJECTIVES.map((o) => (
+                      <SelectItem key={o} value={o}>
+                        {o}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="cap">Limite diário de envios</Label>
+                <Input
+                  id="cap"
+                  type="number"
+                  min={1}
+                  value={dailyCap}
+                  onChange={(e) => setDailyCap(Number(e.target.value) || 1)}
+                />
+              </div>
+
+              <label className="flex items-center gap-2 text-sm md:col-span-2">
+                <input
+                  type="checkbox"
+                  checked={requiresApproval}
+                  onChange={(e) => setRequiresApproval(e.target.checked)}
+                  className="size-4 accent-primary"
+                />
+                Exigir aprovação humana antes de cada envio
+              </label>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex-row items-center justify-between space-y-0">
+              <div>
+                <CardTitle className="text-base">Variantes</CardTitle>
+                <CardDescription>
+                  Distribuição atual: {totalSplit}%{totalSplit !== 100 ? " (deve somar 100%)" : ""}
+                </CardDescription>
+              </div>
+              {variants.length < 4 ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    setVariants((p) => [
+                      ...p,
+                      { label: String.fromCharCode(65 + p.length), body: "", split_percent: 0 },
+                    ])
+                  }
+                >
+                  Adicionar
+                </Button>
+              ) : null}
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {variants.map((v, i) => (
+                <div key={i} className="space-y-2 rounded-md border border-border p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <Badge>{v.label}</Badge>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        min={0}
+                        max={100}
+                        value={v.split_percent}
+                        onChange={(e) =>
+                          updateVariant(i, { split_percent: Number(e.target.value) || 0 })
+                        }
+                        className="w-20"
+                      />
+                      <span className="text-xs text-muted-foreground">%</span>
+                      {variants.length > 1 ? (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setVariants((p) => p.filter((_, x) => x !== i))}
+                        >
+                          Remover
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+                  {channel === "email" ? (
+                    <Input
+                      placeholder="Assunto"
+                      value={v.subject ?? ""}
+                      onChange={(e) => updateVariant(i, { subject: e.target.value })}
+                    />
+                  ) : null}
+                  <Textarea
+                    rows={4}
+                    placeholder="Corpo da mensagem. Use {{nome}} para personalizar."
+                    value={v.body}
+                    onChange={(e) => updateVariant(i, { body: e.target.value })}
+                  />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="h-fit lg:sticky lg:top-6">
+          <CardHeader>
+            <CardTitle className="text-base">Desempenho</CardTitle>
+            <CardDescription>Envios materializados desta campanha.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <p className="text-3xl font-bold tabular-nums">{campaign.data?.stats.total ?? 0}</p>
+            <p className="text-xs text-muted-foreground">envios no total</p>
+            <ul className="space-y-1 border-t border-border pt-3">
+              {Object.entries(campaign.data?.stats.by_state ?? {}).map(([state, count]) => (
+                <li key={state} className="flex items-center justify-between">
+                  <span className="capitalize text-muted-foreground">{state}</span>
+                  <span className="tabular-nums">{count}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
