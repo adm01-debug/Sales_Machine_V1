@@ -848,6 +848,272 @@ export type Database = {
         }
         Relationships: []
       }
+      journey_edges: {
+        Row: {
+          branch: string
+          created_at: string
+          from_node_id: string
+          id: string
+          journey_id: string
+          ordinal: number
+          to_node_id: string
+        }
+        Insert: {
+          branch?: string
+          created_at?: string
+          from_node_id: string
+          id?: string
+          journey_id: string
+          ordinal?: number
+          to_node_id: string
+        }
+        Update: {
+          branch?: string
+          created_at?: string
+          from_node_id?: string
+          id?: string
+          journey_id?: string
+          ordinal?: number
+          to_node_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journey_edges_from_node_id_fkey"
+            columns: ["from_node_id"]
+            isOneToOne: false
+            referencedRelation: "journey_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journey_edges_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "journeys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journey_edges_to_node_id_fkey"
+            columns: ["to_node_id"]
+            isOneToOne: false
+            referencedRelation: "journey_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journey_enrollment_events: {
+        Row: {
+          action: string
+          created_at: string
+          detail: Json
+          enrollment_id: string
+          id: string
+          node_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          detail?: Json
+          enrollment_id: string
+          id?: string
+          node_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          detail?: Json
+          enrollment_id?: string
+          id?: string
+          node_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journey_enrollment_events_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "journey_enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journey_enrollment_events_node_id_fkey"
+            columns: ["node_id"]
+            isOneToOne: false
+            referencedRelation: "journey_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journey_enrollments: {
+        Row: {
+          attempts: number
+          context: Json
+          created_at: string
+          current_node_id: string | null
+          entered_at: string
+          entity_id: string
+          finished_at: string | null
+          id: string
+          journey_id: string
+          last_error: string | null
+          locked_until: string | null
+          next_run_at: string
+          state: Database["public"]["Enums"]["sm_enrollment_state"]
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          context?: Json
+          created_at?: string
+          current_node_id?: string | null
+          entered_at?: string
+          entity_id: string
+          finished_at?: string | null
+          id?: string
+          journey_id: string
+          last_error?: string | null
+          locked_until?: string | null
+          next_run_at?: string
+          state?: Database["public"]["Enums"]["sm_enrollment_state"]
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          context?: Json
+          created_at?: string
+          current_node_id?: string | null
+          entered_at?: string
+          entity_id?: string
+          finished_at?: string | null
+          id?: string
+          journey_id?: string
+          last_error?: string | null
+          locked_until?: string | null
+          next_run_at?: string
+          state?: Database["public"]["Enums"]["sm_enrollment_state"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journey_enrollments_current_node_id_fkey"
+            columns: ["current_node_id"]
+            isOneToOne: false
+            referencedRelation: "journey_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journey_enrollments_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity_map"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journey_enrollments_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "v_contact_profiles"
+            referencedColumns: ["entity_id"]
+          },
+          {
+            foreignKeyName: "journey_enrollments_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "journeys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journey_nodes: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          journey_id: string
+          kind: Database["public"]["Enums"]["sm_journey_node_kind"]
+          label: string
+          position_x: number
+          position_y: number
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          journey_id: string
+          kind: Database["public"]["Enums"]["sm_journey_node_kind"]
+          label?: string
+          position_x?: number
+          position_y?: number
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          journey_id?: string
+          kind?: Database["public"]["Enums"]["sm_journey_node_kind"]
+          label?: string
+          position_x?: number
+          position_y?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journey_nodes_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "journeys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journeys: {
+        Row: {
+          allow_reentry: boolean
+          created_at: string
+          created_by: string | null
+          description: string | null
+          entry_daily_cap: number
+          id: string
+          metadata: Json
+          name: string
+          requires_human_approval: boolean
+          send_window_end: number
+          send_window_start: number
+          status: Database["public"]["Enums"]["sm_journey_status"]
+          updated_at: string
+        }
+        Insert: {
+          allow_reentry?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          entry_daily_cap?: number
+          id?: string
+          metadata?: Json
+          name: string
+          requires_human_approval?: boolean
+          send_window_end?: number
+          send_window_start?: number
+          status?: Database["public"]["Enums"]["sm_journey_status"]
+          updated_at?: string
+        }
+        Update: {
+          allow_reentry?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          entry_daily_cap?: number
+          id?: string
+          metadata?: Json
+          name?: string
+          requires_human_approval?: boolean
+          send_window_end?: number
+          send_window_start?: number
+          status?: Database["public"]["Enums"]["sm_journey_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       marketing_campaigns: {
         Row: {
           audience_id: string | null
@@ -1228,12 +1494,28 @@ export type Database = {
         | "rcs"
         | "mms"
       sm_direction: "outbound" | "inbound"
+      sm_enrollment_state:
+        | "active"
+        | "waiting"
+        | "completed"
+        | "exited"
+        | "goal_reached"
+        | "failed"
       sm_event_status:
         | "received"
         | "processing"
         | "processed"
         | "error"
         | "ignored"
+      sm_journey_node_kind:
+        | "trigger"
+        | "send"
+        | "wait"
+        | "condition"
+        | "split"
+        | "goal"
+        | "exit"
+      sm_journey_status: "draft" | "active" | "paused" | "archived"
       sm_source: "lux" | "singu" | "fatorx" | "manual" | "fuxico"
       sm_target_state:
         | "queued"
@@ -1395,6 +1677,14 @@ export const Constants = {
         "mms",
       ],
       sm_direction: ["outbound", "inbound"],
+      sm_enrollment_state: [
+        "active",
+        "waiting",
+        "completed",
+        "exited",
+        "goal_reached",
+        "failed",
+      ],
       sm_event_status: [
         "received",
         "processing",
@@ -1402,6 +1692,16 @@ export const Constants = {
         "error",
         "ignored",
       ],
+      sm_journey_node_kind: [
+        "trigger",
+        "send",
+        "wait",
+        "condition",
+        "split",
+        "goal",
+        "exit",
+      ],
+      sm_journey_status: ["draft", "active", "paused", "archived"],
       sm_source: ["lux", "singu", "fatorx", "manual", "fuxico"],
       sm_target_state: [
         "queued",
