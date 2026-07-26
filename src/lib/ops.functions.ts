@@ -105,9 +105,6 @@ export const getComplianceStats = createServerFn({ method: "GET" })
     };
   });
 
-/** Limite defensivo: reprocessa em lotes, nunca a fila inteira de uma vez. */
-export const DEAD_LETTER_REQUEUE_LIMIT = 100;
-
 /**
  * Recoloca alvos em `dead_letter` de volta na fila.
  *
@@ -118,28 +115,6 @@ export const DEAD_LETTER_REQUEUE_LIMIT = 100;
 export const requeueDeadLetterTargets = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: candidates, error: readErr } = await context.supabase
-      .from("campaign_targets")
-      .select("id")
-      .eq("state", "dead_letter")
-      .order("last_transition_at", { ascending: true })
-      .limit(DEAD_LETTER_REQUEUE_LIMIT);
-    if (readErr) throw new Error(readErr.message);
-
-    const ids = (candidates ?? []).map((r) => r.id);
-    if (ids.length === 0) return { requeued: 0 };
-
-    const { error: updErr } = await context.supabase
-      .from("campaign_targets")
-      .update({
-        state: "queued",
-        attempts: 0,
-        locked_until: null,
-        last_error: null,
-        next_run_at: new Date().toISOString(),
-      })
-      .in("id", ids);
-    if (updErr) throw new Error(updErr.message);
-
-    return { requeued: ids.length };
+    const { requeueDeadLetter } = await import("./ops-recovery.server");
+    return requeueDeadLetter(context.supabase);
   });
