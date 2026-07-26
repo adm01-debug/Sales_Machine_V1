@@ -1,0 +1,146 @@
+/**
+ * Regras de alerta operacional — lógica pura para ser testável sem banco.
+ * Cada regra responde a uma pergunta que o operador faria de manhã:
+ * "o pipeline travou?", "estou queimando reputação?", "as métricas são confiáveis?".
+ */
+
+export type AlertLevel = "critical" | "warning";
+
+export interface OpsAlert {
+  id: string;
+  level: AlertLevel;
+  title: string;
+  detail: string;
+}
+
+export interface OpsHealthInput {
+  dead_letter: number;
+  queued: number;
+  running: number;
+  sent_24h: number;
+  replies_24h: number;
+  opt_outs_7d: number;
+}
+
+export interface OpsDeliverabilityInput {
+  opened: number;
+  clicked: number;
+  hard_bounce: number;
+  complaint: number;
+}
+
+export interface OpsTrackingInput {
+  sends: number;
+  coverageRate: number;
+  collisions: number;
+  redeliveries: number;
+}
+
+/** Cobertura mínima de rastreio aceitável antes de desconfiar das métricas. */
+export const TRACKING_COVERAGE_FLOOR = 90;
+/** Amostra mínima para que uma taxa percentual signifique alguma coisa. */
+const MIN_SAMPLE = 20;
+
+const pct = (part: number, total: number) => (total > 0 ? (part / total) * 100 : 0);
+const fmt = (n: number) => `${Math.round(n * 10) / 10}%`;
+
+export function buildOpsAlerts(input: {
+  health?: OpsHealthInput | null;
+  deliverability?: OpsDeliverabilityInput | null;
+  tracking?: OpsTrackingInput | null;
+}): OpsAlert[] {
+  const alerts: OpsAlert[] = [];
+  const { health, deliverability: d, tracking: t } = input;
+
+  if (health) {
+    if (health.dead_letter > 0) {
+      alerts.push({
+        id: "dead_letter",
+        level: "critical",
+        title: `${health.dead_letter} alvo(s) em dead-letter`,
+        detail: "Falharam todas as tentativas. Revise o erro e reprocese ou encerre manualmente.",
+      });
+    }
+    if (health.queued > 0 && health.running === 0 && health.sent_24h === 0) {
+      alerts.push({
+        id: "pipeline_stalled",
+        level: "critical",
+        title: "Pipeline parado com fila pendente",
+        detail: `${health.queued} alvo(s) na fila e nenhum envio nas últimas 24h — verifique o agendamento do tick.`,
+      });
+    }
+    if (health.sent_24h >= MIN_SAMPLE && health.replies_24h === 0) {
+      alerts.push({
+        id: "no_replies",
+        level: "warning",
+        title: "Nenhuma resposta nas últimas 24h",
+        detail: `${health.sent_24h} mensagens enviadas sem retorno. Reveja copy, segmentação e horários.`,
+      });
+    }
+    if (health.sent_24h >= MIN_SAMPLE) {
+      const optOutRate = pct(health.opt_outs_7d, health.sent_24h);
+      if (optOutRate > 5) {
+        alerts.push({
+          id: "opt_out_rate",
+          level: "warning",
+          title: `Taxa de opt-out elevada (${fmt(optOutRate)})`,
+          detail: "Acima de 5% costuma indicar audiência mal segmentada ou abordagem invasiva.",
+        });
+      }
+    }
+  }
+
+  if (d) {
+    const emailEvents = d.opened + d.clicked + d.hard_bounce + d.complaint;
+    if (emailEvents >= MIN_SAMPLE) {
+      const bounceRate = pct(d.hard_bounce, emailEvents);
+      if (bounceRate > 5) {
+        alerts.push({
+          id: "bounce_rate",
+          level: "critical",
+          title: `Hard bounce em ${fmt(bounceRate)}`,
+          detail: "Acima de 5% ameaça a reputação do domínio. Higienize a lista antes de novos envios.",
+        });
+      }
+      const complaintRate = pct(d.complaint, emailEvents);
+      if (complaintRate > 0.3) {
+        alerts.push({
+          id: "complaint_rate",
+          level: "critical",
+          title: `Reclamações de spam em ${fmt(complaintRate)}`,
+          detail: "O limite tolerado pelos provedores é 0,3%. Pause a campanha e revise o consentimento.",
+        });
+      }
+    }
+  }
+
+  if (t && t.sends > 0) {
+    if (t.coverageRate < TRACKING_COVERAGE_FLOOR) {
+      alerts.push({
+        id: "tracking_coverage",
+        level: "warning",
+        title: `Cobertura de rastreio em ${fmt(t.coverageRate)}`,
+        detail: `Abaixo de ${TRACKING_COVERAGE_FLOOR}%: aberturas e cliques estão subestimados. Veja a auditoria em Entregabilidade.`,
+      });
+    }
+    if (t.collisions > 0) {
+      alerts.push({
+        id: "tracking_collisions",
+        level: "critical",
+        title: `${t.collisions} código(s) de rastreio duplicado(s)`,
+        detail: "Eventos podem estar sendo atribuídos ao contato errado.",
+      });
+    }
+    if (t.redeliveries > 0) {
+      alerts.push({
+        id: "tracking_redeliveries",
+        level: "warning",
+        title: `${t.redeliveries} evento(s) possivelmente contados em dobro`,
+        detail: "Reentregas do webhook inflam aberturas e cliques.",
+      });
+    }
+  }
+
+  const order: Record<AlertLevel, number> = { critical: 0, warning: 1 };
+  return alerts.sort((a, b) => order[a.level] - order[b.level]);
+}
