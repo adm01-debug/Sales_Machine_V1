@@ -9,6 +9,7 @@ import {
   getFuxicoStatus,
   getFuxicoConfig,
   testFuxicoConnection,
+  runFuxicoEmailTest,
 } from "@/lib/deliverability.functions";
 
 export const Route = createFileRoute("/_authenticated/deliverability")({
@@ -75,6 +76,7 @@ function Page() {
 
       <FuxicoSection data={fuxico.data} loading={fuxico.isPending} />
       <FuxicoConfigSection />
+      <FuxicoE2ESection />
     </div>
   );
 }
@@ -172,6 +174,119 @@ function FuxicoConfigSection() {
           Os valores são gravados como segredos do backend (nunca ficam no código nem aparecem nesta
           tela). Peça no chat para cadastrar os segredos pendentes e um formulário seguro será aberto.
         </p>
+      ) : null}
+    </section>
+  );
+}
+
+function Check({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <div className="rounded-lg border bg-card p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className={ok ? "text-sm font-semibold text-primary" : "text-sm font-semibold text-destructive"}>
+        {ok ? "OK" : "NÃO"}
+      </p>
+    </div>
+  );
+}
+
+function FuxicoE2ESection() {
+  const [email, setEmail] = useState("");
+  const [contactId, setContactId] = useState("");
+  const [send, setSend] = useState(false);
+  const runFn = useServerFn(runFuxicoEmailTest);
+  const run = useMutation({
+    mutationFn: () => runFn({ data: { email: email.trim(), contactId: contactId.trim(), send } }),
+  });
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold text-foreground">Teste ponta a ponta do rastreio</h2>
+      <p className="text-sm text-muted-foreground">
+        Gera um e-mail de exemplo com dois links pelo mesmo pipeline dos disparos reais e mostra se
+        pixel, links e trackingId foram aplicados. Marque &quot;disparar de verdade&quot; e informe o ID do
+        contato para enviar via SINGU.
+      </p>
+
+      <form
+        className="space-y-3"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (email.trim()) run.mutate();
+        }}
+      >
+        <div className="grid gap-2 md:grid-cols-2">
+          <Input
+            type="email"
+            placeholder="destinatario@empresa.com.br"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            placeholder="ID do contato (opcional, para envio real)"
+            value={contactId}
+            onChange={(e) => setContactId(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <input type="checkbox" checked={send} onChange={(e) => setSend(e.target.checked)} />
+            Disparar de verdade via SINGU
+          </label>
+          <Button type="submit" disabled={run.isPending || !email.trim()}>
+            {run.isPending ? "Executando..." : "Executar teste"}
+          </Button>
+        </div>
+      </form>
+
+      {run.error ? (
+        <p className="text-sm text-destructive">{(run.error as Error).message}</p>
+      ) : null}
+
+      {run.data ? (
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+            <Check ok={!!run.data.trackingId} label="Tracking ID" />
+            <Check ok={run.data.pixelInjected} label="Pixel de abertura" />
+            <Check
+              ok={run.data.linksRewritten === run.data.linksTotal && run.data.linksTotal > 0}
+              label={`Links reescritos (${run.data.linksRewritten}/${run.data.linksTotal})`}
+            />
+          </div>
+
+          {run.data.trackingId ? (
+            <div className="rounded-lg border bg-card p-3">
+              <p className="text-xs text-muted-foreground">Tracking ID</p>
+              <pre className="mt-1 break-all text-xs text-foreground">{run.data.trackingId}</pre>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              FUXICO indisponível ou não configurado — o envio seguiria com o pixel interno (degradação
+              segura, sem bloquear o disparo).
+            </p>
+          )}
+
+          {run.data.sent ? (
+            <p className={run.data.sent.ok ? "text-sm text-primary" : "text-sm text-destructive"}>
+              {run.data.sent.ok ? "✅ " : "⚠️ "}
+              {run.data.sent.message}
+            </p>
+          ) : null}
+
+          <details className="rounded-lg border bg-card p-3">
+            <summary className="cursor-pointer text-sm font-medium text-foreground">
+              Ver HTML gerado
+            </summary>
+            <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap break-all rounded bg-muted p-2 text-xs text-muted-foreground">
+              {run.data.bodyPreview}
+            </pre>
+          </details>
+
+          <p className="text-xs text-muted-foreground">
+            Depois de abrir o e-mail ou clicar nos links, os eventos aparecem nos contadores acima e na
+            linha do tempo do contato.
+          </p>
+        </div>
       ) : null}
     </section>
   );
