@@ -199,6 +199,151 @@ function FuxicoE2ESection() {
 }
 
 function FuxicoWebhookTestSection() {
+  return <FuxicoWebhookTestSectionInner />;
+}
+
+const PERIODS = [7, 30, 90] as const;
+
+function CampaignReportSection() {
+  const [days, setDays] = useState<number>(30);
+  const reportFn = useServerFn(getCampaignDeliverabilityReport);
+  const report = useQuery({
+    queryKey: ["fuxico-campaign-report", days],
+    queryFn: () => reportFn({ data: { days } }),
+  });
+
+  const exportCsv = () => {
+    const rows = report.data?.rows ?? [];
+    const header = [
+      "campanha",
+      "campaign_id",
+      "envios",
+      "aberturas",
+      "cliques",
+      "bounces",
+      "reclamacoes",
+      "descadastros",
+      "taxa_abertura_%",
+      "taxa_clique_%",
+      "taxa_bounce_%",
+    ];
+    const esc = (v: string | number | null) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const csv = [
+      header.join(","),
+      ...rows.map((r) =>
+        [
+          esc(r.campaignName),
+          esc(r.campaignId),
+          r.sends,
+          r.opened,
+          r.clicked,
+          r.hardBounce,
+          r.complaint,
+          r.unsubscribe,
+          r.openRate,
+          r.clickRate,
+          r.bounceRate,
+        ].join(","),
+      ),
+    ].join("\n");
+    const url = URL.createObjectURL(new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `deliverability-campanhas-${days}d.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const rows = report.data?.rows ?? [];
+  const totals = report.data?.totals;
+
+  return (
+    <section className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold text-foreground">Relatório por campanha</h2>
+        <div className="flex items-center gap-2">
+          {PERIODS.map((p) => (
+            <Button
+              key={p}
+              type="button"
+              variant={days === p ? "default" : "outline"}
+              size="sm"
+              onClick={() => setDays(p)}
+            >
+              {p}d
+            </Button>
+          ))}
+          <Button type="button" variant="outline" size="sm" onClick={exportCsv} disabled={!rows.length}>
+            Exportar CSV
+          </Button>
+        </div>
+      </div>
+      <p className="text-sm text-muted-foreground">
+        Aberturas, cliques, bounces e reclamações recebidos do FUXICO, agregados pela campanha do
+        touchpoint de e-mail.
+      </p>
+
+      {report.isPending ? (
+        <p className="text-sm text-muted-foreground">Carregando...</p>
+      ) : report.error ? (
+        <p className="text-sm text-destructive">{(report.error as Error).message}</p>
+      ) : !rows.length ? (
+        <p className="text-sm text-muted-foreground">
+          Nenhum envio de e-mail registrado nos últimos {days} dias.
+        </p>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border bg-card">
+          <table className="w-full text-sm">
+            <thead className="border-b bg-muted/50 text-left text-xs uppercase text-muted-foreground">
+              <tr>
+                <th className="px-3 py-2">Campanha</th>
+                <th className="px-3 py-2 text-right">Envios</th>
+                <th className="px-3 py-2 text-right">Aberturas</th>
+                <th className="px-3 py-2 text-right">Cliques</th>
+                <th className="px-3 py-2 text-right">Bounces</th>
+                <th className="px-3 py-2 text-right">Reclam.</th>
+                <th className="px-3 py-2 text-right">Descad.</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.campaignId ?? "none"} className="border-b last:border-0">
+                  <td className="px-3 py-2 text-foreground">{r.campaignName}</td>
+                  <td className="px-3 py-2 text-right text-foreground">{r.sends}</td>
+                  <td className="px-3 py-2 text-right text-foreground">
+                    {r.opened} <span className="text-xs text-muted-foreground">({r.openRate}%)</span>
+                  </td>
+                  <td className="px-3 py-2 text-right text-foreground">
+                    {r.clicked} <span className="text-xs text-muted-foreground">({r.clickRate}%)</span>
+                  </td>
+                  <td className="px-3 py-2 text-right text-foreground">
+                    {r.hardBounce}{" "}
+                    <span className="text-xs text-muted-foreground">({r.bounceRate}%)</span>
+                  </td>
+                  <td className="px-3 py-2 text-right text-foreground">{r.complaint}</td>
+                  <td className="px-3 py-2 text-right text-foreground">{r.unsubscribe}</td>
+                </tr>
+              ))}
+              {totals ? (
+                <tr className="bg-muted/30 font-medium">
+                  <td className="px-3 py-2 text-foreground">Total</td>
+                  <td className="px-3 py-2 text-right text-foreground">{totals.sends}</td>
+                  <td className="px-3 py-2 text-right text-foreground">{totals.opened}</td>
+                  <td className="px-3 py-2 text-right text-foreground">{totals.clicked}</td>
+                  <td className="px-3 py-2 text-right text-foreground">{totals.hardBounce}</td>
+                  <td className="px-3 py-2 text-right text-foreground">{totals.complaint}</td>
+                  <td className="px-3 py-2 text-right text-foreground">{totals.unsubscribe}</td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function FuxicoWebhookTestSectionInner() {
   const [trackingId, setTrackingId] = useState("");
   const [email, setEmail] = useState("");
   const [event, setEvent] = useState<"email.opened" | "email.clicked">("email.opened");
