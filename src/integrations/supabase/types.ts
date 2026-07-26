@@ -858,6 +858,7 @@ export type Database = {
           media_url: string | null
           name: string
           rcs_payload: Json | null
+          subject: string | null
           updated_at: string
           variables: Json
         }
@@ -871,6 +872,7 @@ export type Database = {
           media_url?: string | null
           name: string
           rcs_payload?: Json | null
+          subject?: string | null
           updated_at?: string
           variables?: Json
         }
@@ -884,6 +886,7 @@ export type Database = {
           media_url?: string | null
           name?: string
           rcs_payload?: Json | null
+          subject?: string | null
           updated_at?: string
           variables?: Json
         }
