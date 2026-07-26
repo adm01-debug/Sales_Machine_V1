@@ -129,13 +129,14 @@ export const requeueDeadLetterTargets = createServerFn({ method: "POST" })
  */
 export const getManualInterventions = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { data, error } = await context.supabase
-      .from("campaign_target_events")
-      .select("id, target_id, from_state, to_state, reason, actor, created_at")
-      .like("actor", "operator:%")
-      .order("created_at", { ascending: false })
-      .limit(25);
-    if (error) throw new Error(error.message);
-    return data ?? [];
+  .inputValidator((input: { days?: number | null; targetId?: string | null } | undefined) => ({
+    days: input?.days ?? null,
+    targetId: input?.targetId ?? null,
+  }))
+  .handler(async ({ context, data }) => {
+    const { listManualInterventions } = await import("./ops-audit.server");
+    return listManualInterventions(context.supabase, {
+      days: data.days,
+      targetId: data.targetId,
+    });
   });
