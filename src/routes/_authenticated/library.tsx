@@ -22,6 +22,14 @@ import {
   unknownVariables,
 } from "@/lib/template-vars";
 import { MessagePreview } from "@/components/message-preview";
+import { EmailBlockEditor } from "@/components/email/EmailBlockEditor";
+import {
+  parseBlocks,
+  renderEmailHtml,
+  renderEmailText,
+  validateBlocks,
+  type EmailBlock,
+} from "@/lib/email-blocks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -93,11 +101,20 @@ function ComposerPage() {
     image_url: "",
     suggestions: [],
   });
+  const [emailBlocks, setEmailBlocks] = useState<EmailBlock[]>([]);
   const [testEntityId, setTestEntityId] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const segments = useMemo(() => analyzeSms(body), [body]);
+  const emailIssues = useMemo(
+    () => (channel === "email" && emailBlocks.length > 0 ? validateBlocks(emailBlocks) : []),
+    [channel, emailBlocks],
+  );
+  const emailHtml = useMemo(
+    () => renderEmailHtml(emailBlocks, { subject }),
+    [emailBlocks, subject],
+  );
 
   const resetForm = () => {
     setId(null);
@@ -108,6 +125,7 @@ function ComposerPage() {
     setMediaUrl(null);
     setMediaPath(null);
     setRcs({ type: "rich_card", title: "", description: "", image_url: "", suggestions: [] });
+    setEmailBlocks([]);
   };
 
   const loadTemplate = (t: (typeof templatesQ.data extends (infer U)[] | undefined ? U : never)) => {
@@ -122,20 +140,27 @@ function ComposerPage() {
     setRcs(
       p ?? { type: "rich_card", title: "", description: "", image_url: "", suggestions: [] },
     );
+    setEmailBlocks(parseBlocks((t as { email_blocks?: unknown }).email_blocks));
   };
 
   const saveMut = useMutation({
     mutationFn: async () => {
       if (!name.trim()) throw new Error("Dê um nome ao template");
-      if (!body.trim()) throw new Error("Corpo da mensagem é obrigatório");
+      const useBlocks = channel === "email" && emailBlocks.length > 0;
+      if (useBlocks) {
+        const issues = validateBlocks(emailBlocks);
+        if (issues.length > 0) throw new Error(issues[0].message);
+      }
+      const finalBody = useBlocks ? renderEmailText(emailBlocks) : body;
+      if (!finalBody.trim()) throw new Error("Corpo da mensagem é obrigatório");
       if (channel === "mms" && !mediaUrl) throw new Error("MMS requer mídia");
       if (channel === "email" && !subject.trim())
         throw new Error("Templates de e-mail exigem assunto");
-      if (body.length > CHANNEL_BODY_LIMIT[channel])
+      if (finalBody.length > CHANNEL_BODY_LIMIT[channel])
         throw new Error(
           `Limite de ${CHANNEL_BODY_LIMIT[channel]} caracteres excedido para ${channel}`,
         );
-      const unknown = unknownVariables(`${subject}\n${body}`);
+      const unknown = unknownVariables(`${subject}\n${finalBody}`);
       if (unknown.length > 0)
         throw new Error(`Variáveis desconhecidas: ${unknown.map((v) => `{{${v}}}`).join(", ")}`);
       const payload = {
@@ -143,10 +168,11 @@ function ComposerPage() {
         name,
         channel,
         subject: channel === "email" ? subject : null,
-        body,
+        body: finalBody,
         media_url: channel === "sms" ? null : mediaUrl,
         rcs_payload: channel === "rcs" ? rcs : null,
-        variables: extractTemplateVars(`${subject}\n${body}`),
+        email_blocks: useBlocks ? (emailBlocks as unknown as Record<string, unknown>[]) : null,
+        variables: extractTemplateVars(`${subject}\n${finalBody}`),
       };
       return upsert({ data: payload });
     },
