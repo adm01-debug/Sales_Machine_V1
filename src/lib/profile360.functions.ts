@@ -44,7 +44,7 @@ export const getContactProfile = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!profile) throw new Error("Contato não encontrado");
 
-    const [touchRes, consentRes, audienceRes, sendRes] = await Promise.all([
+    const [touchRes, consentRes, audienceRes, sendRes, trackRes] = await Promise.all([
       context.supabase
         .from("contact_touchpoints")
         .select("id, channel, direction, status, created_at, payload, error")
@@ -68,6 +68,13 @@ export const getContactProfile = createServerFn({ method: "POST" })
         .eq("entity_id", data.entity_id)
         .order("created_at", { ascending: false })
         .limit(20),
+      // Eventos de tracking de e-mail (FUXICO e provedores internos)
+      context.supabase
+        .from("email_deliverability_events")
+        .select("id, event_type, provider, created_at, raw")
+        .eq("entity_id", data.entity_id)
+        .order("created_at", { ascending: false })
+        .limit(25),
     ]);
 
     return {
@@ -76,5 +83,6 @@ export const getContactProfile = createServerFn({ method: "POST" })
       consent: consentRes.data ?? [],
       audiences: audienceRes.data ?? [],
       campaign_sends: sendRes.data ?? [],
+      tracking_events: trackRes.data ?? [],
     };
   });
