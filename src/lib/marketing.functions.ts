@@ -377,54 +377,13 @@ export const listAudienceSample = createServerFn({ method: "POST" })
       .select("id, display_name, metadata")
       .in("id", ids);
     if (error) throw new Error(error.message);
+    // Devolvemos apenas os valores de variáveis já resolvidos (strings serializáveis).
     return (rows ?? []).map((r) => ({
       id: r.id,
-      display_name: r.display_name,
-      metadata: (r.metadata ?? {}) as Record<string, unknown>,
+      display_name: r.display_name ?? "",
+      values: buildVarValues({
+        display_name: r.display_name,
+        metadata: r.metadata as Record<string, unknown> | null,
+      }) as Record<string, string | null>,
     }));
-  });
-
-const _legacyOverview = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const since = new Date(Date.now() - 30 * 86400_000).toISOString();
-    const [campaignsRes, sendsRes, touchRes, audiencesRes] = await Promise.all([
-      context.supabase.from("marketing_campaigns").select("id, name, status, channel, updated_at"),
-      context.supabase.from("campaign_sends").select("state, campaign_id"),
-      context.supabase
-        .from("contact_touchpoints")
-        .select("channel, direction, status, created_at")
-        .gte("created_at", since),
-      context.supabase.from("audiences").select("id, name, member_count").eq("archived", false),
-    ]);
-
-    const sendsByState: Record<string, number> = {};
-    const sendsByCampaign: Record<string, number> = {};
-    for (const s of sendsRes.data ?? []) {
-      sendsByState[s.state] = (sendsByState[s.state] ?? 0) + 1;
-      sendsByCampaign[s.campaign_id] = (sendsByCampaign[s.campaign_id] ?? 0) + 1;
-    }
-
-    const byChannel: Record<string, { sent: number; replies: number }> = {};
-    for (const t of touchRes.data ?? []) {
-      const bucket = (byChannel[t.channel] ??= { sent: 0, replies: 0 });
-      if (t.direction === "outbound" && t.status === "sent") bucket.sent += 1;
-      if (t.direction === "inbound") bucket.replies += 1;
-    }
-
-    const campaigns = (campaignsRes.data ?? []).map((c) => ({
-      ...c,
-      sends: sendsByCampaign[c.id] ?? 0,
-    }));
-
-    return {
-      campaigns: campaigns.sort((a, b) => b.sends - a.sends).slice(0, 6),
-      campaign_count: campaigns.length,
-      running: campaigns.filter((c) => c.status === "running").length,
-      sends_by_state: sendsByState,
-      by_channel: byChannel,
-      audiences: (audiencesRes.data ?? []).slice(0, 6),
-      audience_count: (audiencesRes.data ?? []).length,
-      reach: (audiencesRes.data ?? []).reduce((acc, a) => acc + (a.member_count ?? 0), 0),
-    };
   });
