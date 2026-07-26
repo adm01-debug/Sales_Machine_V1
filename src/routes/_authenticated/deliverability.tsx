@@ -11,6 +11,7 @@ import {
   testFuxicoConnection,
   runFuxicoEmailTest,
   sendTestFuxicoWebhook,
+  getCampaignDeliverabilityReport,
 } from "@/lib/deliverability.functions";
 
 export const Route = createFileRoute("/_authenticated/deliverability")({
@@ -79,6 +80,7 @@ function Page() {
       <FuxicoConfigSection />
       <FuxicoE2ESection />
       <FuxicoWebhookTestSection />
+      <CampaignReportSection />
     </div>
   );
 }
