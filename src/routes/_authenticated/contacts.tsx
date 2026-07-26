@@ -76,7 +76,9 @@ function ContactsPage() {
             </p>
           ) : (
             <ul className="divide-y divide-border">
-              {(profiles.data ?? []).map((p) => (
+              {(profiles.data ?? [])
+                .filter((p): p is typeof p & { entity_id: string } => !!p.entity_id)
+                .map((p) => (
                 <li key={p.entity_id} className="flex flex-wrap items-center justify-between gap-2 py-3">
                   <div className="min-w-0">
                     <Link
