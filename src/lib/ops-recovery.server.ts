@@ -26,6 +26,7 @@ export interface RequeueClient {
 export async function requeueDeadLetter(
   client: RequeueClient,
   limit: number = DEAD_LETTER_REQUEUE_LIMIT,
+  actor = "operator",
 ): Promise<{ requeued: number }> {
   const { data: candidates, error: readErr } = await client
     .from("campaign_targets")
@@ -50,6 +51,22 @@ export async function requeueDeadLetter(
     .eq("state", "dead_letter")
     .in("id", ids);
   if (updErr) throw new Error(updErr.message);
+
+  // Trilha de auditoria: a transição dead_letter -> queued é uma intervenção
+  // humana, então é registrada com o ator real em vez de 'system'. Falha aqui
+  // não desfaz o requeue (os alvos já voltaram à fila); apenas não silenciamos
+  // o erro no log do worker.
+  const { error: auditErr } = await client.from("campaign_target_events").insert(
+    ids.map((id: string) => ({
+      target_id: id,
+      from_state: "dead_letter",
+      to_state: "queued",
+      reason: "manual_requeue",
+      actor,
+      payload: { batch_size: ids.length },
+    })),
+  );
+  if (auditErr) console.error("[ops-recovery] falha ao registrar auditoria:", auditErr.message);
 
   return { requeued: ids.length };
 }
