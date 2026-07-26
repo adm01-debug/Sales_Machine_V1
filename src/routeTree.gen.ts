@@ -36,6 +36,7 @@ import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public
 import { Route as ApiPublicTrackOpenDotgifRouteImport } from './routes/api/public/track/open[.]gif'
 import { Route as ApiPublicTrackClickRouteImport } from './routes/api/public/track/click'
 import { Route as ApiPublicHooksTickMarketingRouteImport } from './routes/api/public/hooks/tick-marketing'
+import { Route as ApiPublicHooksTickJourneysRouteImport } from './routes/api/public/hooks/tick-journeys'
 import { Route as ApiPublicHooksTickCadenceRouteImport } from './routes/api/public/hooks/tick-cadence'
 import { Route as ApiPublicHooksBudgetReallocateRouteImport } from './routes/api/public/hooks/budget-reallocate'
 import { Route as ApiPublicHooksAlertSweepRouteImport } from './routes/api/public/hooks/alert-sweep'
@@ -183,6 +184,12 @@ const ApiPublicHooksTickMarketingRoute =
     path: '/api/public/hooks/tick-marketing',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksTickJourneysRoute =
+  ApiPublicHooksTickJourneysRouteImport.update({
+    id: '/api/public/hooks/tick-journeys',
+    path: '/api/public/hooks/tick-journeys',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksTickCadenceRoute =
   ApiPublicHooksTickCadenceRouteImport.update({
     id: '/api/public/hooks/tick-cadence',
@@ -231,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
   '/api/public/hooks/budget-reallocate': typeof ApiPublicHooksBudgetReallocateRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/hooks/tick-journeys': typeof ApiPublicHooksTickJourneysRoute
   '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
@@ -263,6 +271,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
   '/api/public/hooks/budget-reallocate': typeof ApiPublicHooksBudgetReallocateRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/hooks/tick-journeys': typeof ApiPublicHooksTickJourneysRoute
   '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
@@ -297,6 +306,7 @@ export interface FileRoutesById {
   '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
   '/api/public/hooks/budget-reallocate': typeof ApiPublicHooksBudgetReallocateRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
+  '/api/public/hooks/tick-journeys': typeof ApiPublicHooksTickJourneysRoute
   '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/alert-sweep'
     | '/api/public/hooks/budget-reallocate'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/hooks/tick-journeys'
     | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
@@ -363,6 +374,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/alert-sweep'
     | '/api/public/hooks/budget-reallocate'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/hooks/tick-journeys'
     | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
@@ -396,6 +408,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/alert-sweep'
     | '/api/public/hooks/budget-reallocate'
     | '/api/public/hooks/tick-cadence'
+    | '/api/public/hooks/tick-journeys'
     | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
@@ -415,6 +428,7 @@ export interface RootRouteChildren {
   ApiPublicHooksAlertSweepRoute: typeof ApiPublicHooksAlertSweepRoute
   ApiPublicHooksBudgetReallocateRoute: typeof ApiPublicHooksBudgetReallocateRoute
   ApiPublicHooksTickCadenceRoute: typeof ApiPublicHooksTickCadenceRoute
+  ApiPublicHooksTickJourneysRoute: typeof ApiPublicHooksTickJourneysRoute
   ApiPublicHooksTickMarketingRoute: typeof ApiPublicHooksTickMarketingRoute
   ApiPublicTrackClickRoute: typeof ApiPublicTrackClickRoute
   ApiPublicTrackOpenDotgifRoute: typeof ApiPublicTrackOpenDotgifRoute
@@ -616,6 +630,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksTickMarketingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/tick-journeys': {
+      id: '/api/public/hooks/tick-journeys'
+      path: '/api/public/hooks/tick-journeys'
+      fullPath: '/api/public/hooks/tick-journeys'
+      preLoaderRoute: typeof ApiPublicHooksTickJourneysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/tick-cadence': {
       id: '/api/public/hooks/tick-cadence'
       path: '/api/public/hooks/tick-cadence'
@@ -742,6 +763,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksAlertSweepRoute: ApiPublicHooksAlertSweepRoute,
   ApiPublicHooksBudgetReallocateRoute: ApiPublicHooksBudgetReallocateRoute,
   ApiPublicHooksTickCadenceRoute: ApiPublicHooksTickCadenceRoute,
+  ApiPublicHooksTickJourneysRoute: ApiPublicHooksTickJourneysRoute,
   ApiPublicHooksTickMarketingRoute: ApiPublicHooksTickMarketingRoute,
   ApiPublicTrackClickRoute: ApiPublicTrackClickRoute,
   ApiPublicTrackOpenDotgifRoute: ApiPublicTrackOpenDotgifRoute,
