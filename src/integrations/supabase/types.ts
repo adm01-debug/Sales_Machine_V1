@@ -1114,6 +1114,159 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_form_submissions: {
+        Row: {
+          company_name: string | null
+          confirm_expires_at: string | null
+          confirm_token_hash: string | null
+          confirmed_at: string | null
+          created_at: string
+          email: string | null
+          entity_id: string | null
+          form_id: string
+          full_name: string | null
+          id: string
+          ip_hash: string | null
+          payload: Json
+          phone: string | null
+          status: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          confirm_expires_at?: string | null
+          confirm_token_hash?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          email?: string | null
+          entity_id?: string | null
+          form_id: string
+          full_name?: string | null
+          id?: string
+          ip_hash?: string | null
+          payload?: Json
+          phone?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          confirm_expires_at?: string | null
+          confirm_token_hash?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          email?: string | null
+          entity_id?: string | null
+          form_id?: string
+          full_name?: string | null
+          id?: string
+          ip_hash?: string | null
+          payload?: Json
+          phone?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_form_submissions_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity_map"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_form_submissions_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "v_contact_profiles"
+            referencedColumns: ["entity_id"]
+          },
+          {
+            foreignKeyName: "lead_form_submissions_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "lead_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_forms: {
+        Row: {
+          channel: Database["public"]["Enums"]["sm_channel"]
+          confirm_ttl_hours: number
+          consent_text: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          double_opt_in: boolean
+          fields: Json
+          id: string
+          journey_id: string | null
+          name: string
+          slug: string
+          status: string
+          submission_count: number
+          submit_label: string
+          success_message: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          channel?: Database["public"]["Enums"]["sm_channel"]
+          confirm_ttl_hours?: number
+          consent_text?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          double_opt_in?: boolean
+          fields?: Json
+          id?: string
+          journey_id?: string | null
+          name: string
+          slug: string
+          status?: string
+          submission_count?: number
+          submit_label?: string
+          success_message?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          channel?: Database["public"]["Enums"]["sm_channel"]
+          confirm_ttl_hours?: number
+          consent_text?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          double_opt_in?: boolean
+          fields?: Json
+          id?: string
+          journey_id?: string | null
+          name?: string
+          slug?: string
+          status?: string
+          submission_count?: number
+          submit_label?: string
+          success_message?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_forms_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "journeys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marketing_campaigns: {
         Row: {
           audience_id: string | null
