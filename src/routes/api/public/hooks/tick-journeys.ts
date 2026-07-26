@@ -204,10 +204,20 @@ export const Route = createFileRoute("/api/public/hooks/tick-journeys")({
                 ? node.config.channel.trim().toLowerCase()
                 : "";
             if (channel) {
-              const { data: consent, error: consentErr } = await db.rpc("check_consent", {
-                _entity_id: enrollment.entity_id,
-                _channel: channel,
-              });
+              // Falha do RPC (erro PostgREST ou exceção de transporte) jamais
+              // pode virar envio às cegas: adia e tenta de novo em 15 min.
+              let consent: unknown = null;
+              let consentErr: { message: string } | null = null;
+              try {
+                const res = await db.rpc("check_consent", {
+                  _entity_id: enrollment.entity_id,
+                  _channel: channel,
+                });
+                consent = res.data;
+                consentErr = res.error;
+              } catch (err) {
+                consentErr = { message: err instanceof Error ? err.message : String(err) };
+              }
               if (consentErr) {
                 stats.deferred++;
                 await db
