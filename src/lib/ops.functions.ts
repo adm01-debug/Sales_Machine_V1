@@ -118,3 +118,24 @@ export const requeueDeadLetterTargets = createServerFn({ method: "POST" })
     const { requeueDeadLetter } = await import("./ops-recovery.server");
     return requeueDeadLetter(context.supabase, undefined, `operator:${context.userId}`);
   });
+
+/**
+ * Trilha de auditoria das intervenções humanas no pipeline.
+ *
+ * Filtra `campaign_target_events` pelos eventos cujo autor é `operator:<uid>`
+ * (gravados pelo reprocessamento manual de dead-letter). O índice parcial
+ * `idx_campaign_target_events_operator` cobre exatamente esse predicado, então
+ * a leitura não varre o histórico automático — que é ordens de grandeza maior.
+ */
+export const getManualInterventions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("campaign_target_events")
+      .select("id, target_id, from_state, to_state, reason, actor, created_at")
+      .like("actor", "operator:%")
+      .order("created_at", { ascending: false })
+      .limit(25);
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
