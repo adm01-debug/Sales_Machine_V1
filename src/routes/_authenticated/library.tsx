@@ -24,6 +24,7 @@ import {
 import { MessagePreview } from "@/components/message-preview";
 import { EmailBlockEditor } from "@/components/email/EmailBlockEditor";
 import { EmailPreflightPanel } from "@/components/email/EmailPreflightPanel";
+import { blockingFindings, preflightEmailContent } from "@/lib/email-preflight";
 import {
   parseBlocks,
   renderEmailHtml,
