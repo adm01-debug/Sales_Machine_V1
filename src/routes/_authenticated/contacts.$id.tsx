@@ -141,6 +141,32 @@ function ContactDetailPage() {
               )}
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Tracking de e-mail</CardTitle>
+              <CardDescription>Aberturas, cliques e bounces (FUXICO).</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {d.tracking_events.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Sem eventos de rastreio ainda.</p>
+              ) : (
+                <ul className="space-y-1 text-sm">
+                  {d.tracking_events.map((e) => (
+                    <li key={e.id} className="flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-2">
+                        <Badge variant="outline">{e.event_type}</Badge>
+                        <span className="text-xs text-muted-foreground">{e.provider}</span>
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(e.created_at).toLocaleString("pt-BR")}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

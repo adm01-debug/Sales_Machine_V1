@@ -47,3 +47,37 @@ export const checkEmailDns = createServerFn({ method: "POST" })
       },
     };
   });
+
+/**
+ * Status da integração FUXICO (tracking de e-mail) + agregados dos últimos 30 dias.
+ * Não expõe segredos: apenas se está configurado e a URL de webhook a cadastrar.
+ */
+export const getFuxicoStatus = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const configured = !!process.env.FUXICO_URL;
+    const webhookSecretSet = !!process.env.FUXICO_WEBHOOK_SECRET;
+
+    const since = new Date(Date.now() - 30 * 86400_000).toISOString();
+    const { data, error } = await context.supabase
+      .from("email_deliverability_events")
+      .select("event_type")
+      .eq("provider", "fuxico")
+      .gte("created_at", since)
+      .limit(5000);
+    if (error) {
+      return {
+        configured,
+        webhookSecretSet,
+        counts: { opened: 0, clicked: 0, hard_bounce: 0, complaint: 0, unsubscribe: 0 },
+        error: error.message,
+      };
+    }
+
+    const counts = { opened: 0, clicked: 0, hard_bounce: 0, complaint: 0, unsubscribe: 0 };
+    for (const row of data ?? []) {
+      const key = row.event_type as keyof typeof counts;
+      if (key in counts) counts[key] += 1;
+    }
+    return { configured, webhookSecretSet, counts, error: null as string | null };
+  });

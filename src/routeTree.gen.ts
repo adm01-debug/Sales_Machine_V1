@@ -31,6 +31,7 @@ import { Route as AuthenticatedAudiencesIdRouteImport } from './routes/_authenti
 import { Route as ApiPublicWebhooksSinguBounceRouteImport } from './routes/api/public/webhooks/singu-bounce'
 import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
 import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
+import { Route as ApiPublicWebhooksFuxicoRouteImport } from './routes/api/public/webhooks/fuxico'
 import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
 import { Route as ApiPublicTrackOpenDotgifRouteImport } from './routes/api/public/track/open[.]gif'
 import { Route as ApiPublicTrackClickRouteImport } from './routes/api/public/track/click'
@@ -153,6 +154,11 @@ const ApiPublicWebhooksLuxRoute = ApiPublicWebhooksLuxRouteImport.update({
   path: '/api/public/webhooks/lux',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksFuxicoRoute = ApiPublicWebhooksFuxicoRouteImport.update({
+  id: '/api/public/webhooks/fuxico',
+  path: '/api/public/webhooks/fuxico',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicWebhooksFatorxRoute = ApiPublicWebhooksFatorxRouteImport.update({
   id: '/api/public/webhooks/fatorx',
   path: '/api/public/webhooks/fatorx',
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
+  '/api/public/webhooks/fuxico': typeof ApiPublicWebhooksFuxicoRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
   '/api/public/webhooks/singu-bounce': typeof ApiPublicWebhooksSinguBounceRoute
@@ -242,6 +249,7 @@ export interface FileRoutesByTo {
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
+  '/api/public/webhooks/fuxico': typeof ApiPublicWebhooksFuxicoRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
   '/api/public/webhooks/singu-bounce': typeof ApiPublicWebhooksSinguBounceRoute
@@ -273,6 +281,7 @@ export interface FileRoutesById {
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
   '/api/public/track/open.gif': typeof ApiPublicTrackOpenDotgifRoute
   '/api/public/webhooks/fatorx': typeof ApiPublicWebhooksFatorxRoute
+  '/api/public/webhooks/fuxico': typeof ApiPublicWebhooksFuxicoRoute
   '/api/public/webhooks/lux': typeof ApiPublicWebhooksLuxRoute
   '/api/public/webhooks/singu': typeof ApiPublicWebhooksSinguRoute
   '/api/public/webhooks/singu-bounce': typeof ApiPublicWebhooksSinguBounceRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
+    | '/api/public/webhooks/fuxico'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
     | '/api/public/webhooks/singu-bounce'
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
+    | '/api/public/webhooks/fuxico'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
     | '/api/public/webhooks/singu-bounce'
@@ -363,6 +374,7 @@ export interface FileRouteTypes {
     | '/api/public/track/click'
     | '/api/public/track/open.gif'
     | '/api/public/webhooks/fatorx'
+    | '/api/public/webhooks/fuxico'
     | '/api/public/webhooks/lux'
     | '/api/public/webhooks/singu'
     | '/api/public/webhooks/singu-bounce'
@@ -379,6 +391,7 @@ export interface RootRouteChildren {
   ApiPublicTrackClickRoute: typeof ApiPublicTrackClickRoute
   ApiPublicTrackOpenDotgifRoute: typeof ApiPublicTrackOpenDotgifRoute
   ApiPublicWebhooksFatorxRoute: typeof ApiPublicWebhooksFatorxRoute
+  ApiPublicWebhooksFuxicoRoute: typeof ApiPublicWebhooksFuxicoRoute
   ApiPublicWebhooksLuxRoute: typeof ApiPublicWebhooksLuxRoute
   ApiPublicWebhooksSinguRoute: typeof ApiPublicWebhooksSinguRoute
   ApiPublicWebhooksSinguBounceRoute: typeof ApiPublicWebhooksSinguBounceRoute
@@ -540,6 +553,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksLuxRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/webhooks/fuxico': {
+      id: '/api/public/webhooks/fuxico'
+      path: '/api/public/webhooks/fuxico'
+      fullPath: '/api/public/webhooks/fuxico'
+      preLoaderRoute: typeof ApiPublicWebhooksFuxicoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/webhooks/fatorx': {
       id: '/api/public/webhooks/fatorx'
       path: '/api/public/webhooks/fatorx'
@@ -682,6 +702,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicTrackClickRoute: ApiPublicTrackClickRoute,
   ApiPublicTrackOpenDotgifRoute: ApiPublicTrackOpenDotgifRoute,
   ApiPublicWebhooksFatorxRoute: ApiPublicWebhooksFatorxRoute,
+  ApiPublicWebhooksFuxicoRoute: ApiPublicWebhooksFuxicoRoute,
   ApiPublicWebhooksLuxRoute: ApiPublicWebhooksLuxRoute,
   ApiPublicWebhooksSinguRoute: ApiPublicWebhooksSinguRoute,
   ApiPublicWebhooksSinguBounceRoute: ApiPublicWebhooksSinguBounceRoute,
@@ -689,13 +710,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -4,7 +4,7 @@
  * request time — never at module scope — so missing secrets fail loudly
  * only on the endpoints that need them.
  */
-export type ExternalSystem = "lux" | "singu" | "fatorx";
+export type ExternalSystem = "lux" | "singu" | "fatorx" | "fuxico";
 
 export function getExternalConfig(system: ExternalSystem) {
   switch (system) {
@@ -26,6 +26,12 @@ export function getExternalConfig(system: ExternalSystem) {
         serviceKey: process.env.FATORX_SERVICE_KEY ?? "",
         webhookSecret: process.env.FATORX_WEBHOOK_SECRET ?? "",
         defaultAgentId: process.env.FATORX_AGENT_ID_DEFAULT ?? "",
+      };
+    case "fuxico":
+      return {
+        baseUrl: process.env.FUXICO_URL ?? "",
+        serviceKey: process.env.FUXICO_SERVICE_KEY ?? "",
+        webhookSecret: process.env.FUXICO_WEBHOOK_SECRET ?? "",
       };
   }
 }

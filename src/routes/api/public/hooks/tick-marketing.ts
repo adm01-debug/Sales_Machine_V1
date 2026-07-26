@@ -257,10 +257,30 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
                     }
                   }
                 } else if (campaign.channel === "email") {
+                  const subject = (variant.subject ?? campaign.name).slice(0, 120);
+                  const { withFuxicoTracking } = await import("@/lib/email-tracking.server");
+                  const recipientEmail = (meta.email as string | undefined) ?? null;
+                  const tracked = await withFuxicoTracking({
+                    body: messageText,
+                    recipientEmail,
+                    subject,
+                    metadata: {
+                      marketing_campaign_id: campaign.id,
+                      entity_id: entity.id,
+                      variant: variant.label,
+                      touchpoint_id: tp?.id ?? null,
+                    },
+                  });
+                  if (tp && tracked.trackingId) {
+                    await supabaseAdmin
+                      .from("contact_touchpoints")
+                      .update({ fuxico_tracking_id: tracked.trackingId })
+                      .eq("id", tp.id);
+                  }
                   await singuClient.sendEmail({
                     contact_id: entity.singu_id,
-                    subject: (variant.subject ?? campaign.name).slice(0, 120),
-                    body: messageText,
+                    subject,
+                    body: tracked.body,
                   });
                 }
                 if (tp) {
