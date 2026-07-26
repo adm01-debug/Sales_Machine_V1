@@ -196,6 +196,17 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
       );
     }
 
+    // Pré-voo financeiro: nunca materializar envios que o guardrail vai adiar
+    // canal a canal — melhor falhar aqui, com a conta explícita na tela.
+    const { buildCampaignPreflight } = await import("./campaign-cost.server");
+    const preflight = await buildCampaignPreflight(context.supabase as never, data.id);
+    if (preflight.verdict === "blocked") {
+      throw new Error(
+        `Pré-voo de custo reprovado — ${preflight.reasons.join(" · ")} ` +
+          `(estimativa: R$ ${preflight.estimate.totalCost.toFixed(2)})`,
+      );
+    }
+
     // Distribuição determinística por índice, respeitando os percentuais.
     const weights = variants.map((v) => Math.max(v.split_percent, 0));
     const totalWeight = weights.reduce((a, b) => a + b, 0) || variants.length;
@@ -386,4 +397,13 @@ export const listAudienceSample = createServerFn({ method: "POST" })
         metadata: r.metadata as Record<string, unknown> | null,
       }) as Record<string, string | null>,
     }));
+  });
+
+/** Pré-voo de custo da campanha, cruzado com o guardrail de orçamento do canal. */
+export const getCampaignCostPreflight = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { buildCampaignPreflight } = await import("./campaign-cost.server");
+    return buildCampaignPreflight(context.supabase as never, data.id);
   });
