@@ -116,5 +116,5 @@ export const requeueDeadLetterTargets = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { requeueDeadLetter } = await import("./ops-recovery.server");
-    return requeueDeadLetter(context.supabase);
+    return requeueDeadLetter(context.supabase, undefined, `operator:${context.userId}`);
   });
