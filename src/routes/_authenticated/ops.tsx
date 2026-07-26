@@ -8,6 +8,7 @@ import {
 } from "@/lib/ops.functions";
 import { getTrackingIntegrityReport } from "@/lib/deliverability.functions";
 import { buildOpsAlerts } from "@/lib/ops-alerts";
+import { AlertHistory } from "@/components/ops/alert-history";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/ops")({
