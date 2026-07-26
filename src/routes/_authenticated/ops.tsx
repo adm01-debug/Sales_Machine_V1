@@ -13,6 +13,7 @@ import { buildOpsAlerts } from "@/lib/ops-alerts";
 import { AlertHistory } from "@/components/ops/alert-history";
 import { ManualInterventions } from "@/components/ops/manual-interventions";
 import { SpendBreakdown } from "@/components/ops/spend-breakdown";
+import { BudgetGuardrails } from "@/components/ops/budget-guardrails";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/ops")({
@@ -182,6 +183,7 @@ function OpsPage() {
       <AlertHistory />
 
       <SpendBreakdown />
+      <BudgetGuardrails />
 
       <ManualInterventions />
 

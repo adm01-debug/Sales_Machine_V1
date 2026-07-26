@@ -114,6 +114,25 @@ describe("decideCadenceAction", () => {
     expect(d.action).toBe("defer");
   });
 
+  it("orçamento esgotado adia o target em 1h sem encerrar", () => {
+    const d = decideCadenceAction(facts({ budgetBlocked: true, budgetReason: "teto diário" }));
+    expect(d.action).toBe("defer");
+    if (d.action === "defer") {
+      expect(d.reason).toContain("orçamento do canal");
+      expect(d.delayMs).toBe(3_600_000);
+    }
+  });
+
+  it("orçamento não sobrepõe opt-out (LGPD tem precedência)", () => {
+    const d = decideCadenceAction(facts({ budgetBlocked: true, consentAllowed: false }));
+    expect(d.action).toBe("stop");
+  });
+
+  it("orçamento bloqueia antes do gate humano", () => {
+    const d = decideCadenceAction(facts({ budgetBlocked: true, requiresHumanApproval: true }));
+    expect(d.action).toBe("defer");
+  });
+
   it("roteia para aprovação humana quando exigido", () => {
     const d = decideCadenceAction(facts({ requiresHumanApproval: true }));
     expect(d).toMatchObject({ action: "approval_gate", step: steps[0] });

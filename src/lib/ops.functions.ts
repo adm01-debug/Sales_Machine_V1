@@ -172,3 +172,51 @@ export const getSpendBreakdown = createServerFn({ method: "GET" })
     const { buildSpendReport } = await import("./ops-spend.server");
     return buildSpendReport(context.supabase, { days: data.days });
   });
+/**
+ * Guardrail de orçamento: gasto do dia/mês por canal cruzado com os tetos
+ * configurados em `channel_budgets`. Mesma fonte de verdade usada pelo worker.
+ */
+export const getBudgetReport = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { buildBudgetReport } = await import("./budget.server");
+    const report = await buildBudgetReport(context.supabase);
+    // `Set` não é serializável pelo transporte de server functions.
+    return { ...report, blockedChannels: [...report.blockedChannels] };
+  });
+
+/** Atualiza os tetos de um canal. RLS restringe a admin/operator. */
+export const updateChannelBudget = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: {
+    channel: string;
+    dailyLimit: number;
+    monthlyLimit: number;
+    enabled: boolean;
+  }) => {
+    const channel = String(input?.channel ?? "").trim();
+    if (!channel) throw new Error("Canal obrigatório");
+    const clamp = (n: unknown) => {
+      const v = Number(n);
+      if (!Number.isFinite(v) || v < 0) return 0;
+      return Math.min(Math.round(v * 100) / 100, 9_999_999);
+    };
+    return {
+      channel,
+      dailyLimit: clamp(input.dailyLimit),
+      monthlyLimit: clamp(input.monthlyLimit),
+      enabled: input.enabled !== false,
+    };
+  })
+  .handler(async ({ context, data }) => {
+    const { error } = await context.supabase
+      .from("channel_budgets")
+      .update({
+        daily_limit_brl: data.dailyLimit,
+        monthly_limit_brl: data.monthlyLimit,
+        enabled: data.enabled,
+      })
+      .eq("channel", data.channel);
+    if (error) throw new Error(error.message);
+    return { ok: true as const, channel: data.channel };
+  });

@@ -519,6 +519,36 @@ export type Database = {
           },
         ]
       }
+      channel_budgets: {
+        Row: {
+          channel: string
+          created_at: string
+          daily_limit_brl: number
+          enabled: boolean
+          monthly_limit_brl: number
+          note: string | null
+          updated_at: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          daily_limit_brl?: number
+          enabled?: boolean
+          monthly_limit_brl?: number
+          note?: string | null
+          updated_at?: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          daily_limit_brl?: number
+          enabled?: boolean
+          monthly_limit_brl?: number
+          note?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       channel_quotas: {
         Row: {
           channel: Database["public"]["Enums"]["sm_channel"]
