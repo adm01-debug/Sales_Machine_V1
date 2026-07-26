@@ -198,3 +198,88 @@ export const runFuxicoEmailTest = createServerFn({ method: "POST" })
       fallback: tracked.trackingId === null,
     };
   });
+
+/**
+ * Dispara um evento FUXICO assinado contra o próprio webhook público e
+ * confirma se a linha correspondente foi gravada em
+ * `email_deliverability_events`. Serve como teste de ponta a ponta da
+ * assinatura HMAC + persistência, sem depender do FUXICO real.
+ */
+export const sendTestFuxicoWebhook = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        event: z.enum(["email.opened", "email.clicked"]),
+        trackingId: z.string().trim().min(1).max(200),
+        recipientEmail: z.string().trim().email().max(255).optional().or(z.literal("")),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const secret = process.env.FUXICO_WEBHOOK_SECRET;
+    if (!secret) {
+      return {
+        ok: false as const,
+        step: "config" as const,
+        message: "FUXICO_WEBHOOK_SECRET não configurado — não é possível assinar o evento de teste.",
+        status: null as number | null,
+        persisted: false,
+        externalId: null as string | null,
+      };
+    }
+
+    const origin = new URL(getRequest().url).origin;
+    const timestamp = new Date().toISOString();
+    const body = JSON.stringify({
+      event: data.event,
+      timestamp,
+      data: {
+        tracking_id: data.trackingId,
+        recipient_email: data.recipientEmail || undefined,
+        test: true,
+      },
+      metadata: { source: "fuxico", test: true },
+    });
+
+    const { signPayload } = await import("@/lib/hmac.server");
+    const res = await fetch(`${origin}/api/public/webhooks/fuxico`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-webhook-signature": signPayload(body, secret),
+      },
+      body,
+    });
+    const text = (await res.text()).slice(0, 300);
+
+    if (!res.ok) {
+      return {
+        ok: false as const,
+        step: "webhook" as const,
+        message: `Webhook respondeu ${res.status}: ${text}`,
+        status: res.status,
+        persisted: false,
+        externalId: null as string | null,
+      };
+    }
+
+    const eventType = data.event === "email.opened" ? "opened" : "clicked";
+    const externalId = `fuxico:${data.trackingId}:${eventType}:${timestamp}`;
+    const { data: row } = await context.supabase
+      .from("email_deliverability_events")
+      .select("id, event_type, created_at")
+      .eq("external_id", externalId)
+      .maybeSingle();
+
+    return {
+      ok: !!row,
+      step: "verify" as const,
+      message: row
+        ? `Evento "${eventType}" gravado com sucesso em email_deliverability_events.`
+        : "Webhook aceitou o evento (200), mas a linha não foi encontrada — verifique se o tracking id existe.",
+      status: res.status,
+      persisted: !!row,
+      externalId,
+    };
+  });
