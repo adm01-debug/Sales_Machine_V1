@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildOpsAlerts } from "@/lib/ops-alerts";
-import { buildTrackingIntegrityReport } from "@/lib/tracking-integrity";
+import {
+  buildTrackingIntegrityReport,
+  type RawTouchpoint,
+  type RawDeliveryEvent,
+} from "@/lib/tracking-integrity";
 import { planAlertDispatch, buildNotificationPayload } from "@/lib/alert-dispatch";
 
 /**
