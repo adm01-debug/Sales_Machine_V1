@@ -283,3 +283,117 @@ export const sendTestFuxicoWebhook = createServerFn({ method: "POST" })
       externalId,
     };
   });
+/** Uma linha do relatório agregado por campanha. */
+export interface CampaignDeliverabilityRow {
+  campaignId: string | null;
+  campaignName: string;
+  sends: number;
+  opened: number;
+  clicked: number;
+  hardBounce: number;
+  complaint: number;
+  unsubscribe: number;
+  openRate: number;
+  clickRate: number;
+  bounceRate: number;
+}
+
+/**
+ * Relatório de entregabilidade agregado por campanha.
+ * Fonte: `email_deliverability_events` (provider FUXICO) ligado a
+ * `contact_touchpoints.campaign_id`. Agregação feita em memória para permitir
+ * juntar campanhas de marketing e de orquestração no mesmo relatório.
+ */
+export const getCampaignDeliverabilityReport = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ days: z.coerce.number().int().min(1).max(365).default(30) }).parse(d ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    const since = new Date(Date.now() - data.days * 86_400_000).toISOString();
+    const supabase = context.supabase;
+
+    // 1) Touchpoints de e-mail no período (base de envios + vínculo com campanha).
+    const { data: touchpoints, error: tpErr } = await supabase
+      .from("contact_touchpoints")
+      .select("id, campaign_id, created_at")
+      .eq("channel", "email")
+      .eq("direction", "outbound")
+      .gte("created_at", since)
+      .limit(20000);
+    if (tpErr) throw new Error(tpErr.message);
+
+    const campaignByTouchpoint = new Map<string, string | null>();
+    const sendsByCampaign = new Map<string | null, number>();
+    for (const tp of touchpoints ?? []) {
+      campaignByTouchpoint.set(tp.id, tp.campaign_id ?? null);
+      sendsByCampaign.set(tp.campaign_id ?? null, (sendsByCampaign.get(tp.campaign_id ?? null) ?? 0) + 1);
+    }
+
+    // 2) Eventos de entregabilidade no período.
+    const { data: events, error: evErr } = await supabase
+      .from("email_deliverability_events")
+      .select("touchpoint_id, event_type, created_at")
+      .gte("created_at", since)
+      .limit(50000);
+    if (evErr) throw new Error(evErr.message);
+
+    type Counts = { opened: number; clicked: number; hard_bounce: number; complaint: number; unsubscribe: number };
+    const empty = (): Counts => ({ opened: 0, clicked: 0, hard_bounce: 0, complaint: 0, unsubscribe: 0 });
+    const byCampaign = new Map<string | null, Counts>();
+
+    for (const ev of events ?? []) {
+      const campaignId = ev.touchpoint_id ? (campaignByTouchpoint.get(ev.touchpoint_id) ?? null) : null;
+      const bucket = byCampaign.get(campaignId) ?? empty();
+      if (ev.event_type in bucket) bucket[ev.event_type as keyof Counts] += 1;
+      byCampaign.set(campaignId, bucket);
+    }
+    for (const campaignId of sendsByCampaign.keys()) {
+      if (!byCampaign.has(campaignId)) byCampaign.set(campaignId, empty());
+    }
+
+    // 3) Nomes das campanhas (marketing + orquestração).
+    const ids = [...byCampaign.keys()].filter((v): v is string => !!v);
+    const names = new Map<string, string>();
+    if (ids.length) {
+      const [mk, orch] = await Promise.all([
+        supabase.from("marketing_campaigns").select("id, name").in("id", ids),
+        supabase.from("campaigns_orchestration").select("id, name").in("id", ids),
+      ]);
+      for (const r of mk.data ?? []) names.set(r.id, r.name);
+      for (const r of orch.data ?? []) if (!names.has(r.id)) names.set(r.id, r.name);
+    }
+
+    const pct = (n: number, d: number) => (d > 0 ? Math.round((n / d) * 1000) / 10 : 0);
+    const rows: CampaignDeliverabilityRow[] = [...byCampaign.entries()].map(([campaignId, c]) => {
+      const sends = sendsByCampaign.get(campaignId) ?? 0;
+      return {
+        campaignId,
+        campaignName: campaignId ? (names.get(campaignId) ?? "Campanha removida") : "Sem campanha (avulso)",
+        sends,
+        opened: c.opened,
+        clicked: c.clicked,
+        hardBounce: c.hard_bounce,
+        complaint: c.complaint,
+        unsubscribe: c.unsubscribe,
+        openRate: pct(c.opened, sends),
+        clickRate: pct(c.clicked, sends),
+        bounceRate: pct(c.hard_bounce, sends),
+      };
+    });
+    rows.sort((a, b) => b.sends - a.sends || b.opened - a.opened);
+
+    const totals = rows.reduce(
+      (acc, r) => ({
+        sends: acc.sends + r.sends,
+        opened: acc.opened + r.opened,
+        clicked: acc.clicked + r.clicked,
+        hardBounce: acc.hardBounce + r.hardBounce,
+        complaint: acc.complaint + r.complaint,
+        unsubscribe: acc.unsubscribe + r.unsubscribe,
+      }),
+      { sends: 0, opened: 0, clicked: 0, hardBounce: 0, complaint: 0, unsubscribe: 0 },
+    );
+
+    return { since, days: data.days, rows, totals };
+  });
