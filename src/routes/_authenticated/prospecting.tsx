@@ -26,7 +26,7 @@ import { toast } from "sonner";
 const CHANNELS = ["whatsapp", "email", "sms", "linkedin", "instagram"] as const;
 type Channel = (typeof CHANNELS)[number];
 
-export const Route = createFileRoute("/_authenticated/campaigns")({
+export const Route = createFileRoute("/_authenticated/prospecting")({
   head: () => ({
     meta: [
       { title: "Campanhas · Sales Machine" },
