@@ -132,7 +132,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
             if (!variant) {
               await supabaseAdmin
                 .from("campaign_sends")
-                .update({ state: "failed", error: "variante não encontrada" })
+                .update({ state: "failed", last_error: "variante não encontrada" })
                 .eq("id", send.id);
               failed++;
               continue;
@@ -147,7 +147,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
               skipped_consent++;
               await supabaseAdmin
                 .from("campaign_sends")
-                .update({ state: "skipped", error: "opt-out registrado para o canal" })
+                .update({ state: "skipped", last_error: "opt-out registrado para o canal" })
                 .eq("id", send.id);
               continue;
             }
@@ -160,7 +160,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
             if (!entity) {
               await supabaseAdmin
                 .from("campaign_sends")
-                .update({ state: "failed", error: "contato não encontrado" })
+                .update({ state: "failed", last_error: "contato não encontrado" })
                 .eq("id", send.id);
               failed++;
               continue;
@@ -273,7 +273,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
 
               await supabaseAdmin
                 .from("campaign_sends")
-                .update({ state: "sent", sent_at: new Date().toISOString(), error: null })
+                .update({ state: "sent", sent_at: new Date().toISOString(), last_error: null })
                 .eq("id", send.id);
               processed++;
             } catch (err) {
@@ -292,7 +292,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
                   state: giveUp ? "failed" : "queued",
                   attempts,
                   next_run_at: nextRetryAt(attempts),
-                  error: emsg.slice(0, 500),
+                  last_error: emsg.slice(0, 500),
                 })
                 .eq("id", send.id);
               failed++;
