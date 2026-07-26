@@ -123,3 +123,77 @@ export const testFuxicoConnection = createServerFn({ method: "POST" })
       return { ok: false as const, message: message.slice(0, 300) };
     }
   });
+
+/**
+ * Teste ponta a ponta do rastreio FUXICO.
+ *
+ * Monta um e-mail de exemplo com dois links, passa pelo mesmo pipeline usado
+ * nos disparos reais (`withFuxicoTracking`) e devolve um diagnóstico do que foi
+ * injetado: trackingId, pixel de abertura e links reescritos.
+ * Com `send: true` e um `contactId`, dispara de fato via SINGU.
+ */
+export const runFuxicoEmailTest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        email: z.string().trim().email().max(255),
+        contactId: z.string().trim().uuid().optional().or(z.literal("")),
+        send: z.boolean().default(false),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const subject = "SALES MACHINE · teste de rastreio";
+    const sampleLinks = [
+      "https://example.com/catalogo",
+      "https://example.com/agendar-apresentacao",
+    ];
+    const sourceBody = `<html><body><p>Olá! Este é um e-mail de teste do rastreio.</p>
+<p><a href="${sampleLinks[0]}">Ver catálogo</a></p>
+<p><a href="${sampleLinks[1]}">Agendar apresentação</a></p>
+</body></html>`;
+
+    const { withFuxicoTracking } = await import("@/lib/email-tracking.server");
+    const tracked = await withFuxicoTracking({
+      body: sourceBody,
+      recipientEmail: data.email,
+      subject,
+      metadata: { test: true },
+    });
+
+    const pixelInjected = /<img[^>]+src=/i.test(tracked.body.replace(sourceBody, ""));
+    const rewritten = sampleLinks.filter((l) => !tracked.body.includes(`href="${l}"`));
+
+    let sent: { ok: boolean; message: string } | null = null;
+    if (data.send) {
+      if (!data.contactId) {
+        sent = { ok: false, message: "Informe o ID do contato para disparar de verdade." };
+      } else {
+        try {
+          const { singuClient } = await import("@/integrations/external/singu.server");
+          await singuClient.sendEmail({
+            contact_id: data.contactId,
+            subject,
+            body: tracked.body,
+          });
+          sent = { ok: true, message: "E-mail enviado via SINGU." };
+        } catch (err) {
+          sent = {
+            ok: false,
+            message: (err instanceof Error ? err.message : "Falha no envio").slice(0, 300),
+          };
+        }
+      }
+    }
+
+    return {
+      trackingId: tracked.trackingId,
+      pixelInjected,
+      linksRewritten: rewritten.length,
+      linksTotal: sampleLinks.length,
+      bodyPreview: tracked.body.slice(0, 1500),
+      sent,
+      fallback: tracked.trackingId === null,
+    };
+  });
