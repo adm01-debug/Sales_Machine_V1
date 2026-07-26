@@ -140,3 +140,21 @@ export const getManualInterventions = createServerFn({ method: "GET" })
       targetId: data.targetId,
     });
   });
+
+/**
+ * Recorte completo (paginado no servidor) para exportação em CSV.
+ * Separado do listing da UI porque tem custo maior e roda sob demanda.
+ */
+export const exportManualInterventions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { days?: number | null; targetId?: string | null } | undefined) => ({
+    days: input?.days ?? null,
+    targetId: input?.targetId ?? null,
+  }))
+  .handler(async ({ context, data }) => {
+    const { collectManualInterventions } = await import("./ops-audit.server");
+    return collectManualInterventions(context.supabase, {
+      days: data.days,
+      targetId: data.targetId,
+    });
+  });
