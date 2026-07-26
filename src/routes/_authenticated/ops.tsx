@@ -11,6 +11,7 @@ import {
 import { getTrackingIntegrityReport } from "@/lib/deliverability.functions";
 import { buildOpsAlerts } from "@/lib/ops-alerts";
 import { AlertHistory } from "@/components/ops/alert-history";
+import { ManualInterventions } from "@/components/ops/manual-interventions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/ops")({
@@ -77,7 +78,11 @@ function DeadLetterRecovery({ count }: { count: number }) {
   const requeue = useServerFn(requeueDeadLetterTargets);
   const mutation = useMutation({
     mutationFn: () => requeue(),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["ops", "health"] }),
+    onSuccess: () => {
+      // A recuperação muda a fila E grava auditoria: invalida os dois painéis.
+      queryClient.invalidateQueries({ queryKey: ["ops", "health"] });
+      queryClient.invalidateQueries({ queryKey: ["ops", "interventions"] });
+    },
   });
 
   if (count <= 0) return null;
@@ -174,6 +179,8 @@ function OpsPage() {
       {health.data ? <DeadLetterRecovery count={health.data.dead_letter ?? 0} /> : null}
 
       <AlertHistory />
+
+      <ManualInterventions />
 
       {health.isLoading ? (
         <div className="text-muted-foreground">Carregando...</div>
