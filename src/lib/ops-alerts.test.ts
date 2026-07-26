@@ -152,3 +152,57 @@ describe("regra de bloqueio por consentimento", () => {
     expect(alerts.filter((a) => a.id.startsWith("consent_block"))).toHaveLength(1);
   });
 });
+
+describe("alertas de orçamento", () => {
+  const ch = (over: Partial<OpsBudgetChannelInput>): OpsBudgetChannelInput => ({
+    channel: "sms",
+    status: "ok",
+    spentToday: 0,
+    dailyLimit: 100,
+    usageRate: 0,
+    reason: null,
+    ...over,
+  });
+
+  it("não emite nada quando todos os canais estão ok", () => {
+    const a = buildOpsAlerts({ budget: [ch({}), ch({ channel: "email" })] });
+    expect(a).toHaveLength(0);
+  });
+
+  it("emite crítico quando um canal esgota o teto", () => {
+    const a = buildOpsAlerts({
+      budget: [ch({ status: "exhausted", reason: "orçamento diário de 100.00 BRL atingido" })],
+    });
+    expect(a[0]).toMatchObject({ id: "budget_exhausted", level: "critical" });
+    expect(a[0].detail).toContain("teto atingido");
+  });
+
+  it("distingue canal desativado manualmente de teto atingido", () => {
+    const a = buildOpsAlerts({
+      budget: [ch({ status: "disabled", channel: "whatsapp" }), ch({ status: "exhausted" })],
+    });
+    expect(a[0].title).toContain("2 canal(is)");
+    expect(a[0].detail).toContain("desativado pelo operador: WhatsApp");
+    expect(a[0].detail).toContain("teto atingido: SMS");
+  });
+
+  it("emite aviso agregado acima de 80% do teto", () => {
+    const a = buildOpsAlerts({
+      budget: [ch({ status: "warning", usageRate: 87.5, spentToday: 87.5 })],
+    });
+    expect(a[0]).toMatchObject({ id: "budget_warning", level: "warning" });
+    expect(a[0].detail).toContain("87.5%");
+  });
+
+  it("crítico de orçamento vem antes do aviso", () => {
+    const a = buildOpsAlerts({
+      budget: [ch({ status: "warning", usageRate: 90 }), ch({ channel: "email", status: "exhausted" })],
+    });
+    expect(a.map((x) => x.level)).toEqual(["critical", "warning"]);
+  });
+
+  it("ignora orçamento ausente ou vazio", () => {
+    expect(buildOpsAlerts({ budget: null })).toHaveLength(0);
+    expect(buildOpsAlerts({ budget: [] })).toHaveLength(0);
+  });
+});
