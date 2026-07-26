@@ -14,6 +14,7 @@ import { listAudiences } from "@/lib/audiences.functions";
 import { validateCampaign, hasBlockingIssues } from "@/lib/campaign-validation";
 import { TEMPLATE_VARS } from "@/lib/template-vars";
 import { TemplatePickerDialog, type PickedTemplate } from "@/components/template-picker-dialog";
+import { upsertTemplate } from "@/lib/templates.functions";
 import { CampaignValidationPanel } from "@/components/campaign-validation-panel";
 import { MessagePreview } from "@/components/message-preview";
 import { CHANNELS } from "@/lib/audience-rules";
@@ -61,6 +62,7 @@ function CampaignDetailPage() {
   const fetchAudiences = useServerFn(listAudiences);
   const fetchSample = useServerFn(listAudienceSample);
   const fetchCoverage = useServerFn(getVariableCoverage);
+  const saveTemplate = useServerFn(upsertTemplate);
   const save = useServerFn(saveMarketingCampaign);
   const launch = useServerFn(launchMarketingCampaign);
   const changeStatus = useServerFn(setCampaignStatus);
@@ -191,6 +193,29 @@ function CampaignDetailPage() {
     });
     toast.success(`Template "${tpl.name}" aplicado à variante ${variants[idx]?.label ?? ""}`);
   };
+
+  // Devolve o criativo para a Biblioteca, reaproveitando as mesmas regras de validação.
+  const saveAsTemplateMutation = useMutation({
+    mutationFn: async (idx: number) => {
+      const v = variants[idx];
+      if (!v?.body.trim()) throw new Error("Escreva o corpo antes de salvar como template");
+      return saveTemplate({
+        data: {
+          name: `${name.trim() || "Campanha"} · variante ${v.label}`,
+          channel: channel as never,
+          subject: channel === "email" ? (v.subject ?? null) : null,
+          body: v.body,
+          media_url: v.media_url || null,
+          rcs_payload: null,
+        },
+      });
+    },
+    onSuccess: () => {
+      toast.success("Criativo salvo na Biblioteca");
+      queryClient.invalidateQueries({ queryKey: ["sm", "templates"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const insertVar = (idx: number, key: string) =>
     updateVariant(idx, { body: `${variants[idx]?.body ?? ""}{{${key}}}` });
@@ -351,6 +376,14 @@ function CampaignDetailPage() {
                       <Badge>{v.label}</Badge>
                       <Button size="sm" variant="outline" onClick={() => setPickerFor(i)}>
                         Usar template
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => saveAsTemplateMutation.mutate(i)}
+                        disabled={saveAsTemplateMutation.isPending}
+                      >
+                        Salvar na biblioteca
                       </Button>
                     </div>
                     <div className="flex items-center gap-2">

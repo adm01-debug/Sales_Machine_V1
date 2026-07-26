@@ -157,14 +157,17 @@ export function validateCampaign(input: CampaignForValidation): ValidationIssue[
       });
     }
 
+    // Uma variável repetida no mesmo criativo gera um único aviso.
+    const noFallback = new Set<string>();
     for (const parsed of parseVariables(`${variant.subject ?? ""}\n${body}`)) {
-      if (parsed.key && !parsed.fallback) {
-        issues.push({
-          level: "warning",
-          scope,
-          message: `{{${parsed.key}}} não tem texto padrão — contatos sem esse dado receberão a mensagem com lacuna.`,
-        });
-      }
+      if (parsed.key && !parsed.fallback) noFallback.add(parsed.key);
+    }
+    for (const key of noFallback) {
+      issues.push({
+        level: "warning",
+        scope,
+        message: `{{${key}}} não tem texto padrão — contatos sem esse dado receberão a mensagem com lacuna.`,
+      });
     }
 
     if (variant.source_channel && variant.source_channel !== channel) {
