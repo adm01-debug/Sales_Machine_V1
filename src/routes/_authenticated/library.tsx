@@ -288,11 +288,31 @@ function ComposerPage() {
                   </div>
                 )}
 
+                {channel === "email" && (
+                  <div className="space-y-2 border-t pt-4">
+                    <Label>Blocos do e-mail</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Com blocos, o HTML responsivo é gerado automaticamente e o texto abaixo vira
+                      apenas o fallback.
+                    </p>
+                    <EmailBlockEditor blocks={emailBlocks} onChange={setEmailBlocks} />
+                  </div>
+                )}
+
                 <div className="space-y-2">
-                  <Label>Mensagem</Label>
+                  <Label>
+                    {channel === "email" && emailBlocks.length > 0
+                      ? "Fallback texto (gerado dos blocos)"
+                      : "Mensagem"}
+                  </Label>
                   <Textarea
-                    value={body}
+                    value={
+                      channel === "email" && emailBlocks.length > 0
+                        ? renderEmailText(emailBlocks)
+                        : body
+                    }
                     onChange={(e) => setBody(e.target.value)}
+                    readOnly={channel === "email" && emailBlocks.length > 0}
                     rows={5}
                     maxLength={CHANNEL_BODY_LIMIT[channel]}
                     placeholder="Olá {{nome}}, tudo bem?"
@@ -393,12 +413,29 @@ function ComposerPage() {
                   <CardDescription>Variáveis resolvidas com dados de exemplo.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <MessagePreview
-                    channel={channel}
-                    subject={subject}
-                    body={body}
-                    mediaUrl={mediaUrl}
-                  />
+                  {channel === "email" && emailBlocks.length > 0 ? (
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">{subject || "(sem assunto)"}</p>
+                      <iframe
+                        title="Preview do e-mail"
+                        srcDoc={renderPreviewHtml(emailHtml)}
+                        sandbox=""
+                        className="h-[460px] w-full rounded-md border bg-background"
+                      />
+                      {emailIssues.map((issue) => (
+                        <p key={`${issue.blockId}-${issue.message}`} className="text-xs text-destructive">
+                          {issue.message}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <MessagePreview
+                      channel={channel}
+                      subject={subject}
+                      body={body}
+                      mediaUrl={mediaUrl}
+                    />
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -476,6 +513,11 @@ function ComposerPage() {
 function renderPreview(body: string): string {
   // Preview do telefone usa o mesmo motor de variáveis dos workers.
   return renderTemplate(body, sampleVarValues()).text;
+}
+
+function renderPreviewHtml(html: string): string {
+  // O preview resolve variáveis com dados de exemplo, igual aos workers.
+  return renderTemplate(html, sampleVarValues()).text;
 }
 
 function PhonePreview({
