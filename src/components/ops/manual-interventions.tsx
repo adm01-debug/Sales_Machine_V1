@@ -1,6 +1,16 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getManualInterventions } from "@/lib/ops.functions";
+import { cn } from "@/lib/utils";
+
+/** Recortes temporais oferecidos; `null` = todo o histórico retido (90 dias). */
+const PERIODS: Array<{ label: string; days: number | null }> = [
+  { label: "24h", days: 1 },
+  { label: "7d", days: 7 },
+  { label: "30d", days: 30 },
+  { label: "Tudo", days: null },
+];
 
 /**
  * Trilha de auditoria das ações humanas sobre o pipeline.
@@ -11,9 +21,14 @@ import { getManualInterventions } from "@/lib/ops.functions";
  */
 export function ManualInterventions() {
   const fetchEvents = useServerFn(getManualInterventions);
+  const [days, setDays] = useState<number | null>(7);
+  const [targetInput, setTargetInput] = useState("");
+  // Só o valor confirmado entra na queryKey: evita uma requisição por tecla.
+  const [targetId, setTargetId] = useState("");
+
   const query = useQuery({
-    queryKey: ["ops", "interventions"],
-    queryFn: () => fetchEvents(),
+    queryKey: ["ops", "interventions", days, targetId],
+    queryFn: () => fetchEvents({ data: { days, targetId: targetId || null } }),
     refetchInterval: 120_000,
   });
 
@@ -21,9 +36,66 @@ export function ManualInterventions() {
 
   return (
     <section>
-      <h2 className="mb-3 text-sm font-medium text-muted-foreground">
-        Intervenções manuais (auditoria)
-      </h2>
+      <div className="mb-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-sm font-medium text-muted-foreground">
+          Intervenções manuais (auditoria)
+        </h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex rounded-md border bg-card p-0.5">
+            {PERIODS.map((p) => (
+              <button
+                key={p.label}
+                type="button"
+                onClick={() => setDays(p.days)}
+                className={cn(
+                  "rounded px-2 py-1 text-xs transition-colors",
+                  p.days === days
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              setTargetId(targetInput.trim());
+            }}
+            className="flex items-center gap-2"
+          >
+            <label htmlFor="audit-target" className="sr-only">
+              Filtrar por ID do alvo
+            </label>
+            <input
+              id="audit-target"
+              value={targetInput}
+              onChange={(e) => setTargetInput(e.target.value)}
+              placeholder="ID do alvo (prefixo)"
+              className="w-44 rounded-md border bg-background px-2 py-1 text-xs text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+            <button
+              type="submit"
+              className="rounded-md border px-2 py-1 text-xs text-foreground hover:bg-accent"
+            >
+              Filtrar
+            </button>
+            {targetId ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setTargetInput("");
+                  setTargetId("");
+                }}
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
+                Limpar
+              </button>
+            ) : null}
+          </form>
+        </div>
+      </div>
       {query.isLoading ? (
         <div className="rounded-lg border bg-card p-4 text-sm text-muted-foreground">
           Carregando trilha de auditoria...
@@ -34,7 +106,9 @@ export function ManualInterventions() {
         </div>
       ) : events.length === 0 ? (
         <div className="rounded-lg border bg-card p-4 text-sm text-muted-foreground">
-          Nenhuma intervenção manual registrada — o pipeline vem rodando sozinho.
+          {targetId || days
+            ? "Nenhuma intervenção manual no filtro selecionado."
+            : "Nenhuma intervenção manual registrada — o pipeline vem rodando sozinho."}
         </div>
       ) : (
         <ul className="divide-y rounded-lg border bg-card">
