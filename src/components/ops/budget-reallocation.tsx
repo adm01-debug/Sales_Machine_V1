@@ -1,7 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Loader2, Scale, ShieldAlert, Sparkles } from "lucide-react";
-import { applyBudgetReallocation, getBudgetReallocationPlan } from "@/lib/ops.functions";
+import { ArrowRight, History, Loader2, Scale, ShieldAlert, Sparkles } from "lucide-react";
+import {
+  applyBudgetReallocation,
+  getBudgetReallocationHistory,
+  getBudgetReallocationPlan,
+} from "@/lib/ops.functions";
 import { formatBRL } from "@/lib/cost-model";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +21,7 @@ export function BudgetReallocation() {
   const queryClient = useQueryClient();
   const fetchPlan = useServerFn(getBudgetReallocationPlan);
   const applyPlan = useServerFn(applyBudgetReallocation);
+  const fetchHistory = useServerFn(getBudgetReallocationHistory);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["ops", "budget-reallocation"],
@@ -24,10 +29,17 @@ export function BudgetReallocation() {
     staleTime: 60_000,
   });
 
+  const { data: history } = useQuery({
+    queryKey: ["ops", "budget-reallocation-history"],
+    queryFn: () => fetchHistory(),
+    staleTime: 60_000,
+  });
+
   const mutation = useMutation({
     mutationFn: () => applyPlan(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ops", "budget-reallocation"] });
+      queryClient.invalidateQueries({ queryKey: ["ops", "budget-reallocation-history"] });
       queryClient.invalidateQueries({ queryKey: ["ops", "budget-report"] });
       queryClient.invalidateQueries({ queryKey: ["ops", "spend"] });
     },
@@ -161,6 +173,35 @@ export function BudgetReallocation() {
             Teto diário somado: {formatBRL(data.totalBefore)} → {formatBRL(data.totalAfter)}
             {conserved ? " (orçamento total preservado)" : " (divergência detectada)"}
           </p>
+        ) : null}
+
+        {history && history.length > 0 ? (
+          <div className="space-y-2 border-t pt-4">
+            <p className="flex items-center gap-2 text-sm font-medium">
+              <History className="h-4 w-4 text-muted-foreground" aria-hidden />
+              Histórico de realocações
+            </p>
+            <ul className="space-y-2">
+              {history.map((h) => (
+                <li key={h.id} className="rounded-lg border p-3 text-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-medium text-foreground">
+                      {new Date(h.appliedAt).toLocaleString("pt-BR")}
+                    </span>
+                    <Badge variant="secondary">{formatBRL(h.movedTotal)}</Badge>
+                  </div>
+                  <p className="mt-1 text-muted-foreground">
+                    {h.channelsChanged} canal(is) ajustado(s) ·{" "}
+                    {h.transfers.length > 0
+                      ? h.transfers
+                          .map((t) => `${t.from} → ${t.to} (${formatBRL(t.amount)})`)
+                          .join(", ")
+                      : "sem transferências"}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : null}
       </CardContent>
     </Card>
