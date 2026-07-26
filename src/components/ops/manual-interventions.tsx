@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getManualInterventions } from "@/lib/ops.functions";
+import { getManualInterventions, exportManualInterventions } from "@/lib/ops.functions";
 import { toCsv, csvFilename, downloadCsv, type CsvColumn } from "@/lib/csv-export";
 import { cn } from "@/lib/utils";
 
@@ -46,7 +46,10 @@ const CSV_COLUMNS: Array<CsvColumn<InterventionRow>> = [
  */
 export function ManualInterventions() {
   const fetchEvents = useServerFn(getManualInterventions);
+  const fetchExport = useServerFn(exportManualInterventions);
   const [days, setDays] = useState<number | null>(7);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const [targetInput, setTargetInput] = useState("");
   // Só o valor confirmado entra na queryKey: evita uma requisição por tecla.
   const [targetId, setTargetId] = useState("");
@@ -59,13 +62,33 @@ export function ManualInterventions() {
 
   const events = query.data ?? [];
 
-  function handleExport() {
-    if (events.length === 0) return;
-    const scope = days ? `${days}d` : "tudo";
-    downloadCsv(
-      csvFilename(`auditoria-intervencoes-${scope}`),
-      toCsv(events as InterventionRow[], CSV_COLUMNS),
-    );
+  /**
+   * Exporta o recorte COMPLETO (não apenas as linhas visíveis): a listagem tem
+   * teto de 200 registros, então buscamos a trilha paginada no servidor antes
+   * de serializar.
+   */
+  async function handleExport() {
+    setExporting(true);
+    setExportError(null);
+    try {
+      const result = await fetchExport({ data: { days, targetId: targetId || null } });
+      if (result.rows.length === 0) {
+        setExportError("Nenhum registro no filtro selecionado.");
+        return;
+      }
+      const scope = days ? `${days}d` : "tudo";
+      downloadCsv(
+        csvFilename(`auditoria-intervencoes-${scope}`),
+        toCsv(result.rows as InterventionRow[], CSV_COLUMNS),
+      );
+      if (result.truncated) {
+        setExportError("Exportação truncada no teto de 5.000 registros — reduza o período.");
+      }
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : "Falha ao exportar.");
+    } finally {
+      setExporting(false);
+    }
   }
 
   return (
@@ -131,14 +154,19 @@ export function ManualInterventions() {
           <button
             type="button"
             onClick={handleExport}
-            disabled={events.length === 0}
+            disabled={exporting}
             title="Exportar a trilha filtrada em CSV"
             className="rounded-md border px-2 py-1 text-xs text-foreground hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Exportar CSV
+            {exporting ? "Exportando..." : "Exportar CSV"}
           </button>
         </div>
       </div>
+      {exportError ? (
+        <p className="mb-2 text-xs text-muted-foreground" role="status">
+          {exportError}
+        </p>
+      ) : null}
       {query.isLoading ? (
         <div className="rounded-lg border bg-card p-4 text-sm text-muted-foreground">
           Carregando trilha de auditoria...

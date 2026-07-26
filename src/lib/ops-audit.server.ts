@@ -13,6 +13,15 @@ export type AuditPeriod = (typeof AUDIT_PERIODS)[number];
 export const AUDIT_DEFAULT_LIMIT = 25;
 export const AUDIT_MAX_LIMIT = 200;
 
+/**
+ * Exportação: a UI lista no máximo 200 linhas, mas a auditoria externa precisa
+ * do recorte inteiro. Paginamos por keyset (não por OFFSET, que degrada em
+ * O(n) e ainda pode duplicar/pular linhas se um evento novo chegar entre as
+ * páginas) e limitamos o total para não estourar a memória do worker.
+ */
+export const AUDIT_EXPORT_PAGE_SIZE = 200;
+export const AUDIT_EXPORT_MAX_ROWS = 5_000;
+
 export interface AuditFilters {
   /** Janela em dias; ausente/nulo devolve todo o histórico retido. */
   days?: number | null;
@@ -76,4 +85,68 @@ export async function listManualInterventions(
     .limit(clampLimit(filters.limit));
   if (error) throw new Error(error.message);
   return (data ?? []) as ManualInterventionRow[];
+}
+
+export interface AuditExportResult {
+  rows: ManualInterventionRow[];
+  /** `true` quando batemos o teto — o CSV está incompleto e a UI deve avisar. */
+  truncated: boolean;
+}
+
+/**
+ * Percorre a trilha completa via keyset em `created_at` decrescente.
+ *
+ * Dois cuidados que a paginação ingênua erra:
+ * - Eventos com o MESMO `created_at` (o worker grava em lote) ficariam presos
+ *   num laço infinito com `lt(created_at, cursor)`, ou seriam perdidos. Por
+ *   isso pedimos `lte` a partir do cursor e descartamos os `id` já vistos.
+ * - Se uma página inteira for composta só de ids repetidos, não há progresso
+ *   possível; encerramos em vez de girar para sempre.
+ */
+export async function collectManualInterventions(
+  client: AuditClient,
+  filters: AuditFilters = {},
+): Promise<AuditExportResult> {
+  const seen = new Set<string>();
+  const rows: ManualInterventionRow[] = [];
+  let cursor: string | null = null;
+
+  for (;;) {
+    let q = client
+      .from("campaign_target_events")
+      .select("id, target_id, from_state, to_state, reason, actor, created_at")
+      .like("actor", "operator:%");
+
+    const days = filters.days;
+    if (typeof days === "number" && Number.isFinite(days) && days > 0) {
+      q = q.gte("created_at", new Date(Date.now() - days * 24 * 3600_000).toISOString());
+    }
+
+    const target = normalizeTargetFilter(filters.targetId);
+    if (target) q = q.ilike("target_id", `${target}%`);
+    if (cursor) q = q.lte("created_at", cursor);
+
+    const { data, error } = await q
+      .order("created_at", { ascending: false })
+      .limit(AUDIT_EXPORT_PAGE_SIZE);
+    if (error) throw new Error(error.message);
+
+    const page = (data ?? []) as ManualInterventionRow[];
+    if (page.length === 0) return { rows, truncated: false };
+
+    let added = 0;
+    for (const row of page) {
+      if (seen.has(row.id)) continue;
+      seen.add(row.id);
+      rows.push(row);
+      added++;
+      if (rows.length >= AUDIT_EXPORT_MAX_ROWS) return { rows, truncated: true };
+    }
+
+    // Página cheia só de repetidos, ou última página parcial: fim do conjunto.
+    if (added === 0 || page.length < AUDIT_EXPORT_PAGE_SIZE) {
+      return { rows, truncated: false };
+    }
+    cursor = page[page.length - 1].created_at;
+  }
 }

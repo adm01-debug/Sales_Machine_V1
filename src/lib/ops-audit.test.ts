@@ -6,6 +6,9 @@ import {
   clampLimit,
   AUDIT_DEFAULT_LIMIT,
   AUDIT_MAX_LIMIT,
+  collectManualInterventions,
+  AUDIT_EXPORT_PAGE_SIZE,
+  AUDIT_EXPORT_MAX_ROWS,
 } from "./ops-audit.server";
 
 const now = Date.now();
@@ -115,5 +118,83 @@ describe("listManualInterventions", () => {
     chain.then = (resolve: (v: unknown) => unknown) =>
       Promise.resolve({ data: null, error: { message: "boom" } }).then(resolve);
     await expect(listManualInterventions({ from: () => chain } as never)).rejects.toThrow("boom");
+  });
+});
+describe("collectManualInterventions (exportação paginada)", () => {
+  /** Cria N eventos com timestamps decrescentes distintos. */
+  function manyEvents(n: number, base = now): Row[] {
+    return Array.from({ length: n }, (_, i) =>
+      event(`e-${i}`, { created_at: new Date(base - i * 1000).toISOString() }),
+    );
+  }
+
+  it("devolve conjunto vazio quando não há intervenções", async () => {
+    const db = createFakeSupabase({ tables: { campaign_target_events: [] } });
+    const res = await collectManualInterventions(db as never);
+    expect(res.rows).toEqual([]);
+    expect(res.truncated).toBe(false);
+  });
+
+  it("atravessa múltiplas páginas sem duplicar linhas", async () => {
+    const total = AUDIT_EXPORT_PAGE_SIZE * 2 + 17;
+    const db = createFakeSupabase({ tables: { campaign_target_events: manyEvents(total) } });
+    const res = await collectManualInterventions(db as never);
+    expect(res.rows).toHaveLength(total);
+    expect(new Set(res.rows.map((r) => r.id)).size).toBe(total);
+    expect(res.truncated).toBe(false);
+  });
+
+  it("não entra em laço infinito com timestamps idênticos", async () => {
+    const stamp = new Date(now).toISOString();
+    const rows = Array.from({ length: AUDIT_EXPORT_PAGE_SIZE + 5 }, (_, i) =>
+      event(`dup-${i}`, { created_at: stamp }),
+    );
+    const db = createFakeSupabase({ tables: { campaign_target_events: rows } });
+    const res = await collectManualInterventions(db as never);
+    // A página se repete integralmente; encerramos sem progresso, sem travar.
+    expect(res.rows.length).toBeGreaterThan(0);
+    expect(new Set(res.rows.map((r) => r.id)).size).toBe(res.rows.length);
+  });
+
+  it("marca truncated ao bater o teto de linhas", async () => {
+    const db = createFakeSupabase({
+      tables: { campaign_target_events: manyEvents(AUDIT_EXPORT_MAX_ROWS + AUDIT_EXPORT_PAGE_SIZE) },
+    });
+    const res = await collectManualInterventions(db as never);
+    expect(res.rows).toHaveLength(AUDIT_EXPORT_MAX_ROWS);
+    expect(res.truncated).toBe(true);
+  });
+
+  it("ignora eventos automáticos do worker", async () => {
+    const db = createFakeSupabase({ tables: { campaign_target_events: [
+        event("a"),
+        event("b", { actor: "system" }),
+      ],
+    } });
+    const res = await collectManualInterventions(db as never);
+    expect(res.rows.map((r) => r.id)).toEqual(["a"]);
+  });
+
+  it("aplica o recorte temporal", async () => {
+    const db = createFakeSupabase({
+      tables: {
+        campaign_target_events: [event("recente"), event("antigo", { created_at: daysAgo(40) })],
+      },
+    });
+    const res = await collectManualInterventions(db as never, { days: 7 });
+    expect(res.rows.map((r) => r.id)).toEqual(["recente"]);
+  });
+
+  it("aplica o filtro por prefixo de alvo e ignora curingas", async () => {
+    const db = createFakeSupabase({ tables: { campaign_target_events: [
+        event("x"),
+        event("y", { target_id: "bbbbbbbb-1111-2222-3333-444444444444" }),
+      ],
+    } });
+    const filtered = await collectManualInterventions(db as never, { targetId: "aaaaaaaa" });
+    expect(filtered.rows.map((r) => r.id)).toEqual(["x"]);
+
+    const wildcard = await collectManualInterventions(db as never, { targetId: "%" });
+    expect(wildcard.rows).toHaveLength(2);
   });
 });
