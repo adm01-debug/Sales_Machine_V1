@@ -76,6 +76,35 @@ describe("requeueDeadLetter", () => {
     expect(await requeueDeadLetter(db)).toEqual({ requeued: 0 });
   });
 
+  it("registra a intervenção humana em campaign_target_events", async () => {
+    const rows = [
+      target("d1", "dead_letter", "2026-01-01T00:00:00.000Z"),
+      target("d2", "dead_letter", "2026-01-02T00:00:00.000Z"),
+    ];
+    const db = createFakeSupabase({ tables: { campaign_targets: rows, campaign_target_events: [] } });
+
+    await requeueDeadLetter(db, 10, "operator:u-1");
+
+    const events = db.tables.campaign_target_events;
+    expect(events).toHaveLength(2);
+    expect(events[0]).toMatchObject({
+      target_id: "d1",
+      from_state: "dead_letter",
+      to_state: "queued",
+      reason: "manual_requeue",
+      actor: "operator:u-1",
+      payload: { batch_size: 2 },
+    });
+  });
+
+  it("não grava auditoria quando nada foi reenfileirado", async () => {
+    const db = createFakeSupabase({
+      tables: { campaign_targets: [target("a", "queued", "2026-01-01T00:00:00.000Z")], campaign_target_events: [] },
+    });
+    await requeueDeadLetter(db);
+    expect(db.tables.campaign_target_events).toHaveLength(0);
+  });
+
   it("propaga erro de leitura sem tentar escrever", async () => {
     const failing = {
       from: () => ({
