@@ -193,6 +193,86 @@ function Check({ ok, label }: { ok: boolean; label: string }) {
 }
 
 function FuxicoE2ESection() {
+  return <FuxicoE2ESectionInner />;
+}
+
+function FuxicoWebhookTestSection() {
+  const [trackingId, setTrackingId] = useState("");
+  const [email, setEmail] = useState("");
+  const [event, setEvent] = useState<"email.opened" | "email.clicked">("email.opened");
+  const sendFn = useServerFn(sendTestFuxicoWebhook);
+  const run = useMutation({
+    mutationFn: () =>
+      sendFn({ data: { event, trackingId: trackingId.trim(), recipientEmail: email.trim() } }),
+  });
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-lg font-semibold text-foreground">Validação do webhook FUXICO</h2>
+      <p className="text-sm text-muted-foreground">
+        Envia um evento assinado (HMAC-SHA256) para{" "}
+        <code className="rounded bg-muted px-1">/api/public/webhooks/fuxico</code> e confirma se a
+        linha foi gravada em <code className="rounded bg-muted px-1">email_deliverability_events</code>.
+        Use o Tracking ID gerado no teste acima para associar o evento a um contato real.
+      </p>
+
+      <form
+        className="space-y-3"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (trackingId.trim()) run.mutate();
+        }}
+      >
+        <div className="grid gap-2 md:grid-cols-3">
+          <select
+            className="h-10 rounded-md border bg-background px-3 text-sm text-foreground"
+            value={event}
+            onChange={(e) => setEvent(e.target.value as "email.opened" | "email.clicked")}
+          >
+            <option value="email.opened">email.opened (abertura)</option>
+            <option value="email.clicked">email.clicked (clique)</option>
+          </select>
+          <Input
+            placeholder="Tracking ID"
+            value={trackingId}
+            onChange={(e) => setTrackingId(e.target.value)}
+          />
+          <Input
+            type="email"
+            placeholder="E-mail do destinatário (opcional)"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <Button type="submit" disabled={run.isPending || !trackingId.trim()}>
+          {run.isPending ? "Enviando..." : "Enviar evento assinado"}
+        </Button>
+      </form>
+
+      {run.error ? <p className="text-sm text-destructive">{(run.error as Error).message}</p> : null}
+
+      {run.data ? (
+        <div className="space-y-2 rounded-lg border bg-card p-4">
+          <div className="grid grid-cols-2 gap-3">
+            <Check ok={run.data.status === 200} label={`Webhook (HTTP ${run.data.status ?? "—"})`} />
+            <Check ok={run.data.persisted} label="Gravado no banco" />
+          </div>
+          <p className={run.data.ok ? "text-sm text-primary" : "text-sm text-destructive"}>
+            {run.data.ok ? "✅ " : "⚠️ "}
+            {run.data.message}
+          </p>
+          {run.data.externalId ? (
+            <pre className="break-all rounded bg-muted p-2 text-xs text-muted-foreground">
+              external_id: {run.data.externalId}
+            </pre>
+          ) : null}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+function FuxicoE2ESectionInner() {
   const [email, setEmail] = useState("");
   const [contactId, setContactId] = useState("");
   const [send, setSend] = useState(false);
