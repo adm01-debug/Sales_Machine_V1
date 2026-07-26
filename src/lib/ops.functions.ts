@@ -220,3 +220,25 @@ export const updateChannelBudget = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true as const, channel: data.channel };
   });
+
+/**
+ * Prévia da realocação de teto diário entre canais (melhoria 023).
+ * Somente leitura — nada é alterado até o operador confirmar.
+ */
+export const getBudgetReallocationPlan = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { previewReallocation } = await import("./budget-reallocation.server");
+    return previewReallocation(context.supabase);
+  });
+
+/**
+ * Aplica a realocação recalculando o plano no servidor no instante da execução,
+ * para não mover saldo com base em uma prévia obsoleta.
+ */
+export const applyBudgetReallocation = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { applyReallocation } = await import("./budget-reallocation.server");
+    return applyReallocation(context.supabase);
+  });
