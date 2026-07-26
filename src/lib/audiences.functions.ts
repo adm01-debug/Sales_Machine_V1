@@ -2,7 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { audienceRulesSchema, parseRules } from "@/lib/audience-rules";
-import { resolveAudience } from "@/lib/audience-resolver.server";
 
 export const listAudiences = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -44,6 +43,7 @@ export const previewAudience = createServerFn({ method: "POST" })
     z.object({ rules: audienceRulesSchema }).parse(input),
   )
   .handler(async ({ data, context }) => {
+    const { resolveAudience } = await import("@/lib/audience-resolver.server");
     const rows = await resolveAudience(context.supabase, data.rules);
     return {
       count: rows.length,
@@ -105,6 +105,7 @@ export const refreshAudience = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!audience) throw new Error("Audiência não encontrada");
 
+    const { resolveAudience } = await import("@/lib/audience-resolver.server");
     const rows = await resolveAudience(context.supabase, parseRules(audience.rules));
 
     await context.supabase.from("audience_members").delete().eq("audience_id", data.id);
