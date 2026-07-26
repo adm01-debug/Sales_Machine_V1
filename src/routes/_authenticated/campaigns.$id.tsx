@@ -9,7 +9,13 @@ import {
   saveMarketingCampaign,
   setCampaignStatus,
 } from "@/lib/marketing.functions";
+import { getVariableCoverage, listAudienceSample } from "@/lib/marketing.functions";
 import { listAudiences } from "@/lib/audiences.functions";
+import { validateCampaign, hasBlockingIssues } from "@/lib/campaign-validation";
+import { TEMPLATE_VARS } from "@/lib/template-vars";
+import { TemplatePickerDialog, type PickedTemplate } from "@/components/template-picker-dialog";
+import { CampaignValidationPanel } from "@/components/campaign-validation-panel";
+import { MessagePreview } from "@/components/message-preview";
 import { CHANNELS } from "@/lib/audience-rules";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,6 +50,7 @@ interface VariantDraft {
   label: string;
   subject?: string;
   body: string;
+  media_url?: string;
   split_percent: number;
 }
 
@@ -52,6 +59,8 @@ function CampaignDetailPage() {
   const queryClient = useQueryClient();
   const fetchCampaign = useServerFn(getMarketingCampaign);
   const fetchAudiences = useServerFn(listAudiences);
+  const fetchSample = useServerFn(listAudienceSample);
+  const fetchCoverage = useServerFn(getVariableCoverage);
   const save = useServerFn(saveMarketingCampaign);
   const launch = useServerFn(launchMarketingCampaign);
   const changeStatus = useServerFn(setCampaignStatus);
@@ -65,6 +74,9 @@ function CampaignDetailPage() {
   const [variants, setVariants] = useState<VariantDraft[]>([
     { label: "A", body: "", split_percent: 100 },
   ]);
+  const [pickerFor, setPickerFor] = useState<number | null>(null);
+  const [previewVariant, setPreviewVariant] = useState(0);
+  const [previewContactId, setPreviewContactId] = useState<string>("");
 
   const campaign = useQuery({
     queryKey: ["mkt", "campaign", id],
@@ -88,6 +100,7 @@ function CampaignDetailPage() {
           label: x.label,
           subject: x.subject ?? undefined,
           body: x.body,
+          media_url: x.media_url ?? undefined,
           split_percent: x.split_percent,
         })),
       );
@@ -105,7 +118,13 @@ function CampaignDetailPage() {
           audience_id: audienceId || undefined,
           daily_cap: dailyCap,
           requires_human_approval: requiresApproval,
-          variants,
+          variants: variants.map((v) => ({
+            label: v.label,
+            subject: v.subject || undefined,
+            body: v.body,
+            media_url: v.media_url || undefined,
+            split_percent: v.split_percent,
+          })),
         },
       }),
     onSuccess: () => {
@@ -129,6 +148,52 @@ function CampaignDetailPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["mkt", "campaign", id] }),
     onError: (e: Error) => toast.error(e.message),
   });
+
+  // Amostra de contatos reais da audiência para a prévia e a cobertura de variáveis.
+  const sample = useQuery({
+    queryKey: ["mkt", "sample", audienceId],
+    queryFn: () => fetchSample({ data: { audience_id: audienceId, limit: 10 } }),
+    enabled: !!audienceId,
+  });
+
+  const variantTexts = variants.flatMap((v) => [v.body, v.subject ?? ""]).filter(Boolean);
+  const coverage = useQuery({
+    queryKey: ["mkt", "coverage", audienceId, variantTexts.join("|")],
+    queryFn: () => fetchCoverage({ data: { audience_id: audienceId, texts: variantTexts.slice(0, 10) } }),
+    enabled: !!audienceId && variantTexts.length > 0,
+  });
+
+  const selectedAudience = (audiences.data ?? []).find((a) => a.id === audienceId);
+  const issues = validateCampaign({
+    name,
+    channel: channel as never,
+    audience_id: audienceId || null,
+    audience_size: selectedAudience?.member_count ?? undefined,
+    variants: variants.map((v) => ({
+      label: v.label,
+      subject: v.subject ?? null,
+      body: v.body,
+      media_url: v.media_url ?? null,
+      rcs_payload: null,
+      split_percent: v.split_percent,
+    })),
+  });
+  const blocked = hasBlockingIssues(issues);
+
+  const previewContact = (sample.data ?? []).find((c) => c.id === previewContactId);
+  const activeVariant = variants[Math.min(previewVariant, variants.length - 1)];
+
+  const applyTemplate = (idx: number, tpl: PickedTemplate) => {
+    updateVariant(idx, {
+      body: tpl.body,
+      subject: tpl.subject ?? undefined,
+      media_url: tpl.media_url ?? undefined,
+    });
+    toast.success(`Template "${tpl.name}" aplicado à variante ${variants[idx]?.label ?? ""}`);
+  };
+
+  const insertVar = (idx: number, key: string) =>
+    updateVariant(idx, { body: `${variants[idx]?.body ?? ""}{{${key}}}` });
 
   const totalSplit = variants.reduce((a, v) => a + v.split_percent, 0);
   const status = campaign.data?.campaign.status ?? "draft";
@@ -161,7 +226,7 @@ function CampaignDetailPage() {
           ) : null}
           <Button
             onClick={() => launchMutation.mutate()}
-            disabled={launchMutation.isPending || !audienceId}
+            disabled={launchMutation.isPending || !audienceId || blocked}
           >
             {launchMutation.isPending ? "Lançando…" : "Lançar campanha"}
           </Button>
