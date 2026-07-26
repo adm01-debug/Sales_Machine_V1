@@ -1342,6 +1342,7 @@ export type Database = {
           channel: Database["public"]["Enums"]["sm_channel"]
           created_at: string
           created_by: string | null
+          email_blocks: Json | null
           id: string
           media_url: string | null
           name: string
@@ -1356,6 +1357,7 @@ export type Database = {
           channel: Database["public"]["Enums"]["sm_channel"]
           created_at?: string
           created_by?: string | null
+          email_blocks?: Json | null
           id?: string
           media_url?: string | null
           name: string
@@ -1370,6 +1372,7 @@ export type Database = {
           channel?: Database["public"]["Enums"]["sm_channel"]
           created_at?: string
           created_by?: string | null
+          email_blocks?: Json | null
           id?: string
           media_url?: string | null
           name?: string
