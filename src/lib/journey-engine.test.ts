@@ -385,7 +385,12 @@ describe("validateJourney", () => {
   const valid = () => ({
     nodes: [
       node({ id: "t", kind: "trigger", label: "Entrada" }),
-      node({ id: "s", kind: "send", label: "E-mail 1", config: { channel: "email" } }),
+      node({
+        id: "s",
+        kind: "send",
+        label: "E-mail 1",
+        config: { channel: "email", template_id: "tpl-1" },
+      }),
       node({ id: "g", kind: "goal", label: "Reunião marcada" }),
     ],
     edges: [
@@ -423,6 +428,31 @@ describe("validateJourney", () => {
     const issues = validateJourney(withOrphan, withEdge);
     expect(issues.some((i) => i.message.includes("desconectada"))).toBe(true);
     expect(issues.some((i) => i.message.includes("duração zero"))).toBe(true);
+  });
+
+  it("exige conteúdo ou template na etapa de envio", () => {
+    const { nodes, edges } = valid();
+    const semConteudo = nodes.map((n) =>
+      n.id === "s" ? { ...n, config: { channel: "email" } } : n,
+    );
+    expect(
+      validateJourney(semConteudo, edges).some((i) =>
+        i.message.includes("não tem mensagem nem template"),
+      ),
+    ).toBe(true);
+  });
+
+  it("aplica o pré-voo de entregabilidade em e-mail escrito no nó", () => {
+    const { nodes, edges } = valid();
+    const inline = nodes.map((n) =>
+      n.id === "s"
+        ? { ...n, config: { channel: "email", subject: "Oferta", body: "Clique aqui" } }
+        : n,
+    );
+    const issues = validateJourney(inline, edges);
+    expect(issues.some((i) => i.level === "error" && i.message.includes("Entregabilidade"))).toBe(
+      true,
+    );
   });
 
   it("aponta ligação para etapa inexistente", () => {

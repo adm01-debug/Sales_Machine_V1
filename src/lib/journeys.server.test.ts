@@ -11,7 +11,11 @@ const graph = (over: Partial<JourneyGraphInput> = {}): JourneyGraphInput =>
     settings: { name: "Boas-vindas", description: null },
     nodes: [
       { id: "n-trigger", kind: "trigger", label: "Entrada", config: {} },
-      { id: "tmp-send", kind: "send", label: "Oi", config: { channel: "email", body: "x" } },
+      { id: "tmp-send", kind: "send", label: "Oi", config: {
+        channel: "email",
+        subject: "Bem-vindo à {{empresa|sua empresa}}",
+        body: "Olá {{primeiro_nome|tudo bem}}, obrigado por se cadastrar. Preparei um material com três formas de reduzir seu custo de aquisição em até 40%. Se preferir não receber mais, clique para descadastrar.",
+      } },
       { id: "n-exit", kind: "exit", label: "Fim", config: {} },
     ],
     edges: [
