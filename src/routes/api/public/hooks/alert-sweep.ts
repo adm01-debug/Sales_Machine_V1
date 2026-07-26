@@ -160,7 +160,8 @@ export const Route = createFileRoute("/api/public/hooks/alert-sweep")({
             const secret = process.env.OPS_ALERT_WEBHOOK_SECRET;
             if (secret) {
               const { signPayload } = await import("@/lib/hmac.server");
-              headers["x-signature"] = `sha256=${signPayload(body, secret)}`;
+              // signPayload já devolve o prefixo `sha256=`.
+              headers["x-signature"] = signPayload(body, secret);
             }
             const res = await fetch(webhookUrl, { method: "POST", headers, body });
             notified = res.ok;

@@ -102,7 +102,6 @@ describe("alert-sweep (integração)", () => {
       alert_id: "dead_letter",
       level: "critical",
       occurrences: 1,
-      resolved_at: undefined,
     });
   });
 
@@ -195,7 +194,7 @@ describe("alert-sweep (integração)", () => {
     fake = createFakeSupabase({ tables });
     const out = await sweep();
     const ids = fake.tables.ops_alert_notifications.map((r) => r.alert_id);
-    expect(ids).toContain("consent_block_rate");
+    expect(ids).toContain("consent_block_rate_critical");
     expect(out.active as number).toBeGreaterThan(0);
   });
 
