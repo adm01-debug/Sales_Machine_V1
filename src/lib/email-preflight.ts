@@ -291,3 +291,28 @@ export function scoreLabel(score: number): "excelente" | "bom" | "atenção" | "
   if (score >= 45) return "atenção";
   return "crítico";
 }
+
+/**
+ * Executa o pré-voo aceitando blocos OU corpo em texto puro.
+ *
+ * Campanhas antigas guardam apenas `body`; o motor de heurísticas trabalha com
+ * blocos, então convertemos o texto em um bloco único antes de analisar.
+ */
+export function preflightEmailContent(input: {
+  subject: string;
+  blocks?: EmailBlock[] | null;
+  body?: string | null;
+}): PreflightReport {
+  const blocks: EmailBlock[] =
+    input.blocks && input.blocks.length > 0
+      ? input.blocks
+      : (input.body ?? "").trim()
+        ? [{ id: "body", type: "text", text: (input.body ?? "").trim() }]
+        : [];
+  return preflightEmail({ subject: input.subject ?? "", blocks });
+}
+
+/** Achados que devem impedir o salvamento/lançamento. */
+export function blockingFindings(report: PreflightReport): PreflightFinding[] {
+  return report.findings.filter((f) => f.severity === "error");
+}
