@@ -9,13 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ConfirmarRouteImport } from './routes/confirmar'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FSlugRouteImport } from './routes/f.$slug'
 import { Route as AuthenticatedProspectingRouteImport } from './routes/_authenticated/prospecting'
 import { Route as AuthenticatedOpsRouteImport } from './routes/_authenticated/ops'
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedJourneysRouteImport } from './routes/_authenticated/journeys'
+import { Route as AuthenticatedFormsRouteImport } from './routes/_authenticated/forms'
 import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/evals'
 import { Route as AuthenticatedDeliverabilityRouteImport } from './routes/_authenticated/deliverability'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -44,6 +47,11 @@ import { Route as ApiPublicHooksBudgetReallocateRouteImport } from './routes/api
 import { Route as ApiPublicHooksAlertSweepRouteImport } from './routes/api/public/hooks/alert-sweep'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
 
+const ConfirmarRoute = ConfirmarRouteImport.update({
+  id: '/confirmar',
+  path: '/confirmar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -56,6 +64,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FSlugRoute = FSlugRouteImport.update({
+  id: '/f/$slug',
+  path: '/f/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedProspectingRoute =
@@ -77,6 +90,11 @@ const AuthenticatedLibraryRoute = AuthenticatedLibraryRouteImport.update({
 const AuthenticatedJourneysRoute = AuthenticatedJourneysRouteImport.update({
   id: '/journeys',
   path: '/journeys',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFormsRoute = AuthenticatedFormsRouteImport.update({
+  id: '/forms',
+  path: '/forms',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedEvalsRoute = AuthenticatedEvalsRouteImport.update({
@@ -230,6 +248,7 @@ const ApiPublicAgentToolsSendMessageRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/confirmar': typeof ConfirmarRoute
   '/approvals': typeof AuthenticatedApprovalsRoute
   '/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
@@ -238,10 +257,12 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
+  '/forms': typeof AuthenticatedFormsRoute
   '/journeys': typeof AuthenticatedJourneysRouteWithChildren
   '/library': typeof AuthenticatedLibraryRoute
   '/ops': typeof AuthenticatedOpsRoute
   '/prospecting': typeof AuthenticatedProspectingRoute
+  '/f/$slug': typeof FSlugRoute
   '/audiences/$id': typeof AuthenticatedAudiencesIdRoute
   '/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
@@ -265,6 +286,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/confirmar': typeof ConfirmarRoute
   '/approvals': typeof AuthenticatedApprovalsRoute
   '/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
@@ -273,10 +295,12 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/evals': typeof AuthenticatedEvalsRoute
+  '/forms': typeof AuthenticatedFormsRoute
   '/journeys': typeof AuthenticatedJourneysRouteWithChildren
   '/library': typeof AuthenticatedLibraryRoute
   '/ops': typeof AuthenticatedOpsRoute
   '/prospecting': typeof AuthenticatedProspectingRoute
+  '/f/$slug': typeof FSlugRoute
   '/audiences/$id': typeof AuthenticatedAudiencesIdRoute
   '/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
@@ -302,6 +326,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/confirmar': typeof ConfirmarRoute
   '/_authenticated/approvals': typeof AuthenticatedApprovalsRoute
   '/_authenticated/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/_authenticated/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
@@ -310,10 +335,12 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/deliverability': typeof AuthenticatedDeliverabilityRoute
   '/_authenticated/evals': typeof AuthenticatedEvalsRoute
+  '/_authenticated/forms': typeof AuthenticatedFormsRoute
   '/_authenticated/journeys': typeof AuthenticatedJourneysRouteWithChildren
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/ops': typeof AuthenticatedOpsRoute
   '/_authenticated/prospecting': typeof AuthenticatedProspectingRoute
+  '/f/$slug': typeof FSlugRoute
   '/_authenticated/audiences/$id': typeof AuthenticatedAudiencesIdRoute
   '/_authenticated/campaigns/$id': typeof AuthenticatedCampaignsIdRoute
   '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
@@ -339,6 +366,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/confirmar'
     | '/approvals'
     | '/audiences'
     | '/campaigns'
@@ -347,10 +375,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deliverability'
     | '/evals'
+    | '/forms'
     | '/journeys'
     | '/library'
     | '/ops'
     | '/prospecting'
+    | '/f/$slug'
     | '/audiences/$id'
     | '/campaigns/$id'
     | '/companies/$id'
@@ -374,6 +404,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/confirmar'
     | '/approvals'
     | '/audiences'
     | '/campaigns'
@@ -382,10 +413,12 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deliverability'
     | '/evals'
+    | '/forms'
     | '/journeys'
     | '/library'
     | '/ops'
     | '/prospecting'
+    | '/f/$slug'
     | '/audiences/$id'
     | '/campaigns/$id'
     | '/companies/$id'
@@ -410,6 +443,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/confirmar'
     | '/_authenticated/approvals'
     | '/_authenticated/audiences'
     | '/_authenticated/campaigns'
@@ -418,10 +452,12 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/deliverability'
     | '/_authenticated/evals'
+    | '/_authenticated/forms'
     | '/_authenticated/journeys'
     | '/_authenticated/library'
     | '/_authenticated/ops'
     | '/_authenticated/prospecting'
+    | '/f/$slug'
     | '/_authenticated/audiences/$id'
     | '/_authenticated/campaigns/$id'
     | '/_authenticated/companies/$id'
@@ -447,6 +483,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ConfirmarRoute: typeof ConfirmarRoute
+  FSlugRoute: typeof FSlugRoute
   ApiPublicUnsubscribeRoute: typeof ApiPublicUnsubscribeRoute
   ApiPublicAgentToolsSendMessageRoute: typeof ApiPublicAgentToolsSendMessageRoute
   ApiPublicHooksAlertSweepRoute: typeof ApiPublicHooksAlertSweepRoute
@@ -465,6 +503,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/confirmar': {
+      id: '/confirmar'
+      path: '/confirmar'
+      fullPath: '/confirmar'
+      preLoaderRoute: typeof ConfirmarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -484,6 +529,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/f/$slug': {
+      id: '/f/$slug'
+      path: '/f/$slug'
+      fullPath: '/f/$slug'
+      preLoaderRoute: typeof FSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/prospecting': {
@@ -512,6 +564,13 @@ declare module '@tanstack/react-router' {
       path: '/journeys'
       fullPath: '/journeys'
       preLoaderRoute: typeof AuthenticatedJourneysRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/forms': {
+      id: '/_authenticated/forms'
+      path: '/forms'
+      fullPath: '/forms'
+      preLoaderRoute: typeof AuthenticatedFormsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/evals': {
@@ -783,6 +842,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDeliverabilityRoute: typeof AuthenticatedDeliverabilityRoute
   AuthenticatedEvalsRoute: typeof AuthenticatedEvalsRoute
+  AuthenticatedFormsRoute: typeof AuthenticatedFormsRoute
   AuthenticatedJourneysRoute: typeof AuthenticatedJourneysRouteWithChildren
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedOpsRoute: typeof AuthenticatedOpsRoute
@@ -798,6 +858,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDeliverabilityRoute: AuthenticatedDeliverabilityRoute,
   AuthenticatedEvalsRoute: AuthenticatedEvalsRoute,
+  AuthenticatedFormsRoute: AuthenticatedFormsRoute,
   AuthenticatedJourneysRoute: AuthenticatedJourneysRouteWithChildren,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedOpsRoute: AuthenticatedOpsRoute,
@@ -811,6 +872,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ConfirmarRoute: ConfirmarRoute,
+  FSlugRoute: FSlugRoute,
   ApiPublicUnsubscribeRoute: ApiPublicUnsubscribeRoute,
   ApiPublicAgentToolsSendMessageRoute: ApiPublicAgentToolsSendMessageRoute,
   ApiPublicHooksAlertSweepRoute: ApiPublicHooksAlertSweepRoute,

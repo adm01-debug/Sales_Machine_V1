@@ -9,6 +9,8 @@ import {
   Activity,
   MailCheck,
   FlaskConical,
+  Workflow,
+  ClipboardList,
   type LucideIcon,
 } from "lucide-react";
 
@@ -31,6 +33,8 @@ export const NAV_GROUPS: NavGroup[] = [
       { to: "/dashboard", label: "Visão Geral", icon: LayoutDashboard, exact: true },
       { to: "/audiences", label: "Audiências", icon: Users },
       { to: "/campaigns", label: "Campanhas", icon: Megaphone },
+      { to: "/journeys", label: "Jornadas", icon: Workflow },
+      { to: "/forms", label: "Formulários", icon: ClipboardList },
       { to: "/library", label: "Biblioteca", icon: Library },
     ],
   },
