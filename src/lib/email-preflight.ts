@@ -118,8 +118,16 @@ export function preflightEmail(input: {
 
   const html = renderEmailHtml(blocks, { subject });
   const text = renderEmailText(blocks);
+  // Só heading/text contam como "texto real" — legendas de imagem não valem.
+  const realText = blocks
+    .filter((b): b is Extract<EmailBlock, { type: "heading" | "text" }> =>
+      b.type === "heading" || b.type === "text",
+    )
+    .map((b) => b.text.trim())
+    .join("\n\n")
+    .trim();
   const htmlBytes = byteLength(html);
-  const textChars = text.length;
+  const textChars = realText.length;
   const imageCount = blocks.filter((b) => b.type === "image").length;
   const urls = collectUrls(blocks);
 
