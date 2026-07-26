@@ -412,6 +412,34 @@ export function validateJourney(nodes: JourneyNode[], edges: JourneyEdge[]): Jou
     if (node.kind === "send" && !String(node.config?.channel ?? "").trim()) {
       issues.push({ level: "error", nodeId: node.id, message: "Etapa de envio sem canal definido." });
     }
+    if (node.kind === "send") {
+      const cfg = node.config ?? {};
+      const inlineBody = typeof cfg.body === "string" ? cfg.body.trim() : "";
+      const templateId = typeof cfg.template_id === "string" ? cfg.template_id.trim() : "";
+      if (!inlineBody && !templateId) {
+        issues.push({
+          level: "error",
+          nodeId: node.id,
+          message: `A etapa "${node.label || "envio"}" não tem mensagem nem template selecionado.`,
+        });
+      }
+      // Pré-voo de entregabilidade só é possível para conteúdo escrito no nó;
+      // quando vem de template, a Biblioteca já bloqueia no salvamento.
+      if (String(cfg.channel ?? "") === "email" && inlineBody) {
+        const report = preflightEmailContent({
+          subject: typeof cfg.subject === "string" ? cfg.subject : "",
+          body: inlineBody,
+        });
+        for (const finding of report.findings) {
+          if (finding.severity === "info") continue;
+          issues.push({
+            level: finding.severity === "error" ? "error" : "warning",
+            nodeId: node.id,
+            message: `Entregabilidade: ${finding.message}${finding.hint ? ` ${finding.hint}` : ""}`,
+          });
+        }
+      }
+    }
     if (node.kind === "wait" && waitDurationMs(node.config ?? {}) === 0) {
       issues.push({
         level: "warning",
