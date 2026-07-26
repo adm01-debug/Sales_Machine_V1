@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ConfirmarRouteImport } from './routes/confirmar'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -45,6 +46,11 @@ import { Route as ApiPublicHooksBudgetReallocateRouteImport } from './routes/api
 import { Route as ApiPublicHooksAlertSweepRouteImport } from './routes/api/public/hooks/alert-sweep'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
 
+const ConfirmarRoute = ConfirmarRouteImport.update({
+  id: '/confirmar',
+  path: '/confirmar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -236,6 +242,7 @@ const ApiPublicAgentToolsSendMessageRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/confirmar': typeof ConfirmarRoute
   '/approvals': typeof AuthenticatedApprovalsRoute
   '/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
@@ -272,6 +279,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/confirmar': typeof ConfirmarRoute
   '/approvals': typeof AuthenticatedApprovalsRoute
   '/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
@@ -310,6 +318,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/confirmar': typeof ConfirmarRoute
   '/_authenticated/approvals': typeof AuthenticatedApprovalsRoute
   '/_authenticated/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/_authenticated/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
@@ -348,6 +357,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/confirmar'
     | '/approvals'
     | '/audiences'
     | '/campaigns'
@@ -384,6 +394,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/confirmar'
     | '/approvals'
     | '/audiences'
     | '/campaigns'
@@ -421,6 +432,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/confirmar'
     | '/_authenticated/approvals'
     | '/_authenticated/audiences'
     | '/_authenticated/campaigns'
@@ -459,6 +471,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ConfirmarRoute: typeof ConfirmarRoute
   FSlugRoute: typeof FSlugRoute
   ApiPublicUnsubscribeRoute: typeof ApiPublicUnsubscribeRoute
   ApiPublicAgentToolsSendMessageRoute: typeof ApiPublicAgentToolsSendMessageRoute
@@ -478,6 +491,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/confirmar': {
+      id: '/confirmar'
+      path: '/confirmar'
+      fullPath: '/confirmar'
+      preLoaderRoute: typeof ConfirmarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -831,6 +851,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ConfirmarRoute: ConfirmarRoute,
   FSlugRoute: FSlugRoute,
   ApiPublicUnsubscribeRoute: ApiPublicUnsubscribeRoute,
   ApiPublicAgentToolsSendMessageRoute: ApiPublicAgentToolsSendMessageRoute,
