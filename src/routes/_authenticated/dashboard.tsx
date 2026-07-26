@@ -1,154 +1,170 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { listRecentEvents, listCampaigns } from "@/lib/orchestrator.functions";
+import { getMarketingOverview } from "@/lib/marketing.functions";
+import { listRecentEvents } from "@/lib/orchestrator.functions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { MetricCard } from "@/components/metric-card";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Cockpit · Sales Machine" },
-      { name: "description", content: "Painel central da Sales Machine com eventos, campanhas e integrações." },
+      { title: "Visão Geral · Sales Machine" },
+      {
+        name: "description",
+        content:
+          "Painel de marketing multicanal: alcance das audiências, engajamento por canal e desempenho das campanhas.",
+      },
     ],
   }),
-  component: DashboardPage,
+  component: OverviewPage,
 });
 
-const SYSTEMS: Array<{ key: "lux" | "singu" | "fatorx"; name: string; role: string }> = [
-  { key: "lux", name: "LUX", role: "Descoberta de empresas no ICP" },
-  { key: "singu", name: "SINGU", role: "CRM + análise + canais (WhatsApp, Email, SMS)" },
-  { key: "fatorx", name: "FATOR X", role: "Agentes de IA treinados" },
-];
-
-function DashboardPage() {
-  const navigate = useNavigate();
+function OverviewPage() {
+  const fetchOverview = useServerFn(getMarketingOverview);
   const fetchEvents = useServerFn(listRecentEvents);
-  const fetchCampaigns = useServerFn(listCampaigns);
+  const overview = useQuery({ queryKey: ["mkt", "overview"], queryFn: () => fetchOverview() });
   const events = useQuery({ queryKey: ["sm", "events"], queryFn: () => fetchEvents() });
-  const campaigns = useQuery({ queryKey: ["sm", "campaigns"], queryFn: () => fetchCampaigns() });
 
-  async function signOut() {
-    await supabase.auth.signOut();
-    navigate({ to: "/auth" });
-  }
+  const data = overview.data;
+  const channels = Object.entries(data?.by_channel ?? {});
+  const sent = channels.reduce((a, [, c]) => a + c.sent, 0);
+  const replies = channels.reduce((a, [, c]) => a + c.replies, 0);
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <header className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Sales Machine</h1>
-            <p className="text-sm text-muted-foreground">
-              Cockpit de prospecção orquestrada — LUX · SINGU · FATOR X
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Link to="/companies"><Button variant="outline" size="sm">Empresas</Button></Link>
-            <Link to="/campaigns"><Button variant="outline" size="sm">Campanhas</Button></Link>
-            <Link to="/composer"><Button variant="outline" size="sm">Compositor</Button></Link>
-            <Link to="/ops"><Button variant="outline" size="sm">Operações</Button></Link>
-            <Link to="/deliverability"><Button variant="outline" size="sm">Deliverability</Button></Link>
-            <Link to="/approvals"><Button variant="outline" size="sm">Aprovações</Button></Link>
-            <Link to="/evals"><Button variant="outline" size="sm">Evals</Button></Link>
-            <Button variant="outline" size="sm" onClick={signOut}>Sair</Button>
-          </div>
-        </header>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Visão Geral</h1>
+          <p className="text-sm text-muted-foreground">
+            Marketing multicanal alimentado por LUX · SINGU · FATOR X
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Link to="/audiences">
+            <Button variant="outline" size="sm">Audiências</Button>
+          </Link>
+          <Link to="/campaigns">
+            <Button size="sm">Campanhas</Button>
+          </Link>
+        </div>
+      </header>
 
-        <section className="grid gap-4 md:grid-cols-3">
-          {SYSTEMS.map((s) => (
-            <Card key={s.key}>
-              <CardHeader>
-                <CardTitle className="text-base">{s.name}</CardTitle>
-                <CardDescription>{s.role}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Badge variant="secondary">Integrado via webhook + API</Badge>
-              </CardContent>
-            </Card>
-          ))}
-        </section>
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard
+          label="Alcance nas audiências"
+          value={data?.reach ?? 0}
+          hint={`${data?.audience_count ?? 0} audiências ativas`}
+          loading={overview.isLoading}
+        />
+        <MetricCard
+          label="Campanhas em execução"
+          value={data?.running ?? 0}
+          hint={`${data?.campaign_count ?? 0} no total`}
+          loading={overview.isLoading}
+        />
+        <MetricCard label="Mensagens enviadas (30d)" value={sent} loading={overview.isLoading} />
+        <MetricCard
+          label="Respostas recebidas (30d)"
+          value={replies}
+          hint={sent > 0 ? `${((replies / sent) * 100).toFixed(1)}% de resposta` : undefined}
+          loading={overview.isLoading}
+        />
+      </section>
 
-        <section className="grid gap-4 lg:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Eventos recentes</CardTitle>
-              <CardDescription>Últimos sinais recebidos dos sistemas integrados.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {events.isLoading ? (
-                <p className="text-sm text-muted-foreground">Carregando…</p>
-              ) : events.error ? (
-                <p className="text-sm text-destructive">Sem permissão ou erro ao ler eventos.</p>
-              ) : events.data && events.data.length > 0 ? (
-                <ul className="space-y-2 text-sm">
-                  {events.data.map((e) => (
-                    <li key={e.id} className="flex items-center justify-between border-b py-1 last:border-0">
-                      <span className="flex items-center gap-2">
-                        <Badge variant="outline">{e.source}</Badge>
-                        <span className="font-mono text-xs">{e.event_type}</span>
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(e.received_at).toLocaleString("pt-BR")}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  Nenhum evento ainda. Configure os webhooks nos sistemas externos.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Campanhas de orquestração</CardTitle>
-              <CardDescription>Cadências ativas com FATOR X + canais SINGU.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {campaigns.isLoading ? (
-                <p className="text-sm text-muted-foreground">Carregando…</p>
-              ) : campaigns.data && campaigns.data.length > 0 ? (
-                <ul className="space-y-2 text-sm">
-                  {campaigns.data.map((c) => (
-                    <li key={c.id} className="flex items-center justify-between border-b py-1 last:border-0">
-                      <span>{c.name}</span>
-                      <Badge>{c.status}</Badge>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  Nenhuma campanha criada ainda.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </section>
+      <section className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Desempenho por canal</CardTitle>
+            <CardDescription>Envios e respostas dos últimos 30 dias.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {channels.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Sem atividade registrada ainda.</p>
+            ) : (
+              <ul className="space-y-2 text-sm">
+                {channels.map(([channel, v]) => (
+                  <li
+                    key={channel}
+                    className="flex items-center justify-between border-b border-border py-1 last:border-0"
+                  >
+                    <Badge variant="outline">{channel}</Badge>
+                    <span className="text-muted-foreground">
+                      {v.sent} enviadas · {v.replies} respostas
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Endpoints de integração</CardTitle>
-            <CardDescription>
-              Configure estas URLs nos sistemas externos. Todas exigem HMAC-SHA256 no header{" "}
-              <code className="rounded bg-muted px-1">x-signature</code>.
-            </CardDescription>
+            <CardTitle>Principais campanhas</CardTitle>
+            <CardDescription>Ordenadas por volume de envios materializados.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm font-mono">
-            <div>POST /api/public/webhooks/lux</div>
-            <div>POST /api/public/webhooks/singu</div>
-            <div>POST /api/public/webhooks/fatorx</div>
-            <div className="pt-2 text-muted-foreground font-sans text-xs">
-              Ferramenta de agente (bearer AGENT_TOOL_TOKEN):
-            </div>
-            <div>POST /api/public/agent-tools/send-message</div>
+          <CardContent>
+            {(data?.campaigns ?? []).length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Nenhuma campanha de marketing criada ainda.
+              </p>
+            ) : (
+              <ul className="space-y-2 text-sm">
+                {(data?.campaigns ?? []).map((c) => (
+                  <li
+                    key={c.id}
+                    className="flex items-center justify-between border-b border-border py-1 last:border-0"
+                  >
+                    <Link to="/campaigns/$id" params={{ id: c.id }} className="hover:underline">
+                      {c.name}
+                    </Link>
+                    <span className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">{c.sends} envios</span>
+                      <Badge variant="secondary">{c.status}</Badge>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </CardContent>
         </Card>
-      </div>
+      </section>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Sinais recentes dos sistemas integrados</CardTitle>
+          <CardDescription>Eventos recebidos de LUX, SINGU e FATOR X.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {events.isLoading ? (
+            <p className="text-sm text-muted-foreground">Carregando…</p>
+          ) : (events.data ?? []).length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Nenhum evento ainda. Configure os webhooks nos sistemas externos.
+            </p>
+          ) : (
+            <ul className="space-y-2 text-sm">
+              {(events.data ?? []).slice(0, 10).map((e) => (
+                <li
+                  key={e.id}
+                  className="flex items-center justify-between border-b border-border py-1 last:border-0"
+                >
+                  <span className="flex items-center gap-2">
+                    <Badge variant="outline">{e.source}</Badge>
+                    <span className="font-mono text-xs">{e.event_type}</span>
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(e.received_at).toLocaleString("pt-BR")}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
