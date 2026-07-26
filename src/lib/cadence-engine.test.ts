@@ -126,7 +126,8 @@ describe("decideFailureOutcome", () => {
     const minutes = seq.map((o) =>
       o.action === "retry" ? (Date.parse(o.nextRunAt) - NOW) / 60_000 : -1,
     );
-    expect(minutes).toEqual([1, 5, 30, 120, 480, 480]);
+    // attempts é incrementado antes do backoff: 0 falhas prévias → 1ª espera de 5min.
+    expect(minutes).toEqual([5, 30, 120, 480, 480, 480]);
   });
 
   it("manda para dead_letter ao atingir max_attempts", () => {
