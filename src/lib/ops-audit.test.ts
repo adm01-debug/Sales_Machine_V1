@@ -176,7 +176,10 @@ describe("collectManualInterventions (exportação paginada)", () => {
   });
 
   it("aplica o recorte temporal", async () => {
-    const db = createFakeSupabase({ tables: { campaign_target_events: [event("recente"), event("antigo", { created_at: daysAgo(40) })],
+    const db = createFakeSupabase({
+      tables: {
+        campaign_target_events: [event("recente"), event("antigo", { created_at: daysAgo(40) })],
+      },
     });
     const res = await collectManualInterventions(db as never, { days: 7 });
     expect(res.rows.map((r) => r.id)).toEqual(["recente"]);
