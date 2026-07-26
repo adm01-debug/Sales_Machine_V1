@@ -15,7 +15,12 @@ import {
 import { analyzeSms } from "@/lib/sms-segments";
 import { CHANNELS, type Channel } from "@/lib/audience-rules";
 import { CHANNEL_BODY_LIMIT } from "@/lib/campaign-validation";
-import { extractVariables as extractTemplateVars, unknownVariables } from "@/lib/template-vars";
+import {
+  extractVariables as extractTemplateVars,
+  renderTemplate,
+  sampleVarValues,
+  unknownVariables,
+} from "@/lib/template-vars";
 import { MessagePreview } from "@/components/message-preview";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -442,18 +447,9 @@ function ComposerPage() {
   );
 }
 
-function extractVariables(body: string): string[] {
-  const set = new Set<string>();
-  const re = /\{\{\s*([\w.]+)\s*\}\}/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(body))) set.add(m[1]);
-  return [...set];
-}
-
 function renderPreview(body: string): string {
-  return body
-    .replace(/\{\{\s*nome\s*\}\}/gi, "Ana")
-    .replace(/\{\{\s*empresa\s*\}\}/gi, "Acme");
+  // Preview do telefone usa o mesmo motor de variáveis dos workers.
+  return renderTemplate(body, sampleVarValues()).text;
 }
 
 function PhonePreview({
