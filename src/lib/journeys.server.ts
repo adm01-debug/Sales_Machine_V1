@@ -81,7 +81,7 @@ export async function saveJourneyGraph(
 
   const settingsUpdate = await db
     .from("journeys")
-    .update({ ...graph.settings, updated_at: new Date().toISOString() })
+    .update({ ...graph.settings, updated_at: new Date().toISOString() } as never)
     .eq("id", graph.id);
   if (settingsUpdate.error) throw new Error(settingsUpdate.error.message);
 
