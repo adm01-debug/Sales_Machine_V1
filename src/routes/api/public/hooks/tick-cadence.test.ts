@@ -15,7 +15,7 @@ const singuClient = {
   sendRcs: vi.fn(async (i: { message: string }) => sent.push({ kind: "rcs", message: i.message })),
   sendEmail: vi.fn(async (i: { body: string }) => sent.push({ kind: "email", message: i.body })),
 };
-const runAgent = vi.fn(async () => ({ message: "Olá {{display_name}}, podemos conversar?" }));
+const runAgent = vi.fn(async () => ({ message: "Olá {{nome}}, podemos conversar?" }));
 const socialSend = vi.fn(async () => ({ status: "sent" as const, provider: "stub", error: null }));
 
 let fake: ReturnType<typeof createFakeSupabase>;
@@ -130,6 +130,27 @@ describe("tick-cadence (integração)", () => {
     const target = fake.tables.campaign_targets[0];
     expect(target).toMatchObject({ current_step: 1, state: "queued", attempts: 0 });
     expect(fake.tables.contact_touchpoints[0]).toMatchObject({ status: "sent", channel: "whatsapp" });
+  });
+
+  it("preserva variáveis desconhecidas literais em vez de apagá-las", async () => {
+    runAgent.mockResolvedValueOnce({ message: "Oi {{nome}}, {{variavel_inexistente}}" });
+    fake = createFakeSupabase({
+      tables: baseTables(),
+      rpc: { check_consent: () => true, has_recent_account_touchpoint: () => false },
+    });
+    await tick();
+    expect(sent[0].message).toBe("Oi Ana, {{variavel_inexistente}}");
+  });
+
+  it("usa mensagem de fallback quando o FATOR X falha", async () => {
+    runAgent.mockRejectedValueOnce(new Error("FATORX 503"));
+    fake = createFakeSupabase({
+      tables: baseTables(),
+      rpc: { check_consent: () => true, has_recent_account_touchpoint: () => false },
+    });
+    const out = await tick();
+    expect(out).toMatchObject({ processed: 1 });
+    expect(sent[0].message).toContain("Ana");
   });
 
   it("NÃO envia quando check_consent retorna false e para o target (LGPD)", async () => {
