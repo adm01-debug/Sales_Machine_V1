@@ -189,3 +189,35 @@ describe("hasBlockingIssues", () => {
     expect(hasBlockingIssues([{ level: "error", scope: "x", message: "y" }])).toBe(true);
   });
 });
+describe("validateCampaign · pré-voo de e-mail", () => {
+  const base = {
+    name: "Nutrição",
+    channel: "email" as const,
+    audience_id: "aud-1",
+    audience_size: 100,
+  };
+
+  it("bloqueia e-mail sem descadastro", () => {
+    const issues = validateCampaign({
+      ...base,
+      variants: [
+        {
+          label: "A",
+          subject: "Estudo de caso",
+          body: "Olá, separei um estudo com três empresas do seu segmento que reduziram custo por reunião em 40%.",
+          split_percent: 100,
+        },
+      ],
+    });
+    expect(issues.some((i) => i.level === "error" && /descadastro/i.test(i.message))).toBe(true);
+  });
+
+  it("não sinaliza entregabilidade em canais fora de e-mail", () => {
+    const issues = validateCampaign({
+      ...base,
+      channel: "sms",
+      variants: [{ label: "A", body: "Oi, tudo bem?", split_percent: 100 }],
+    });
+    expect(issues.some((i) => i.scope.includes("entregabilidade"))).toBe(false);
+  });
+});

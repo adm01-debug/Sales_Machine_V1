@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { preflightEmail, scoreLabel, GMAIL_CLIP_BYTES } from "./email-preflight";
+import {
+  preflightEmail,
+  preflightEmailContent,
+  blockingFindings,
+  scoreLabel,
+  GMAIL_CLIP_BYTES,
+} from "./email-preflight";
 import type { EmailBlock } from "./email-blocks";
 
 const codes = (r: ReturnType<typeof preflightEmail>) => r.findings.map((f) => f.code);
@@ -151,5 +157,29 @@ describe("scoreLabel", () => {
     expect(scoreLabel(75)).toBe("bom");
     expect(scoreLabel(50)).toBe("atenção");
     expect(scoreLabel(10)).toBe("crítico");
+  });
+});
+
+describe("preflightEmailContent", () => {
+  it("usa os blocos quando existem", () => {
+    const r = preflightEmailContent({ subject: "Estudo", blocks: goodBlocks });
+    expect(codes(r)).toEqual([]);
+  });
+
+  it("converte corpo em texto quando não há blocos", () => {
+    const r = preflightEmailContent({
+      subject: "Estudo de caso {{empresa|sua empresa}}",
+      blocks: [],
+      body:
+        "Olá, separei um estudo com três empresas do seu segmento que reduziram o custo por reunião em 40%. Posso mostrar em 15 minutos? Para descadastrar, responda esta mensagem.",
+    });
+    expect(codes(r)).not.toContain("no_blocks");
+    expect(codes(r)).not.toContain("no_unsubscribe");
+  });
+
+  it("reporta ausência de conteúdo quando nada é informado", () => {
+    const r = preflightEmailContent({ subject: "Oi", blocks: null, body: "   " });
+    expect(codes(r)).toContain("no_blocks");
+    expect(blockingFindings(r).length).toBeGreaterThan(0);
   });
 });
