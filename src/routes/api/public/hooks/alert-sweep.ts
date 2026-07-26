@@ -6,6 +6,7 @@ import {
   type RawDeliveryEvent,
 } from "@/lib/tracking-integrity";
 import { planAlertDispatch, buildNotificationPayload } from "@/lib/alert-dispatch";
+import type { buildBudgetReport } from "@/lib/budget.server";
 
 /**
  * Varredura de alertas operacionais — chamada por pg_cron (sugestão: a cada 15 minutos).
@@ -73,6 +74,16 @@ export const Route = createFileRoute("/api/public/hooks/alert-sweep")({
           .eq("state", "skipped")
           .ilike("last_error", "%opt-out%");
 
+        // 3c. Guardrail financeiro: mesmo relatório do painel /ops.
+        let budgetStates: Awaited<ReturnType<typeof buildBudgetReport>>["states"] | null = null;
+        try {
+          const { buildBudgetReport: build } = await import("@/lib/budget.server");
+          budgetStates = (await build(supabaseAdmin as never)).states;
+        } catch (err) {
+          // Guardrail nunca derruba a varredura: seguimos sem alertas de orçamento.
+          console.error("[alert-sweep] orçamento", err);
+        }
+
         const active = buildOpsAlerts({
           health: (health ?? null) as never,
           deliverability: {
@@ -91,6 +102,7 @@ export const Route = createFileRoute("/api/public/hooks/alert-sweep")({
             blockedByConsent: (blockedTargets ?? 0) + (skippedSends ?? 0),
             deliveryAttempts: tracking.sends,
           },
+          budget: budgetStates,
         });
 
         // 4. Diferencial contra o estado persistido.

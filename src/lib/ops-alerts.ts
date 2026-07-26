@@ -46,6 +46,32 @@ export interface OpsComplianceInput {
   deliveryAttempts: number;
 }
 
+/**
+ * Estado de orçamento por canal, na forma mínima que o motor de alertas
+ * precisa. Deliberadamente estrutural (e não um import de `budget-guard`)
+ * para manter este módulo puro e sem acoplamento de tipos de banco.
+ */
+export interface OpsBudgetChannelInput {
+  channel: string;
+  status: "ok" | "warning" | "exhausted" | "disabled";
+  spentToday: number;
+  dailyLimit: number;
+  usageRate: number | null;
+  monthlyUsageRate?: number | null;
+  reason?: string | null;
+}
+
+const CHANNEL_LABELS: Record<string, string> = {
+  whatsapp: "WhatsApp",
+  email: "E-mail",
+  sms: "SMS",
+  rcs: "RCS",
+  mms: "MMS",
+  linkedin: "LinkedIn",
+  instagram: "Instagram",
+};
+const channelLabel = (c: string) => CHANNEL_LABELS[c] ?? c;
+
 /** Acima disso a audiência está sendo montada em cima de opt-outs. */
 export const CONSENT_BLOCK_WARN_RATE = 10;
 export const CONSENT_BLOCK_CRITICAL_RATE = 25;
@@ -63,9 +89,10 @@ export function buildOpsAlerts(input: {
   deliverability?: OpsDeliverabilityInput | null;
   tracking?: OpsTrackingInput | null;
   compliance?: OpsComplianceInput | null;
+  budget?: OpsBudgetChannelInput[] | null;
 }): OpsAlert[] {
   const alerts: OpsAlert[] = [];
-  const { health, deliverability: d, tracking: t, compliance: c } = input;
+  const { health, deliverability: d, tracking: t, compliance: c, budget: b } = input;
 
   if (health) {
     if (health.dead_letter > 0) {
@@ -176,6 +203,49 @@ export function buildOpsAlerts(input: {
         detail:
           `${c.blockedByConsent} de ${attempts} tentativas recusadas. ` +
           "Aplique o filtro de opt-out na origem da audiência para não queimar quota.",
+      });
+    }
+  }
+
+  if (b && b.length > 0) {
+    // Um alerta agregado por severidade: o operador quer saber "quais canais
+    // pararam" em uma linha, não sete cards separados.
+    const halted = b.filter((s) => s.status === "exhausted" || s.status === "disabled");
+    if (halted.length > 0) {
+      const exhausted = halted.filter((s) => s.status === "exhausted");
+      const disabled = halted.filter((s) => s.status === "disabled");
+      const parts: string[] = [];
+      if (exhausted.length > 0) {
+        parts.push(
+          `teto atingido: ${exhausted
+            .map((s) => `${channelLabel(s.channel)} (${s.reason ?? "sem saldo"})`)
+            .join(", ")}`,
+        );
+      }
+      if (disabled.length > 0) {
+        parts.push(`desativado pelo operador: ${disabled.map((s) => channelLabel(s.channel)).join(", ")}`);
+      }
+      alerts.push({
+        id: "budget_exhausted",
+        level: "critical",
+        title: `${halted.length} canal(is) sem orçamento — disparos adiados`,
+        detail: `${parts.join(" · ")}. O motor de cadência reagenda os alvos a cada hora; ajuste os tetos em Orçamento por canal para retomar.`,
+      });
+    }
+
+    const nearLimit = b.filter((s) => s.status === "warning");
+    if (nearLimit.length > 0) {
+      alerts.push({
+        id: "budget_warning",
+        level: "warning",
+        title: `${nearLimit.length} canal(is) acima de ${Math.round(80)}% do teto`,
+        detail: nearLimit
+          .map(
+            (s) =>
+              `${channelLabel(s.channel)}: ${fmt(s.usageRate ?? 0)} do teto diário ` +
+              `(R$ ${s.spentToday.toFixed(2)} de R$ ${s.dailyLimit.toFixed(2)})`,
+          )
+          .join(" · "),
       });
     }
   }
