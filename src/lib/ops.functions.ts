@@ -31,3 +31,20 @@ export const getDeliverabilityStats = createServerFn({ method: "GET" })
     for (const row of data ?? []) counts[row.event_type] = (counts[row.event_type] ?? 0) + 1;
     return counts;
   });
+
+/**
+ * Histórico das notificações de alerta disparadas pela varredura automática.
+ * Mostra o que já foi avisado (e quando) para evitar dúvida do operador
+ * sobre "isso já foi comunicado ao time?".
+ */
+export const getAlertNotifications = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("ops_alert_notifications")
+      .select("id, alert_id, level, title, detail, first_notified_at, last_notified_at, occurrences, resolved_at")
+      .order("last_notified_at", { ascending: false })
+      .limit(20);
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
