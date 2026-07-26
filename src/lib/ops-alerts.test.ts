@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildOpsAlerts, TRACKING_COVERAGE_FLOOR } from "./ops-alerts";
+import { buildOpsAlerts, TRACKING_COVERAGE_FLOOR, type OpsBudgetChannelInput } from "./ops-alerts";
 
 const health = (o: Partial<Parameters<typeof buildOpsAlerts>[0]["health"] & object> = {}) => ({
   dead_letter: 0,
