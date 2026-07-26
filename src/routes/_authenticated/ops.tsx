@@ -137,6 +137,13 @@ function OpsPage() {
     refetchInterval: 300_000,
   });
 
+  const fetchBudget = useServerFn(getBudgetReport);
+  const budget = useQuery({
+    queryKey: ["ops", "budget", "alerts"],
+    queryFn: () => fetchBudget(),
+    refetchInterval: 120_000,
+  });
+
   const alerts = buildOpsAlerts({
     health: health.data ?? null,
     deliverability: deliv.data
@@ -161,6 +168,7 @@ function OpsPage() {
           deliveryAttempts: tracking.data?.sends ?? health.data?.sent_24h ?? 0,
         }
       : null,
+    budget: budget.data?.states ?? null,
   });
 
   return (
