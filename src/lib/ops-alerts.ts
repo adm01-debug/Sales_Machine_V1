@@ -46,6 +46,32 @@ export interface OpsComplianceInput {
   deliveryAttempts: number;
 }
 
+/**
+ * Estado de orçamento por canal, na forma mínima que o motor de alertas
+ * precisa. Deliberadamente estrutural (e não um import de `budget-guard`)
+ * para manter este módulo puro e sem acoplamento de tipos de banco.
+ */
+export interface OpsBudgetChannelInput {
+  channel: string;
+  status: "ok" | "warning" | "exhausted" | "disabled";
+  spentToday: number;
+  dailyLimit: number;
+  usageRate: number | null;
+  monthlyUsageRate?: number | null;
+  reason?: string | null;
+}
+
+const CHANNEL_LABELS: Record<string, string> = {
+  whatsapp: "WhatsApp",
+  email: "E-mail",
+  sms: "SMS",
+  rcs: "RCS",
+  mms: "MMS",
+  linkedin: "LinkedIn",
+  instagram: "Instagram",
+};
+const channelLabel = (c: string) => CHANNEL_LABELS[c] ?? c;
+
 /** Acima disso a audiência está sendo montada em cima de opt-outs. */
 export const CONSENT_BLOCK_WARN_RATE = 10;
 export const CONSENT_BLOCK_CRITICAL_RATE = 25;
@@ -63,9 +89,10 @@ export function buildOpsAlerts(input: {
   deliverability?: OpsDeliverabilityInput | null;
   tracking?: OpsTrackingInput | null;
   compliance?: OpsComplianceInput | null;
+  budget?: OpsBudgetChannelInput[] | null;
 }): OpsAlert[] {
   const alerts: OpsAlert[] = [];
-  const { health, deliverability: d, tracking: t, compliance: c } = input;
+  const { health, deliverability: d, tracking: t, compliance: c, budget: b } = input;
 
   if (health) {
     if (health.dead_letter > 0) {
