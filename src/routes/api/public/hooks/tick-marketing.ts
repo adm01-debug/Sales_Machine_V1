@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { renderForContact } from "@/lib/template-vars";
 
 /**
  * Marketing worker — chamado por pg_cron a cada 5 minutos.
@@ -17,14 +18,6 @@ const BACKOFF_MINUTES = [5, 30, 120, 480];
 function nextRetryAt(attempts: number): string {
   const idx = Math.min(attempts, BACKOFF_MINUTES.length - 1);
   return new Date(Date.now() + BACKOFF_MINUTES[idx] * 60_000).toISOString();
-}
-
-/** Substitui placeholders simples do tipo {{nome}} pelo nome de exibição. */
-function renderBody(body: string, displayName: string | null): string {
-  return body
-    .replace(/\{\{\s*nome\s*\}\}/gi, displayName ?? "")
-    .replace(/\{\{\s*name\s*\}\}/gi, displayName ?? "")
-    .trim();
 }
 
 export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
@@ -166,7 +159,10 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
               continue;
             }
 
-            const messageText = renderBody(variant.body, entity.display_name);
+            const messageText = renderForContact(variant.body, {
+              display_name: entity.display_name,
+              metadata: entity.metadata as Record<string, unknown> | null,
+            });
             const isSocial = campaign.channel === "linkedin" || campaign.channel === "instagram";
 
             // Gate humano: registra touchpoint pendente e não dispara.
@@ -257,7 +253,10 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
                     }
                   }
                 } else if (campaign.channel === "email") {
-                  const subject = (variant.subject ?? campaign.name).slice(0, 120);
+                  const subject = renderForContact(variant.subject ?? campaign.name, {
+                    display_name: entity.display_name,
+                    metadata: entity.metadata as Record<string, unknown> | null,
+                  }).slice(0, 120);
                   const { withFuxicoTracking } = await import("@/lib/email-tracking.server");
                   const recipientEmail = (meta.email as string | undefined) ?? null;
                   const tracked = await withFuxicoTracking({
