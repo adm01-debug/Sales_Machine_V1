@@ -385,7 +385,12 @@ describe("validateJourney", () => {
   const valid = () => ({
     nodes: [
       node({ id: "t", kind: "trigger", label: "Entrada" }),
-      node({ id: "s", kind: "send", label: "E-mail 1", config: { channel: "email" } }),
+      node({
+        id: "s",
+        kind: "send",
+        label: "E-mail 1",
+        config: { channel: "email", template_id: "tpl-1" },
+      }),
       node({ id: "g", kind: "goal", label: "Reunião marcada" }),
     ],
     edges: [
