@@ -414,6 +414,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
           dead_lettered,
           queued_approval,
           blocked_consent,
+          blocked_budget,
         });
       },
     },
