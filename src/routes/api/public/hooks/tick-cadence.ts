@@ -289,10 +289,25 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                 } else if (step.channel === "email") {
                   // QA-013 fix (F10): canal email era no-op; agora dispara via SINGU.
                   const subject = `Contato de ${campaign.name}`.slice(0, 120);
+                  const { withFuxicoTracking } = await import("@/lib/email-tracking.server");
+                  const recipientEmail =
+                    ((entity.metadata as Record<string, unknown>)?.email as string | undefined) ?? null;
+                  const tracked = await withFuxicoTracking({
+                    body: messageText,
+                    recipientEmail,
+                    subject,
+                    metadata: { campaign_id: campaign.id, entity_id: entity.id, touchpoint_id: tp?.id ?? null },
+                  });
+                  if (tp && tracked.trackingId) {
+                    await supabaseAdmin
+                      .from("contact_touchpoints")
+                      .update({ fuxico_tracking_id: tracked.trackingId })
+                      .eq("id", tp.id);
+                  }
                   await singuClient.sendEmail({
                     contact_id: ent2.singu_id,
                     subject,
-                    body: messageText,
+                    body: tracked.body,
                   });
                 }
                 if (tp) {
