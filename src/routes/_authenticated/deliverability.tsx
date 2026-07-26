@@ -4,7 +4,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { checkEmailDns, getFuxicoStatus } from "@/lib/deliverability.functions";
+import {
+  checkEmailDns,
+  getFuxicoStatus,
+  getFuxicoConfig,
+  testFuxicoConnection,
+} from "@/lib/deliverability.functions";
 
 export const Route = createFileRoute("/_authenticated/deliverability")({
   head: () => ({
@@ -69,7 +74,106 @@ function Page() {
       ) : null}
 
       <FuxicoSection data={fuxico.data} loading={fuxico.isPending} />
+      <FuxicoConfigSection />
     </div>
+  );
+}
+
+function SecretRow({
+  name,
+  ok,
+  hint,
+  value,
+}: {
+  name: string;
+  ok: boolean;
+  hint: string;
+  value?: string | null;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-4 rounded-lg border bg-card p-4">
+      <div className="min-w-0">
+        <code className="rounded bg-muted px-1 text-sm text-foreground">{name}</code>
+        <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
+        {value ? (
+          <p className="mt-1 truncate text-xs text-muted-foreground">{value}</p>
+        ) : null}
+      </div>
+      <span
+        className={
+          ok ? "shrink-0 text-xs font-semibold text-primary" : "shrink-0 text-xs font-semibold text-destructive"
+        }
+      >
+        {ok ? "CONFIGURADO" : "PENDENTE"}
+      </span>
+    </div>
+  );
+}
+
+function FuxicoConfigSection() {
+  const cfgFn = useServerFn(getFuxicoConfig);
+  const cfg = useQuery({ queryKey: ["fuxico-config"], queryFn: () => cfgFn({}) });
+  const testFn = useServerFn(testFuxicoConnection);
+  const test = useMutation({ mutationFn: () => testFn({}) });
+
+  const allSet = !!cfg.data?.url.set && !!cfg.data?.serviceKey.set && !!cfg.data?.webhookSecret.set;
+
+  return (
+    <section className="space-y-3">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-foreground">Configuração da conexão FUXICO</h2>
+        <Button size="sm" variant="outline" onClick={() => test.mutate()} disabled={test.isPending}>
+          {test.isPending ? "Testando..." : "Testar conexão"}
+        </Button>
+      </div>
+
+      {cfg.isPending ? (
+        <p className="text-sm text-muted-foreground">Carregando status dos segredos…</p>
+      ) : (
+        <div className="space-y-2">
+          <SecretRow
+            name="FUXICO_URL"
+            ok={!!cfg.data?.url.set && !!cfg.data?.url.valid}
+            hint="URL base do FUXICO (https). Ex.: https://open-receipt-ace.lovable.app"
+            value={
+              cfg.data?.url.set && !cfg.data?.url.valid
+                ? "Valor inválido: precisa ser uma URL https completa."
+                : cfg.data?.url.preview
+            }
+          />
+          <SecretRow
+            name="FUXICO_SERVICE_KEY"
+            ok={!!cfg.data?.serviceKey.set}
+            hint="Chave de serviço usada para autenticar as chamadas de criação de rastreio."
+          />
+          <SecretRow
+            name="FUXICO_WEBHOOK_SECRET"
+            ok={!!cfg.data?.webhookSecret.set}
+            hint="Segredo HMAC usado para validar os webhooks recebidos do FUXICO."
+          />
+        </div>
+      )}
+
+      {test.data ? (
+        <div
+          className={
+            test.data.ok
+              ? "rounded-lg border border-primary/40 bg-primary/5 p-3 text-sm text-foreground"
+              : "rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-foreground"
+          }
+        >
+          {test.data.ok ? "✅ " : "⚠️ "}
+          {test.data.message}
+        </div>
+      ) : null}
+
+      {!cfg.isPending && !allSet ? (
+        <p className="text-xs text-muted-foreground">
+          Os valores são gravados como segredos do backend (nunca ficam no código nem aparecem nesta
+          tela). Peça no chat para cadastrar os segredos pendentes e um formulário seguro será aberto.
+        </p>
+      ) : null}
+    </section>
   );
 }
 
