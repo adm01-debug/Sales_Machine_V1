@@ -181,6 +181,11 @@ export function BudgetReallocation() {
               <History className="h-4 w-4 text-muted-foreground" aria-hidden />
               Histórico de realocações
             </p>
+            <p className="text-xs text-muted-foreground">
+              A rotina automática revisa os tetos a cada 30 minutos e só aplica quando
+              respeita o intervalo mínimo, o valor mínimo e o limite percentual de
+              remanejamento. Planos maiores ficam para aprovação manual aqui.
+            </p>
             <ul className="space-y-2">
               {history.map((h) => (
                 <li key={h.id} className="rounded-lg border p-3 text-xs">
