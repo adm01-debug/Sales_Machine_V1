@@ -36,6 +36,20 @@ export interface OpsTrackingInput {
   redeliveries: number;
 }
 
+/**
+ * Sinal de compliance: quantos disparos o motor recusou por falta de
+ * consentimento comparado ao total de tentativas do período. Uma taxa alta
+ * indica audiência montada sobre contatos que já pediram para sair.
+ */
+export interface OpsComplianceInput {
+  blockedByConsent: number;
+  deliveryAttempts: number;
+}
+
+/** Acima disso a audiência está sendo montada em cima de opt-outs. */
+export const CONSENT_BLOCK_WARN_RATE = 10;
+export const CONSENT_BLOCK_CRITICAL_RATE = 25;
+
 /** Cobertura mínima de rastreio aceitável antes de desconfiar das métricas. */
 export const TRACKING_COVERAGE_FLOOR = 90;
 /** Amostra mínima para que uma taxa percentual signifique alguma coisa. */
@@ -48,9 +62,10 @@ export function buildOpsAlerts(input: {
   health?: OpsHealthInput | null;
   deliverability?: OpsDeliverabilityInput | null;
   tracking?: OpsTrackingInput | null;
+  compliance?: OpsComplianceInput | null;
 }): OpsAlert[] {
   const alerts: OpsAlert[] = [];
-  const { health, deliverability: d, tracking: t } = input;
+  const { health, deliverability: d, tracking: t, compliance: c } = input;
 
   if (health) {
     if (health.dead_letter > 0) {
@@ -137,6 +152,30 @@ export function buildOpsAlerts(input: {
         level: "warning",
         title: `${t.redeliveries} evento(s) possivelmente contados em dobro`,
         detail: "Reentregas do webhook inflam aberturas e cliques.",
+      });
+    }
+  }
+
+  if (c && c.blockedByConsent > 0) {
+    const attempts = c.deliveryAttempts + c.blockedByConsent;
+    const rate = pct(c.blockedByConsent, attempts);
+    if (attempts >= MIN_SAMPLE && rate > CONSENT_BLOCK_CRITICAL_RATE) {
+      alerts.push({
+        id: "consent_block_rate_critical",
+        level: "critical",
+        title: `${fmt(rate)} dos disparos bloqueados por consentimento`,
+        detail:
+          `${c.blockedByConsent} de ${attempts} tentativas foram recusadas pelo gate de LGPD. ` +
+          "Pause a campanha e refaça a audiência excluindo quem já pediu descadastro.",
+      });
+    } else if (attempts >= MIN_SAMPLE && rate > CONSENT_BLOCK_WARN_RATE) {
+      alerts.push({
+        id: "consent_block_rate",
+        level: "warning",
+        title: `Bloqueios por consentimento em ${fmt(rate)}`,
+        detail:
+          `${c.blockedByConsent} de ${attempts} tentativas recusadas. ` +
+          "Aplique o filtro de opt-out na origem da audiência para não queimar quota.",
       });
     }
   }
