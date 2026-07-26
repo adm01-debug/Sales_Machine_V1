@@ -37,6 +37,7 @@ import { Route as ApiPublicTrackOpenDotgifRouteImport } from './routes/api/publi
 import { Route as ApiPublicTrackClickRouteImport } from './routes/api/public/track/click'
 import { Route as ApiPublicHooksTickMarketingRouteImport } from './routes/api/public/hooks/tick-marketing'
 import { Route as ApiPublicHooksTickCadenceRouteImport } from './routes/api/public/hooks/tick-cadence'
+import { Route as ApiPublicHooksAlertSweepRouteImport } from './routes/api/public/hooks/alert-sweep'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
 
 const AuthRoute = AuthRouteImport.update({
@@ -187,6 +188,12 @@ const ApiPublicHooksTickCadenceRoute =
     path: '/api/public/hooks/tick-cadence',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksAlertSweepRoute =
+  ApiPublicHooksAlertSweepRouteImport.update({
+    id: '/api/public/hooks/alert-sweep',
+    path: '/api/public/hooks/alert-sweep',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicAgentToolsSendMessageRoute =
   ApiPublicAgentToolsSendMessageRouteImport.update({
     id: '/api/public/agent-tools/send-message',
@@ -214,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/contacts/$id': typeof AuthenticatedContactsIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
+  '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
@@ -244,6 +252,7 @@ export interface FileRoutesByTo {
   '/contacts/$id': typeof AuthenticatedContactsIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
+  '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
@@ -276,6 +285,7 @@ export interface FileRoutesById {
   '/_authenticated/contacts/$id': typeof AuthenticatedContactsIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
+  '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/contacts/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
+    | '/api/public/hooks/alert-sweep'
     | '/api/public/hooks/tick-cadence'
     | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
@@ -338,6 +349,7 @@ export interface FileRouteTypes {
     | '/contacts/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
+    | '/api/public/hooks/alert-sweep'
     | '/api/public/hooks/tick-cadence'
     | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
@@ -369,6 +381,7 @@ export interface FileRouteTypes {
     | '/_authenticated/contacts/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
+    | '/api/public/hooks/alert-sweep'
     | '/api/public/hooks/tick-cadence'
     | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
@@ -386,6 +399,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ApiPublicUnsubscribeRoute: typeof ApiPublicUnsubscribeRoute
   ApiPublicAgentToolsSendMessageRoute: typeof ApiPublicAgentToolsSendMessageRoute
+  ApiPublicHooksAlertSweepRoute: typeof ApiPublicHooksAlertSweepRoute
   ApiPublicHooksTickCadenceRoute: typeof ApiPublicHooksTickCadenceRoute
   ApiPublicHooksTickMarketingRoute: typeof ApiPublicHooksTickMarketingRoute
   ApiPublicTrackClickRoute: typeof ApiPublicTrackClickRoute
@@ -595,6 +609,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksTickCadenceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/alert-sweep': {
+      id: '/api/public/hooks/alert-sweep'
+      path: '/api/public/hooks/alert-sweep'
+      fullPath: '/api/public/hooks/alert-sweep'
+      preLoaderRoute: typeof ApiPublicHooksAlertSweepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/agent-tools/send-message': {
       id: '/api/public/agent-tools/send-message'
       path: '/api/public/agent-tools/send-message'
@@ -697,6 +718,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ApiPublicUnsubscribeRoute: ApiPublicUnsubscribeRoute,
   ApiPublicAgentToolsSendMessageRoute: ApiPublicAgentToolsSendMessageRoute,
+  ApiPublicHooksAlertSweepRoute: ApiPublicHooksAlertSweepRoute,
   ApiPublicHooksTickCadenceRoute: ApiPublicHooksTickCadenceRoute,
   ApiPublicHooksTickMarketingRoute: ApiPublicHooksTickMarketingRoute,
   ApiPublicTrackClickRoute: ApiPublicTrackClickRoute,
