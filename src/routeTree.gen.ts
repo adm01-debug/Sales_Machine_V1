@@ -19,9 +19,11 @@ import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDeliverabilityRouteImport } from './routes/_authenticated/deliverability'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
+import { Route as AuthenticatedAudiencesRouteImport } from './routes/_authenticated/audiences'
 import { Route as AuthenticatedApprovalsRouteImport } from './routes/_authenticated/approvals'
 import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
 import { Route as AuthenticatedCompaniesIdRouteImport } from './routes/_authenticated/companies.$id'
+import { Route as AuthenticatedAudiencesIdRouteImport } from './routes/_authenticated/audiences.$id'
 import { Route as ApiPublicWebhooksSinguBounceRouteImport } from './routes/api/public/webhooks/singu-bounce'
 import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
 import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
@@ -82,6 +84,11 @@ const AuthenticatedCompaniesRoute = AuthenticatedCompaniesRouteImport.update({
   path: '/companies',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAudiencesRoute = AuthenticatedAudiencesRouteImport.update({
+  id: '/audiences',
+  path: '/audiences',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedApprovalsRoute = AuthenticatedApprovalsRouteImport.update({
   id: '/approvals',
   path: '/approvals',
@@ -97,6 +104,12 @@ const AuthenticatedCompaniesIdRoute =
     id: '/$id',
     path: '/$id',
     getParentRoute: () => AuthenticatedCompaniesRoute,
+  } as any)
+const AuthenticatedAudiencesIdRoute =
+  AuthenticatedAudiencesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAudiencesRoute,
   } as any)
 const ApiPublicWebhooksSinguBounceRoute =
   ApiPublicWebhooksSinguBounceRouteImport.update({
@@ -147,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/approvals': typeof AuthenticatedApprovalsRoute
+  '/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
@@ -154,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/library': typeof AuthenticatedLibraryRoute
   '/ops': typeof AuthenticatedOpsRoute
   '/prospecting': typeof AuthenticatedProspectingRoute
+  '/audiences/$id': typeof AuthenticatedAudiencesIdRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
@@ -169,6 +184,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/approvals': typeof AuthenticatedApprovalsRoute
+  '/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
@@ -176,6 +192,7 @@ export interface FileRoutesByTo {
   '/library': typeof AuthenticatedLibraryRoute
   '/ops': typeof AuthenticatedOpsRoute
   '/prospecting': typeof AuthenticatedProspectingRoute
+  '/audiences/$id': typeof AuthenticatedAudiencesIdRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
@@ -193,6 +210,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/approvals': typeof AuthenticatedApprovalsRoute
+  '/_authenticated/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/deliverability': typeof AuthenticatedDeliverabilityRoute
@@ -200,6 +218,7 @@ export interface FileRoutesById {
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/ops': typeof AuthenticatedOpsRoute
   '/_authenticated/prospecting': typeof AuthenticatedProspectingRoute
+  '/_authenticated/audiences/$id': typeof AuthenticatedAudiencesIdRoute
   '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
@@ -217,6 +236,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/approvals'
+    | '/audiences'
     | '/companies'
     | '/dashboard'
     | '/deliverability'
@@ -224,6 +244,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/ops'
     | '/prospecting'
+    | '/audiences/$id'
     | '/companies/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
@@ -239,6 +260,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/approvals'
+    | '/audiences'
     | '/companies'
     | '/dashboard'
     | '/deliverability'
@@ -246,6 +268,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/ops'
     | '/prospecting'
+    | '/audiences/$id'
     | '/companies/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
@@ -262,6 +285,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/approvals'
+    | '/_authenticated/audiences'
     | '/_authenticated/companies'
     | '/_authenticated/dashboard'
     | '/_authenticated/deliverability'
@@ -269,6 +293,7 @@ export interface FileRouteTypes {
     | '/_authenticated/library'
     | '/_authenticated/ops'
     | '/_authenticated/prospecting'
+    | '/_authenticated/audiences/$id'
     | '/_authenticated/companies/$id'
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
@@ -368,6 +393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCompaniesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/audiences': {
+      id: '/_authenticated/audiences'
+      path: '/audiences'
+      fullPath: '/audiences'
+      preLoaderRoute: typeof AuthenticatedAudiencesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/approvals': {
       id: '/_authenticated/approvals'
       path: '/approvals'
@@ -388,6 +420,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/companies/$id'
       preLoaderRoute: typeof AuthenticatedCompaniesIdRouteImport
       parentRoute: typeof AuthenticatedCompaniesRoute
+    }
+    '/_authenticated/audiences/$id': {
+      id: '/_authenticated/audiences/$id'
+      path: '/$id'
+      fullPath: '/audiences/$id'
+      preLoaderRoute: typeof AuthenticatedAudiencesIdRouteImport
+      parentRoute: typeof AuthenticatedAudiencesRoute
     }
     '/api/public/webhooks/singu-bounce': {
       id: '/api/public/webhooks/singu-bounce'
@@ -448,6 +487,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAudiencesRouteChildren {
+  AuthenticatedAudiencesIdRoute: typeof AuthenticatedAudiencesIdRoute
+}
+
+const AuthenticatedAudiencesRouteChildren: AuthenticatedAudiencesRouteChildren =
+  {
+    AuthenticatedAudiencesIdRoute: AuthenticatedAudiencesIdRoute,
+  }
+
+const AuthenticatedAudiencesRouteWithChildren =
+  AuthenticatedAudiencesRoute._addFileChildren(
+    AuthenticatedAudiencesRouteChildren,
+  )
+
 interface AuthenticatedCompaniesRouteChildren {
   AuthenticatedCompaniesIdRoute: typeof AuthenticatedCompaniesIdRoute
 }
@@ -464,6 +517,7 @@ const AuthenticatedCompaniesRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedApprovalsRoute: typeof AuthenticatedApprovalsRoute
+  AuthenticatedAudiencesRoute: typeof AuthenticatedAudiencesRouteWithChildren
   AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDeliverabilityRoute: typeof AuthenticatedDeliverabilityRoute
@@ -475,6 +529,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApprovalsRoute: AuthenticatedApprovalsRoute,
+  AuthenticatedAudiencesRoute: AuthenticatedAudiencesRouteWithChildren,
   AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDeliverabilityRoute: AuthenticatedDeliverabilityRoute,
