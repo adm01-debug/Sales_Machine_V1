@@ -19,9 +19,15 @@ export interface FakeSupabaseOptions {
 }
 
 interface Filter {
-  kind: "eq" | "in" | "lte" | "gte";
+  kind: "eq" | "in" | "lte" | "gte" | "is" | "ilike";
   column: string;
   value: unknown;
+}
+
+/** Converte um padrão PostgREST (`%texto%`) em RegExp case-insensitive. */
+function likeToRegex(pattern: string): RegExp {
+  const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/%/g, ".*");
+  return new RegExp(`^${escaped}$`, "i");
 }
 
 function matches(row: Row, filters: Filter[]): boolean {
@@ -30,6 +36,8 @@ function matches(row: Row, filters: Filter[]): boolean {
     if (f.kind === "eq") return v === f.value;
     if (f.kind === "in") return (f.value as unknown[]).includes(v);
     if (f.kind === "gte") return v != null && String(v) >= String(f.value);
+    if (f.kind === "is") return f.value === null ? v === null || v === undefined : v === f.value;
+    if (f.kind === "ilike") return v != null && likeToRegex(String(f.value)).test(String(v));
     return v != null && String(v) <= String(f.value);
   });
 }
@@ -89,6 +97,14 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
       },
       gte(column: string, value: unknown) {
         filters.push({ kind: "gte", column, value });
+        return api;
+      },
+      is(column: string, value: unknown) {
+        filters.push({ kind: "is", column, value });
+        return api;
+      },
+      ilike(column: string, value: unknown) {
+        filters.push({ kind: "ilike", column, value });
         return api;
       },
       or() {
