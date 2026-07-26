@@ -208,7 +208,7 @@ export const setCampaignStatus = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = { status: data.status };
+    const patch: { status: typeof data.status; completed_at?: string } = { status: data.status };
     if (data.status === "completed") patch.completed_at = new Date().toISOString();
     const { error } = await context.supabase
       .from("marketing_campaigns")
