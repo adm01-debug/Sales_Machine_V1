@@ -1,11 +1,17 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+/**
+ * Leitura da materialized view de saúde do pipeline.
+ *
+ * IMPORTANTE: o REFRESH não acontece aqui. `refresh_pipeline_health()` é uma
+ * função privilegiada (EXECUTE apenas para service_role) chamada pela varredura
+ * automática `alert-sweep` a cada 15 minutos. Isso evita que cada operador
+ * abrindo o painel dispare um REFRESH pesado e concorrente na view.
+ */
 export const getPipelineHealth = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    // Refresh + read
-    await context.supabase.rpc("refresh_pipeline_health");
     const { data, error } = await context.supabase
       .from("v_pipeline_health" as never)
       .select("*")
@@ -59,16 +65,17 @@ export const getComplianceStats = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const since = new Date(Date.now() - 7 * 24 * 3600_000).toISOString();
 
-    const { data: blockedRows, error: blockedErr } = await context.supabase
+    // Contagens via `head: true`: o servidor devolve só o total, sem trafegar linhas.
+    const { count: blockedCount, error: blockedErr } = await context.supabase
       .from("campaign_targets")
-      .select("id")
+      .select("id", { count: "exact", head: true })
       .eq("state", "stopped")
       .ilike("last_error", "%consentimento%");
     if (blockedErr) throw new Error(blockedErr.message);
 
-    const { data: skippedRows, error: skippedErr } = await context.supabase
+    const { count: skippedCount, error: skippedErr } = await context.supabase
       .from("campaign_sends")
-      .select("id")
+      .select("id", { count: "exact", head: true })
       .eq("state", "skipped")
       .ilike("last_error", "%opt-out%");
     if (skippedErr) throw new Error(skippedErr.message);
@@ -91,9 +98,48 @@ export const getComplianceStats = createServerFn({ method: "GET" })
     }
 
     return {
-      blockedByConsent: (blockedRows?.length ?? 0) + (skippedRows?.length ?? 0),
+      blockedByConsent: (blockedCount ?? 0) + (skippedCount ?? 0),
       optIns7d: optIns,
       optOuts7d: Object.values(optOutsByChannel).reduce((a, b) => a + b, 0),
       optOutsByChannel,
     };
+  });
+
+/** Limite defensivo: reprocessa em lotes, nunca a fila inteira de uma vez. */
+export const DEAD_LETTER_REQUEUE_LIMIT = 100;
+
+/**
+ * Recoloca alvos em `dead_letter` de volta na fila.
+ *
+ * Sem isso o operador não tem caminho de recuperação: um pico de indisponibilidade
+ * do canal enterra os alvos permanentemente. Zeramos `attempts` (o backoff já
+ * expirou seu propósito), liberamos o lock e agendamos para agora.
+ */
+export const requeueDeadLetterTargets = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: candidates, error: readErr } = await context.supabase
+      .from("campaign_targets")
+      .select("id")
+      .eq("state", "dead_letter")
+      .order("last_transition_at", { ascending: true })
+      .limit(DEAD_LETTER_REQUEUE_LIMIT);
+    if (readErr) throw new Error(readErr.message);
+
+    const ids = (candidates ?? []).map((r) => r.id);
+    if (ids.length === 0) return { requeued: 0 };
+
+    const { error: updErr } = await context.supabase
+      .from("campaign_targets")
+      .update({
+        state: "queued",
+        attempts: 0,
+        locked_until: null,
+        last_error: null,
+        next_run_at: new Date().toISOString(),
+      })
+      .in("id", ids);
+    if (updErr) throw new Error(updErr.message);
+
+    return { requeued: ids.length };
   });

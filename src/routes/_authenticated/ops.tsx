@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   getPipelineHealth,
   getDeliverabilityStats,
   getAlertNotifications,
   getComplianceStats,
+  requeueDeadLetterTargets,
 } from "@/lib/ops.functions";
 import { getTrackingIntegrityReport } from "@/lib/deliverability.functions";
 import { buildOpsAlerts } from "@/lib/ops-alerts";
@@ -70,6 +71,47 @@ function AlertsBanner({ alerts }: { alerts: ReturnType<typeof buildOpsAlerts> })
   );
 }
 
+/** Ação de recuperação: devolve alvos enterrados em dead-letter para a fila. */
+function DeadLetterRecovery({ count }: { count: number }) {
+  const queryClient = useQueryClient();
+  const requeue = useServerFn(requeueDeadLetterTargets);
+  const mutation = useMutation({
+    mutationFn: () => requeue(),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["ops", "health"] }),
+  });
+
+  if (count <= 0) return null;
+
+  return (
+    <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-4">
+      <p className="text-sm font-medium text-destructive">
+        {count} alvo(s) em dead-letter aguardando recuperação
+      </p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Reprocessa até 100 alvos por vez: zera as tentativas, libera o bloqueio e reagenda o envio.
+      </p>
+      <button
+        type="button"
+        onClick={() => mutation.mutate()}
+        disabled={mutation.isPending}
+        className="mt-3 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+      >
+        {mutation.isPending ? "Reprocessando..." : "Reprocessar dead-letter"}
+      </button>
+      {mutation.isError ? (
+        <p className="mt-2 text-xs text-destructive">
+          Falha ao reprocessar: {(mutation.error as Error).message}
+        </p>
+      ) : null}
+      {mutation.isSuccess ? (
+        <p className="mt-2 text-xs text-muted-foreground">
+          {mutation.data.requeued} alvo(s) recolocados na fila.
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 function OpsPage() {
   const fetchHealth = useServerFn(getPipelineHealth);
   const fetchDeliv = useServerFn(getDeliverabilityStats);
@@ -128,6 +170,8 @@ function OpsPage() {
         <h2 className="mb-3 text-sm font-medium text-muted-foreground">Alertas</h2>
         <AlertsBanner alerts={alerts} />
       </section>
+
+      {health.data ? <DeadLetterRecovery count={health.data.dead_letter ?? 0} /> : null}
 
       <AlertHistory />
 
