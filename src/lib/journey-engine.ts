@@ -11,6 +11,8 @@
  * para poder ser exercitada por testes determinísticos.
  */
 
+import { preflightEmailContent } from "./email-preflight";
+
 export type JourneyNodeKind = "trigger" | "send" | "wait" | "condition" | "split" | "goal" | "exit";
 
 export interface JourneyNode {
