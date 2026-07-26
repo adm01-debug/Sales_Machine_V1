@@ -8,13 +8,11 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
-  branchesForKind,
   isTempId,
-  toEngineEdges,
-  toEngineNodes,
+  validateGraphInput,
   type JourneyGraphInput,
 } from "./journey-graph";
-import { validateJourney, type JourneyIssue } from "./journey-engine";
+import type { JourneyIssue } from "./journey-engine";
 
 type Db = SupabaseClient<never, "public", never>;
 
@@ -23,39 +21,7 @@ const newId = (): string =>
     ? crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-/** Valida o grafo (motor) + coerência dos ramos declarados por tipo de etapa. */
-export function validateGraphInput(graph: JourneyGraphInput): JourneyIssue[] {
-  const nodes = toEngineNodes(graph.nodes);
-  const edges = toEngineEdges(graph.edges);
-  const issues = validateJourney(nodes, edges);
-
-  for (const node of graph.nodes) {
-    const allowed = branchesForKind(node.kind, node.config);
-    for (const edge of graph.edges.filter((e) => e.from_node_id === node.id)) {
-      if (allowed.length === 0) {
-        issues.push({
-          level: "error",
-          nodeId: node.id,
-          message: `A etapa "${node.label || node.kind}" é terminal e não pode ter saída.`,
-        });
-      } else if (!allowed.includes(edge.branch)) {
-        issues.push({
-          level: "error",
-          nodeId: node.id,
-          message: `Ramo "${edge.branch}" não existe na etapa "${node.label || node.kind}".`,
-        });
-      }
-    }
-  }
-
-  if (graph.settings.send_window_start >= graph.settings.send_window_end) {
-    issues.push({
-      level: "error",
-      message: "A janela de envio precisa começar antes de terminar.",
-    });
-  }
-  return issues;
-}
+export { validateGraphInput };
 
 export interface SaveGraphResult {
   issues: JourneyIssue[];
