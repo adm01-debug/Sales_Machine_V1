@@ -240,5 +240,15 @@ export const applyBudgetReallocation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { applyReallocation } = await import("./budget-reallocation.server");
-    return applyReallocation(context.supabase);
+    return applyReallocation(context.supabase, new Date(), context.userId ?? null);
+  });
+
+/**
+ * Histórico auditável das realocações já aplicadas (melhoria 024).
+ */
+export const getBudgetReallocationHistory = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { listReallocationHistory } = await import("./budget-reallocation.server");
+    return listReallocationHistory(context.supabase, 20);
   });

@@ -176,6 +176,45 @@ export type Database = {
         }
         Relationships: []
       }
+      budget_reallocations: {
+        Row: {
+          actor_user_id: string | null
+          applied_at: string
+          changes: Json
+          channels_changed: number
+          id: string
+          moved_total_brl: number
+          total_after_brl: number
+          total_before_brl: number
+          transfers: Json
+          unmet: Json
+        }
+        Insert: {
+          actor_user_id?: string | null
+          applied_at?: string
+          changes?: Json
+          channels_changed?: number
+          id?: string
+          moved_total_brl?: number
+          total_after_brl?: number
+          total_before_brl?: number
+          transfers?: Json
+          unmet?: Json
+        }
+        Update: {
+          actor_user_id?: string | null
+          applied_at?: string
+          changes?: Json
+          channels_changed?: number
+          id?: string
+          moved_total_brl?: number
+          total_after_brl?: number
+          total_before_brl?: number
+          transfers?: Json
+          unmet?: Json
+        }
+        Relationships: []
+      }
       cadence_rules: {
         Row: {
           created_at: string
