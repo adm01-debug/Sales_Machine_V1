@@ -207,6 +207,49 @@ export function buildOpsAlerts(input: {
     }
   }
 
+  if (b && b.length > 0) {
+    // Um alerta agregado por severidade: o operador quer saber "quais canais
+    // pararam" em uma linha, não sete cards separados.
+    const halted = b.filter((s) => s.status === "exhausted" || s.status === "disabled");
+    if (halted.length > 0) {
+      const exhausted = halted.filter((s) => s.status === "exhausted");
+      const disabled = halted.filter((s) => s.status === "disabled");
+      const parts: string[] = [];
+      if (exhausted.length > 0) {
+        parts.push(
+          `teto atingido: ${exhausted
+            .map((s) => `${channelLabel(s.channel)} (${s.reason ?? "sem saldo"})`)
+            .join(", ")}`,
+        );
+      }
+      if (disabled.length > 0) {
+        parts.push(`desativado pelo operador: ${disabled.map((s) => channelLabel(s.channel)).join(", ")}`);
+      }
+      alerts.push({
+        id: "budget_exhausted",
+        level: "critical",
+        title: `${halted.length} canal(is) sem orçamento — disparos adiados`,
+        detail: `${parts.join(" · ")}. O motor de cadência reagenda os alvos a cada hora; ajuste os tetos em Orçamento por canal para retomar.`,
+      });
+    }
+
+    const nearLimit = b.filter((s) => s.status === "warning");
+    if (nearLimit.length > 0) {
+      alerts.push({
+        id: "budget_warning",
+        level: "warning",
+        title: `${nearLimit.length} canal(is) acima de ${Math.round(80)}% do teto`,
+        detail: nearLimit
+          .map(
+            (s) =>
+              `${channelLabel(s.channel)}: ${fmt(s.usageRate ?? 0)} do teto diário ` +
+              `(R$ ${s.spentToday.toFixed(2)} de R$ ${s.dailyLimit.toFixed(2)})`,
+          )
+          .join(" · "),
+      });
+    }
+  }
+
   const order: Record<AlertLevel, number> = { critical: 0, warning: 1 };
   return alerts.sort((a, b) => order[a.level] - order[b.level]);
 }
