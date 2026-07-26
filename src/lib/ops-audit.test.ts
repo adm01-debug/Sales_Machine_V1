@@ -157,7 +157,8 @@ describe("collectManualInterventions (exportação paginada)", () => {
   });
 
   it("marca truncated ao bater o teto de linhas", async () => {
-    const db = createFakeSupabase({ tables: { campaign_target_events: manyEvents(AUDIT_EXPORT_MAX_ROWS + AUDIT_EXPORT_PAGE_SIZE),
+    const db = createFakeSupabase({
+      tables: { campaign_target_events: manyEvents(AUDIT_EXPORT_MAX_ROWS + AUDIT_EXPORT_PAGE_SIZE) },
     });
     const res = await collectManualInterventions(db as never);
     expect(res.rows).toHaveLength(AUDIT_EXPORT_MAX_ROWS);
