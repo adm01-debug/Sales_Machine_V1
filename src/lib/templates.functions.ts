@@ -1,8 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { extractVariables, unknownVariables } from "@/lib/template-vars";
+import { CHANNELS } from "@/lib/audience-rules";
 
-/** CRUD + envio de teste dos templates do Compositor (SMS/RCS/MMS). */
+/** CRUD + envio de teste dos templates da Biblioteca (todos os canais). */
 
 const RcsPayload = z
   .object({
@@ -26,11 +28,12 @@ const RcsPayload = z
 
 const BaseTemplate = z.object({
   name: z.string().trim().min(1).max(120),
-  channel: z.enum(["sms", "rcs", "mms"]),
-  body: z.string().trim().min(1).max(1000),
+  channel: z.enum(CHANNELS),
+  subject: z.string().trim().max(200).nullish(),
+  body: z.string().trim().min(1).max(4000),
   media_url: z.string().url().nullish(),
   rcs_payload: RcsPayload.nullish(),
-  variables: z.array(z.string()).default([]),
+  variables: z.array(z.string()).default([]).optional(),
 });
 
 export const listTemplates = createServerFn({ method: "GET" })
@@ -38,7 +41,9 @@ export const listTemplates = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("message_templates")
-      .select("id, name, channel, body, media_url, rcs_payload, variables, archived, updated_at")
+      .select(
+        "id, name, channel, subject, body, media_url, rcs_payload, variables, archived, updated_at",
+      )
       .order("updated_at", { ascending: false });
     if (error) throw new Error(error.message);
     return data ?? [];
@@ -56,13 +61,21 @@ export const upsertTemplate = createServerFn({ method: "POST" })
     if (data.channel === "rcs" && !data.rcs_payload) {
       throw new Error("RCS requer rcs_payload");
     }
+    if (data.channel === "email" && !data.subject?.trim()) {
+      throw new Error("Templates de e-mail exigem assunto");
+    }
+    const unknown = unknownVariables(`${data.subject ?? ""}\n${data.body}`);
+    if (unknown.length > 0) {
+      throw new Error(`Variáveis desconhecidas: ${unknown.map((v) => `{{${v}}}`).join(", ")}`);
+    }
     const row = {
       name: data.name,
       channel: data.channel,
+      subject: data.channel === "email" ? (data.subject ?? null) : null,
       body: data.body,
       media_url: data.media_url ?? null,
       rcs_payload: (data.rcs_payload ?? null) as never,
-      variables: data.variables as never,
+      variables: extractVariables(`${data.subject ?? ""}\n${data.body}`) as never,
       created_by: context.userId,
     };
     if (data.id) {
@@ -102,7 +115,7 @@ export const duplicateTemplate = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: src, error } = await context.supabase
       .from("message_templates")
-      .select("name, channel, body, media_url, rcs_payload, variables")
+      .select("name, channel, subject, body, media_url, rcs_payload, variables")
       .eq("id", data.id)
       .single();
     if (error) throw new Error(error.message);
@@ -111,6 +124,7 @@ export const duplicateTemplate = createServerFn({ method: "POST" })
       .insert({
         name: `${src.name} (cópia)`,
         channel: src.channel,
+        subject: src.subject,
         body: src.body,
         media_url: src.media_url,
         rcs_payload: src.rcs_payload as never,

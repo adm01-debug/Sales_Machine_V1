@@ -2,15 +2,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { CHANNELS } from "@/lib/audience-rules";
+import { validateCampaign, hasBlockingIssues } from "@/lib/campaign-validation";
+import { buildVarValues, extractVariables } from "@/lib/template-vars";
 
 const channelEnum = z.enum(CHANNELS);
 
 const variantSchema = z.object({
   label: z.string().min(1).max(8),
-  subject: z.string().max(200).optional(),
+  subject: z.string().max(200).nullish(),
   body: z.string().min(1).max(4000),
-  media_url: z.string().url().optional(),
-  rcs_payload: z.record(z.string(), z.unknown()).optional(),
+  media_url: z.string().url().nullish(),
+  rcs_payload: z.record(z.string(), z.unknown()).nullish(),
   split_percent: z.number().int().min(0).max(100),
 });
 
@@ -81,6 +83,24 @@ export const saveMarketingCampaign = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
+    // Validação de autoria: erros bloqueiam a gravação de criativos inválidos.
+    const issues = validateCampaign({
+      name: data.name,
+      channel: data.channel,
+      audience_id: data.audience_id ?? null,
+      variants: data.variants.map((v) => ({
+        label: v.label,
+        subject: v.subject ?? null,
+        body: v.body,
+        media_url: v.media_url ?? null,
+        rcs_payload: (v.rcs_payload ?? null) as Record<string, unknown> | null,
+        split_percent: v.split_percent,
+      })),
+    }).filter((i) => i.level === "error" && i.scope !== "Audiência");
+    if (issues.length > 0) {
+      throw new Error(issues.map((i) => `${i.scope}: ${i.message}`).join(" · "));
+    }
+
     const base = {
       name: data.name,
       objective: data.objective,
@@ -132,7 +152,7 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: campaign, error } = await context.supabase
       .from("marketing_campaigns")
-      .select("id, channel, audience_id, status, scheduled_at")
+      .select("id, name, channel, audience_id, status, scheduled_at")
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -141,7 +161,7 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
 
     const { data: variants } = await context.supabase
       .from("campaign_variants")
-      .select("id, split_percent, label")
+      .select("id, split_percent, label, subject, body, media_url, rcs_payload")
       .eq("campaign_id", data.id)
       .order("label");
     if (!variants || variants.length === 0) throw new Error("Crie ao menos uma variante");
@@ -152,6 +172,28 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
       .eq("audience_id", campaign.audience_id);
     if (!members || members.length === 0) {
       throw new Error("A audiência está vazia — atualize os membros antes de lançar");
+    }
+
+    // Autoridade final: a mesma validação do editor roda aqui antes de materializar.
+    const issues = validateCampaign({
+      name: campaign.name ?? "campanha",
+      channel: campaign.channel as never,
+      audience_id: campaign.audience_id,
+      audience_size: members.length,
+      variants: variants.map((v) => ({
+        label: v.label,
+        subject: v.subject,
+        body: v.body,
+        media_url: v.media_url,
+        rcs_payload: v.rcs_payload as Record<string, unknown> | null,
+        split_percent: v.split_percent,
+      })),
+    });
+    if (hasBlockingIssues(issues)) {
+      const errs = issues.filter((i) => i.level === "error");
+      throw new Error(
+        `Corrija antes de lançar — ${errs.map((i) => `${i.scope}: ${i.message}`).join(" · ")}`,
+      );
     }
 
     // Distribuição determinística por índice, respeitando os percentuais.
@@ -262,4 +304,86 @@ export const getMarketingOverview = createServerFn({ method: "GET" })
       audience_count: (audiencesRes.data ?? []).length,
       reach: (audiencesRes.data ?? []).reduce((acc, a) => acc + (a.member_count ?? 0), 0),
     };
+  });
+
+/**
+ * Cobertura das variáveis usadas nos criativos sobre a audiência escolhida.
+ * Amostra até 500 membros para manter a consulta barata.
+ */
+export const getVariableCoverage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        audience_id: z.string().uuid(),
+        texts: z.array(z.string()).max(10),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const keys = [...new Set(data.texts.flatMap((t) => extractVariables(t)))];
+    if (keys.length === 0) return { sample: 0, coverage: [] as { key: string; pct: number }[] };
+
+    const { data: members } = await context.supabase
+      .from("audience_members")
+      .select("entity_id")
+      .eq("audience_id", data.audience_id)
+      .limit(500);
+    const ids = (members ?? []).map((m) => m.entity_id);
+    if (ids.length === 0) return { sample: 0, coverage: keys.map((key) => ({ key, pct: 0 })) };
+
+    const { data: rows } = await context.supabase
+      .from("entity_map")
+      .select("id, display_name, metadata")
+      .in("id", ids);
+
+    const filled: Record<string, number> = {};
+    for (const row of rows ?? []) {
+      const values = buildVarValues({
+        display_name: row.display_name,
+        metadata: row.metadata as Record<string, unknown> | null,
+      });
+      for (const key of keys) {
+        if (values[key]) filled[key] = (filled[key] ?? 0) + 1;
+      }
+    }
+
+    const sample = (rows ?? []).length;
+    return {
+      sample,
+      coverage: keys.map((key) => ({
+        key,
+        pct: sample === 0 ? 0 : Math.round(((filled[key] ?? 0) / sample) * 100),
+      })),
+    };
+  });
+
+/** Contatos da audiência para o preview com dados reais. */
+export const listAudienceSample = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ audience_id: z.string().uuid(), limit: z.number().int().min(1).max(25).default(10) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: members } = await context.supabase
+      .from("audience_members")
+      .select("entity_id")
+      .eq("audience_id", data.audience_id)
+      .limit(data.limit);
+    const ids = (members ?? []).map((m) => m.entity_id);
+    if (ids.length === 0) return [];
+    const { data: rows, error } = await context.supabase
+      .from("entity_map")
+      .select("id, display_name, metadata")
+      .in("id", ids);
+    if (error) throw new Error(error.message);
+    // Devolvemos apenas os valores de variáveis já resolvidos (strings serializáveis).
+    return (rows ?? []).map((r) => ({
+      id: r.id,
+      display_name: r.display_name ?? "",
+      values: buildVarValues({
+        display_name: r.display_name,
+        metadata: r.metadata as Record<string, unknown> | null,
+      }) as Record<string, string | null>,
+    }));
   });
