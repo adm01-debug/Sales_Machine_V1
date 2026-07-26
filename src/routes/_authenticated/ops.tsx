@@ -1,9 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getPipelineHealth, getDeliverabilityStats } from "@/lib/ops.functions";
+import {
+  getPipelineHealth,
+  getDeliverabilityStats,
+  getAlertNotifications,
+} from "@/lib/ops.functions";
 import { getTrackingIntegrityReport } from "@/lib/deliverability.functions";
 import { buildOpsAlerts } from "@/lib/ops-alerts";
+import { AlertHistory } from "@/components/ops/alert-history";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/ops")({
@@ -110,6 +115,8 @@ function OpsPage() {
         <h2 className="mb-3 text-sm font-medium text-muted-foreground">Alertas</h2>
         <AlertsBanner alerts={alerts} />
       </section>
+
+      <AlertHistory />
 
       {health.isLoading ? (
         <div className="text-muted-foreground">Carregando...</div>

@@ -892,6 +892,48 @@ export type Database = {
         }
         Relationships: []
       }
+      ops_alert_notifications: {
+        Row: {
+          alert_id: string
+          created_at: string
+          detail: string
+          first_notified_at: string
+          id: string
+          last_notified_at: string
+          level: string
+          occurrences: number
+          resolved_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alert_id: string
+          created_at?: string
+          detail: string
+          first_notified_at?: string
+          id?: string
+          last_notified_at?: string
+          level: string
+          occurrences?: number
+          resolved_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          alert_id?: string
+          created_at?: string
+          detail?: string
+          first_notified_at?: string
+          id?: string
+          last_notified_at?: string
+          level?: string
+          occurrences?: number
+          resolved_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sales_machine_events: {
         Row: {
           error: string | null
