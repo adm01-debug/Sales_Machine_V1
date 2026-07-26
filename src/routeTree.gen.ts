@@ -37,6 +37,7 @@ import { Route as ApiPublicTrackOpenDotgifRouteImport } from './routes/api/publi
 import { Route as ApiPublicTrackClickRouteImport } from './routes/api/public/track/click'
 import { Route as ApiPublicHooksTickMarketingRouteImport } from './routes/api/public/hooks/tick-marketing'
 import { Route as ApiPublicHooksTickCadenceRouteImport } from './routes/api/public/hooks/tick-cadence'
+import { Route as ApiPublicHooksBudgetReallocateRouteImport } from './routes/api/public/hooks/budget-reallocate'
 import { Route as ApiPublicHooksAlertSweepRouteImport } from './routes/api/public/hooks/alert-sweep'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
 
@@ -188,6 +189,12 @@ const ApiPublicHooksTickCadenceRoute =
     path: '/api/public/hooks/tick-cadence',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksBudgetReallocateRoute =
+  ApiPublicHooksBudgetReallocateRouteImport.update({
+    id: '/api/public/hooks/budget-reallocate',
+    path: '/api/public/hooks/budget-reallocate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksAlertSweepRoute =
   ApiPublicHooksAlertSweepRouteImport.update({
     id: '/api/public/hooks/alert-sweep',
@@ -222,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
+  '/api/public/hooks/budget-reallocate': typeof ApiPublicHooksBudgetReallocateRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
@@ -253,6 +261,7 @@ export interface FileRoutesByTo {
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
+  '/api/public/hooks/budget-reallocate': typeof ApiPublicHooksBudgetReallocateRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
@@ -286,6 +295,7 @@ export interface FileRoutesById {
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
+  '/api/public/hooks/budget-reallocate': typeof ApiPublicHooksBudgetReallocateRoute
   '/api/public/hooks/tick-cadence': typeof ApiPublicHooksTickCadenceRoute
   '/api/public/hooks/tick-marketing': typeof ApiPublicHooksTickMarketingRoute
   '/api/public/track/click': typeof ApiPublicTrackClickRoute
@@ -319,6 +329,7 @@ export interface FileRouteTypes {
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/alert-sweep'
+    | '/api/public/hooks/budget-reallocate'
     | '/api/public/hooks/tick-cadence'
     | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
@@ -350,6 +361,7 @@ export interface FileRouteTypes {
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/alert-sweep'
+    | '/api/public/hooks/budget-reallocate'
     | '/api/public/hooks/tick-cadence'
     | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
@@ -382,6 +394,7 @@ export interface FileRouteTypes {
     | '/api/public/unsubscribe'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/alert-sweep'
+    | '/api/public/hooks/budget-reallocate'
     | '/api/public/hooks/tick-cadence'
     | '/api/public/hooks/tick-marketing'
     | '/api/public/track/click'
@@ -400,6 +413,7 @@ export interface RootRouteChildren {
   ApiPublicUnsubscribeRoute: typeof ApiPublicUnsubscribeRoute
   ApiPublicAgentToolsSendMessageRoute: typeof ApiPublicAgentToolsSendMessageRoute
   ApiPublicHooksAlertSweepRoute: typeof ApiPublicHooksAlertSweepRoute
+  ApiPublicHooksBudgetReallocateRoute: typeof ApiPublicHooksBudgetReallocateRoute
   ApiPublicHooksTickCadenceRoute: typeof ApiPublicHooksTickCadenceRoute
   ApiPublicHooksTickMarketingRoute: typeof ApiPublicHooksTickMarketingRoute
   ApiPublicTrackClickRoute: typeof ApiPublicTrackClickRoute
@@ -609,6 +623,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksTickCadenceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/budget-reallocate': {
+      id: '/api/public/hooks/budget-reallocate'
+      path: '/api/public/hooks/budget-reallocate'
+      fullPath: '/api/public/hooks/budget-reallocate'
+      preLoaderRoute: typeof ApiPublicHooksBudgetReallocateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/alert-sweep': {
       id: '/api/public/hooks/alert-sweep'
       path: '/api/public/hooks/alert-sweep'
@@ -719,6 +740,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicUnsubscribeRoute: ApiPublicUnsubscribeRoute,
   ApiPublicAgentToolsSendMessageRoute: ApiPublicAgentToolsSendMessageRoute,
   ApiPublicHooksAlertSweepRoute: ApiPublicHooksAlertSweepRoute,
+  ApiPublicHooksBudgetReallocateRoute: ApiPublicHooksBudgetReallocateRoute,
   ApiPublicHooksTickCadenceRoute: ApiPublicHooksTickCadenceRoute,
   ApiPublicHooksTickMarketingRoute: ApiPublicHooksTickMarketingRoute,
   ApiPublicTrackClickRoute: ApiPublicTrackClickRoute,
