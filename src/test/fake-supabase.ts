@@ -58,6 +58,7 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
     let limit: number | null = null;
     let inserted: Row | null = null;
     let countMode = false;
+    let sort: { column: string; ascending: boolean } | null = null;
 
     const run = (): { data: unknown; error: null; count?: number } => {
       const rows = (tables[table] ??= []);
@@ -74,6 +75,15 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
       }
       let out = rows.filter((r) => matches(r, filters));
       if (countMode) return { data: null, error: null, count: out.length };
+      if (sort) {
+        const { column, ascending } = sort;
+        out = [...out].sort((a, b) => {
+          const av = a[column] == null ? "" : String(a[column]);
+          const bv = b[column] == null ? "" : String(b[column]);
+          if (av === bv) return 0;
+          return (av < bv ? -1 : 1) * (ascending ? 1 : -1);
+        });
+      }
       if (limit != null) out = out.slice(0, limit);
       return { data: out, error: null };
     };
@@ -110,7 +120,8 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
       or() {
         return api;
       },
-      order() {
+      order(column?: string, opts?: { ascending?: boolean }) {
+        if (column) sort = { column, ascending: opts?.ascending !== false };
         return api;
       },
       limit(n: number) {
