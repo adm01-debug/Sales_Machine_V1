@@ -4,6 +4,7 @@ import {
   preflightEmailContent,
   blockingFindings,
   scoreLabel,
+  findSpamTriggers,
   GMAIL_CLIP_BYTES,
 } from "./email-preflight";
 import type { EmailBlock } from "./email-blocks";
@@ -161,6 +162,14 @@ describe("scoreLabel", () => {
 });
 
 describe("preflightEmailContent", () => {
+  it("ignora falsos positivos e normaliza acentos nos gatilhos", () => {
+    expect(findSpamTriggers("Pedido urgentemente revisado")).toEqual([]);
+    expect(findSpamTriggers("Material gratis para o time")).toEqual(["grátis"]);
+    expect(findSpamTriggers("GRÁTIS e grátis")).toEqual(["grátis"]);
+    expect(findSpamTriggers("Acesse https://acme.com.br/renda-extra/urgente")).toEqual([]);
+    expect(findSpamTriggers("Clique aqui, é urgente!")).toEqual(["clique aqui", "urgente"]);
+  });
+
   it("usa os blocos quando existem", () => {
     const r = preflightEmailContent({ subject: "Estudo", blocks: goodBlocks });
     expect(codes(r)).toEqual([]);
