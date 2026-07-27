@@ -5,7 +5,6 @@
  * (`saveMarketingCampaign` / `launchMarketingCampaign`), que é a autoridade.
  */
 import type { Channel } from "@/lib/audience-rules";
-import { analyzeSms } from "@/lib/sms-segments";
 import { parseVariables, unknownVariables } from "@/lib/template-vars";
 import type { EmailBlock } from "@/lib/email-blocks";
 import { preflightEmailContent } from "@/lib/email-preflight";
