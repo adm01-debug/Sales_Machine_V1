@@ -41,11 +41,15 @@ export interface PreflightReport {
 /** Limite a partir do qual o Gmail corta o corpo com "[Mensagem aparada]". */
 export const GMAIL_CLIP_BYTES = 102_400;
 
-/** Gatilhos clássicos de filtro de spam em PT-BR/EN. */
+/**
+ * Gatilhos clássicos de filtro de spam em PT-BR/EN.
+ *
+ * A lista é canônica (sem variações acentuadas): a comparação normaliza
+ * acentuação e usa limites de palavra, então "gratis" e "grátis" caem no mesmo
+ * termo e "urgentemente" NÃO dispara o gatilho "urgente".
+ */
 export const SPAM_TRIGGERS = [
   "grátis",
-  "gratis",
-  "100% grátis",
   "clique aqui",
   "promoção imperdível",
   "ganhe dinheiro",
@@ -58,6 +62,36 @@ export const SPAM_TRIGGERS = [
   "act now",
   "viagra",
 ];
+
+/** Remove acentuação e normaliza espaços para comparação determinística. */
+function normalizeForMatch(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** Regex por gatilho, com limites de palavra tolerantes a pontuação. */
+const SPAM_TRIGGER_MATCHERS: ReadonlyArray<{ term: string; re: RegExp }> = SPAM_TRIGGERS.map(
+  (term) => ({
+    term,
+    re: new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(normalizeForMatch(term))}(?![\\p{L}\\p{N}])`, "u"),
+  }),
+);
+
+/** Remove URLs do texto — domínios não devem contar como gatilho de spam. */
+function stripUrls(value: string): string {
+  return value.replace(/https?:\/\/[^\s<>"')]+/gi, " ");
+}
+
+/** Gatilhos de spam presentes no conteúdo, sem duplicatas. */
+export function findSpamTriggers(value: string): string[] {
+  const haystack = normalizeForMatch(stripUrls(value));
+  return SPAM_TRIGGER_MATCHERS.filter((m) => m.re.test(haystack)).map((m) => m.term);
+}
 
 const SHORTENER_HOSTS = ["bit.ly", "tinyurl.com", "goo.gl", "t.co", "is.gd", "ow.ly", "cutt.ly"];
 
@@ -210,8 +244,7 @@ export function preflightEmail(input: {
     });
   }
 
-  const haystack = `${subject}\n${text}`.toLowerCase();
-  const hits = SPAM_TRIGGERS.filter((t) => haystack.includes(t));
+  const hits = findSpamTriggers(`${subject}\n${text}`);
   if (hits.length > 0) {
     findings.push({
       code: "spam_words",
