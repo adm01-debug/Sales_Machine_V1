@@ -5,10 +5,10 @@
  * (`saveMarketingCampaign` / `launchMarketingCampaign`), que é a autoridade.
  */
 import type { Channel } from "@/lib/audience-rules";
-import { analyzeSms } from "@/lib/sms-segments";
 import { parseVariables, unknownVariables } from "@/lib/template-vars";
 import type { EmailBlock } from "@/lib/email-blocks";
 import { preflightEmailContent } from "@/lib/email-preflight";
+import { preflightMessage } from "@/lib/message-preflight";
 
 export interface ValidationIssue {
   /** `error` bloqueia o lançamento; `warning` apenas alerta. */
@@ -141,17 +141,6 @@ export function validateCampaign(input: CampaignForValidation): ValidationIssue[
       }
     }
 
-    if (channel === "sms") {
-      const seg = analyzeSms(body);
-      if (seg.segments > 3) {
-        issues.push({
-          level: "warning",
-          scope,
-          message: `SMS com ${seg.segments} segmentos (${seg.encoding}) — custo multiplicado por ${seg.segments}.`,
-        });
-      }
-    }
-
     const unknown = unknownVariables(`${variant.subject ?? ""}\n${body}`);
     for (const name of unknown) {
       issues.push({
@@ -196,6 +185,23 @@ export function validateCampaign(input: CampaignForValidation): ValidationIssue[
         issues.push({
           level: finding.severity === "error" ? "error" : "warning",
           scope: `${scope} · entregabilidade`,
+          message: finding.hint ? `${finding.message} ${finding.hint}` : finding.message,
+        });
+      }
+    }
+
+    // Pré-voo de qualidade dos canais de mensagem curta (custo, reputação, opt-out).
+    if (channel !== "email") {
+      const report = preflightMessage({
+        channel,
+        body,
+        mediaUrl: variant.media_url ?? null,
+      });
+      for (const finding of report.findings) {
+        if (finding.severity === "info") continue;
+        issues.push({
+          level: finding.severity === "error" ? "error" : "warning",
+          scope: `${scope} · qualidade`,
           message: finding.hint ? `${finding.message} ${finding.hint}` : finding.message,
         });
       }
