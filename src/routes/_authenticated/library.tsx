@@ -24,6 +24,8 @@ import {
 import { MessagePreview } from "@/components/message-preview";
 import { EmailBlockEditor } from "@/components/email/EmailBlockEditor";
 import { EmailPreflightPanel } from "@/components/email/EmailPreflightPanel";
+import { MessagePreflightPanel } from "@/components/message-preflight-panel";
+import { blockingMessageFindings, preflightMessage } from "@/lib/message-preflight";
 import { blockingFindings, preflightEmailContent } from "@/lib/email-preflight";
 import {
   parseBlocks,
@@ -168,6 +170,12 @@ function ComposerPage() {
         throw new Error(
           `Limite de ${CHANNEL_BODY_LIMIT[channel]} caracteres excedido para ${channel}`,
         );
+      if (channel !== "email") {
+        const msgReport = preflightMessage({ channel, body: finalBody, mediaUrl });
+        const msgBlockers = blockingMessageFindings(msgReport);
+        if (msgBlockers.length > 0)
+          throw new Error(`Pré-voo bloqueou o salvamento: ${msgBlockers[0].message}`);
+      }
       const unknown = unknownVariables(`${subject}\n${finalBody}`);
       if (unknown.length > 0)
         throw new Error(`Variáveis desconhecidas: ${unknown.map((v) => `{{${v}}}`).join(", ")}`);
@@ -408,12 +416,10 @@ function ComposerPage() {
             </Card>
 
             {channel === "sms" || channel === "rcs" || channel === "mms" ? (
-              <PhonePreview
-                channel={channel}
-                body={body}
-                mediaUrl={mediaUrl}
-                rcs={rcs}
-              />
+              <div className="space-y-4">
+                <PhonePreview channel={channel} body={body} mediaUrl={mediaUrl} rcs={rcs} />
+                <MessagePreflightPanel channel={channel} body={body} mediaUrl={mediaUrl} />
+              </div>
             ) : (
               <Card>
                 <CardHeader>
@@ -441,6 +447,14 @@ function ComposerPage() {
                     <MessagePreview
                       channel={channel}
                       subject={subject}
+                      body={body}
+                      mediaUrl={mediaUrl}
+                    />
+                  )}
+                  {channel !== "email" && (
+                    <MessagePreflightPanel
+                      className="mt-3"
+                      channel={channel}
                       body={body}
                       mediaUrl={mediaUrl}
                     />
