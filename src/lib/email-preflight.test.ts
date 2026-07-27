@@ -153,9 +153,6 @@ describe("preflightEmail", () => {
 });
 
 describe("scoreLabel", () => {
-  it("placeholder", () => {
-    expect(true).toBe(true);
-  });
   it("classifica faixas", () => {
     expect(scoreLabel(100)).toBe("excelente");
     expect(scoreLabel(75)).toBe("bom");
