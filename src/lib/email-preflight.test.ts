@@ -4,6 +4,7 @@ import {
   preflightEmailContent,
   blockingFindings,
   scoreLabel,
+  findSpamTriggers,
   GMAIL_CLIP_BYTES,
 } from "./email-preflight";
 import type { EmailBlock } from "./email-blocks";
