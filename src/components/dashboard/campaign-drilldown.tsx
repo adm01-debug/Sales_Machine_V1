@@ -232,6 +232,30 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                         <span><strong>Insight:</strong> {data.diagnosis.sentiment.top_insight}</span>
                       </div>
                     </div>
+
+                    {data.diagnosis.sentiment.positive_terms.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="text-[9px] font-bold uppercase text-muted-foreground/70 tracking-widest px-1">
+                          Nuvem de Oportunidade (Termos Positivos)
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 p-2 rounded-lg bg-neon-lime/5 border border-neon-lime/20">
+                          {data.diagnosis.sentiment.positive_terms.map((t, i) => (
+                            <Badge 
+                              key={i} 
+                              variant="outline" 
+                              className="bg-background/50 border-neon-lime/30 text-neon-lime text-[10px] py-0 px-2"
+                              style={{ 
+                                fontSize: `${Math.min(14, 10 + t.count)}px`,
+                                opacity: Math.max(0.6, Math.min(1, t.count / 5)) 
+                              }}
+                            >
+                              {t.term}
+                              {t.count > 1 && <span className="ml-1 opacity-50">({t.count})</span>}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </section>
