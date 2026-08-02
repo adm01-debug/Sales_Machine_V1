@@ -18,6 +18,7 @@ import { BudgetGuardrails } from "@/components/ops/budget-guardrails";
 import { BudgetReallocation } from "@/components/ops/budget-reallocation";
 import { cn } from "@/lib/utils";
 import { ChannelROIStats } from "@/components/ops/channel-roi-stats";
+import { ChurnRiskWidget } from "@/components/dashboard/churn-risk-widget";
 
 export const Route = createFileRoute("/_authenticated/ops")({
   head: () => ({
@@ -197,7 +198,14 @@ function OpsPage() {
         <h2 className="mb-3 text-sm font-medium text-muted-foreground">Financeiro & Orçamento</h2>
         <div className="space-y-6">
           <SpendBreakdown />
-          <ChannelROIStats />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <ChannelROIStats />
+            </div>
+            <div>
+              <ChurnRiskWidget />
+            </div>
+          </div>
           <BudgetGuardrails />
           <BudgetReallocation />
         </div>
