@@ -28,6 +28,7 @@ import { EmailBlockEditor } from "@/components/email/EmailBlockEditor";
 import { EmailPreflightPanel } from "@/components/email/EmailPreflightPanel";
 import { MessagePreflightPanel } from "@/components/message-preflight-panel";
 import { ComplianceAuditPanel } from "@/components/compliance-audit-panel";
+import { listComplianceTerms } from "@/lib/compliance.functions";
 import { blockingMessageFindings, preflightMessage } from "@/lib/message-preflight";
 import { blockingFindings, preflightEmailContent } from "@/lib/email-preflight";
 import {
