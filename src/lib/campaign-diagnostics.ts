@@ -184,29 +184,29 @@ export function diagnoseCampaign(
       
       recommendations.push({
         type: "info",
-        title: "🎯 Refinamento de Copy",
-        description: `Frases como "${sentiment.positive_phrases[0]?.phrase || 'proposta'}" estão gerando conversão.`,
-        action: "Mantenha o tom empático e foque nos termos da nuvem no follow-up."
+        title: "🎯 Refinamento de Copy (Sucesso)",
+        description: `O padrão detectado indica que o lead valoriza "${sentiment.positive_phrases[0]?.phrase || 'soluções objetivas'}".`,
+        action: "ACELERAÇÃO: Reduza o tempo entre a primeira resposta e o agendamento. Reforce o CTA 'Agendar agora' no texto."
       });
     } else if (sentiment.negative > sentiment.positive && !sentiment.threshold_alert) {
       sentiment.summary += "Sentimento geral predominantemente NEGATIVO.";
-      sentiment.top_insight = "Volume de negativas superior às positivas. Requer ajuste de abordagem.";
+      sentiment.top_insight = "Resistência à oferta detectada. Ajuste de abordagem sugerido.";
       
       recommendations.push({
         type: "warning",
-        title: "⚠️ Ajuste de Tom Necessário",
-        description: "A taxa de rejeição está crescendo. O público parece resistente à oferta direta.",
-        action: "Suavize o CTA: troque 'Agende agora' por 'Podemos trocar uma ideia?'"
+        title: "⚠️ Ajuste de Copy (Objeção)",
+        description: "O público está reagindo de forma defensiva ao tom imperativo ou à oferta direta.",
+        action: "REDUÇÃO DE ATRITO: Troque CTAs de venda por convites de ajuda ('Posso te ajudar com X?' ou 'Você tem enfrentado Y?')."
       });
     } else if (sentiment.neutral > (sentiment.positive + sentiment.negative)) {
       sentiment.summary += "Volume excessivo de respostas NEUTRAS.";
-      sentiment.top_insight = "Falta de 'gancho' ou clareza. O lead entende, mas não se move.";
+      sentiment.top_insight = "Falta de diferenciação ou clareza na proposta de valor.";
       
       recommendations.push({
         type: "info",
-        title: "💡 Gatilho de Urgência",
-        description: "Muitas respostas pedindo 'quem é' ou 'qual valor' indicam falha no contexto inicial.",
-        action: "Insira uma prova social ou benefício quantificável nos primeiros 100 caracteres."
+        title: "💡 Ajuste de Copy (Engajamento)",
+        description: "As respostas pedindo contexto extra indicam que o texto inicial é vago.",
+        action: "INJEÇÃO DE CONTEXTO: Inclua um benefício quantificável (ex: 'Reduzimos X em 30%') antes do CTA para gerar curiosidade."
       });
     }
   }
