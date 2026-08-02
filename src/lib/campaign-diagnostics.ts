@@ -8,6 +8,13 @@ export interface CampaignDiagnosis {
     description: string;
     action?: string;
   }>;
+  sentiment?: {
+    positive: number;
+    neutral: number;
+    negative: number;
+    summary: string;
+    top_insight: string;
+  };
 }
 
 /**
