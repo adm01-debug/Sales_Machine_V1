@@ -125,14 +125,14 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
       const chunk = touchpointIds.slice(i, i + CHUNK);
       const res = await context.supabase
         .from("contact_touchpoints")
-        .select("channel, status, direction, metadata")
+        .select("channel, status, direction, payload")
         .in("id", chunk);
       if (res.data) {
         touchpoints.push(...res.data.map(tp => ({
           channel: tp.channel,
           status: tp.status,
           direction: tp.direction,
-          content: (tp.metadata as any)?.content || (tp.metadata as any)?.body || ""
+          content: (tp.payload as any)?.content || (tp.payload as any)?.body || ""
         })));
       }
     }
