@@ -192,11 +192,17 @@ function OpsPage() {
 
       <AlertHistory />
 
-      <SpendBreakdown />
-      <BudgetGuardrails />
-      <BudgetReallocation />
+      <section>
+        <h2 className="mb-3 text-sm font-medium text-muted-foreground">Financeiro & Orçamento</h2>
+        <div className="space-y-6">
+          <SpendBreakdown />
+          <BudgetGuardrails />
+          <BudgetReallocation />
+        </div>
+      </section>
 
       <ManualInterventions />
+
 
       {health.isLoading ? (
         <div className="text-muted-foreground">Carregando...</div>

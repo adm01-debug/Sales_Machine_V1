@@ -120,7 +120,7 @@ export function BudgetReallocation() {
 
         {transfers.length > 0 ? (
           <div className="space-y-2">
-            {transfers.map((t, i) => (
+            {transfers.map((t: any, i) => (
               <div
                 key={`${t.from}-${t.to}-${i}`}
                 className="flex flex-wrap items-center gap-2 rounded-lg border p-3 text-sm"
@@ -136,7 +136,7 @@ export function BudgetReallocation() {
 
         {data && data.changes.length > 0 ? (
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {data.changes.map((c) => (
+            {data.changes.map((c: any) => (
               <div key={c.channel} className="rounded-lg border p-3 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="font-medium capitalize">{c.channel}</span>
@@ -158,7 +158,7 @@ export function BudgetReallocation() {
           <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm">
             <p className="font-medium">Necessidades não atendidas</p>
             <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
-              {data.unmet.map((u, i) => (
+              {data.unmet.map((u: any, i) => (
                 <li key={`${u.channel}-${i}`}>
                   <span className="capitalize">{u.channel}</span>
                   {u.missing > 0 ? ` — faltam ${formatBRL(u.missing)}` : ""} · {u.reason}

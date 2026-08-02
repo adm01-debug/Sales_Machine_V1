@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { ComplianceNiche, ComplianceRule } from "@/lib/compliance-terms";
+import type { ComplianceNiche, ComplianceRule, ComplianceViolation } from "@/lib/compliance-terms";
 
 export interface ComplianceContext {
   niches: ComplianceNiche[];
@@ -38,4 +38,38 @@ export async function loadComplianceContext(
     }
   }
   return { niches: [...niches], rules };
+}
+
+/**
+ * Registra as violações de conformidade na trilha de auditoria.
+ * Melhoria 036.
+ */
+export async function logComplianceViolations(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: SupabaseClient<any>,
+  userId: string,
+  violations: ComplianceViolation[],
+  options: {
+    campaignId?: string;
+    action: "save" | "launch";
+    textSnapshot: string;
+  },
+): Promise<void> {
+  if (violations.length === 0) return;
+
+  const logs = violations.map((v) => ({
+    user_id: userId,
+    campaign_id: options.campaignId || null,
+    niche: v.niche,
+    term: v.term,
+    severity: v.severity,
+    reason: v.reason,
+    text_snapshot: options.textSnapshot,
+    action: options.action,
+  }));
+
+  const { error } = await supabase.from("compliance_violations_log").insert(logs);
+  if (error) {
+    console.error("[compliance] falha ao registrar auditoria:", error.message);
+  }
 }

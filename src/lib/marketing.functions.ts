@@ -3,7 +3,8 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { CHANNELS } from "@/lib/audience-rules";
 import { validateCampaign, hasBlockingIssues } from "@/lib/campaign-validation";
-import { loadComplianceContext } from "@/lib/compliance.server";
+import { loadComplianceContext, logComplianceViolations } from "@/lib/compliance.server";
+import { auditCompliance } from "@/lib/compliance-terms";
 import { buildVarValues, extractVariables } from "@/lib/template-vars";
 
 const channelEnum = z.enum(CHANNELS);
@@ -86,7 +87,7 @@ export const saveMarketingCampaign = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     // Validação de autoria: erros bloqueiam a gravação de criativos inválidos.
     const compliance = await loadComplianceContext(context.supabase);
-    const issues = validateCampaign({
+    const validationIssues = validateCampaign({
       name: data.name,
       channel: data.channel,
       audience_id: data.audience_id ?? null,
@@ -100,7 +101,25 @@ export const saveMarketingCampaign = createServerFn({ method: "POST" })
         rcs_payload: (v.rcs_payload ?? null) as Record<string, unknown> | null,
         split_percent: v.split_percent,
       })),
-    }).filter((i) => i.level === "error" && i.scope !== "Audiência");
+    });
+
+    // Auditoria técnica: registrar violações (Melhoria 036).
+    for (const variant of data.variants) {
+      const audit = auditCompliance({
+        text: `${variant.subject ?? ""}\n${variant.body}`,
+        niches: compliance.niches,
+        customRules: compliance.rules,
+      });
+      if (audit.violations.length > 0) {
+        await logComplianceViolations(context.supabase, context.userId, audit.violations, {
+          campaignId: data.id,
+          action: "save",
+          textSnapshot: `${variant.subject ? `[Assunto: ${variant.subject}] ` : ""}${variant.body.slice(0, 500)}`,
+        });
+      }
+    }
+
+    const issues = validationIssues.filter((i) => i.level === "error" && i.scope !== "Audiência");
     if (issues.length > 0) {
       throw new Error(issues.map((i) => `${i.scope}: ${i.message}`).join(" · "));
     }
@@ -180,7 +199,7 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
 
     // Autoridade final: a mesma validação do editor roda aqui antes de materializar.
     const compliance = await loadComplianceContext(context.supabase);
-    const issues = validateCampaign({
+    const validationIssues = validateCampaign({
       name: campaign.name ?? "campanha",
       channel: campaign.channel as never,
       audience_id: campaign.audience_id,
@@ -196,8 +215,25 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
         split_percent: v.split_percent,
       })),
     });
-    if (hasBlockingIssues(issues)) {
-      const errs = issues.filter((i) => i.level === "error");
+
+    // Auditoria técnica: registrar violações no lançamento (Melhoria 036).
+    for (const v of variants) {
+      const audit = auditCompliance({
+        text: `${v.subject ?? ""}\n${v.body}`,
+        niches: compliance.niches,
+        customRules: compliance.rules,
+      });
+      if (audit.violations.length > 0) {
+        await logComplianceViolations(context.supabase, context.userId, audit.violations, {
+          campaignId: data.id,
+          action: "launch",
+          textSnapshot: `${v.subject ? `[Assunto: ${v.subject}] ` : ""}${v.body.slice(0, 500)}`,
+        });
+      }
+    }
+
+    if (hasBlockingIssues(validationIssues)) {
+      const errs = validationIssues.filter((i) => i.level === "error");
       throw new Error(
         `Corrija antes de lançar — ${errs.map((i) => `${i.scope}: ${i.message}`).join(" · ")}`,
       );

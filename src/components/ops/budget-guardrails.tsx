@@ -14,7 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 
-const STATUS_META: Record<BudgetStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const STATUS_META: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   ok: { label: "Dentro do teto", variant: "secondary" },
   warning: { label: "Acima de 80%", variant: "outline" },
   exhausted: { label: "Bloqueado", variant: "destructive" },
