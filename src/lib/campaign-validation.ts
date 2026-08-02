@@ -216,6 +216,23 @@ export function validateCampaign(input: CampaignForValidation): ValidationIssue[
         });
       }
     }
+
+    // Conformidade regulatória por nicho (Melhoria 034/035): `error` bloqueia.
+    const compliance = auditCompliance({
+      text: `${variant.subject ?? ""}\n${body}`,
+      niches: input.compliance_niches,
+      customRules: input.compliance_rules,
+    });
+    for (const violation of compliance.violations) {
+      if (violation.severity === "info") continue;
+      issues.push({
+        level: violation.severity === "error" ? "error" : "warning",
+        scope: `${scope} · conformidade`,
+        message: `“${violation.term}” (${NICHE_LABELS[violation.niche]}): ${violation.reason}${
+          violation.suggestion ? ` Sugestão: ${violation.suggestion}` : ""
+        }`,
+      });
+    }
   }
 
   return issues;
