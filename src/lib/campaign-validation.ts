@@ -9,6 +9,12 @@ import { parseVariables, unknownVariables } from "@/lib/template-vars";
 import type { EmailBlock } from "@/lib/email-blocks";
 import { preflightEmailContent } from "@/lib/email-preflight";
 import { preflightMessage } from "@/lib/message-preflight";
+import {
+  auditCompliance,
+  NICHE_LABELS,
+  type ComplianceNiche,
+  type ComplianceRule,
+} from "@/lib/compliance-terms";
 
 export interface ValidationIssue {
   /** `error` bloqueia o lançamento; `warning` apenas alerta. */
@@ -37,6 +43,10 @@ export interface CampaignForValidation {
   audience_id?: string | null;
   audience_size?: number | null;
   variants: VariantForValidation[];
+  /** Nichos regulatórios ativos do cliente (Melhoria 035). */
+  compliance_niches?: readonly ComplianceNiche[];
+  /** Termos proibidos cadastrados pelo cliente. */
+  compliance_rules?: readonly ComplianceRule[];
 }
 
 /** Limite prático de caracteres por canal. */
