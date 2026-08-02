@@ -281,6 +281,30 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                         </div>
                       </div>
                     )}
+
+                    {data.diagnosis.sentiment.positive_phrases.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="text-[9px] font-bold uppercase text-muted-foreground/70 tracking-widest px-1">
+                          Frases que Convertem (use nos scripts)
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 p-2 rounded-lg bg-neon-purple/5 border border-neon-purple/20">
+                          {data.diagnosis.sentiment.positive_phrases.map((p, i) => (
+                            <Badge
+                              key={i}
+                              variant="outline"
+                              className="bg-background/50 border-neon-purple/30 text-neon-purple text-[10px] py-0 px-2"
+                              style={{
+                                fontSize: `${Math.min(14, 10 + p.count)}px`,
+                                opacity: Math.max(0.65, Math.min(1, p.count / 4)),
+                              }}
+                            >
+                              “{p.phrase}”
+                              <span className="ml-1 opacity-50">({p.count})</span>
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </section>
