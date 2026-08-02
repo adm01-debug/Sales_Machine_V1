@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
+import { CampaignDrilldown } from "@/components/dashboard/campaign-drilldown";
 
 const SERIES = ["var(--neon-cyan)", "var(--neon-purple)", "var(--neon-lime)", "var(--neon-pink)", "var(--neon-amber)"];
 
@@ -184,6 +185,7 @@ function TrendCard({
 
 export function AnalyticsCharts() {
   const [days, setDays] = useState<number>(30);
+  const [selected, setSelected] = useState<{ id: string; name: string } | null>(null);
   const fetchCharts = useServerFn(getAnalyticsCharts);
   const query = useQuery({
     queryKey: ["analytics", "charts", days],
@@ -225,6 +227,8 @@ export function AnalyticsCharts() {
   }));
 
   const campaigns = (data?.campaigns ?? []).map((c) => ({
+    id: c.id,
+    fullName: c.name,
     name: c.name.length > 18 ? `${c.name.slice(0, 17)}…` : c.name,
     sends: c.sends,
   }));
