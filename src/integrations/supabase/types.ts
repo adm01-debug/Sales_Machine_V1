@@ -618,6 +618,45 @@ export type Database = {
         }
         Relationships: []
       }
+      channel_roi_stats: {
+        Row: {
+          cac_brl: number | null
+          channel: Database["public"]["Enums"]["sm_channel"]
+          conversion_rate: number | null
+          created_at: string | null
+          date: string
+          id: string
+          total_conversions: number
+          total_messages_sent: number
+          total_spent_brl: number
+          updated_at: string | null
+        }
+        Insert: {
+          cac_brl?: number | null
+          channel: Database["public"]["Enums"]["sm_channel"]
+          conversion_rate?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          total_conversions?: number
+          total_messages_sent?: number
+          total_spent_brl?: number
+          updated_at?: string | null
+        }
+        Update: {
+          cac_brl?: number | null
+          channel?: Database["public"]["Enums"]["sm_channel"]
+          conversion_rate?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          total_conversions?: number
+          total_messages_sent?: number
+          total_spent_brl?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       compliance_terms: {
         Row: {
           created_at: string
@@ -1744,6 +1783,7 @@ export type Database = {
         Returns: boolean
       }
       compute_daily_cap: { Args: { _sender_id: string }; Returns: number }
+      fn_refresh_roi_stats: { Args: { _days?: number }; Returns: undefined }
       has_recent_account_touchpoint: {
         Args: { _entity_id: string; _hours: number }
         Returns: boolean
