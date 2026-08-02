@@ -78,6 +78,12 @@ export function diagnoseCampaign(
     threshold_alert: false,
     positive_terms: [] as Array<{ term: string; count: number }>,
     positive_phrases: [] as Array<{ phrase: string; count: number }>,
+    emoji_tone: { positive: 0, negative: 0, neutral: 0 } as {
+      positive: number;
+      negative: number;
+      neutral: number;
+    },
+    top_emojis: [] as Array<{ emoji: string; count: number; tone: "positive" | "negative" | "neutral" }>,
   };
 
   if (inboundMessages.length > 0) {
@@ -101,13 +107,26 @@ export function diagnoseCampaign(
 
     const termMap = new Map<string, number>();
     const phraseMap = new Map<string, number>();
+    const emojiMap = new Map<string, number>();
     let deferralCount = 0;
     
     for (const msg of inboundMessages) {
       const content = msg.content;
+
+      // Melhoria 049: leitura de emojis como sinal emocional explícito.
+      const emojiScore = scoreEmojis(content, emojiMap);
+      if (emojiScore.positive > 0) sentiment.emoji_tone.positive += emojiScore.positive;
+      if (emojiScore.negative > 0) sentiment.emoji_tone.negative += emojiScore.negative;
+      if (emojiScore.neutral > 0) sentiment.emoji_tone.neutral += emojiScore.neutral;
+      const emojiNet = emojiScore.positive - emojiScore.negative;
       
       // Precedência 1: rejeição explícita sempre vence (proteção reputacional).
       if (hardRejectionWords.test(content)) {
+        sentiment.negative++;
+      }
+      // Precedência 1.5: emojis fortemente negativos (raiva/reprovação) sinalizam rejeição
+      // mesmo quando o texto é curto ou ambíguo ("ok 😡", "👎").
+      else if (emojiNet <= -1 && emojiScore.negative >= 1 && content.replace(EMOJI_REGEX, "").trim().length < 40) {
         sentiment.negative++;
       }
       // Precedência 2: adiamento — "não agora" é oportunidade futura, não rejeição.
@@ -132,11 +151,21 @@ export function diagnoseCampaign(
       else if (neutralWords.test(content)) {
         sentiment.neutral++;
       }
+      // Mensagens sem texto relevante mas com emojis positivos ("👍", "🔥🔥") contam como aceite.
+      else if (emojiNet >= 1) {
+        sentiment.positive++;
+        extractPhrases(content, phraseMap);
+      }
       else {
         // Classificação residual como neutra/informativa
         sentiment.neutral++;
       }
     }
+
+    sentiment.top_emojis = Array.from(emojiMap.entries())
+      .map(([emoji, count]) => ({ emoji, count, tone: emojiTone(emoji) }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8);
 
     sentiment.positive_terms = Array.from(termMap.entries())
       .map(([term, count]) => ({ term, count }))
