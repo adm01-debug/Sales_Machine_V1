@@ -81,25 +81,43 @@ export function diagnoseCampaign(
   };
 
   if (inboundMessages.length > 0) {
-    const positiveWords = /obrigado|gostei|quero|interessante|agendar|marcar|bom|excelente/i;
-    const negativeWords = /nao quero|remover|spam|pare|ruim|pessimo|desinscrever/i;
+    // Melhoria 045: Critérios refinados de análise de sentimento
+    // Regex expandida para capturar variações, gírias e intenções implícitas em PT-BR
+    const positiveWords = /obrigado|gostei|quero|interessante|agendar|marcar|bom|excelente|tenho interesse|me ligue|faz sentido|concordo|topo|bora|maravilha|show/i;
+    // Captura rejeição agressiva, sarcasmo ("nao enche") e sinalizações de LGPD/Spam
+    const negativeWords = /nao quero|remover|spam|pare|ruim|pessimo|desinscrever|sai fora|nao enche|inconveniente|abusivo|descadastrar|nunca mais/i;
+    // Critério de Neutralidade Ativa: Dúvidas técnicas ou respostas automáticas (Out of Office)
+    const neutralWords = /qual o valor|como funciona|quem e voce|ausente|ferias|retorno em breve|onde conseguiu/i;
 
     const termMap = new Map<string, number>();
     const phraseMap = new Map<string, number>();
+    
     for (const msg of inboundMessages) {
-      if (positiveWords.test(msg.content)) {
+      const content = msg.content;
+      
+      // Lógica de Precedência de Rótulo (Refinamento de Precisão)
+      // Se contiver palavras negativas, o risco reputacional torna o rótulo negativo prioritário
+      if (negativeWords.test(content)) {
+        sentiment.negative++;
+      }
+      else if (positiveWords.test(content)) {
         sentiment.positive++;
         // Termos isolados (unigramas) relevantes
-        msg.content
+        content
           .split(/[\s,.;!?]+/)
           .map(normalizeToken)
           .filter((t) => t.length > 3 && !STOPWORDS.has(t))
           .forEach((t) => termMap.set(t, (termMap.get(t) ?? 0) + 1));
         // Frases recorrentes (bigramas/trigramas)
-        extractPhrases(msg.content, phraseMap);
+        extractPhrases(content, phraseMap);
       }
-      else if (negativeWords.test(msg.content)) sentiment.negative++;
-      else sentiment.neutral++;
+      else if (neutralWords.test(content)) {
+        sentiment.neutral++;
+      }
+      else {
+        // Fallback: Se não casar com nenhum critério explícito, classificar como neutro/ambíguo
+        sentiment.neutral++;
+      }
     }
 
     sentiment.positive_terms = Array.from(termMap.entries())
@@ -116,47 +134,68 @@ export function diagnoseCampaign(
     const totalInbound = inboundMessages.length;
     sentiment.negative_rate = (sentiment.negative / totalInbound) * 100;
     
-    // Gatilho Automático: Limite configurável (default 40% conforme sugestão)
-    const NEGATIVE_THRESHOLD = 40;
+    // Limiares Dinâmicos de Alerta
+    const NEGATIVE_THRESHOLD = 35; // Reduzido de 40 para 35 para alerta precoce
+    const POSITIVE_THRESHOLD_FOR_SCALING = 60; // Novo limiar para sugestão de escala
+    
     sentiment.threshold_alert = sentiment.negative_rate >= NEGATIVE_THRESHOLD;
 
     sentiment.summary = `Analisamos ${totalInbound} respostas. `;
-    if (sentiment.positive > sentiment.negative) {
-      sentiment.summary += "O sentimento geral é predominante POSITIVO.";
-      sentiment.top_insight = "Os leads estão reagindo bem à sua proposta de valor.";
-      
-      // Recomendação acionável para padrão positivo
-      recommendations.push({
-        type: "info",
-        title: "🚀 Otimização de Performance",
-        description: `Detectamos alta aceitação das frases "${sentiment.positive_phrases[0]?.phrase || 'proposta'}". O público valoriza clareza e agilidade.`,
-        action: "Incorpore os termos da nuvem no CTA para acelerar o agendamento."
-      });
-    } else if (sentiment.negative > sentiment.positive) {
-      sentiment.summary += "O sentimento geral é predominante NEGATIVO.";
-      sentiment.top_insight = sentiment.threshold_alert 
-        ? "CRÍTICO: Taxa de negatividade excedeu o limite de segurança." 
-        : "Alta taxa de rejeição. Considere suavizar o tom da abordagem.";
+    
+    // Matriz de Insights Acionáveis Refinada
+    if (sentiment.threshold_alert) {
+      sentiment.summary += "CRÍTICO: A rejeição atingiu níveis de alerta.";
+      sentiment.top_insight = "Padrão de fadiga ou intrusividade detectado no público alvo.";
       
       recommendations.push({
-        type: sentiment.threshold_alert ? "error" : "warning",
-        title: sentiment.threshold_alert ? "🛡️ SEGURANÇA: Bloqueio de Sentimento" : "⚠️ Alerta: Rejeição Elevada",
-        description: sentiment.threshold_alert 
-          ? `Taxa de negatividade em ${sentiment.negative_rate.toFixed(1)}% (Limite: ${NEGATIVE_THRESHOLD}%). Padrão de rejeição por intrusividade detectado.`
-          : "FATOR X detectou volume incomum de sentimentos negativos. O CTA pode estar muito agressivo.",
-        action: sentiment.threshold_alert 
-          ? "PAUSAR IMEDIATAMENTE. Remova termos imperativos e foque em 'ajuda/consulta' no CTA." 
-          : "Altere o CTA para uma pergunta aberta em vez de solicitação direta de reunião."
+        type: "error",
+        title: "🛡️ SHIELD: Alerta de Reputação",
+        description: `Negatividade em ${sentiment.negative_rate.toFixed(1)}% (Threshold: ${NEGATIVE_THRESHOLD}%). Risco iminente de bloqueio de conta.`,
+        action: "PAUSAR IMEDIATAMENTE. O copy está sendo percebido como invasivo ou irrelevante."
       });
     } else {
-      sentiment.summary += "O sentimento geral é NEUTRO.";
-      sentiment.top_insight = "As respostas são puramente informativas ou de descadastro padrão.";
+      const posRate = (sentiment.positive / totalInbound) * 100;
+      if (posRate >= POSITIVE_THRESHOLD_FOR_SCALING) {
+        sentiment.summary += "EXCELENTE: Alta taxa de aceitação positiva.";
+        sentiment.top_insight = "Sinal verde para escalonamento horizontal da campanha.";
+        recommendations.push({
+          type: "info",
+          title: "📈 Oportunidade de Escala",
+          description: `Aprovação de ${posRate.toFixed(1)}%. O script ressoa fortemente com o ICP.`,
+          action: "Aumentar orçamento diário em 30% ou expandir volume de leads."
+        });
+      }
+    }
 
+    if (sentiment.positive > sentiment.negative && !sentiment.threshold_alert) {
+      sentiment.summary += "Sentimento geral predominantemente POSITIVO.";
+      sentiment.top_insight = "Os leads estão demonstrando interesse real nos benefícios apresentados.";
+      
       recommendations.push({
         type: "info",
-        title: "💡 Ajuste de Engajamento",
-        description: "As respostas neutras indicam que o texto não está gerando curiosidade ou urgência.",
-        action: "Adicione um 'gancho' de benefício imediato antes do CTA para forçar uma decisão."
+        title: "🎯 Refinamento de Copy",
+        description: `Frases como "${sentiment.positive_phrases[0]?.phrase || 'proposta'}" estão gerando conversão.`,
+        action: "Mantenha o tom empático e foque nos termos da nuvem no follow-up."
+      });
+    } else if (sentiment.negative > sentiment.positive && !sentiment.threshold_alert) {
+      sentiment.summary += "Sentimento geral predominantemente NEGATIVO.";
+      sentiment.top_insight = "Volume de negativas superior às positivas. Requer ajuste de abordagem.";
+      
+      recommendations.push({
+        type: "warning",
+        title: "⚠️ Ajuste de Tom Necessário",
+        description: "A taxa de rejeição está crescendo. O público parece resistente à oferta direta.",
+        action: "Suavize o CTA: troque 'Agende agora' por 'Podemos trocar uma ideia?'"
+      });
+    } else if (sentiment.neutral > (sentiment.positive + sentiment.negative)) {
+      sentiment.summary += "Volume excessivo de respostas NEUTRAS.";
+      sentiment.top_insight = "Falta de 'gancho' ou clareza. O lead entende, mas não se move.";
+      
+      recommendations.push({
+        type: "info",
+        title: "💡 Gatilho de Urgência",
+        description: "Muitas respostas pedindo 'quem é' ou 'qual valor' indicam falha no contexto inicial.",
+        action: "Insira uma prova social ou benefício quantificável nos primeiros 100 caracteres."
       });
     }
   }
