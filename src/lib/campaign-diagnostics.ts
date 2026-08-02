@@ -17,7 +17,43 @@ export interface CampaignDiagnosis {
     negative_rate: number;
     threshold_alert: boolean;
     positive_terms: Array<{ term: string; count: number }>;
+    /** Bigramas/trigramas recorrentes nas respostas positivas. */
+    positive_phrases: Array<{ phrase: string; count: number }>;
   };
+}
+
+/** Palavras vazias PT-BR ignoradas na mineração de termos. */
+const STOPWORDS = new Set([
+  "este","esta","esse","essa","isso","aquele","aquela","para","pela","pelo","como","mais","muito",
+  "quando","onde","porque","tambem","também","estou","estamos","somos","seria","sobre","entao","então",
+  "voce","você","voces","vocês","tenho","temos","fazer","poder","posso","pode","podemos","gente",
+  "nosso","nossa","aqui","hoje","amanha","amanhã","depois","antes","agora","favor","bem","sim",
+  "dele","dela","deles","delas","numa","numas","havia","tinha","estava","apenas","ainda","que","com",
+]);
+
+function normalizeToken(raw: string): string {
+  return raw.toLowerCase().replace(/[^\p{L}\p{N}-]/gu, "");
+}
+
+/** Extrai bigramas e trigramas significativos de um texto positivo. */
+function extractPhrases(text: string, target: Map<string, number>): void {
+  const tokens = text
+    .split(/[\n,.;!?]+/)
+    .flatMap((sentence) =>
+      sentence.split(/\s+/).map(normalizeToken).filter(Boolean),
+    );
+  for (let n = 2; n <= 3; n++) {
+    for (let i = 0; i + n <= tokens.length; i++) {
+      const gram = tokens.slice(i, i + n);
+      // Descarta n-gramas que começam ou terminam em stopword ou palavra curta.
+      const first = gram[0]!;
+      const last = gram[gram.length - 1]!;
+      if (STOPWORDS.has(first) || STOPWORDS.has(last)) continue;
+      if (first.length < 3 || last.length < 3) continue;
+      const phrase = gram.join(" ");
+      target.set(phrase, (target.get(phrase) ?? 0) + 1);
+    }
+  }
 }
 
 /**
@@ -40,7 +76,8 @@ export function diagnoseCampaign(
     top_insight: "",
     negative_rate: 0,
     threshold_alert: false,
-    positive_terms: [] as Array<{ term: string; count: number }>
+    positive_terms: [] as Array<{ term: string; count: number }>,
+    positive_phrases: [] as Array<{ phrase: string; count: number }>,
   };
 
   if (inboundMessages.length > 0) {
@@ -48,14 +85,18 @@ export function diagnoseCampaign(
     const negativeWords = /nao quero|remover|spam|pare|ruim|pessimo|desinscrever/i;
 
     const termMap = new Map<string, number>();
+    const phraseMap = new Map<string, number>();
     for (const msg of inboundMessages) {
       if (positiveWords.test(msg.content)) {
         sentiment.positive++;
-        // Extração simples de termos (tokens > 3 chars)
-        msg.content.toLowerCase()
+        // Termos isolados (unigramas) relevantes
+        msg.content
           .split(/[\s,.;!?]+/)
-          .filter(t => t.length > 3 && !/^(este|esta|esse|essa|para|como|pelo|pela|mais|muito)$/.test(t))
-          .forEach(t => termMap.set(t, (termMap.get(t) || 0) + 1));
+          .map(normalizeToken)
+          .filter((t) => t.length > 3 && !STOPWORDS.has(t))
+          .forEach((t) => termMap.set(t, (termMap.get(t) ?? 0) + 1));
+        // Frases recorrentes (bigramas/trigramas)
+        extractPhrases(msg.content, phraseMap);
       }
       else if (negativeWords.test(msg.content)) sentiment.negative++;
       else sentiment.neutral++;
@@ -65,6 +106,12 @@ export function diagnoseCampaign(
       .map(([term, count]) => ({ term, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
+
+    sentiment.positive_phrases = Array.from(phraseMap.entries())
+      .filter(([, count]) => count > 1)
+      .map(([phrase, count]) => ({ phrase, count }))
+      .sort((a, b) => b.count - a.count || b.phrase.length - a.phrase.length)
+      .slice(0, 8);
 
     const totalInbound = inboundMessages.length;
     sentiment.negative_rate = (sentiment.negative / totalInbound) * 100;
