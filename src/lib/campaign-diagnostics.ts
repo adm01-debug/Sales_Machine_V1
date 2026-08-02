@@ -19,7 +19,74 @@ export interface CampaignDiagnosis {
     positive_terms: Array<{ term: string; count: number }>;
     /** Bigramas/trigramas recorrentes nas respostas positivas. */
     positive_phrases: Array<{ phrase: string; count: number }>;
+    /** Tom emocional agregado extraído de emojis (Melhoria 049). */
+    emoji_tone: { positive: number; negative: number; neutral: number };
+    /** Emojis mais frequentes nas respostas, com o tom mapeado. */
+    top_emojis: Array<{ emoji: string; count: number; tone: "positive" | "negative" | "neutral" }>;
   };
+}
+
+/**
+ * Mapeamento e regras de interpretação de emojis (Melhoria 049).
+ * Emojis carregam tom emocional explícito e frequentemente substituem texto
+ * em canais como WhatsApp e Instagram — por isso entram no classificador.
+ */
+const EMOJI_REGEX = /\p{Extended_Pictographic}/gu;
+
+const EMOJI_LEXICON: Record<"positive" | "negative" | "neutral", string[]> = {
+  positive: [
+    "👍","👏","🙌","🤝","💪","🔥","🚀","✅","☑️","✔️","😀","😃","😄","😁","😊","🙂","😉","😍",
+    "🥰","😘","🤩","😎","🎉","🎊","💚","💙","❤️","🧡","💛","💜","🤗","👌","💯","⭐","🌟","😂","🤣",
+  ],
+  negative: [
+    "👎","😡","🤬","😠","😤","🙄","😒","😞","😔","😢","😭","😩","😫","🤮","🤢","💩","🚫","⛔",
+    "❌","🛑","😑","😖","😣","🥱","😴","🤡","⚠️",
+  ],
+  neutral: ["🤔","🙏","👀","📅","📩","📧","📞","ℹ️","😐","🤷","🤷‍♂️","🤷‍♀️","💬","📌","🔎"],
+};
+
+const EMOJI_TONE_MAP = new Map<string, "positive" | "negative" | "neutral">();
+for (const tone of ["positive", "negative", "neutral"] as const) {
+  for (const emoji of EMOJI_LEXICON[tone]) {
+    EMOJI_TONE_MAP.set(emoji, tone);
+    // Normaliza variantes com/sem seletor de variação (U+FE0F).
+    EMOJI_TONE_MAP.set(emoji.replace(/\uFE0F/g, ""), tone);
+  }
+}
+
+/** Retorna o tom mapeado de um emoji; desconhecidos são tratados como neutros. */
+function emojiTone(emoji: string): "positive" | "negative" | "neutral" {
+  return (
+    EMOJI_TONE_MAP.get(emoji) ??
+    EMOJI_TONE_MAP.get(emoji.replace(/\uFE0F/g, "")) ??
+    "neutral"
+  );
+}
+
+/**
+ * Pontua os emojis de uma mensagem e alimenta o mapa de frequência.
+ * Regra anti-inflação: repetições do mesmo emoji na mesma mensagem contam
+ * no máximo 2 vezes para o score (evita "🔥🔥🔥🔥🔥" distorcer a média).
+ */
+function scoreEmojis(
+  text: string,
+  frequency: Map<string, number>,
+): { positive: number; negative: number; neutral: number } {
+  const result = { positive: 0, negative: 0, neutral: 0 };
+  const matches = text.match(EMOJI_REGEX);
+  if (!matches) return result;
+
+  const perEmoji = new Map<string, number>();
+  for (const raw of matches) {
+    const emoji = raw.replace(/\uFE0F/g, "");
+    if (!emoji.trim()) continue;
+    frequency.set(emoji, (frequency.get(emoji) ?? 0) + 1);
+    const seen = perEmoji.get(emoji) ?? 0;
+    perEmoji.set(emoji, seen + 1);
+    if (seen >= 2) continue; // cap de 2 ocorrências por emoji/mensagem
+    result[emojiTone(emoji)] += 1;
+  }
+  return result;
 }
 
 /** Palavras vazias PT-BR ignoradas na mineração de termos. */
