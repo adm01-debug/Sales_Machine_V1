@@ -238,13 +238,16 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                     <div className="grid gap-2">
                       <div className={`text-xs p-2.5 rounded-lg border italic leading-relaxed ${
                         data.diagnosis.sentiment.threshold_alert 
-                          ? "bg-destructive/10 border-destructive/30 text-destructive-foreground font-medium" 
+                          ? "bg-destructive/15 border-destructive/40 text-destructive-foreground font-semibold shadow-[0_0_15px_-5px_rgba(239,68,68,0.5)]" 
                           : "bg-accent/30 border-border/50 text-foreground"
                       }`}>
                         {data.diagnosis.sentiment.threshold_alert && (
-                          <div className="flex items-center gap-2 mb-1 not-italic">
-                            <ShieldAlert className="h-3.5 w-3.5 text-destructive animate-bounce" />
-                            <span className="text-[10px] font-bold uppercase tracking-tighter">Limite Excedido: {data.diagnosis.sentiment.negative_rate.toFixed(1)}% Negativo</span>
+                          <div className="flex items-center justify-between mb-2 not-italic">
+                            <div className="flex items-center gap-2">
+                              <ShieldAlert className="h-4 w-4 text-destructive animate-pulse" />
+                              <span className="text-[10px] font-black uppercase tracking-tighter">GATILHO DE SEGURANÇA ATIVO</span>
+                            </div>
+                            <Badge variant="destructive" className="h-4 text-[9px] px-1 animate-bounce">AÇÃO REQUERIDA</Badge>
                           </div>
                         )}
                         "{data.diagnosis.sentiment.summary}"
