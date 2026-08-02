@@ -134,35 +134,46 @@ export function diagnoseCampaign(
     const totalInbound = inboundMessages.length;
     sentiment.negative_rate = (sentiment.negative / totalInbound) * 100;
     
-    // Limiares Dinâmicos de Alerta
-    const NEGATIVE_THRESHOLD = 35; // Reduzido de 40 para 35 para alerta precoce
-    const POSITIVE_THRESHOLD_FOR_SCALING = 60; // Novo limiar para sugestão de escala
+    // Limiares Dinâmicos de Alerta (Melhoria 046)
+    const NEGATIVE_THRESHOLD_CRITICAL = 35; // Pausa automática
+    const NEGATIVE_THRESHOLD_WARNING = 20;  // Ajuste de tom
+    const POSITIVE_THRESHOLD_FOR_SCALING = 60; // Replanejar para cima
     
-    sentiment.threshold_alert = sentiment.negative_rate >= NEGATIVE_THRESHOLD;
+    sentiment.threshold_alert = sentiment.negative_rate >= NEGATIVE_THRESHOLD_CRITICAL;
 
     sentiment.summary = `Analisamos ${totalInbound} respostas. `;
     
-    // Matriz de Insights Acionáveis Refinada
-    if (sentiment.threshold_alert) {
-      sentiment.summary += "CRÍTICO: A rejeição atingiu níveis de alerta.";
-      sentiment.top_insight = "Padrão de fadiga ou intrusividade detectado no público alvo.";
+    // Matriz de Gatilhos Automáticos Refinada
+    if (sentiment.negative_rate >= NEGATIVE_THRESHOLD_CRITICAL) {
+      sentiment.summary += "GATILHO: Pausa automática por negatividade crítica.";
+      sentiment.top_insight = "Intervenção necessária para proteger a reputação da marca.";
       
       recommendations.push({
         type: "error",
-        title: "🛡️ SHIELD: Alerta de Reputação",
-        description: `Negatividade em ${sentiment.negative_rate.toFixed(1)}% (Threshold: ${NEGATIVE_THRESHOLD}%). Risco iminente de bloqueio de conta.`,
-        action: "PAUSAR IMEDIATAMENTE. O copy está sendo percebido como invasivo ou irrelevante."
+        title: "🛑 GATILHO: Pausa Automática",
+        description: `Taxa de rejeição (${sentiment.negative_rate.toFixed(1)}%) superou o limite de segurança de ${NEGATIVE_THRESHOLD_CRITICAL}%.`,
+        action: "PAUSAR IMEDIATAMENTE. O sistema sugere replanejar o ICP ou revisar drasticamente o copy."
+      });
+    } else if (sentiment.negative_rate >= NEGATIVE_THRESHOLD_WARNING) {
+      sentiment.summary += "GATILHO: Ajuste de tom preventivo.";
+      sentiment.top_insight = "Negatividade em crescimento. A campanha requer ajustes antes de escalar.";
+      
+      recommendations.push({
+        type: "warning",
+        title: "⚡ GATILHO: Ajuste de Rota",
+        description: `Taxa de rejeição em ${sentiment.negative_rate.toFixed(1)}%. Limiar de atenção atingido.`,
+        action: "AJUSTAR CTA. Suavize a abordagem para evitar o gatilho de pausa crítica."
       });
     } else {
       const posRate = (sentiment.positive / totalInbound) * 100;
       if (posRate >= POSITIVE_THRESHOLD_FOR_SCALING) {
-        sentiment.summary += "EXCELENTE: Alta taxa de aceitação positiva.";
-        sentiment.top_insight = "Sinal verde para escalonamento horizontal da campanha.";
+        sentiment.summary += "GATILHO: Replanejamento para Escala.";
+        sentiment.top_insight = "Sinal verde para expansão agressiva.";
         recommendations.push({
           type: "info",
-          title: "📈 Oportunidade de Escala",
-          description: `Aprovação de ${posRate.toFixed(1)}%. O script ressoa fortemente com o ICP.`,
-          action: "Aumentar orçamento diário em 30% ou expandir volume de leads."
+          title: "🚀 GATILHO: Escalar Campanha",
+          description: `Alta aceitação detectada (${posRate.toFixed(1)}%). O fit entre copy e público está validado.`,
+          action: "REPLANEJAR VOLUME. Aumentar cadência de envios diários e expandir para novos segmentos similares."
         });
       }
     }
