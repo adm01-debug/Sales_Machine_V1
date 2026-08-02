@@ -144,16 +144,9 @@ export function diagnoseCampaign(
     
     // Matriz de Insights Acionáveis Refinada
     if (sentiment.threshold_alert) {
-      sentiment.summary += "CRÍTICO: A rejeição atingiu níveis de alerta.";
-      sentiment.top_insight = "Padrão de fadiga ou intrusividade detectado no público alvo.";
-      
-      recommendations.push({
-        type: "error",
-        title: "🛡️ SHIELD: Alerta de Reputação",
-        description: `Negatividade em ${sentiment.negative_rate.toFixed(1)}% (Threshold: ${NEGATIVE_THRESHOLD}%). Risco iminente de bloqueio de conta.`,
-        action: "PAUSAR IMEDIATAMENTE. O copy está sendo percebido como invasivo ou irrelevante."
-      });
-    } else if (sentiment.positive_rate > POSITIVE_THRESHOLD_FOR_SCALING) {
+    } else {
+      const positive_rate = (sentiment.positive / totalInbound) * 100;
+      if (positive_rate > POSITIVE_THRESHOLD_FOR_SCALING) {
       // Nota: sentiment.positive_rate seria calculado como (positive / totalInbound) * 100
       const posRate = (sentiment.positive / totalInbound) * 100;
       if (posRate >= POSITIVE_THRESHOLD_FOR_SCALING) {
