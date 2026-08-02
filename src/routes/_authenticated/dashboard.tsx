@@ -35,10 +35,13 @@ function OverviewPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-3">
+      <header className="surface-hero flex flex-wrap items-end justify-between gap-4 rounded-2xl p-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Visão Geral</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xxs font-semibold uppercase tracking-[0.18em] text-primary">
+            Campaign Intelligence Engine
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">Visão Geral</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Marketing multicanal alimentado por LUX · SINGU · FATOR X
           </p>
         </div>
@@ -47,7 +50,7 @@ function OverviewPage() {
             <Button variant="outline" size="sm">Audiências</Button>
           </Link>
           <Link to="/campaigns">
-            <Button size="sm">Campanhas</Button>
+            <Button variant="premium" size="sm">Campanhas</Button>
           </Link>
         </div>
       </header>
@@ -58,19 +61,27 @@ function OverviewPage() {
           value={data?.reach ?? 0}
           hint={`${data?.audience_count ?? 0} audiências ativas`}
           loading={overview.isLoading}
+          accent="cyan"
         />
         <MetricCard
           label="Campanhas em execução"
           value={data?.running ?? 0}
           hint={`${data?.campaign_count ?? 0} no total`}
           loading={overview.isLoading}
+          accent="purple"
         />
-        <MetricCard label="Mensagens enviadas (30d)" value={sent} loading={overview.isLoading} />
+        <MetricCard
+          label="Mensagens enviadas (30d)"
+          value={sent}
+          loading={overview.isLoading}
+          accent="amber"
+        />
         <MetricCard
           label="Respostas recebidas (30d)"
           value={replies}
           hint={sent > 0 ? `${((replies / sent) * 100).toFixed(1)}% de resposta` : undefined}
           loading={overview.isLoading}
+          accent="lime"
         />
       </section>
 
@@ -90,7 +101,7 @@ function OverviewPage() {
                     key={channel}
                     className="flex items-center justify-between border-b border-border py-1 last:border-0"
                   >
-                    <Badge variant="outline">{channel}</Badge>
+                    <Badge variant="cyan">{channel}</Badge>
                     <span className="text-muted-foreground">
                       {v.sent} enviadas · {v.replies} respostas
                     </span>
@@ -123,7 +134,7 @@ function OverviewPage() {
                     </Link>
                     <span className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground">{c.sends} envios</span>
-                      <Badge variant="secondary">{c.status}</Badge>
+                      <Badge variant="purple">{c.status}</Badge>
                     </span>
                   </li>
                 ))}
