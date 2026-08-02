@@ -78,11 +78,12 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
     z.object({ 
       campaignId: z.string().uuid(),
-      days: z.number().int().min(1).max(365).optional().default(30)
+      days: z.number().int().min(1).max(365).optional().default(30),
+      sentimentFilter: z.enum(["all", "positive", "neutral", "negative"]).optional().default("all")
     }).parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
-    const { campaignId, days } = data;
+    const { campaignId, days, sentimentFilter } = data;
     const since = new Date(Date.now() - days * 86400_000).toISOString();
 
     const [campaignRes, sendsRes, variantsRes] = await Promise.all([
@@ -119,8 +120,11 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
     }
 
     // Resolve os touchpoints em lotes para não estourar o limite da query string.
-    const touchpoints: { channel: string; status: string; direction: string; content?: string }[] = [];
+    const touchpoints: { channel: string; status: string; direction: string; content?: string; sentiment?: string }[] = [];
     const CHUNK = 200;
+    const positiveWords = /obrigado|gostei|quero|interessante|agendar|marcar|bom|excelente/i;
+    const negativeWords = /nao quero|remover|spam|pare|ruim|pessimo|desinscrever/i;
+
     for (let i = 0; i < touchpointIds.length && i < 4000; i += CHUNK) {
       const chunk = touchpointIds.slice(i, i + CHUNK);
       const res = await context.supabase
@@ -128,13 +132,31 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
         .select("channel, status, direction, payload")
         .in("id", chunk);
       if (res.data) {
-        touchpoints.push(...res.data.map(tp => ({
-          channel: tp.channel,
-          status: tp.status,
-          direction: tp.direction,
-          content: (tp.payload as any)?.content || (tp.payload as any)?.body || ""
-        })));
+        for (const tp of res.data) {
+          const content = (tp.payload as any)?.content || (tp.payload as any)?.body || "";
+          let sentiment = "neutral";
+          if (tp.direction === "inbound") {
+            if (positiveWords.test(content)) sentiment = "positive";
+            else if (negativeWords.test(content)) sentiment = "negative";
+          }
+          
+          touchpoints.push({
+            channel: tp.channel,
+            status: tp.status,
+            direction: tp.direction,
+            content,
+            sentiment
+          });
+        }
       }
+    }
+
+    // Filtragem de touchpoints baseada em sentimento se solicitado
+    let filteredTouchpoints = touchpoints;
+    if (sentimentFilter !== "all") {
+      // Quando filtramos por sentimento, queremos ver os touchpoints que levaram ou são a resposta desse sentimento
+      // Para fins de métricas de funil, filtramos os inbound e mantemos a estrutura
+      filteredTouchpoints = touchpoints.filter(t => t.direction === "outbound" || t.sentiment === sentimentFilter);
     }
 
     const variantLabels = new Map(
@@ -159,7 +181,7 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
       total_sends: sends.length,
       states,
       stages,
-      channels: buildCampaignChannelBreakdown(touchpoints),
+      channels: buildCampaignChannelBreakdown(filteredTouchpoints),
       diagnosis: campaignRes.data ? diagnoseCampaign(
         campaignRes.data, 
         topErrors, 

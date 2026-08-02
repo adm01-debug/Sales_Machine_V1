@@ -74,10 +74,11 @@ export interface CampaignDrilldownProps {
 /** Painel de detalhamento de uma campanha: etapas, canais e variantes. */
 export function CampaignDrilldown({ campaignId, campaignName, onClose }: CampaignDrilldownProps) {
   const [days, setDays] = useState(30);
+  const [sentiment, setSentiment] = useState<"all" | "positive" | "neutral" | "negative">("all");
   const fetchDrilldown = useServerFn(getCampaignDrilldown);
   const query = useQuery({
-    queryKey: ["analytics", "campaign-drilldown", campaignId, days],
-    queryFn: () => fetchDrilldown({ data: { campaignId: campaignId as string, days } }),
+    queryKey: ["analytics", "campaign-drilldown", campaignId, days, sentiment],
+    queryFn: () => fetchDrilldown({ data: { campaignId: campaignId as string, days, sentimentFilter: sentiment } }),
     enabled: Boolean(campaignId),
   });
 
@@ -105,18 +106,39 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
               ? `${data.total_sends.toLocaleString("pt-BR")} envios materializados nos últimos ${days} dias`
               : "Carregando detalhamento por canal e etapa…"}
           </DialogDescription>
-          <div className="flex gap-1 rounded-lg border border-border bg-card p-1 w-fit mt-2">
-            {[7, 30, 90].map((d) => (
-              <Button
-                key={d}
-                size="sm"
-                variant={days === d ? "premium" : "ghost"}
-                onClick={() => setDays(d)}
-                className="h-7 px-2 text-xs"
-              >
-                {d} dias
-              </Button>
-            ))}
+          <div className="flex flex-wrap items-center gap-3 mt-3">
+            <div className="flex gap-1 rounded-lg border border-border bg-card p-1 w-fit">
+              {[7, 30, 90].map((d) => (
+                <Button
+                  key={d}
+                  size="sm"
+                  variant={days === d ? "premium" : "ghost"}
+                  onClick={() => setDays(d)}
+                  className="h-7 px-2 text-xs"
+                >
+                  {d} dias
+                </Button>
+              ))}
+            </div>
+            
+            <div className="flex gap-1 rounded-lg border border-border bg-card p-1 w-fit">
+              {([
+                { id: "all", label: "Todos" },
+                { id: "positive", label: "Positivos" },
+                { id: "neutral", label: "Neutros" },
+                { id: "negative", label: "Negativos" }
+              ] as const).map((s) => (
+                <Button
+                  key={s.id}
+                  size="sm"
+                  variant={sentiment === s.id ? "secondary" : "ghost"}
+                  onClick={() => setSentiment(s.id)}
+                  className="h-7 px-2 text-xs"
+                >
+                  {s.label}
+                </Button>
+              ))}
+            </div>
           </div>
           {campaignId && (
             <div className="mt-4 border-t border-border pt-4">
