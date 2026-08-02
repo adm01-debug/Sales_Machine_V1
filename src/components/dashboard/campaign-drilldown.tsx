@@ -24,6 +24,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { Button } from "@/components/ui/button";
+import { Link } from "@tanstack/react-router";
+import { ExternalLink } from "lucide-react";
 
 const SERIES = [
   "var(--neon-cyan)",
@@ -116,6 +118,20 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
               </Button>
             ))}
           </div>
+          {campaignId && (
+            <div className="mt-4 border-t border-border pt-4">
+              <Button asChild variant="outline" size="sm" className="w-full sm:w-auto gap-2">
+                <Link 
+                  to="/campaigns/wizard" 
+                  search={{ campaignId }}
+                  className="flex items-center"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Ajustar e Revisar Campanha no Wizard
+                </Link>
+              </Button>
+            </div>
+          )}
         </DialogHeader>
 
         {loading ? (

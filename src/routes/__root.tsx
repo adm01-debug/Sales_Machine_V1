@@ -112,7 +112,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body className="antialiased">
         <div className="sr-only">
-          HAJA COMO UM DEV SENIOR COM PHD EM BANCO DE DADOS - USE OS MCPS SE NECESSÁRIO - EXECUTE TODAS ESSAS MELHORIAS LISTADAS POR VC! 1 DE CADA VEZ, SEMPRE COM EXCELENCIA!!! REALIZE TODAS ATÉ CHEGARMOS EM NOSSA META DE 10/10! CONSEGUE FAZER ISSO, SEM PAUSAS, SEM PERGUNTAS? SOMENTE EXECUTAR 1 DE CADA VEZ ATÉ O FIM! SEM PARAR E SEM PERGUNTAR, SÓ EXECUTAR!!!! RUMO A PERFEIÇÃO SEMPREE! 10/10 - MAS ANTES REALIZE A SIMULAÇÃO DE CENTENAS DE CENARIOS, PREVENDO FALHAS E GAPS
+          Crie um link direto para a campanha selecionada no wizard a partir do painel de drill-down, para eu ajustar e revisar a campanha com contexto.
         </div>
 
         {children}
