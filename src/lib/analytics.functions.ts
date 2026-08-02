@@ -5,6 +5,7 @@ import {
   buildChannelBreakdown,
   buildDailySeries,
   buildFunnel,
+  buildTotals,
   type TouchpointRow,
 } from "@/lib/analytics-aggregate";
 
@@ -19,18 +20,26 @@ export const getAnalyticsCharts = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const days = data.days;
     const since = new Date(Date.now() - days * 86400_000).toISOString();
+    const previousSince = new Date(Date.now() - days * 2 * 86400_000).toISOString();
 
-    const [touchRes, sendsRes, campaignsRes] = await Promise.all([
+    const [touchRes, prevTouchRes, sendsRes, campaignsRes] = await Promise.all([
       context.supabase
         .from("contact_touchpoints")
         .select("channel, direction, status, created_at")
         .gte("created_at", since)
+        .limit(20000),
+      context.supabase
+        .from("contact_touchpoints")
+        .select("channel, direction, status, created_at")
+        .gte("created_at", previousSince)
+        .lt("created_at", since)
         .limit(20000),
       context.supabase.from("campaign_sends").select("state, campaign_id"),
       context.supabase.from("marketing_campaigns").select("id, name, status, channel"),
     ]);
 
     const rows = (touchRes.data ?? []) as TouchpointRow[];
+    const prevRows = (prevTouchRes.data ?? []) as TouchpointRow[];
 
     const states: Record<string, number> = {};
     const sendsByCampaign: Record<string, number> = {};
@@ -48,6 +57,9 @@ export const getAnalyticsCharts = createServerFn({ method: "POST" })
       days,
       daily: buildDailySeries(rows, days),
       channels: buildChannelBreakdown(rows),
+      totals: buildTotals(rows),
+      previous_totals: buildTotals(prevRows),
+      previous_channels: buildChannelBreakdown(prevRows),
       funnel: buildFunnel(states),
       states,
       campaigns,
