@@ -27,6 +27,7 @@ import { MessagePreview } from "@/components/message-preview";
 import { EmailBlockEditor } from "@/components/email/EmailBlockEditor";
 import { EmailPreflightPanel } from "@/components/email/EmailPreflightPanel";
 import { MessagePreflightPanel } from "@/components/message-preflight-panel";
+import { ComplianceAuditPanel } from "@/components/compliance-audit-panel";
 import { blockingMessageFindings, preflightMessage } from "@/lib/message-preflight";
 import { blockingFindings, preflightEmailContent } from "@/lib/email-preflight";
 import {
@@ -434,6 +435,7 @@ function ComposerPage() {
               <div className="space-y-4">
                 <PhonePreview channel={channel} body={body} mediaUrl={mediaUrl} rcs={rcs} />
                 <MessagePreflightPanel channel={channel} body={body} mediaUrl={mediaUrl} />
+                <ComplianceAuditPanel text={`${subject ?? ""}\n${body}`} />
               </div>
             ) : (
               <Card>
@@ -475,6 +477,7 @@ function ComposerPage() {
                       mediaUrl={mediaUrl}
                     />
                   )}
+                  <ComplianceAuditPanel className="mt-3" text={`${subject ?? ""}\n${body}`} />
                 </CardContent>
               </Card>
             )}
