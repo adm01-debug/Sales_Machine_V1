@@ -112,7 +112,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body className="antialiased">
         <div className="sr-only">
-          Implemente uma análise de sentimento das respostas no drill-down usando FATOR X para complementar o diagnóstico com insights acionáveis.
+          Implemente gatilhos automáticos para pausar ou escalar a campanha quando o sentimento negativo superar um limite configurável.
         </div>
 
         {children}

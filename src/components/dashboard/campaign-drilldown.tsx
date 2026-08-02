@@ -25,7 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ExternalLink, AlertTriangle, AlertCircle, Info, CheckCircle2 } from "lucide-react";
+import { ExternalLink, AlertTriangle, AlertCircle, Info, CheckCircle2, ShieldAlert } from "lucide-react";
 
 const SERIES = [
   "var(--neon-cyan)",
@@ -214,7 +214,17 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                     </div>
                     
                     <div className="grid gap-2">
-                      <div className="text-xs text-foreground bg-accent/30 p-2.5 rounded-lg border border-border/50 italic leading-relaxed">
+                      <div className={`text-xs p-2.5 rounded-lg border italic leading-relaxed ${
+                        data.diagnosis.sentiment.threshold_alert 
+                          ? "bg-destructive/10 border-destructive/30 text-destructive-foreground font-medium" 
+                          : "bg-accent/30 border-border/50 text-foreground"
+                      }`}>
+                        {data.diagnosis.sentiment.threshold_alert && (
+                          <div className="flex items-center gap-2 mb-1 not-italic">
+                            <ShieldAlert className="h-3.5 w-3.5 text-destructive animate-bounce" />
+                            <span className="text-[10px] font-bold uppercase tracking-tighter">Limite Excedido: {data.diagnosis.sentiment.negative_rate.toFixed(1)}% Negativo</span>
+                          </div>
+                        )}
                         "{data.diagnosis.sentiment.summary}"
                       </div>
                       <div className="flex items-start gap-2 text-xs text-muted-foreground">
