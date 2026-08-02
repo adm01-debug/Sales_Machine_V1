@@ -88,14 +88,35 @@ export function diagnoseCampaign(
     // Identificação de respostas automáticas e consultas informativas para isolar ruído
     const neutralWords = /qual o valor|como funciona|quem e voce|ausente|ferias|férias|retorno em breve|onde conseguiu|duvida|dúvida|explicar/i;
 
+    /**
+     * Análise de contexto (Melhoria 048): adiamento ≠ rejeição.
+     * "não agora", "depois", "mês que vem" indicam interesse futuro (NEUTRO/adiado),
+     * enquanto "não quero", "não tenho interesse" são rejeição explícita (NEGATIVO).
+     */
+    const deferralWords =
+      /n[aã]o (agora|no momento|neste momento|nesse momento|por enquanto|hoje)|agora n[aã]o|no momento n[aã]o|por enquanto n[aã]o|talvez (depois|mais para frente|futuramente)|me (chame|chama|procure|procura|retorne|retorna) (depois|em|no|na|mais tarde|mais para frente)|(volte|volta|retorne|retorna) a falar|(m[eê]s|semana|trimestre|ano) que vem|mais para frente|futuramente|deixa para (depois|o pr[oó]ximo)|estamos (avaliando|analisando)|vou (pensar|analisar|avaliar|ver)|preciso (pensar|avaliar|analisar)|sem (or[cç]amento|budget) (agora|no momento)|guardar (seu|o) contato/i;
+    /** Rejeição explícita: prevalece sobre qualquer adiamento na mesma frase. */
+    const hardRejectionWords =
+      /n[aã]o (quero|tenho interesse|me interessa|interessa|preciso|use|utilizo)|sem interesse|n[aã]o insista|pare de (mandar|enviar)|me (tire|tira|remova|remove)|descadastr|desinscrev|nunca mais/i;
+
     const termMap = new Map<string, number>();
     const phraseMap = new Map<string, number>();
+    let deferralCount = 0;
     
     for (const msg of inboundMessages) {
       const content = msg.content;
       
-      // Ponderação de Sentimento: A rejeição agressiva tem prioridade no rótulo para segurança
-      if (negativeWords.test(content)) {
+      // Precedência 1: rejeição explícita sempre vence (proteção reputacional).
+      if (hardRejectionWords.test(content)) {
+        sentiment.negative++;
+      }
+      // Precedência 2: adiamento — "não agora" é oportunidade futura, não rejeição.
+      else if (deferralWords.test(content)) {
+        sentiment.neutral++;
+        deferralCount++;
+      }
+      // Precedência 3: demais marcadores negativos.
+      else if (negativeWords.test(content)) {
         sentiment.negative++;
       }
       else if (positiveWords.test(content)) {
@@ -139,6 +160,17 @@ export function diagnoseCampaign(
     sentiment.threshold_alert = sentiment.negative_rate >= NEGATIVE_THRESHOLD_CRITICAL;
 
     sentiment.summary = `Analisamos ${totalInbound} respostas. `;
+
+    // Insight dedicado para leads adiados (contexto "não agora").
+    const deferralRate = (deferralCount / totalInbound) * 100;
+    if (deferralRate >= 15) {
+      recommendations.push({
+        type: "info",
+        title: "⏳ Leads Adiados (não agora ≠ não quero)",
+        description: `${deferralRate.toFixed(1)}% das respostas indicam adiamento, não rejeição. Esses contatos seguem elegíveis para novo contato.`,
+        action: "AGENDAR NURTURING: mova esses leads para uma cadência de follow-up em 30-60 dias em vez de descartá-los.",
+      });
+    }
     
     // Matriz de Gatilhos Automáticos Refinada
     if (sentiment.negative_rate >= NEGATIVE_THRESHOLD_CRITICAL) {
