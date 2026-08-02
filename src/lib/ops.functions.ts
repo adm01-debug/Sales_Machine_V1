@@ -351,3 +351,25 @@ export const listComplianceViolations = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return data ?? [];
   });
+
+/**
+ * Busca estatísticas de ROI por canal (Melhoria 037).
+ */
+export const getChannelROI = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ days: z.number() }).parse(input))
+  .handler(async ({ data: { days }, context }) => {
+    // Tenta atualizar as estatísticas primeiro
+    await context.supabase.rpc("fn_refresh_roi_stats", { _days: days });
+
+    const since = new Date(Date.now() - days * 86400_000).toISOString().split('T')[0];
+    
+    const { data, error } = await context.supabase
+      .from("channel_roi_stats")
+      .select("*")
+      .gte("date", since)
+      .order("conversion_rate", { ascending: false });
+
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
