@@ -122,15 +122,16 @@ function ContactsPage() {
         <CardContent className="pt-6">
           {profiles.isLoading ? (
             <p className="text-sm text-muted-foreground">Carregando…</p>
-          ) : (profiles.data ?? []).length === 0 ? (
+          ) : rows.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Nenhum registro. Os dados chegam pelos webhooks de LUX e SINGU.
+              Nenhum registro para este filtro. Os dados chegam pelos webhooks de LUX e SINGU.
             </p>
           ) : (
             <ul className="divide-y divide-border">
-              {(profiles.data ?? [])
-                .filter((p): p is typeof p & { entity_id: string } => !!p.entity_id)
-                .map((p) => (
+              {rows.map((p) => {
+                const meta = PRIORITY_META[p.reply_priority];
+                const Icon = meta.icon;
+                return (
                 <li key={p.entity_id} className="flex flex-wrap items-center justify-between gap-2 py-3">
                   <div className="min-w-0">
                     <Link
@@ -146,15 +147,38 @@ function ContactsPage() {
                         ? ` · último contato ${new Date(p.last_touch_at).toLocaleDateString("pt-BR")}`
                         : ""}
                     </p>
+                    {p.sentiment.total > 0 ? (
+                      <p className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
+                        {p.sentiment.positive > 0 && (
+                          <span className="flex items-center gap-1 text-neon-lime">
+                            <Smile className="h-3 w-3" /> {p.sentiment.positive}
+                          </span>
+                        )}
+                        {p.sentiment.negative > 0 && (
+                          <span className="flex items-center gap-1 text-destructive">
+                            <Frown className="h-3 w-3" /> {p.sentiment.negative}
+                          </span>
+                        )}
+                        <span>
+                          saldo {p.sentiment.net_score > 0 ? "+" : ""}
+                          {p.sentiment.net_score}
+                        </span>
+                      </p>
+                    ) : null}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant="outline" className={meta.className}>
+                      <Icon className="mr-1 h-3 w-3" />
+                      {meta.label} · {p.reply_probability}%
+                    </Badge>
                     <Badge variant="outline">{p.kind === "company" ? "empresa" : "pessoa"}</Badge>
                     <Badge variant="secondary">
                       sinal {Number(p.signal_score ?? 0).toFixed(1)}
                     </Badge>
                   </div>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           )}
         </CardContent>
