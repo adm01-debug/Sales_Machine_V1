@@ -85,13 +85,13 @@ export function diagnoseCampaign(
       
       recommendations.push({
         type: sentiment.threshold_alert ? "error" : "warning",
-        title: sentiment.threshold_alert ? "BLOQUEIO DE SEGURANÇA: Gatilho de Sentimento" : "Rejeição de Conteúdo",
+        title: sentiment.threshold_alert ? "🛡️ SEGURANÇA: Bloqueio de Sentimento" : "⚠️ Alerta: Rejeição Elevada",
         description: sentiment.threshold_alert 
-          ? `A taxa de negatividade (${sentiment.negative_rate.toFixed(1)}%) superou o limite de ${NEGATIVE_THRESHOLD}%. A campanha requer intervenção imediata.`
-          : "Detectamos sentimentos negativos nas respostas recentes via FATOR X.",
+          ? `Taxa de negatividade em ${sentiment.negative_rate.toFixed(1)}% (Limite: ${NEGATIVE_THRESHOLD}%). Gatilho de segurança ativado.`
+          : "FATOR X detectou volume incomum de sentimentos negativos nas respostas.",
         action: sentiment.threshold_alert 
-          ? "PAUSAR CAMPANHA IMEDIATAMENTE e reformular abordagem para evitar blacklist." 
-          : "Revise o template da mensagem para ser menos invasivo."
+          ? "PAUSAR CAMPANHA (Status: Segurado) para revisão de roteiro e audiência." 
+          : "Ajustar segmentação ou suavizar tom para evitar gatilho de bloqueio."
       });
     } else {
       sentiment.summary += "O sentimento geral é NEUTRO.";
