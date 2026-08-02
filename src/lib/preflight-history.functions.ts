@@ -6,6 +6,7 @@ export const getTemplatePreflightHistory = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ templateId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
+    // @ts-ignore - The table was just created via migration and might not be in types.ts yet
     const { data: history, error } = await context.supabase
       .from("template_preflight_history")
       .select("score, findings, created_at")
@@ -13,7 +14,7 @@ export const getTemplatePreflightHistory = createServerFn({ method: "GET" })
       .order("created_at", { ascending: true });
     
     if (error) throw new Error(error.message);
-    return history ?? [];
+    return (history || []) as any[];
   });
 
 export const recordTemplatePreflight = createServerFn({ method: "POST" })
@@ -26,6 +27,7 @@ export const recordTemplatePreflight = createServerFn({ method: "POST" })
     }).parse(input)
   )
   .handler(async ({ data, context }) => {
+    // @ts-ignore - The table was just created via migration and might not be in types.ts yet
     const { error } = await context.supabase
       .from("template_preflight_history")
       .insert({
