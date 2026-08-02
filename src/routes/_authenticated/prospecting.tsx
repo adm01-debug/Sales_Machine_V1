@@ -136,7 +136,7 @@ function CampaignsPage() {
                     />
                     {c}
                     {(c === "linkedin" || c === "instagram") && (
-                      <Badge variant="outline" className="text-[10px]">stub</Badge>
+                      <Badge variant="outline" className="text-xxs">stub</Badge>
                     )}
                   </label>
                 ))}
