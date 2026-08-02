@@ -19,10 +19,12 @@ import {
   ComposedChart,
 } from "recharts";
 import { getAnalyticsCharts } from "@/lib/analytics.functions";
+import { pctDelta } from "@/lib/analytics-aggregate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
 
 const SERIES = ["var(--neon-cyan)", "var(--neon-purple)", "var(--neon-lime)", "var(--neon-pink)", "var(--neon-amber)"];
 
@@ -101,6 +103,85 @@ function ChartFrame({
   );
 }
 
+/** Indicador de tendência com delta percentual vs. período anterior. */
+function DeltaBadge({
+  delta,
+  invert = false,
+  className,
+}: {
+  delta: number | null;
+  invert?: boolean;
+  className?: string;
+}) {
+  if (delta === null) {
+    return (
+      <span className={cn("text-xxs uppercase tracking-widest text-muted-foreground", className)}>
+        sem base
+      </span>
+    );
+  }
+  const flat = Math.abs(delta) < 0.05;
+  const positive = invert ? delta < 0 : delta > 0;
+  const Icon = flat ? ArrowRight : delta > 0 ? ArrowUpRight : ArrowDownRight;
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium tabular-nums",
+        flat
+          ? "border-border text-muted-foreground"
+          : positive
+            ? "border-primary/40 text-primary"
+            : "border-destructive/40 text-destructive",
+        className,
+      )}
+    >
+      <Icon className="size-3" aria-hidden />
+      {flat ? "0,0%" : `${delta > 0 ? "+" : ""}${delta.toFixed(1).replace(".", ",")}%`}
+    </span>
+  );
+}
+
+function TrendCard({
+  label,
+  value,
+  previous,
+  delta,
+  invert,
+  loading,
+  suffix,
+}: {
+  label: string;
+  value: number;
+  previous: number;
+  delta: number | null;
+  invert?: boolean;
+  loading?: boolean;
+  suffix?: string;
+}) {
+  const fmt = (n: number) =>
+    suffix === "%" ? `${n.toFixed(1).replace(".", ",")}%` : n.toLocaleString("pt-BR");
+  return (
+    <Card>
+      <CardContent className="space-y-1 p-4">
+        <p className="text-xxs uppercase tracking-widest text-muted-foreground">{label}</p>
+        {loading ? (
+          <Skeleton className="h-8 w-24" />
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold tabular-nums">{fmt(value)}</span>
+              <DeltaBadge delta={delta} invert={invert} />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Período anterior: {fmt(previous)}
+            </p>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export function AnalyticsCharts() {
   const [days, setDays] = useState<number>(30);
   const fetchCharts = useServerFn(getAnalyticsCharts);
@@ -112,12 +193,23 @@ export function AnalyticsCharts() {
   const data = query.data;
   const loading = query.isLoading;
 
-  const totals = useMemo(() => {
-    const daily = data?.daily ?? [];
-    const sent = daily.reduce((a, d) => a + d.sent, 0);
-    const replies = daily.reduce((a, d) => a + d.replies, 0);
-    const failed = daily.reduce((a, d) => a + d.failed, 0);
-    return { sent, replies, failed, rate: sent > 0 ? (replies / sent) * 100 : 0 };
+  const totals = data?.totals ?? { sent: 0, replies: 0, failed: 0, reply_rate: 0 };
+  const previous = data?.previous_totals ?? { sent: 0, replies: 0, failed: 0, reply_rate: 0 };
+
+  const deltas = useMemo(
+    () => ({
+      sent: pctDelta(totals.sent, previous.sent),
+      replies: pctDelta(totals.replies, previous.replies),
+      failed: pctDelta(totals.failed, previous.failed),
+      rate: pctDelta(totals.reply_rate, previous.reply_rate),
+    }),
+    [totals, previous],
+  );
+
+  const previousByChannel = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const c of data?.previous_channels ?? []) map.set(c.channel, c.reply_rate);
+    return map;
   }, [data]);
 
   const donut = (data?.channels ?? []).map((c) => ({
@@ -129,6 +221,7 @@ export function AnalyticsCharts() {
   const rateData = (data?.channels ?? []).map((c) => ({
     name: CHANNEL_LABEL[c.channel] ?? c.channel,
     rate: Number(c.reply_rate.toFixed(2)),
+    anterior: Number((previousByChannel.get(c.channel) ?? 0).toFixed(2)),
   }));
 
   const campaigns = (data?.campaigns ?? []).map((c) => ({
@@ -142,7 +235,7 @@ export function AnalyticsCharts() {
         <div>
           <h2 className="text-lg font-semibold tracking-tight">Resultados</h2>
           <p className="text-sm text-muted-foreground">
-            Leitura visual do desempenho multicanal para decisões rápidas.
+            Comparação com os {days} dias anteriores para decisões rápidas.
           </p>
         </div>
         <div className="flex gap-1 rounded-lg border border-border bg-card p-1">
@@ -157,6 +250,39 @@ export function AnalyticsCharts() {
             </Button>
           ))}
         </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <TrendCard
+          label="Enviadas"
+          value={totals.sent}
+          previous={previous.sent}
+          delta={deltas.sent}
+          loading={loading}
+        />
+        <TrendCard
+          label="Respostas"
+          value={totals.replies}
+          previous={previous.replies}
+          delta={deltas.replies}
+          loading={loading}
+        />
+        <TrendCard
+          label="Taxa de resposta"
+          value={totals.reply_rate}
+          previous={previous.reply_rate}
+          delta={deltas.rate}
+          loading={loading}
+          suffix="%"
+        />
+        <TrendCard
+          label="Falhas"
+          value={totals.failed}
+          previous={previous.failed}
+          delta={deltas.failed}
+          invert
+          loading={loading}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -275,7 +401,7 @@ export function AnalyticsCharts() {
 
         <ChartFrame
           title="Taxa de resposta por canal"
-          description="Percentual de respostas sobre envios"
+          description="Período atual vs. período anterior"
           loading={loading}
           empty={rateData.length === 0}
         >
@@ -285,7 +411,9 @@ export function AnalyticsCharts() {
               <XAxis dataKey="name" {...axisProps} />
               <YAxis {...axisProps} width={44} unit="%" />
               <ChartTooltip />
-              <Bar dataKey="rate" name="Taxa de resposta" fill="var(--neon-purple)" radius={[6, 6, 0, 0]} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
+              <Bar dataKey="anterior" name="Anterior" fill="var(--muted-foreground)" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="rate" name="Atual" fill="var(--neon-purple)" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartFrame>
