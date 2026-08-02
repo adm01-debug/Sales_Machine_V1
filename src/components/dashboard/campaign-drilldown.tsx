@@ -227,6 +227,9 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                         )}
                         "{data.diagnosis.sentiment.summary}"
                       </div>
+                      <div className="flex items-start gap-2 text-xs text-muted-foreground">
+                        <Info className="h-3.5 w-3.5 mt-0.5 text-neon-purple" />
+                        <span><strong>Insight:</strong> {data.diagnosis.sentiment.top_insight}</span>
                       </div>
                     </div>
 
