@@ -23,6 +23,7 @@ import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDeliverabilityRouteImport } from './routes/_authenticated/deliverability'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
+import { Route as AuthenticatedComplianceRouteImport } from './routes/_authenticated/compliance'
 import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
 import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
 import { Route as AuthenticatedAudiencesRouteImport } from './routes/_authenticated/audiences'
@@ -117,6 +118,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedContactsRoute = AuthenticatedContactsRouteImport.update({
   id: '/contacts',
   path: '/contacts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedComplianceRoute = AuthenticatedComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCompaniesRoute = AuthenticatedCompaniesRouteImport.update({
@@ -259,6 +265,7 @@ export interface FileRoutesByFullPath {
   '/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
+  '/compliance': typeof AuthenticatedComplianceRoute
   '/contacts': typeof AuthenticatedContactsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
@@ -298,6 +305,7 @@ export interface FileRoutesByTo {
   '/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
+  '/compliance': typeof AuthenticatedComplianceRoute
   '/contacts': typeof AuthenticatedContactsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliverability': typeof AuthenticatedDeliverabilityRoute
@@ -339,6 +347,7 @@ export interface FileRoutesById {
   '/_authenticated/audiences': typeof AuthenticatedAudiencesRouteWithChildren
   '/_authenticated/campaigns': typeof AuthenticatedCampaignsRouteWithChildren
   '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
+  '/_authenticated/compliance': typeof AuthenticatedComplianceRoute
   '/_authenticated/contacts': typeof AuthenticatedContactsRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/deliverability': typeof AuthenticatedDeliverabilityRoute
@@ -380,6 +389,7 @@ export interface FileRouteTypes {
     | '/audiences'
     | '/campaigns'
     | '/companies'
+    | '/compliance'
     | '/contacts'
     | '/dashboard'
     | '/deliverability'
@@ -419,6 +429,7 @@ export interface FileRouteTypes {
     | '/audiences'
     | '/campaigns'
     | '/companies'
+    | '/compliance'
     | '/contacts'
     | '/dashboard'
     | '/deliverability'
@@ -459,6 +470,7 @@ export interface FileRouteTypes {
     | '/_authenticated/audiences'
     | '/_authenticated/campaigns'
     | '/_authenticated/companies'
+    | '/_authenticated/compliance'
     | '/_authenticated/contacts'
     | '/_authenticated/dashboard'
     | '/_authenticated/deliverability'
@@ -611,6 +623,13 @@ declare module '@tanstack/react-router' {
       path: '/contacts'
       fullPath: '/contacts'
       preLoaderRoute: typeof AuthenticatedContactsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/compliance': {
+      id: '/_authenticated/compliance'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof AuthenticatedComplianceRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/companies': {
@@ -868,6 +887,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAudiencesRoute: typeof AuthenticatedAudiencesRouteWithChildren
   AuthenticatedCampaignsRoute: typeof AuthenticatedCampaignsRouteWithChildren
   AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
+  AuthenticatedComplianceRoute: typeof AuthenticatedComplianceRoute
   AuthenticatedContactsRoute: typeof AuthenticatedContactsRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDeliverabilityRoute: typeof AuthenticatedDeliverabilityRoute
@@ -884,6 +904,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAudiencesRoute: AuthenticatedAudiencesRouteWithChildren,
   AuthenticatedCampaignsRoute: AuthenticatedCampaignsRouteWithChildren,
   AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
+  AuthenticatedComplianceRoute: AuthenticatedComplianceRoute,
   AuthenticatedContactsRoute: AuthenticatedContactsRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDeliverabilityRoute: AuthenticatedDeliverabilityRoute,
