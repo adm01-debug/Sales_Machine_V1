@@ -167,7 +167,6 @@ export function BudgetReallocation() {
             </ul>
           </div>
         ) : null}
-        ) : null}
 
         {data ? (
           <p className={cn("text-xs", conserved ? "text-muted-foreground" : "text-destructive")}>
