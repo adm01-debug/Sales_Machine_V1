@@ -424,7 +424,7 @@ export function AnalyticsCharts() {
 
         <ChartFrame
           title="Campanhas por volume"
-          description="Envios materializados por campanha"
+          description="Clique em uma campanha para ver o detalhamento"
           loading={loading}
           empty={campaigns.length === 0}
         >
@@ -434,7 +434,19 @@ export function AnalyticsCharts() {
               <XAxis dataKey="name" {...axisProps} interval={0} angle={-15} textAnchor="end" height={48} />
               <YAxis {...axisProps} width={44} />
               <ChartTooltip />
-              <Bar dataKey="sends" name="Envios" fill="var(--neon-cyan)" radius={[6, 6, 0, 0]} />
+              <Bar
+                dataKey="sends"
+                name="Envios"
+                fill="var(--neon-cyan)"
+                radius={[6, 6, 0, 0]}
+                cursor="pointer"
+                onClick={(entry: unknown) => {
+                  const row = entry as { payload?: { id?: string; fullName?: string } };
+                  if (row?.payload?.id) {
+                    setSelected({ id: row.payload.id, name: row.payload.fullName ?? "" });
+                  }
+                }}
+              />
               <Line
                 type="monotone"
                 dataKey="sends"
