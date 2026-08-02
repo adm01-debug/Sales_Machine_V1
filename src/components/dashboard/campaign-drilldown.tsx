@@ -148,7 +148,7 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                     <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                       Diagnóstico Automático
                     </h3>
-                    <Badge variant={data.diagnosis.score > 80 ? "success" : data.diagnosis.score > 50 ? "warning" : "destructive"}>
+                    <Badge variant={data.diagnosis.score > 80 ? "lime" : data.diagnosis.score > 50 ? "amber" : "destructive"}>
                       Health Score: {data.diagnosis.score}/100
                     </Badge>
                   </div>
