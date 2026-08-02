@@ -17,6 +17,7 @@ import { SpendBreakdown } from "@/components/ops/spend-breakdown";
 import { BudgetGuardrails } from "@/components/ops/budget-guardrails";
 import { BudgetReallocation } from "@/components/ops/budget-reallocation";
 import { cn } from "@/lib/utils";
+import { ChannelROIStats } from "@/components/ops/channel-roi-stats";
 
 export const Route = createFileRoute("/_authenticated/ops")({
   head: () => ({
