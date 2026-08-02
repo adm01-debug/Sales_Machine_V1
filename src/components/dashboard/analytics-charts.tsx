@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
+import { CampaignDrilldown } from "@/components/dashboard/campaign-drilldown";
 
 const SERIES = ["var(--neon-cyan)", "var(--neon-purple)", "var(--neon-lime)", "var(--neon-pink)", "var(--neon-amber)"];
 
@@ -184,6 +185,7 @@ function TrendCard({
 
 export function AnalyticsCharts() {
   const [days, setDays] = useState<number>(30);
+  const [selected, setSelected] = useState<{ id: string; name: string } | null>(null);
   const fetchCharts = useServerFn(getAnalyticsCharts);
   const query = useQuery({
     queryKey: ["analytics", "charts", days],
@@ -225,6 +227,8 @@ export function AnalyticsCharts() {
   }));
 
   const campaigns = (data?.campaigns ?? []).map((c) => ({
+    id: c.id,
+    fullName: c.name,
     name: c.name.length > 18 ? `${c.name.slice(0, 17)}…` : c.name,
     sends: c.sends,
   }));
@@ -420,7 +424,7 @@ export function AnalyticsCharts() {
 
         <ChartFrame
           title="Campanhas por volume"
-          description="Envios materializados por campanha"
+          description="Clique em uma campanha para ver o detalhamento"
           loading={loading}
           empty={campaigns.length === 0}
         >
@@ -430,7 +434,19 @@ export function AnalyticsCharts() {
               <XAxis dataKey="name" {...axisProps} interval={0} angle={-15} textAnchor="end" height={48} />
               <YAxis {...axisProps} width={44} />
               <ChartTooltip />
-              <Bar dataKey="sends" name="Envios" fill="var(--neon-cyan)" radius={[6, 6, 0, 0]} />
+              <Bar
+                dataKey="sends"
+                name="Envios"
+                fill="var(--neon-cyan)"
+                radius={[6, 6, 0, 0]}
+                cursor="pointer"
+                onClick={(entry: unknown) => {
+                  const row = entry as { payload?: { id?: string; fullName?: string } };
+                  if (row?.payload?.id) {
+                    setSelected({ id: row.payload.id, name: row.payload.fullName ?? "" });
+                  }
+                }}
+              />
               <Line
                 type="monotone"
                 dataKey="sends"
@@ -443,6 +459,28 @@ export function AnalyticsCharts() {
           </ResponsiveContainer>
         </ChartFrame>
       </div>
+
+      {campaigns.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {campaigns.map((c) => (
+            <Button
+              key={c.id}
+              size="sm"
+              variant="outline"
+              onClick={() => setSelected({ id: c.id, name: c.fullName })}
+            >
+              {c.name}
+              <span className="ml-2 tabular-nums text-muted-foreground">{c.sends}</span>
+            </Button>
+          ))}
+        </div>
+      ) : null}
+
+      <CampaignDrilldown
+        campaignId={selected?.id ?? null}
+        campaignName={selected?.name}
+        onClose={() => setSelected(null)}
+      />
     </section>
   );
 }
