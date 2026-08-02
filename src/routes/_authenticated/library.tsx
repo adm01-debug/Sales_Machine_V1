@@ -12,6 +12,8 @@ import {
   sendTestMessage,
   getMediaSignedUrl,
 } from "@/lib/templates.functions";
+import { recordTemplatePreflight } from "@/lib/preflight-history.functions";
+import { PreflightHistoryChart } from "@/components/PreflightHistoryChart";
 import { analyzeSms } from "@/lib/sms-segments";
 import { CHANNELS, type Channel } from "@/lib/audience-rules";
 import { CHANNEL_BODY_LIMIT } from "@/lib/campaign-validation";
@@ -85,6 +87,7 @@ function ComposerPage() {
   const dup = useServerFn(duplicateTemplate);
   const sendTest = useServerFn(sendTestMessage);
   const signUrl = useServerFn(getMediaSignedUrl);
+  const recordHistory = useServerFn(recordTemplatePreflight);
 
   const templatesQ = useQuery({
     queryKey: ["sm", "templates"],
@@ -190,12 +193,24 @@ function ComposerPage() {
         email_blocks: useBlocks ? (emailBlocks as unknown as Record<string, unknown>[]) : null,
         variables: extractTemplateVars(`${subject}\n${finalBody}`),
       };
-      return upsert({ data: payload });
+      const res = await upsert({ data: payload });
+      
+      // Gravar histórico de pré-voo após sucesso
+      if (channel === "email") {
+        const report = preflightEmailContent({ subject, blocks: emailBlocks, body: finalBody });
+        await recordHistory({ data: { templateId: res.id, score: report.score, findings: report.findings } });
+      } else {
+        const msgReport = preflightMessage({ channel, body: finalBody, mediaUrl });
+        await recordHistory({ data: { templateId: res.id, score: msgReport.score, findings: msgReport.findings } });
+      }
+
+      return res;
     },
     onSuccess: (res) => {
       toast.success("Template salvo");
       setId(res.id);
       qc.invalidateQueries({ queryKey: ["sm", "templates"] });
+      qc.invalidateQueries({ queryKey: ["template-preflight-history", res.id] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -451,6 +466,7 @@ function ComposerPage() {
                       mediaUrl={mediaUrl}
                     />
                   )}
+                  {id && <PreflightHistoryChart templateId={id} />}
                   {channel !== "email" && (
                     <MessagePreflightPanel
                       className="mt-3"

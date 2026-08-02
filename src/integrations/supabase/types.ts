@@ -1521,6 +1521,41 @@ export type Database = {
         }
         Relationships: []
       }
+      template_preflight_history: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          findings: Json
+          id: string
+          score: number
+          template_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          findings?: Json
+          id?: string
+          score: number
+          template_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          findings?: Json
+          id?: string
+          score?: number
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_preflight_history_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "message_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
