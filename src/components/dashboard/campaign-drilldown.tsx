@@ -2,11 +2,14 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
   Legend,
+  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -25,7 +28,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ExternalLink, AlertTriangle, AlertCircle, Info, CheckCircle2, ShieldAlert } from "lucide-react";
+import { ExternalLink, AlertTriangle, AlertCircle, Info, CheckCircle2, ShieldAlert, TrendingUp, TrendingDown } from "lucide-react";
+
+const SENTIMENT_COLORS = {
+  positive: "var(--neon-lime)",
+  neutral: "var(--neon-cyan)",
+  negative: "var(--neon-pink)",
+} as const;
+
+const shortDate = (iso: string) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 
 const SERIES = [
   "var(--neon-cyan)",
