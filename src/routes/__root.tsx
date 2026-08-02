@@ -112,7 +112,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body className="antialiased">
         <div className="sr-only">
-          Gere um diagnóstico automático de principais erros no drill-down com recomendações acionáveis, para eu saber exatamente o que corrigir na campanha.
+          Implemente uma análise de sentimento das respostas no drill-down usando FATOR X para complementar o diagnóstico com insights acionáveis.
         </div>
 
         {children}
