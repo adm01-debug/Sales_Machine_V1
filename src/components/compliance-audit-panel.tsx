@@ -1,10 +1,18 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { AlertTriangle, Info, ShieldCheck, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
   auditCompliance,
+  NICHE_RULES,
   NICHE_LABELS,
   type ComplianceNiche,
   type ComplianceRule,
@@ -13,6 +21,7 @@ import {
 
 export interface ComplianceAuditPanelProps {
   text: string;
+  /** Quando informado, o seletor de nicho é ocultado (modo controlado). */
   niches?: readonly ComplianceNiche[];
   customRules?: readonly ComplianceRule[];
   className?: string;
@@ -37,9 +46,15 @@ export function ComplianceAuditPanel({
   customRules,
   className,
 }: ComplianceAuditPanelProps) {
+  const [localNiche, setLocalNiche] = useState<ComplianceNiche>("geral");
+  const active: readonly ComplianceNiche[] = niches?.length
+    ? niches
+    : localNiche === "geral"
+      ? ["geral"]
+      : ["geral", localNiche];
   const report = useMemo(
-    () => auditCompliance({ text, niches, customRules }),
-    [text, niches, customRules],
+    () => auditCompliance({ text, niches: active, customRules }),
+    [text, active, customRules],
   );
 
   return (
@@ -50,9 +65,23 @@ export function ComplianceAuditPanel({
           {report.score}/100 · {report.blocked ? "bloqueado" : "liberado"}
         </Badge>
       </div>
+      {!niches?.length && (
+        <Select value={localNiche} onValueChange={(v) => setLocalNiche(v as ComplianceNiche)}>
+          <SelectTrigger className="h-8 text-xs">
+            <SelectValue placeholder="Nicho do cliente" />
+          </SelectTrigger>
+          <SelectContent>
+            {(Object.keys(NICHE_RULES) as ComplianceNiche[]).map((n) => (
+              <SelectItem key={n} value={n}>
+                {NICHE_LABELS[n]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
       <Progress value={report.score} />
       <p className="text-xs text-muted-foreground">
-        Listas ativas: {(niches?.length ? niches : (["geral"] as const)).map((n) => NICHE_LABELS[n]).join(", ")}
+        Listas ativas: {active.map((n) => NICHE_LABELS[n]).join(", ")}
         {customRules?.length ? ` · ${customRules.length} termo(s) do cliente` : ""}
       </p>
       {report.violations.length === 0 ? (
