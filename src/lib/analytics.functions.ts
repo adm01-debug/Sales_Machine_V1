@@ -119,15 +119,22 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
     }
 
     // Resolve os touchpoints em lotes para não estourar o limite da query string.
-    const touchpoints: { channel: string; status: string; direction: string }[] = [];
+    const touchpoints: { channel: string; status: string; direction: string; content?: string }[] = [];
     const CHUNK = 200;
     for (let i = 0; i < touchpointIds.length && i < 4000; i += CHUNK) {
       const chunk = touchpointIds.slice(i, i + CHUNK);
       const res = await context.supabase
         .from("contact_touchpoints")
-        .select("channel, status, direction")
+        .select("channel, status, direction, metadata")
         .in("id", chunk);
-      if (res.data) touchpoints.push(...res.data);
+      if (res.data) {
+        touchpoints.push(...res.data.map(tp => ({
+          channel: tp.channel,
+          status: tp.status,
+          direction: tp.direction,
+          content: (tp.metadata as any)?.content || (tp.metadata as any)?.body || ""
+        })));
+      }
     }
 
     const variantLabels = new Map(
@@ -153,7 +160,12 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
       states,
       stages,
       channels: buildCampaignChannelBreakdown(touchpoints),
-      diagnosis: campaignRes.data ? diagnoseCampaign(campaignRes.data, topErrors, stages) : null,
+      diagnosis: campaignRes.data ? diagnoseCampaign(
+        campaignRes.data, 
+        topErrors, 
+        stages, 
+        touchpoints.filter(t => t.direction === "inbound").map(t => ({ content: t.content || "" }))
+      ) : null,
       variants: Object.entries(byVariant)
         .map(([id, v]) => ({
           id,

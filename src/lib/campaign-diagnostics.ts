@@ -23,9 +23,50 @@ export interface CampaignDiagnosis {
 export function diagnoseCampaign(
   campaign: { name: string; channel?: string; objective?: string },
   errors: Array<{ message: string; count: number }>,
-  stages: Array<{ stage: string; value: number }>
+  stages: Array<{ stage: string; value: number }>,
+  inboundMessages: Array<{ content: string }>
 ): CampaignDiagnosis {
   const recommendations: CampaignDiagnosis["recommendations"] = [];
+  
+  // 1. Análise de Sentimento (FATOR X - Simulado/Mock via análise de termos)
+  const sentiment = {
+    positive: 0,
+    neutral: 0,
+    negative: 0,
+    summary: "",
+    top_insight: ""
+  };
+
+  if (inboundMessages.length > 0) {
+    const positiveWords = /obrigado|gostei|quero|interessante|agendar|marcar|bom|excelente/i;
+    const negativeWords = /nao quero|remover|spam|pare|ruim|pessimo|desinscrever/i;
+
+    for (const msg of inboundMessages) {
+      if (positiveWords.test(msg.content)) sentiment.positive++;
+      else if (negativeWords.test(msg.content)) sentiment.negative++;
+      else sentiment.neutral++;
+    }
+
+    const totalInbound = inboundMessages.length;
+    sentiment.summary = `Analisamos ${totalInbound} respostas. `;
+    if (sentiment.positive > sentiment.negative) {
+      sentiment.summary += "O sentimento geral é predominante POSITIVO.";
+      sentiment.top_insight = "Os leads estão reagindo bem à sua proposta de valor.";
+    } else if (sentiment.negative > sentiment.positive) {
+      sentiment.summary += "O sentimento geral é predominante NEGATIVO.";
+      sentiment.top_insight = "Alta taxa de rejeição. Considere suavizar o tom da abordagem.";
+      recommendations.push({
+        type: "warning",
+        title: "Rejeição de Conteúdo",
+        description: "Detectamos sentimentos negativos nas respostas recentes via FATOR X.",
+        action: "Revise o template da mensagem para ser menos invasivo."
+      });
+    } else {
+      sentiment.summary += "O sentimento geral é NEUTRO.";
+      sentiment.top_insight = "As respostas são puramente informativas ou de descadastro padrão.";
+    }
+  }
+
   
   // 1. Diagnóstico de Erros Técnicos
   const connectionErrors = errors.filter(e => 
@@ -99,6 +140,7 @@ export function diagnoseCampaign(
 
   return {
     score: Math.max(0, score),
-    recommendations
+    recommendations,
+    sentiment: inboundMessages.length > 0 ? sentiment : undefined
   };
 }
