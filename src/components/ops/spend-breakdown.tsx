@@ -121,7 +121,7 @@ export function SpendBreakdown() {
           </ul>
 
           {data.truncated ? (
-            <p className="text-xs text-amber-600 dark:text-amber-400">
+            <p className="text-xs text-neon-amber">
               Volume acima do teto de varredura: os valores são um piso, não o total do período.
             </p>
           ) : null}

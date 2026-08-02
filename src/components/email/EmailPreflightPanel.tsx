@@ -20,7 +20,7 @@ const ICONS: Record<PreflightSeverity, typeof Info> = {
 
 const TONE: Record<PreflightSeverity, string> = {
   error: "text-destructive",
-  warning: "text-amber-600 dark:text-amber-400",
+  warning: "text-neon-amber",
   info: "text-muted-foreground",
 };
 

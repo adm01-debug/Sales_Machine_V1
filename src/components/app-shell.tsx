@@ -25,8 +25,8 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card/80 px-4 py-3 backdrop-blur lg:hidden">
-        <span className="font-semibold tracking-tight">Sales Machine</span>
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border surface-glass px-4 py-3 lg:hidden">
+        <span className="font-semibold tracking-tight text-gradient-primary">Sales Machine</span>
         <Button variant="ghost" size="icon" onClick={() => setOpen((v) => !v)} aria-label="Menu">
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </Button>
@@ -35,18 +35,23 @@ export function AppShell({ children }: AppShellProps) {
       <div className="flex">
         <aside
           className={cn(
-            "fixed inset-x-0 top-[57px] z-20 border-b border-border bg-card p-4 lg:static lg:block lg:h-screen lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r",
+            "fixed inset-x-0 top-[57px] z-20 border-b border-sidebar-border bg-sidebar p-4 text-sidebar-foreground lg:static lg:block lg:h-screen lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r",
             open ? "block" : "hidden",
           )}
         >
           <div className="mb-6 hidden lg:block">
-            <p className="text-lg font-bold tracking-tight">Sales Machine</p>
-            <p className="text-xs text-muted-foreground">Marketing · LUX · SINGU · FATOR X</p>
+            <div className="flex items-center gap-2">
+              <span className="size-2.5 rounded-full bg-primary shadow-glow" aria-hidden />
+              <p className="text-lg font-bold tracking-tight text-gradient-primary">Sales Machine</p>
+            </div>
+            <p className="mt-1 text-xxs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+              Marketing · LUX · SINGU · FATOR X
+            </p>
           </div>
           <nav className="space-y-5 lg:h-[calc(100vh-9rem)] lg:overflow-y-auto">
             {NAV_GROUPS.map((group) => (
               <div key={group.label} className="space-y-1">
-                <p className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <p className="px-2 text-xxs font-semibold uppercase tracking-[0.16em] text-muted-foreground/80">
                   {group.label}
                 </p>
                 {group.items.map((item) => (
@@ -54,7 +59,7 @@ export function AppShell({ children }: AppShellProps) {
                     key={item.to}
                     to={item.to}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[status=active]:bg-accent data-[status=active]:font-medium data-[status=active]:text-accent-foreground"
+                    className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[status=active]:bg-sidebar-accent data-[status=active]:font-medium data-[status=active]:text-sidebar-accent-foreground data-[status=active]:[&_svg]:text-primary"
                     activeOptions={{ exact: item.exact ?? false }}
                   >
                     <item.icon className="size-4" />
