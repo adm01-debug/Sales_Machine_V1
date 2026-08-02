@@ -9,6 +9,12 @@ import { parseVariables, unknownVariables } from "@/lib/template-vars";
 import type { EmailBlock } from "@/lib/email-blocks";
 import { preflightEmailContent } from "@/lib/email-preflight";
 import { preflightMessage } from "@/lib/message-preflight";
+import {
+  auditCompliance,
+  NICHE_LABELS,
+  type ComplianceNiche,
+  type ComplianceRule,
+} from "@/lib/compliance-terms";
 
 export interface ValidationIssue {
   /** `error` bloqueia o lançamento; `warning` apenas alerta. */
@@ -37,6 +43,10 @@ export interface CampaignForValidation {
   audience_id?: string | null;
   audience_size?: number | null;
   variants: VariantForValidation[];
+  /** Nichos regulatórios ativos do cliente (Melhoria 035). */
+  compliance_niches?: readonly ComplianceNiche[];
+  /** Termos proibidos cadastrados pelo cliente. */
+  compliance_rules?: readonly ComplianceRule[];
 }
 
 /** Limite prático de caracteres por canal. */
@@ -205,6 +215,23 @@ export function validateCampaign(input: CampaignForValidation): ValidationIssue[
           message: finding.hint ? `${finding.message} ${finding.hint}` : finding.message,
         });
       }
+    }
+
+    // Conformidade regulatória por nicho (Melhoria 034/035): `error` bloqueia.
+    const compliance = auditCompliance({
+      text: `${variant.subject ?? ""}\n${body}`,
+      niches: input.compliance_niches,
+      customRules: input.compliance_rules,
+    });
+    for (const violation of compliance.violations) {
+      if (violation.severity === "info") continue;
+      issues.push({
+        level: violation.severity === "error" ? "error" : "warning",
+        scope: `${scope} · conformidade`,
+        message: `“${violation.term}” (${NICHE_LABELS[violation.niche]}): ${violation.reason}${
+          violation.suggestion ? ` Sugestão: ${violation.suggestion}` : ""
+        }`,
+      });
     }
   }
 

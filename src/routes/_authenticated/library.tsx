@@ -28,6 +28,7 @@ import { EmailBlockEditor } from "@/components/email/EmailBlockEditor";
 import { EmailPreflightPanel } from "@/components/email/EmailPreflightPanel";
 import { MessagePreflightPanel } from "@/components/message-preflight-panel";
 import { ComplianceAuditPanel } from "@/components/compliance-audit-panel";
+import { listComplianceTerms } from "@/lib/compliance.functions";
 import { blockingMessageFindings, preflightMessage } from "@/lib/message-preflight";
 import { blockingFindings, preflightEmailContent } from "@/lib/email-preflight";
 import {
@@ -89,11 +90,25 @@ function ComposerPage() {
   const sendTest = useServerFn(sendTestMessage);
   const signUrl = useServerFn(getMediaSignedUrl);
   const recordHistory = useServerFn(recordTemplatePreflight);
+  const fetchComplianceTerms = useServerFn(listComplianceTerms);
 
   const templatesQ = useQuery({
     queryKey: ["sm", "templates"],
     queryFn: () => fetchTemplates(),
   });
+
+  // Termos proibidos do cliente aplicados junto às listas regulatórias embutidas.
+  const complianceQ = useQuery({
+    queryKey: ["compliance-terms"],
+    queryFn: () => fetchComplianceTerms(),
+  });
+  const complianceRules = useMemo(
+    () =>
+      (complianceQ.data ?? [])
+        .filter((t) => t.is_active)
+        .map(({ term, severity, reason, suggestion }) => ({ term, severity, reason, suggestion })),
+    [complianceQ.data],
+  );
 
   const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -435,7 +450,10 @@ function ComposerPage() {
               <div className="space-y-4">
                 <PhonePreview channel={channel} body={body} mediaUrl={mediaUrl} rcs={rcs} />
                 <MessagePreflightPanel channel={channel} body={body} mediaUrl={mediaUrl} />
-                <ComplianceAuditPanel text={`${subject ?? ""}\n${body}`} />
+                <ComplianceAuditPanel
+                  text={`${subject ?? ""}\n${body}`}
+                  customRules={complianceRules}
+                />
               </div>
             ) : (
               <Card>
@@ -477,7 +495,11 @@ function ComposerPage() {
                       mediaUrl={mediaUrl}
                     />
                   )}
-                  <ComplianceAuditPanel className="mt-3" text={`${subject ?? ""}\n${body}`} />
+                  <ComplianceAuditPanel
+                    className="mt-3"
+                    text={`${subject ?? ""}\n${body}`}
+                    customRules={complianceRules}
+                  />
                 </CardContent>
               </Card>
             )}

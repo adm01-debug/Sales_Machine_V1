@@ -618,6 +618,45 @@ export type Database = {
         }
         Relationships: []
       }
+      compliance_terms: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          niche: Database["public"]["Enums"]["sm_compliance_niche"]
+          reason: string
+          severity: Database["public"]["Enums"]["sm_compliance_severity"]
+          suggestion: string | null
+          term: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          niche?: Database["public"]["Enums"]["sm_compliance_niche"]
+          reason: string
+          severity?: Database["public"]["Enums"]["sm_compliance_severity"]
+          suggestion?: string | null
+          term: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          niche?: Database["public"]["Enums"]["sm_compliance_niche"]
+          reason?: string
+          severity?: Database["public"]["Enums"]["sm_compliance_severity"]
+          suggestion?: string | null
+          term?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       consent_ledger: {
         Row: {
           channel: Database["public"]["Enums"]["sm_channel"]
@@ -1684,6 +1723,15 @@ export type Database = {
         | "instagram"
         | "rcs"
         | "mms"
+      sm_compliance_niche:
+        | "geral"
+        | "saude"
+        | "financeiro"
+        | "juridico"
+        | "apostas"
+        | "suplementos"
+        | "custom"
+      sm_compliance_severity: "error" | "warning" | "info"
       sm_direction: "outbound" | "inbound"
       sm_enrollment_state:
         | "active"
@@ -1867,6 +1915,16 @@ export const Constants = {
         "rcs",
         "mms",
       ],
+      sm_compliance_niche: [
+        "geral",
+        "saude",
+        "financeiro",
+        "juridico",
+        "apostas",
+        "suplementos",
+        "custom",
+      ],
+      sm_compliance_severity: ["error", "warning", "info"],
       sm_direction: ["outbound", "inbound"],
       sm_enrollment_state: [
         "active",

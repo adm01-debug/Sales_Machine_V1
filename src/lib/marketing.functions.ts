@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { CHANNELS } from "@/lib/audience-rules";
 import { validateCampaign, hasBlockingIssues } from "@/lib/campaign-validation";
+import { loadComplianceContext } from "@/lib/compliance.server";
 import { buildVarValues, extractVariables } from "@/lib/template-vars";
 
 const channelEnum = z.enum(CHANNELS);
@@ -84,10 +85,13 @@ export const saveMarketingCampaign = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     // Validação de autoria: erros bloqueiam a gravação de criativos inválidos.
+    const compliance = await loadComplianceContext(context.supabase);
     const issues = validateCampaign({
       name: data.name,
       channel: data.channel,
       audience_id: data.audience_id ?? null,
+      compliance_niches: compliance.niches,
+      compliance_rules: compliance.rules,
       variants: data.variants.map((v) => ({
         label: v.label,
         subject: v.subject ?? null,
@@ -175,11 +179,14 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
     }
 
     // Autoridade final: a mesma validação do editor roda aqui antes de materializar.
+    const compliance = await loadComplianceContext(context.supabase);
     const issues = validateCampaign({
       name: campaign.name ?? "campanha",
       channel: campaign.channel as never,
       audience_id: campaign.audience_id,
       audience_size: members.length,
+      compliance_niches: compliance.niches,
+      compliance_rules: compliance.rules,
       variants: variants.map((v) => ({
         label: v.label,
         subject: v.subject,

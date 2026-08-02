@@ -9,6 +9,7 @@ import {
   Activity,
   MailCheck,
   FlaskConical,
+  ShieldCheck,
   Workflow,
   ClipboardList,
   type LucideIcon,
@@ -51,6 +52,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: "/ops", label: "Saúde do pipeline", icon: Activity },
       { to: "/deliverability", label: "Entregabilidade", icon: MailCheck },
+      { to: "/compliance", label: "Conformidade", icon: ShieldCheck },
       { to: "/evals", label: "Avaliações de agente", icon: FlaskConical },
     ],
   },
