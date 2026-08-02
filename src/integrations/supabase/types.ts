@@ -657,6 +657,53 @@ export type Database = {
         }
         Relationships: []
       }
+      compliance_violations_log: {
+        Row: {
+          action: string
+          campaign_id: string | null
+          created_at: string | null
+          id: string
+          niche: string
+          reason: string
+          severity: string
+          term: string
+          text_snapshot: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          campaign_id?: string | null
+          created_at?: string | null
+          id?: string
+          niche: string
+          reason: string
+          severity: string
+          term: string
+          text_snapshot: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          campaign_id?: string | null
+          created_at?: string | null
+          id?: string
+          niche?: string
+          reason?: string
+          severity?: string
+          term?: string
+          text_snapshot?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_violations_log_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consent_ledger: {
         Row: {
           channel: Database["public"]["Enums"]["sm_channel"]
