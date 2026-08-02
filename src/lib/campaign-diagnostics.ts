@@ -81,13 +81,12 @@ export function diagnoseCampaign(
   };
 
   if (inboundMessages.length > 0) {
-    // Melhoria 045: Critérios refinados de análise de sentimento
-    // Regex expandida para capturar variações, gírias e intenções implícitas em PT-BR
-    const positiveWords = /obrigado|gostei|quero|interessante|agendar|marcar|bom|excelente|tenho interesse|me ligue|faz sentido|concordo|topo|bora|maravilha|show/i;
-    // Captura rejeição agressiva, sarcasmo ("nao enche") e sinalizações de LGPD/Spam
-    const negativeWords = /nao quero|remover|spam|pare|ruim|pessimo|desinscrever|sai fora|nao enche|inconveniente|abusivo|descadastrar|nunca mais/i;
-    // Critério de Neutralidade Ativa: Dúvidas técnicas ou respostas automáticas (Out of Office)
-    const neutralWords = /qual o valor|como funciona|quem e voce|ausente|ferias|retorno em breve|onde conseguiu/i;
+    // Melhoria 047: Refinamento de critérios e limiares de análise de sentimento
+    // Expansão das palavras-chave para maior cobertura de intenções e contextos brasileiros
+    const positiveWords = /obrigado|gostei|quero|interessante|agendar|marcar|bom|excelente|tenho interesse|me ligue|faz sentido|concordo|topo|bora|maravilha|show|legal|perfeito|fechado|otimo|ótimo|obrigada/i;
+    const negativeWords = /nao quero|remover|spam|pare|ruim|pessimo|péssimo|desinscrever|sai fora|nao enche|inconveniente|abusivo|descadastrar|nunca mais|bloquear|denunciar|chatice/i;
+    // Identificação de respostas automáticas e consultas informativas para isolar ruído
+    const neutralWords = /qual o valor|como funciona|quem e voce|ausente|ferias|férias|retorno em breve|onde conseguiu|duvida|dúvida|explicar/i;
 
     const termMap = new Map<string, number>();
     const phraseMap = new Map<string, number>();
@@ -95,27 +94,25 @@ export function diagnoseCampaign(
     for (const msg of inboundMessages) {
       const content = msg.content;
       
-      // Lógica de Precedência de Rótulo (Refinamento de Precisão)
-      // Se contiver palavras negativas, o risco reputacional torna o rótulo negativo prioritário
+      // Ponderação de Sentimento: A rejeição agressiva tem prioridade no rótulo para segurança
       if (negativeWords.test(content)) {
         sentiment.negative++;
       }
       else if (positiveWords.test(content)) {
         sentiment.positive++;
-        // Termos isolados (unigramas) relevantes
+        // Extração de insights para a nuvem de frases e termos
         content
           .split(/[\s,.;!?]+/)
           .map(normalizeToken)
           .filter((t) => t.length > 3 && !STOPWORDS.has(t))
           .forEach((t) => termMap.set(t, (termMap.get(t) ?? 0) + 1));
-        // Frases recorrentes (bigramas/trigramas)
         extractPhrases(content, phraseMap);
       }
       else if (neutralWords.test(content)) {
         sentiment.neutral++;
       }
       else {
-        // Fallback: Se não casar com nenhum critério explícito, classificar como neutro/ambíguo
+        // Classificação residual como neutra/informativa
         sentiment.neutral++;
       }
     }
