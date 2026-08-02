@@ -197,6 +197,7 @@ function OpsPage() {
         <h2 className="mb-3 text-sm font-medium text-muted-foreground">Financeiro & Orçamento</h2>
         <div className="space-y-6">
           <SpendBreakdown />
+          <ChannelROIStats />
           <BudgetGuardrails />
           <BudgetReallocation />
         </div>
