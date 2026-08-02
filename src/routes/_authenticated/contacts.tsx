@@ -47,11 +47,25 @@ function ContactsPage() {
   const fetchProfiles = useServerFn(listContactProfiles);
   const [search, setSearch] = useState("");
   const [kind, setKind] = useState<"company" | "person" | undefined>(undefined);
+  const [priority, setPriority] = useState<(typeof PRIORITY_FILTERS)[number]["id"]>("all");
 
   const profiles = useQuery({
     queryKey: ["mkt", "profiles", search, kind],
     queryFn: () => fetchProfiles({ data: { search: search || undefined, kind, limit: 100 } }),
   });
+
+  const rows = useMemo(() => {
+    const list = (profiles.data ?? []).filter(
+      (p): p is typeof p & { entity_id: string } => !!p.entity_id,
+    );
+    return list
+      .filter((p) => priority === "all" || p.reply_priority === priority)
+      .sort(
+        (a, b) =>
+          PRIORITY_ORDER[a.reply_priority] - PRIORITY_ORDER[b.reply_priority] ||
+          b.reply_probability - a.reply_probability,
+      );
+  }, [profiles.data, priority]);
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -65,9 +79,12 @@ function ContactsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Filtrar</CardTitle>
-          <CardDescription>Ordenado por score de sinal decrescente.</CardDescription>
+          <CardDescription>
+            Ordenado por probabilidade de resposta (sinal + sentimento das respostas).
+          </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2 sm:flex-row">
+        <CardContent className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             value={search}
             placeholder="Buscar por nome"
@@ -83,6 +100,20 @@ function ContactsPage() {
             <Button variant={kind === "person" ? "default" : "outline"} onClick={() => setKind("person")}>
               Pessoas
             </Button>
+          </div>
+          </div>
+          <div className="flex flex-wrap gap-1 rounded-lg border border-border bg-card p-1">
+            {PRIORITY_FILTERS.map((f) => (
+              <Button
+                key={f.id}
+                size="sm"
+                variant={priority === f.id ? "secondary" : "ghost"}
+                onClick={() => setPriority(f.id)}
+                className="h-7 px-2 text-xs"
+              >
+                {f.label}
+              </Button>
+            ))}
           </div>
         </CardContent>
       </Card>
