@@ -14,6 +14,8 @@ export interface CampaignDiagnosis {
     negative: number;
     summary: string;
     top_insight: string;
+    negative_rate: number;
+    threshold_alert: boolean;
   };
 }
 
@@ -34,7 +36,9 @@ export function diagnoseCampaign(
     neutral: 0,
     negative: 0,
     summary: "",
-    top_insight: ""
+    top_insight: "",
+    negative_rate: 0,
+    threshold_alert: false
   };
 
   if (inboundMessages.length > 0) {
@@ -48,18 +52,31 @@ export function diagnoseCampaign(
     }
 
     const totalInbound = inboundMessages.length;
+    sentiment.negative_rate = (sentiment.negative / totalInbound) * 100;
+    
+    // Gatilho Automático: Limite configurável (default 40% conforme sugestão)
+    const NEGATIVE_THRESHOLD = 40;
+    sentiment.threshold_alert = sentiment.negative_rate >= NEGATIVE_THRESHOLD;
+
     sentiment.summary = `Analisamos ${totalInbound} respostas. `;
     if (sentiment.positive > sentiment.negative) {
       sentiment.summary += "O sentimento geral é predominante POSITIVO.";
       sentiment.top_insight = "Os leads estão reagindo bem à sua proposta de valor.";
     } else if (sentiment.negative > sentiment.positive) {
       sentiment.summary += "O sentimento geral é predominante NEGATIVO.";
-      sentiment.top_insight = "Alta taxa de rejeição. Considere suavizar o tom da abordagem.";
+      sentiment.top_insight = sentiment.threshold_alert 
+        ? "CRÍTICO: Taxa de negatividade excedeu o limite de segurança." 
+        : "Alta taxa de rejeição. Considere suavizar o tom da abordagem.";
+      
       recommendations.push({
-        type: "warning",
-        title: "Rejeição de Conteúdo",
-        description: "Detectamos sentimentos negativos nas respostas recentes via FATOR X.",
-        action: "Revise o template da mensagem para ser menos invasivo."
+        type: sentiment.threshold_alert ? "error" : "warning",
+        title: sentiment.threshold_alert ? "BLOQUEIO DE SEGURANÇA: Gatilho de Sentimento" : "Rejeição de Conteúdo",
+        description: sentiment.threshold_alert 
+          ? `A taxa de negatividade (${sentiment.negative_rate.toFixed(1)}%) superou o limite de ${NEGATIVE_THRESHOLD}%. A campanha requer intervenção imediata.`
+          : "Detectamos sentimentos negativos nas respostas recentes via FATOR X.",
+        action: sentiment.threshold_alert 
+          ? "PAUSAR CAMPANHA IMEDIATAMENTE e reformular abordagem para evitar blacklist." 
+          : "Revise o template da mensagem para ser menos invasivo."
       });
     } else {
       sentiment.summary += "O sentimento geral é NEUTRO.";
