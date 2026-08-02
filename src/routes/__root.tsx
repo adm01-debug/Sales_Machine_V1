@@ -111,9 +111,22 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="antialiased">
-        HAJA COMO UM DEV SENIOR COM PHD EM BANCO DE DADOS - USE OS MCPS SE NECESSÁRIO - EXECUTE TODAS ESSAS MELHORIAS LISTADAS POR VC! 1 DE CADA VEZ, SEMPRE COM EXCELENCIA!!! REALIZE TODAS ATÉ CHEGARMOS EM NOSSA META DE 10/10! CONSEGUE FAZER ISSO, SEM PAUSAS, SEM PERGUNTAS? SOMENTE EXECUTAR 1 DE CADA VEZ ATÉ O FIM! SEM PARAR E SEM PERGUNTAR, SÓ EXECUTAR!!!! RUMO A PERFEIÇÃO SEMPREE! 10/10 - MAS ANTES REALIZE A SIMULAÇÃO DE CENTENAS DE CENARIOS, PREVENDO FALHAS E GAPS
-        {"\n\n\n"}
-        HAJA COMO UM DEV SENIOR COM PHD EM BANCO DE DADOS - USE OS MCPS SE NECESSÁRIO - EXECUTE TODAS ESSAS MELHORIAS LISTADAS POR VC! 1 DE CADA VEZ, SEMPRE COM EXCELENCIA!!! REALIZE TODAS ATÉ CHEGARMOS EM NOSSA META DE 10/10! CONSEGUE FAZER ISSO, SEM PAUSAS, SEM PERGUNTAS? SOMENTE EXECUTAR 1 DE CADA VEZ ATÉ O FIM! SEM PARAR E SEM PERGUNTAR, SÓ EXECUTAR!!!! RUMO A PERFEIÇÃO SEMPREE! 10/10 - MAS ANTES REALIZE A SIMULAÇÃO DE CENTENAS DE CENARIOS, PREVENDO FALHAS E GAPS
+        Realizarei uma auditoria completa no design system para identificar e corrigir inconsistências, bugs visuais e violações de tokens semânticos.
+        {"\n\n"}
+        **Protocolo de Auditoria (Claude Opus 4.8):**
+        {"\n"}
+        1. **Verificação de Tokens Semânticos:** Identificar e substituir qualquer cor hard-coded (`bg-[#...]`) ou utilitário não-semântico (`bg-blue-500`) por tokens do `src/styles.css` (`bg-primary`, `bg-card`, etc.).
+        {"\n"}
+        2. **Consistência de Dark Mode:** Validar se todas as superfícies e textos utilizam tokens que respondem corretamente à classe `.dark`.
+        {"\n"}
+        3. **Auditoria de Componentes Base:** Revisar `Button`, `Card`, `Input` e outros componentes em `src/components/ui/` para garantir que respeitam as variáveis de `--radius` e cores OKLCH.
+        {"\n"}
+        4. **Correção de "Bugs" Visuais:** Ajustar espaçamentos, bordas e sombras que não estejam alinhados com a escala definida no Tailwind v4.
+        {"\n"}
+        5. **Teste de Regressão Visual:** Executar Playwright para garantir que as mudanças não quebraram o layout mobile ou desktop.
+        {"\n\n"}
+        **Meta:** Alcançar 10/10 na consistência do design system, garantindo que o Sales Machine tenha uma interface profissional e robusta.
+
         {children}
         <Scripts />
       </body>
