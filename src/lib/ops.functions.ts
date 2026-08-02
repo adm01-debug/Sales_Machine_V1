@@ -66,8 +66,10 @@ export const getDeliverabilityStats = createServerFn({ method: "GET" })
       const payload = row.payload as any;
       if (payload?.opened) stats.opened++;
       if (payload?.clicked) stats.clicked++;
-      if (row.status === "bounced") stats.hard_bounce++;
-      if (row.status === "complaint") stats.complaint++;
+      // Usar comparação de string direta já que o enum TS é mais restrito que os dados reais possíveis.
+      const status = row.status as string;
+      if (status === "bounced") stats.hard_bounce++;
+      if (status === "complaint") stats.complaint++;
     }
     return stats;
   });
