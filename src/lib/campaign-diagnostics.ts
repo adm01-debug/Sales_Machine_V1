@@ -16,6 +16,7 @@ export interface CampaignDiagnosis {
     top_insight: string;
     negative_rate: number;
     threshold_alert: boolean;
+    positive_terms: Array<{ term: string; count: number }>;
   };
 }
 
@@ -38,18 +39,32 @@ export function diagnoseCampaign(
     summary: "",
     top_insight: "",
     negative_rate: 0,
-    threshold_alert: false
+    threshold_alert: false,
+    positive_terms: [] as Array<{ term: string; count: number }>
   };
 
   if (inboundMessages.length > 0) {
     const positiveWords = /obrigado|gostei|quero|interessante|agendar|marcar|bom|excelente/i;
     const negativeWords = /nao quero|remover|spam|pare|ruim|pessimo|desinscrever/i;
 
+    const termMap = new Map<string, number>();
     for (const msg of inboundMessages) {
-      if (positiveWords.test(msg.content)) sentiment.positive++;
+      if (positiveWords.test(msg.content)) {
+        sentiment.positive++;
+        // Extração simples de termos (tokens > 3 chars)
+        msg.content.toLowerCase()
+          .split(/[\s,.;!?]+/)
+          .filter(t => t.length > 3 && !/^(este|esta|esse|essa|para|como|pelo|pela|mais|muito)$/.test(t))
+          .forEach(t => termMap.set(t, (termMap.get(t) || 0) + 1));
+      }
       else if (negativeWords.test(msg.content)) sentiment.negative++;
       else sentiment.neutral++;
     }
+
+    sentiment.positive_terms = Array.from(termMap.entries())
+      .map(([term, count]) => ({ term, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
 
     const totalInbound = inboundMessages.length;
     sentiment.negative_rate = (sentiment.negative / totalInbound) * 100;
