@@ -1,0 +1,92 @@
+/**
+ * Agregações puras usadas pelos gráficos do painel.
+ * Mantidas fora do módulo de server functions para não quebrar o code-splitting.
+ */
+
+export interface TouchpointRow {
+  channel: string;
+  direction: string;
+  status: string;
+  created_at: string;
+}
+
+export interface DailyPoint {
+  date: string;
+  label: string;
+  sent: number;
+  replies: number;
+  failed: number;
+}
+
+export interface ChannelPoint {
+  channel: string;
+  sent: number;
+  replies: number;
+  failed: number;
+  reply_rate: number;
+}
+
+/** Série diária dos últimos `days` dias, sempre com todos os dias preenchidos. */
+export function buildDailySeries(rows: TouchpointRow[], days: number): DailyPoint[] {
+  const buckets = new Map<string, DailyPoint>();
+  const today = new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today.getTime() - i * 86400_000);
+    const key = d.toISOString().slice(0, 10);
+    buckets.set(key, {
+      date: key,
+      label: `${key.slice(8, 10)}/${key.slice(5, 7)}`,
+      sent: 0,
+      replies: 0,
+      failed: 0,
+    });
+  }
+
+  for (const row of rows) {
+    const key = (row.created_at ?? "").slice(0, 10);
+    const bucket = buckets.get(key);
+    if (!bucket) continue;
+    if (row.direction === "inbound") bucket.replies += 1;
+    else if (row.status === "failed" || row.status === "dead_letter") bucket.failed += 1;
+    else bucket.sent += 1;
+  }
+
+  return [...buckets.values()];
+}
+
+/** Volume e taxa de resposta por canal, ordenado por volume. */
+export function buildChannelBreakdown(rows: TouchpointRow[]): ChannelPoint[] {
+  const map = new Map<string, ChannelPoint>();
+  for (const row of rows) {
+    const bucket = map.get(row.channel) ?? {
+      channel: row.channel,
+      sent: 0,
+      replies: 0,
+      failed: 0,
+      reply_rate: 0,
+    };
+    if (row.direction === "inbound") bucket.replies += 1;
+    else if (row.status === "failed" || row.status === "dead_letter") bucket.failed += 1;
+    else bucket.sent += 1;
+    map.set(row.channel, bucket);
+  }
+  return [...map.values()]
+    .map((c) => ({ ...c, reply_rate: c.sent > 0 ? (c.replies / c.sent) * 100 : 0 }))
+    .sort((a, b) => b.sent - a.sent);
+}
+
+/** Funil de entrega a partir dos estados dos envios materializados. */
+export function buildFunnel(states: Record<string, number>) {
+  const get = (...keys: string[]) => keys.reduce((acc, k) => acc + (states[k] ?? 0), 0);
+  const queued = get("queued", "pending", "pending_approval");
+  const sent = get("sent", "delivered", "read", "replied");
+  const delivered = get("delivered", "read", "replied");
+  const replied = get("replied");
+  const total = queued + sent + get("failed", "dead_letter");
+  return [
+    { stage: "Fila", value: total },
+    { stage: "Enviadas", value: sent },
+    { stage: "Entregues", value: delivered },
+    { stage: "Respondidas", value: replied },
+  ];
+}

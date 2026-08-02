@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MetricCard } from "@/components/metric-card";
+import { AnalyticsCharts } from "@/components/dashboard/analytics-charts";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -84,6 +85,8 @@ function OverviewPage() {
           accent="lime"
         />
       </section>
+
+      <AnalyticsCharts />
 
       <section className="grid gap-4 lg:grid-cols-2">
         <Card>
