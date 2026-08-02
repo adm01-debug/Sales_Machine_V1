@@ -2,11 +2,14 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
   Legend,
+  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -25,7 +28,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ExternalLink, AlertTriangle, AlertCircle, Info, CheckCircle2, ShieldAlert } from "lucide-react";
+import { ExternalLink, AlertTriangle, AlertCircle, Info, CheckCircle2, ShieldAlert, TrendingUp, TrendingDown } from "lucide-react";
+
+const SENTIMENT_COLORS = {
+  positive: "var(--neon-lime)",
+  neutral: "var(--neon-cyan)",
+  negative: "var(--neon-pink)",
+} as const;
+
+const shortDate = (iso: string) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 
 const SERIES = [
   "var(--neon-cyan)",
@@ -309,6 +321,96 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                 )}
               </section>
             )}
+
+            {(data?.sentiment_timeline?.length ?? 0) > 0 || (data?.sentiment_by_channel?.length ?? 0) > 0 ? (
+              <section className="space-y-4 rounded-xl border border-border/60 bg-card/40 p-3 backdrop-blur">
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="text-sm font-semibold">Tendências de sentimento</h3>
+                  {(() => {
+                    const tl = data?.sentiment_timeline ?? [];
+                    if (tl.length < 2) return null;
+                    const half = Math.floor(tl.length / 2);
+                    const avg = (arr: typeof tl) => arr.reduce((s, d) => s + d.net_score, 0) / (arr.length || 1);
+                    const delta = avg(tl.slice(half)) - avg(tl.slice(0, half));
+                    const up = delta >= 0;
+                    return (
+                      <Badge
+                        variant="outline"
+                        className={up ? "border-neon-lime/40 text-neon-lime" : "border-neon-pink/40 text-neon-pink"}
+                      >
+                        {up ? <TrendingUp className="mr-1 h-3 w-3" /> : <TrendingDown className="mr-1 h-3 w-3" />}
+                        {up ? "+" : ""}{delta.toFixed(1)} pts de humor
+                      </Badge>
+                    );
+                  })()}
+                </div>
+                {(data?.sentiment_timeline?.length ?? 0) > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
+                      Evolução diária das respostas
+                    </p>
+                    <div className="h-[220px] w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={data?.sentiment_timeline ?? []} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                          <XAxis dataKey="date" tickFormatter={shortDate} {...axisProps} />
+                          <YAxis {...axisProps} />
+                          <Tooltip {...tooltipProps} labelFormatter={(v) => shortDate(String(v))} />
+                          <Legend wrapperStyle={{ fontSize: 11 }} />
+                          <Area type="monotone" dataKey="positive" name="Positivo" stackId="s" stroke={SENTIMENT_COLORS.positive} fill={SENTIMENT_COLORS.positive} fillOpacity={0.25} />
+                          <Area type="monotone" dataKey="neutral" name="Neutro" stackId="s" stroke={SENTIMENT_COLORS.neutral} fill={SENTIMENT_COLORS.neutral} fillOpacity={0.18} />
+                          <Area type="monotone" dataKey="negative" name="Negativo" stackId="s" stroke={SENTIMENT_COLORS.negative} fill={SENTIMENT_COLORS.negative} fillOpacity={0.25} />
+                          <Line type="monotone" dataKey="net_score" name="Net score" stroke="var(--neon-purple)" strokeWidth={2} dot={false} />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                )}
+                {(data?.sentiment_by_channel?.length ?? 0) > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
+                      Sentimento por canal
+                    </p>
+                    <div className="h-[220px] w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={(data?.sentiment_by_channel ?? []).map((c) => ({
+                            ...c,
+                            name: CHANNEL_LABEL[c.channel] ?? c.channel,
+                          }))}
+                          margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                          <XAxis dataKey="name" {...axisProps} />
+                          <YAxis {...axisProps} />
+                          <Tooltip {...tooltipProps} />
+                          <Legend wrapperStyle={{ fontSize: 11 }} />
+                          <Bar dataKey="positive" name="Positivo" stackId="c" fill={SENTIMENT_COLORS.positive} />
+                          <Bar dataKey="neutral" name="Neutro" stackId="c" fill={SENTIMENT_COLORS.neutral} />
+                          <Bar dataKey="negative" name="Negativo" stackId="c" fill={SENTIMENT_COLORS.negative} radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {(data?.sentiment_by_channel ?? []).map((c) => (
+                        <Badge
+                          key={c.channel}
+                          variant="outline"
+                          className={
+                            c.net_score >= 0
+                              ? "border-neon-lime/30 text-neon-lime text-[10px]"
+                              : "border-neon-pink/30 text-neon-pink text-[10px]"
+                          }
+                        >
+                          {CHANNEL_LABEL[c.channel] ?? c.channel}: {c.net_score > 0 ? "+" : ""}{c.net_score}
+                          <span className="ml-1 opacity-60">({c.total} resp.)</span>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </section>
+            ) : null}
 
             <section className="space-y-2">
               <h3 className="text-sm font-semibold">Etapas do envio</h3>

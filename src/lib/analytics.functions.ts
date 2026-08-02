@@ -120,7 +120,14 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
     }
 
     // Resolve os touchpoints em lotes para não estourar o limite da query string.
-    const touchpoints: { channel: string; status: string; direction: string; content?: string; sentiment?: string }[] = [];
+    const touchpoints: {
+      channel: string;
+      status: string;
+      direction: string;
+      content?: string;
+      sentiment?: string;
+      created_at?: string;
+    }[] = [];
     const CHUNK = 200;
     const positiveWords = /obrigado|gostei|quero|interessante|agendar|marcar|bom|excelente/i;
     const negativeWords = /nao quero|remover|spam|pare|ruim|pessimo|desinscrever/i;
@@ -129,7 +136,7 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
       const chunk = touchpointIds.slice(i, i + CHUNK);
       const res = await context.supabase
         .from("contact_touchpoints")
-        .select("channel, status, direction, payload")
+        .select("channel, status, direction, payload, created_at")
         .in("id", chunk);
       if (res.data) {
         for (const tp of res.data) {
@@ -145,7 +152,8 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
             status: tp.status,
             direction: tp.direction,
             content,
-            sentiment
+            sentiment,
+            created_at: tp.created_at,
           });
         }
       }
@@ -171,6 +179,48 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
     }
 
     const stages = buildCampaignStages(states);
+
+    // ---- Tendências de sentimento (série temporal diária + quebra por canal) ----
+    const inbound = touchpoints.filter((t) => t.direction === "inbound");
+
+    const dayMap = new Map<string, { positive: number; neutral: number; negative: number }>();
+    for (const t of inbound) {
+      const day = (t.created_at ?? "").slice(0, 10);
+      if (!day) continue;
+      const bucket = dayMap.get(day) ?? { positive: 0, neutral: 0, negative: 0 };
+      bucket[(t.sentiment ?? "neutral") as "positive" | "neutral" | "negative"] += 1;
+      dayMap.set(day, bucket);
+    }
+    const sentiment_timeline = Array.from(dayMap.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([date, v]) => {
+        const total = v.positive + v.neutral + v.negative;
+        return {
+          date,
+          ...v,
+          total,
+          net_score: total > 0 ? Number((((v.positive - v.negative) / total) * 100).toFixed(1)) : 0,
+        };
+      });
+
+    const channelMap = new Map<string, { positive: number; neutral: number; negative: number }>();
+    for (const t of inbound) {
+      const bucket = channelMap.get(t.channel) ?? { positive: 0, neutral: 0, negative: 0 };
+      bucket[(t.sentiment ?? "neutral") as "positive" | "neutral" | "negative"] += 1;
+      channelMap.set(t.channel, bucket);
+    }
+    const sentiment_by_channel = Array.from(channelMap.entries())
+      .map(([channel, v]) => {
+        const total = v.positive + v.neutral + v.negative;
+        return {
+          channel,
+          ...v,
+          total,
+          net_score: total > 0 ? Number((((v.positive - v.negative) / total) * 100).toFixed(1)) : 0,
+        };
+      })
+      .sort((a, b) => b.total - a.total);
+
     const topErrors = Object.entries(errors)
       .map(([message, count]) => ({ message, count }))
       .sort((a, b) => b.count - a.count)
@@ -182,11 +232,13 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
       states,
       stages,
       channels: buildCampaignChannelBreakdown(filteredTouchpoints),
+      sentiment_timeline,
+      sentiment_by_channel,
       diagnosis: campaignRes.data ? diagnoseCampaign(
         campaignRes.data, 
         topErrors, 
         stages, 
-        touchpoints.filter(t => t.direction === "inbound").map(t => ({ content: t.content || "" }))
+        inbound.map(t => ({ content: t.content || "" }))
       ) : null,
       variants: Object.entries(byVariant)
         .map(([id, v]) => ({
