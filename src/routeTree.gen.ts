@@ -28,6 +28,7 @@ import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
 import { Route as AuthenticatedAudiencesRouteImport } from './routes/_authenticated/audiences'
 import { Route as AuthenticatedApprovalsRouteImport } from './routes/_authenticated/approvals'
+import { Route as AuthenticatedOpsIndexRouteImport } from './routes/_authenticated/ops/index'
 import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
 import { Route as AuthenticatedJourneysIdRouteImport } from './routes/_authenticated/journeys.$id'
 import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticated/forms.$id'
@@ -144,6 +145,11 @@ const AuthenticatedApprovalsRoute = AuthenticatedApprovalsRouteImport.update({
   id: '/approvals',
   path: '/approvals',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOpsIndexRoute = AuthenticatedOpsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedOpsRoute,
 } as any)
 const ApiPublicUnsubscribeRoute = ApiPublicUnsubscribeRouteImport.update({
   id: '/api/public/unsubscribe',
@@ -273,7 +279,7 @@ export interface FileRoutesByFullPath {
   '/forms': typeof AuthenticatedFormsRouteWithChildren
   '/journeys': typeof AuthenticatedJourneysRouteWithChildren
   '/library': typeof AuthenticatedLibraryRoute
-  '/ops': typeof AuthenticatedOpsRoute
+  '/ops': typeof AuthenticatedOpsRouteWithChildren
   '/prospecting': typeof AuthenticatedProspectingRoute
   '/f/$slug': typeof FSlugRoute
   '/audiences/$id': typeof AuthenticatedAudiencesIdRoute
@@ -283,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/forms/$id': typeof AuthenticatedFormsIdRoute
   '/journeys/$id': typeof AuthenticatedJourneysIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
+  '/ops/': typeof AuthenticatedOpsIndexRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
   '/api/public/hooks/budget-reallocate': typeof ApiPublicHooksBudgetReallocateRoute
@@ -313,7 +320,6 @@ export interface FileRoutesByTo {
   '/forms': typeof AuthenticatedFormsRouteWithChildren
   '/journeys': typeof AuthenticatedJourneysRouteWithChildren
   '/library': typeof AuthenticatedLibraryRoute
-  '/ops': typeof AuthenticatedOpsRoute
   '/prospecting': typeof AuthenticatedProspectingRoute
   '/f/$slug': typeof FSlugRoute
   '/audiences/$id': typeof AuthenticatedAudiencesIdRoute
@@ -323,6 +329,7 @@ export interface FileRoutesByTo {
   '/forms/$id': typeof AuthenticatedFormsIdRoute
   '/journeys/$id': typeof AuthenticatedJourneysIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
+  '/ops': typeof AuthenticatedOpsIndexRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
   '/api/public/hooks/budget-reallocate': typeof ApiPublicHooksBudgetReallocateRoute
@@ -355,7 +362,7 @@ export interface FileRoutesById {
   '/_authenticated/forms': typeof AuthenticatedFormsRouteWithChildren
   '/_authenticated/journeys': typeof AuthenticatedJourneysRouteWithChildren
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
-  '/_authenticated/ops': typeof AuthenticatedOpsRoute
+  '/_authenticated/ops': typeof AuthenticatedOpsRouteWithChildren
   '/_authenticated/prospecting': typeof AuthenticatedProspectingRoute
   '/f/$slug': typeof FSlugRoute
   '/_authenticated/audiences/$id': typeof AuthenticatedAudiencesIdRoute
@@ -365,6 +372,7 @@ export interface FileRoutesById {
   '/_authenticated/forms/$id': typeof AuthenticatedFormsIdRoute
   '/_authenticated/journeys/$id': typeof AuthenticatedJourneysIdRoute
   '/api/public/unsubscribe': typeof ApiPublicUnsubscribeRoute
+  '/_authenticated/ops/': typeof AuthenticatedOpsIndexRoute
   '/api/public/agent-tools/send-message': typeof ApiPublicAgentToolsSendMessageRoute
   '/api/public/hooks/alert-sweep': typeof ApiPublicHooksAlertSweepRoute
   '/api/public/hooks/budget-reallocate': typeof ApiPublicHooksBudgetReallocateRoute
@@ -407,6 +415,7 @@ export interface FileRouteTypes {
     | '/forms/$id'
     | '/journeys/$id'
     | '/api/public/unsubscribe'
+    | '/ops/'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/alert-sweep'
     | '/api/public/hooks/budget-reallocate'
@@ -437,7 +446,6 @@ export interface FileRouteTypes {
     | '/forms'
     | '/journeys'
     | '/library'
-    | '/ops'
     | '/prospecting'
     | '/f/$slug'
     | '/audiences/$id'
@@ -447,6 +455,7 @@ export interface FileRouteTypes {
     | '/forms/$id'
     | '/journeys/$id'
     | '/api/public/unsubscribe'
+    | '/ops'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/alert-sweep'
     | '/api/public/hooks/budget-reallocate'
@@ -488,6 +497,7 @@ export interface FileRouteTypes {
     | '/_authenticated/forms/$id'
     | '/_authenticated/journeys/$id'
     | '/api/public/unsubscribe'
+    | '/_authenticated/ops/'
     | '/api/public/agent-tools/send-message'
     | '/api/public/hooks/alert-sweep'
     | '/api/public/hooks/budget-reallocate'
@@ -659,6 +669,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/approvals'
       preLoaderRoute: typeof AuthenticatedApprovalsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ops/': {
+      id: '/_authenticated/ops/'
+      path: '/'
+      fullPath: '/ops/'
+      preLoaderRoute: typeof AuthenticatedOpsIndexRouteImport
+      parentRoute: typeof AuthenticatedOpsRoute
     }
     '/api/public/unsubscribe': {
       id: '/api/public/unsubscribe'
@@ -882,6 +899,17 @@ const AuthenticatedJourneysRouteWithChildren =
     AuthenticatedJourneysRouteChildren,
   )
 
+interface AuthenticatedOpsRouteChildren {
+  AuthenticatedOpsIndexRoute: typeof AuthenticatedOpsIndexRoute
+}
+
+const AuthenticatedOpsRouteChildren: AuthenticatedOpsRouteChildren = {
+  AuthenticatedOpsIndexRoute: AuthenticatedOpsIndexRoute,
+}
+
+const AuthenticatedOpsRouteWithChildren =
+  AuthenticatedOpsRoute._addFileChildren(AuthenticatedOpsRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedApprovalsRoute: typeof AuthenticatedApprovalsRoute
   AuthenticatedAudiencesRoute: typeof AuthenticatedAudiencesRouteWithChildren
@@ -895,7 +923,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFormsRoute: typeof AuthenticatedFormsRouteWithChildren
   AuthenticatedJourneysRoute: typeof AuthenticatedJourneysRouteWithChildren
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
-  AuthenticatedOpsRoute: typeof AuthenticatedOpsRoute
+  AuthenticatedOpsRoute: typeof AuthenticatedOpsRouteWithChildren
   AuthenticatedProspectingRoute: typeof AuthenticatedProspectingRoute
 }
 
@@ -912,7 +940,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFormsRoute: AuthenticatedFormsRouteWithChildren,
   AuthenticatedJourneysRoute: AuthenticatedJourneysRouteWithChildren,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
-  AuthenticatedOpsRoute: AuthenticatedOpsRoute,
+  AuthenticatedOpsRoute: AuthenticatedOpsRouteWithChildren,
   AuthenticatedProspectingRoute: AuthenticatedProspectingRoute,
 }
 
