@@ -75,7 +75,7 @@ export function ChannelROIStats() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {data.map((item) => (
+          {data.map((item: any) => (
             <div key={item.channel} className="rounded-lg border border-border bg-card p-4 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-foreground">
@@ -83,9 +83,9 @@ export function ChannelROIStats() {
                 </span>
                 <span className={cn(
                   "px-2 py-0.5 rounded text-[10px] font-bold uppercase",
-                  item.conversion_rate > 2 ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+                  (item.conversion_rate ?? 0) > 2 ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
                 )}>
-                  {item.conversion_rate}% Conv.
+                  {item.conversion_rate ?? 0}% Conv.
                 </span>
               </div>
 
@@ -120,7 +120,7 @@ export function ChannelROIStats() {
                 <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-primary transition-all duration-500" 
-                    style={{ width: `${Math.min(item.conversion_rate * 5, 100)}%` }}
+                    style={{ width: `${Math.min((item.conversion_rate ?? 0) * 5, 100)}%` }}
                   />
                 </div>
               </div>
