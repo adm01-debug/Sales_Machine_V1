@@ -1,6 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import {
+  computeReplyPriority,
+  summarizeLeadSentiment,
+  type LeadSentimentSummary,
+  type ReplyPriority,
+} from "@/lib/sentiment";
 
 /** Lista a base unificada de contatos/contas com métricas 360. */
 export const listContactProfiles = createServerFn({ method: "POST" })
@@ -26,7 +32,45 @@ export const listContactProfiles = createServerFn({ method: "POST" })
     if (data.search?.trim()) query = query.ilike("display_name", `%${data.search.trim()}%`);
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
-    return rows ?? [];
+    const profiles = rows ?? [];
+    const ids = profiles.map((p) => p.entity_id).filter((id): id is string => Boolean(id));
+    if (ids.length === 0) return [];
+
+    // Respostas inbound recentes alimentam o sentimento por lead.
+    const { data: inbound } = await context.supabase
+      .from("contact_touchpoints")
+      .select("entity_id, payload, created_at")
+      .in("entity_id", ids)
+      .eq("direction", "inbound")
+      .order("created_at", { ascending: false })
+      .limit(1000);
+
+    const byEntity = new Map<string, string[]>();
+    for (const tp of inbound ?? []) {
+      if (!tp.entity_id) continue;
+      const payload = tp.payload as Record<string, unknown> | null;
+      const text = String(payload?.["content"] ?? payload?.["body"] ?? payload?.["text"] ?? "");
+      const list = byEntity.get(tp.entity_id) ?? [];
+      list.push(text);
+      byEntity.set(tp.entity_id, list);
+    }
+
+    return profiles.map((p) => {
+      const sentiment: LeadSentimentSummary = summarizeLeadSentiment(
+        byEntity.get(p.entity_id ?? "") ?? [],
+      );
+      const { priority, probability, label } = computeReplyPriority(
+        Number(p.signal_score ?? 0),
+        sentiment,
+      );
+      return {
+        ...p,
+        sentiment,
+        reply_priority: priority as ReplyPriority,
+        reply_probability: probability,
+        reply_priority_label: label,
+      };
+    });
   });
 
 /** Ficha 360 consolidada de uma entidade. */
