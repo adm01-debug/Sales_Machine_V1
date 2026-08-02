@@ -1,12 +1,33 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { listContactProfiles } from "@/lib/profile360.functions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PRIORITY_ORDER, type ReplyPriority } from "@/lib/sentiment";
+import { Flame, ThermometerSun, Snowflake, ShieldOff, HelpCircle, Smile, Frown } from "lucide-react";
+
+const PRIORITY_META: Record<
+  ReplyPriority,
+  { label: string; icon: typeof Flame; className: string }
+> = {
+  hot: { label: "Alta chance", icon: Flame, className: "border-neon-lime/40 bg-neon-lime/10 text-neon-lime" },
+  warm: { label: "Média chance", icon: ThermometerSun, className: "border-neon-amber/40 bg-neon-amber/10 text-neon-amber" },
+  cold: { label: "Baixa chance", icon: Snowflake, className: "border-neon-cyan/30 bg-neon-cyan/5 text-neon-cyan" },
+  blocked: { label: "Rejeitou", icon: ShieldOff, className: "border-destructive/40 bg-destructive/10 text-destructive" },
+  unknown: { label: "Sem sinal", icon: HelpCircle, className: "border-border bg-muted/30 text-muted-foreground" },
+};
+
+const PRIORITY_FILTERS = [
+  { id: "all", label: "Todos" },
+  { id: "hot", label: "🔥 Alta" },
+  { id: "warm", label: "Média" },
+  { id: "cold", label: "Baixa" },
+  { id: "blocked", label: "Rejeitaram" },
+] as const;
 
 export const Route = createFileRoute("/_authenticated/contacts")({
   head: () => ({
