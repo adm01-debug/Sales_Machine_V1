@@ -112,7 +112,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body className="antialiased">
         <div className="sr-only">
-          Implemente gatilhos automáticos para pausar ou escalar a campanha quando o sentimento negativo superar um limite configurável.
+          Inclua filtros no drill-down para eu segmentar resultados por Positivo/Neutro/Negativo e comparar métricas por canal e etapa.
         </div>
 
         {children}
