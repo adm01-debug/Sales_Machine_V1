@@ -459,6 +459,28 @@ export function AnalyticsCharts() {
           </ResponsiveContainer>
         </ChartFrame>
       </div>
+
+      {campaigns.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {campaigns.map((c) => (
+            <Button
+              key={c.id}
+              size="sm"
+              variant="outline"
+              onClick={() => setSelected({ id: c.id, name: c.fullName })}
+            >
+              {c.name}
+              <span className="ml-2 tabular-nums text-muted-foreground">{c.sends}</span>
+            </Button>
+          ))}
+        </div>
+      ) : null}
+
+      <CampaignDrilldown
+        campaignId={selected?.id ?? null}
+        campaignName={selected?.name}
+        onClose={() => setSelected(null)}
+      />
     </section>
   );
 }
