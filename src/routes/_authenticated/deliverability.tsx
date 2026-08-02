@@ -349,7 +349,7 @@ function CampaignReportSection() {
 
 const SEVERITY_STYLES: Record<string, string> = {
   ok: "border-primary/30 bg-primary/5 text-primary",
-  warning: "border-amber-500/40 bg-amber-500/5 text-amber-600 dark:text-amber-400",
+  warning: "border-neon-amber/40 bg-neon-amber/10 text-neon-amber",
   error: "border-destructive/40 bg-destructive/5 text-destructive",
 };
 

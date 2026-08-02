@@ -19,7 +19,7 @@ const VERDICT = {
   warning: {
     label: "Atenção",
     icon: AlertTriangle,
-    badge: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
+    badge: "bg-neon-amber/10 text-neon-amber border-neon-amber/25",
     text: "Consome boa parte do saldo do dia.",
   },
   blocked: {

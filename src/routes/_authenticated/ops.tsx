@@ -58,13 +58,13 @@ function AlertsBanner({ alerts }: { alerts: ReturnType<typeof buildOpsAlerts> })
             "rounded-lg border p-4",
             a.level === "critical"
               ? "border-destructive/40 bg-destructive/5"
-              : "border-amber-500/40 bg-amber-500/5",
+              : "border-neon-amber/40 bg-neon-amber/10",
           )}
         >
           <p
             className={cn(
               "text-sm font-medium",
-              a.level === "critical" ? "text-destructive" : "text-amber-600 dark:text-amber-400",
+              a.level === "critical" ? "text-destructive" : "text-neon-amber",
             )}
           >
             {a.level === "critical" ? "🔴" : "🟡"} {a.title}
