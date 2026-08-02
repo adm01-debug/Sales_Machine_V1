@@ -120,3 +120,56 @@ export function buildFunnel(states: Record<string, number>) {
     { stage: "Respondidas", value: replied },
   ];
 }
+
+/** Métricas por canal de uma campanha específica (drill-down). */
+export interface CampaignChannelPoint {
+  channel: string;
+  sent: number;
+  delivered: number;
+  replied: number;
+  failed: number;
+  reply_rate: number;
+}
+
+export function buildCampaignChannelBreakdown(
+  rows: { channel: string; status: string; direction: string }[],
+): CampaignChannelPoint[] {
+  const map = new Map<string, CampaignChannelPoint>();
+  for (const row of rows) {
+    const bucket =
+      map.get(row.channel) ??
+      ({
+        channel: row.channel,
+        sent: 0,
+        delivered: 0,
+        replied: 0,
+        failed: 0,
+        reply_rate: 0,
+      } satisfies CampaignChannelPoint);
+
+    if (row.direction === "inbound" || row.status === "replied") bucket.replied += 1;
+    else if (row.status === "failed" || row.status === "dead_letter") bucket.failed += 1;
+    else bucket.sent += 1;
+
+    if (row.status === "delivered" || row.status === "read" || row.status === "replied") {
+      bucket.delivered += 1;
+    }
+    map.set(row.channel, bucket);
+  }
+  return [...map.values()]
+    .map((c) => ({ ...c, reply_rate: c.sent > 0 ? (c.replied / c.sent) * 100 : 0 }))
+    .sort((a, b) => b.sent - a.sent);
+}
+
+/** Etapas do envio de uma campanha, derivadas dos estados de campaign_sends. */
+export function buildCampaignStages(states: Record<string, number>) {
+  const get = (...keys: string[]) => keys.reduce((acc, k) => acc + (states[k] ?? 0), 0);
+  return [
+    { stage: "Materializados", value: Object.values(states).reduce((a, b) => a + b, 0) },
+    { stage: "Na fila", value: get("queued", "pending", "pending_approval", "scheduled") },
+    { stage: "Enviados", value: get("sent", "delivered", "read", "replied", "done") },
+    { stage: "Entregues", value: get("delivered", "read", "replied") },
+    { stage: "Respondidos", value: get("replied") },
+    { stage: "Falhas", value: get("failed", "dead_letter", "error") },
+  ];
+}
