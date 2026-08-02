@@ -112,7 +112,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body className="antialiased">
         <div className="sr-only">
-          Crie um link direto para a campanha selecionada no wizard a partir do painel de drill-down, para eu ajustar e revisar a campanha com contexto.
+          Gere um diagnóstico automático de principais erros no drill-down com recomendações acionáveis, para eu saber exatamente o que corrigir na campanha.
         </div>
 
         {children}

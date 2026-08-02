@@ -25,7 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, AlertTriangle, AlertCircle, Info, CheckCircle2 } from "lucide-react";
 
 const SERIES = [
   "var(--neon-cyan)",
@@ -141,6 +141,63 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
           </div>
         ) : (
           <div className="space-y-6">
+            {data?.diagnosis && (
+              <section className="rounded-xl border border-border bg-card/50 p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                      Diagnóstico Automático
+                    </h3>
+                    <Badge variant={data.diagnosis.score > 80 ? "success" : data.diagnosis.score > 50 ? "warning" : "destructive"}>
+                      Health Score: {data.diagnosis.score}/100
+                    </Badge>
+                  </div>
+                  {data.diagnosis.score === 100 && (
+                    <div className="flex items-center gap-1 text-xs text-neon-lime">
+                      <CheckCircle2 className="h-3 w-3" />
+                      Campanha Saudável
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid gap-3">
+                  {data.diagnosis.recommendations.map((rec, i) => (
+                    <div 
+                      key={i}
+                      className="flex gap-3 p-3 rounded-lg bg-background/50 border border-border/50 text-sm"
+                    >
+                      <div className="mt-0.5">
+                        {rec.type === "error" && <AlertCircle className="h-4 w-4 text-destructive" />}
+                        {rec.type === "warning" && <AlertTriangle className="h-4 w-4 text-warning" />}
+                        {rec.type === "info" && <Info className="h-4 w-4 text-neon-cyan" />}
+                      </div>
+                      <div className="space-y-1 flex-1">
+                        <div className="font-medium flex items-center justify-between">
+                          {rec.title}
+                          <Badge variant="outline" className="text-[10px] uppercase h-4">
+                            {rec.type}
+                          </Badge>
+                        </div>
+                        <p className="text-muted-foreground text-xs leading-relaxed">
+                          {rec.description}
+                        </p>
+                        {rec.action && (
+                          <div className="pt-1 text-xs font-medium text-foreground italic">
+                            💡 Recomendação: {rec.action}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {data.diagnosis.recommendations.length === 0 && (
+                    <p className="text-xs text-muted-foreground italic text-center py-2">
+                      Nenhum problema crítico detectado. Continue monitorando o desempenho.
+                    </p>
+                  )}
+                </div>
+              </section>
+            )}
+
             <section className="space-y-2">
               <h3 className="text-sm font-semibold">Etapas do envio</h3>
               {(data?.stages ?? []).every((s) => s.value === 0) ? (

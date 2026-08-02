@@ -10,6 +10,7 @@ import {
   buildTotals,
   type TouchpointRow,
 } from "@/lib/analytics-aggregate";
+import { diagnoseCampaign } from "./campaign-diagnostics";
 
 /** Séries e distribuições que alimentam os gráficos do painel de resultados. */
 export const getAnalyticsCharts = createServerFn({ method: "POST" })
@@ -140,12 +141,19 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
       errors[key] = (errors[key] ?? 0) + 1;
     }
 
+    const stages = buildCampaignStages(states);
+    const topErrors = Object.entries(errors)
+      .map(([message, count]) => ({ message, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
     return {
       campaign: campaignRes.data ?? null,
       total_sends: sends.length,
       states,
-      stages: buildCampaignStages(states),
+      stages,
       channels: buildCampaignChannelBreakdown(touchpoints),
+      diagnosis: campaignRes.data ? diagnoseCampaign(campaignRes.data, topErrors, stages) : null,
       variants: Object.entries(byVariant)
         .map(([id, v]) => ({
           id,
@@ -154,9 +162,6 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
           failed: v.failed,
         }))
         .sort((a, b) => b.sends - a.sends),
-      top_errors: Object.entries(errors)
-        .map(([message, count]) => ({ message, count }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 5),
+      top_errors: topErrors,
     };
   });
