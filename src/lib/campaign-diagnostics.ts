@@ -259,6 +259,30 @@ export function diagnoseCampaign(
 
     // Insight dedicado para leads adiados (contexto "não agora").
     const deferralRate = (deferralCount / totalInbound) * 100;
+
+    // Insight de tom emocional por emojis (Melhoria 049).
+    const emojiTotal =
+      sentiment.emoji_tone.positive + sentiment.emoji_tone.negative + sentiment.emoji_tone.neutral;
+    if (emojiTotal >= 3) {
+      const emojiNet = sentiment.emoji_tone.positive - sentiment.emoji_tone.negative;
+      const topList = sentiment.top_emojis.slice(0, 5).map((e) => `${e.emoji} ${e.count}x`).join("  ");
+      if (emojiNet < 0) {
+        recommendations.push({
+          type: "warning",
+          title: "😐 Tom emocional negativo nos emojis",
+          description: `Emojis de reprovação superam os de aprovação (${sentiment.emoji_tone.negative} vs ${sentiment.emoji_tone.positive}). Mais usados: ${topList}`,
+          action: "REDUZIR ATRITO: o incômodo aparece antes das palavras. Suavize a abordagem e reduza a frequência de follow-ups.",
+        });
+      } else if (emojiNet > 0) {
+        recommendations.push({
+          type: "info",
+          title: "🔥 Tom emocional positivo nos emojis",
+          description: `Sinais de entusiasmo detectados (${sentiment.emoji_tone.positive} positivos vs ${sentiment.emoji_tone.negative} negativos). Mais usados: ${topList}`,
+          action: "ESPELHAR O TOM: use emojis compatíveis no follow-up e avance com CTA direto de agendamento.",
+        });
+      }
+    }
+
     if (deferralRate >= 15) {
       recommendations.push({
         type: "info",
