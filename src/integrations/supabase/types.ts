@@ -791,6 +791,47 @@ export type Database = {
           },
         ]
       }
+      contact_churn_scores: {
+        Row: {
+          calculated_at: string | null
+          contact_id: string
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          reasoning: string | null
+          risk_level: string
+          risk_score: number
+        }
+        Insert: {
+          calculated_at?: string | null
+          contact_id: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          reasoning?: string | null
+          risk_level: string
+          risk_score: number
+        }
+        Update: {
+          calculated_at?: string | null
+          contact_id?: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          reasoning?: string | null
+          risk_level?: string
+          risk_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_churn_scores_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_targets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_touchpoints: {
         Row: {
           attempts: number
@@ -1783,6 +1824,10 @@ export type Database = {
         Returns: boolean
       }
       compute_daily_cap: { Args: { _sender_id: string }; Returns: number }
+      fn_calculate_churn_risk: {
+        Args: { _contact_id: string }
+        Returns: undefined
+      }
       fn_refresh_roi_stats: { Args: { _days?: number }; Returns: undefined }
       has_recent_account_touchpoint: {
         Args: { _entity_id: string; _hours: number }
