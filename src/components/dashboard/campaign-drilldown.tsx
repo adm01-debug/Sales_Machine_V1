@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -21,6 +22,8 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+
+import { Button } from "@/components/ui/button";
 
 const SERIES = [
   "var(--neon-cyan)",
@@ -68,10 +71,11 @@ export interface CampaignDrilldownProps {
 
 /** Painel de detalhamento de uma campanha: etapas, canais e variantes. */
 export function CampaignDrilldown({ campaignId, campaignName, onClose }: CampaignDrilldownProps) {
+  const [days, setDays] = useState(30);
   const fetchDrilldown = useServerFn(getCampaignDrilldown);
   const query = useQuery({
-    queryKey: ["analytics", "campaign-drilldown", campaignId],
-    queryFn: () => fetchDrilldown({ data: { campaignId: campaignId as string } }),
+    queryKey: ["analytics", "campaign-drilldown", campaignId, days],
+    queryFn: () => fetchDrilldown({ data: { campaignId: campaignId as string, days } }),
     enabled: Boolean(campaignId),
   });
 
@@ -96,9 +100,22 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
           </DialogTitle>
           <DialogDescription>
             {data
-              ? `${data.total_sends.toLocaleString("pt-BR")} envios materializados · detalhamento por canal e etapa`
+              ? `${data.total_sends.toLocaleString("pt-BR")} envios materializados nos últimos ${days} dias`
               : "Carregando detalhamento por canal e etapa…"}
           </DialogDescription>
+          <div className="flex gap-1 rounded-lg border border-border bg-card p-1 w-fit mt-2">
+            {[7, 30, 90].map((d) => (
+              <Button
+                key={d}
+                size="sm"
+                variant={days === d ? "premium" : "ghost"}
+                onClick={() => setDays(d)}
+                className="h-7 px-2 text-xs"
+              >
+                {d} dias
+              </Button>
+            ))}
+          </div>
         </DialogHeader>
 
         {loading ? (

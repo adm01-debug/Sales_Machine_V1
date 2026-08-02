@@ -75,10 +75,14 @@ export const getAnalyticsCharts = createServerFn({ method: "POST" })
 export const getCampaignDrilldown = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ campaignId: z.string().uuid() }).parse(input ?? {}),
+    z.object({ 
+      campaignId: z.string().uuid(),
+      days: z.number().int().min(1).max(365).optional().default(30)
+    }).parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
-    const { campaignId } = data;
+    const { campaignId, days } = data;
+    const since = new Date(Date.now() - days * 86400_000).toISOString();
 
     const [campaignRes, sendsRes, variantsRes] = await Promise.all([
       context.supabase
@@ -88,8 +92,9 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
         .maybeSingle(),
       context.supabase
         .from("campaign_sends")
-        .select("state, variant_id, touchpoint_id, attempts, last_error")
+        .select("state, variant_id, touchpoint_id, attempts, last_error, created_at")
         .eq("campaign_id", campaignId)
+        .gte("created_at", since)
         .limit(20000),
       context.supabase
         .from("campaign_variants")
