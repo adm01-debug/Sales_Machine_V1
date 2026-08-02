@@ -124,6 +124,14 @@ export function diagnoseCampaign(
     if (sentiment.positive > sentiment.negative) {
       sentiment.summary += "O sentimento geral é predominante POSITIVO.";
       sentiment.top_insight = "Os leads estão reagindo bem à sua proposta de valor.";
+      
+      // Recomendação acionável para padrão positivo
+      recommendations.push({
+        type: "info",
+        title: "🚀 Otimização de Performance",
+        description: `Detectamos alta aceitação das frases "${sentiment.positive_phrases[0]?.phrase || 'proposta'}". O público valoriza clareza e agilidade.`,
+        action: "Incorpore os termos da nuvem no CTA para acelerar o agendamento."
+      });
     } else if (sentiment.negative > sentiment.positive) {
       sentiment.summary += "O sentimento geral é predominante NEGATIVO.";
       sentiment.top_insight = sentiment.threshold_alert 
@@ -134,15 +142,22 @@ export function diagnoseCampaign(
         type: sentiment.threshold_alert ? "error" : "warning",
         title: sentiment.threshold_alert ? "🛡️ SEGURANÇA: Bloqueio de Sentimento" : "⚠️ Alerta: Rejeição Elevada",
         description: sentiment.threshold_alert 
-          ? `Taxa de negatividade em ${sentiment.negative_rate.toFixed(1)}% (Limite: ${NEGATIVE_THRESHOLD}%). Gatilho de segurança ativado.`
-          : "FATOR X detectou volume incomum de sentimentos negativos nas respostas.",
+          ? `Taxa de negatividade em ${sentiment.negative_rate.toFixed(1)}% (Limite: ${NEGATIVE_THRESHOLD}%). Padrão de rejeição por intrusividade detectado.`
+          : "FATOR X detectou volume incomum de sentimentos negativos. O CTA pode estar muito agressivo.",
         action: sentiment.threshold_alert 
-          ? "PAUSAR CAMPANHA (Status: Segurado) para revisão de roteiro e audiência." 
-          : "Ajustar segmentação ou suavizar tom para evitar gatilho de bloqueio."
+          ? "PAUSAR IMEDIATAMENTE. Remova termos imperativos e foque em 'ajuda/consulta' no CTA." 
+          : "Altere o CTA para uma pergunta aberta em vez de solicitação direta de reunião."
       });
     } else {
       sentiment.summary += "O sentimento geral é NEUTRO.";
       sentiment.top_insight = "As respostas são puramente informativas ou de descadastro padrão.";
+
+      recommendations.push({
+        type: "info",
+        title: "💡 Ajuste de Engajamento",
+        description: "As respostas neutras indicam que o texto não está gerando curiosidade ou urgência.",
+        action: "Adicione um 'gancho' de benefício imediato antes do CTA para forçar uma decisão."
+      });
     }
   }
 
