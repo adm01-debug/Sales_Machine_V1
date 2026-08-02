@@ -107,7 +107,7 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
             {[7, 30, 90].map((d) => (
               <Button
                 key={d}
-                size="xs"
+                size="sm"
                 variant={days === d ? "premium" : "ghost"}
                 onClick={() => setDays(d)}
                 className="h-7 px-2 text-xs"
