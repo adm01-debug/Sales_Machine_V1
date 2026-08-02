@@ -76,6 +76,36 @@ export function buildChannelBreakdown(rows: TouchpointRow[]): ChannelPoint[] {
 }
 
 /** Funil de entrega a partir dos estados dos envios materializados. */
+export interface PeriodTotals {
+  sent: number;
+  replies: number;
+  failed: number;
+  reply_rate: number;
+}
+
+/** Totais agregados de um conjunto de touchpoints. */
+export function buildTotals(rows: TouchpointRow[]): PeriodTotals {
+  let sent = 0;
+  let replies = 0;
+  let failed = 0;
+  for (const row of rows) {
+    if (row.direction === "inbound") replies += 1;
+    else if (row.status === "failed" || row.status === "dead_letter") failed += 1;
+    else sent += 1;
+  }
+  return { sent, replies, failed, reply_rate: sent > 0 ? (replies / sent) * 100 : 0 };
+}
+
+/**
+ * Variação percentual entre dois valores.
+ * Retorna null quando não há base de comparação (período anterior zerado).
+ */
+export function pctDelta(current: number, previous: number): number | null {
+  if (!Number.isFinite(current) || !Number.isFinite(previous)) return null;
+  if (previous === 0) return current === 0 ? 0 : null;
+  return ((current - previous) / previous) * 100;
+}
+
 export function buildFunnel(states: Record<string, number>) {
   const get = (...keys: string[]) => keys.reduce((acc, k) => acc + (states[k] ?? 0), 0);
   const queued = get("queued", "pending", "pending_approval");
