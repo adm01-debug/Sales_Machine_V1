@@ -1,1 +1,349 @@
-IyBTQUxFUyBNQUNISU5FIOKAlCBTY2hlbWEgUmVmZXJlbmNlCj4gKipCYW5j bzoqKiBTdXBhYmFzZSBDbG91ZCDCtyAqKsOabHRpbWEgYXR1YWxpemHDp8Oz bzoqKiAyMDI2LTA3LTIxIMK3ICoqTWlncmF0aW9uczoqKiAwMDkgYXBsaWNh ZGFzCgojIyBFbnVtcwoKfCBFbnVtIHwgVmFsb3JlcyB8CnwtLS18LS0tfAp8 IGBhcHBfcm9sZWAgfCBgYWRtaW5gLCBgb3BlcmF0b3JgLCBgdmlld2VyYCB8 CnwgYHNtX3NvdXJjZWAgfCBgbHV4YCwgYHNpbmd1YCwgYGZhdG9yeGAsIGBt YW51YWxgIHwKfCBgc21fY2hhbm5lbGAgfCBgbGlua2VkaW5gLCBgd2hhdHNh cHBgLCBgZW1haWxgLCBgc21zYCwgYGluc3RhZ3JhbWAgfAp8IGBzbV9ldmVu dF9zdGF0dXNgIHwgYHJlY2VpdmVkYCwgYHByb2Nlc3NpbmdgLCBgcHJvY2Vz c2VkYCwgYGVycm9yYCwgYGlnbm9yZWRgIHwKfCBgc21fZGlyZWN0aW9uYCB8 IGBvdXRib3VuZGAsIGBpbmJvdW5kYCB8CnwgYHNtX2NhbXBhaWduX3N0YXR1 c2AgfCBgZHJhZnRgLCBgYWN0aXZlYCwgYHBhdXNlZGAsIGBhcmNoaXZlZGAg fAp8IGBzbV90b3VjaHBvaW50X3N0YXR1c2AgfCBgcXVldWVkYCwgYHNlbnRg LCBgZGVsaXZlcmVkYCwgYHJlYWRgLCBgcmVwbGllZGAsIGBmYWlsZWRgLCBg b3B0ZWRfb3V0YCwgYGRlYWRfbGV0dGVyYCwgYHBlbmRpbmdfYXBwcm92YWxg LCBgcGVuZGluZ19wcm92aWRlcmAgfAp8IGBzbV90YXJnZXRfc3RhdGVgIHwg YHF1ZXVlZGAsIGBydW5uaW5nYCwgYHBhdXNlZGAsIGByZXBsaWVkYCwgYHN0 b3BwZWRgLCBgbG9zdGAsIGBjb21wbGV0ZWRgLCBgZGVhZF9sZXR0ZXJgIHwK fCBgc21fY2FkZW5jZV9wcmVzZXRgIHwgYGFnZ3Jlc3NpdmVgLCBgc3RhbmRh cmRgLCBgZW50ZXJwcmlzZWAsIGBjdXN0b21gIHwKfCBgc21fY29uc2VudF9z dGF0dXNgIHwgYG9wdGVkX2luYCwgYG9wdGVkX291dGAsIGBwZW5kaW5nYCwg YHVua25vd25gIHwKfCBgc21fbGVnYWxfYmFzaXNgIHwgYGxlZ2l0aW1hdGVf aW50ZXJlc3RgLCBgY29uc2VudGAsIGBjb250cmFjdGAsIGBub3RfYXBwbGlj YWJsZWAgfAp8IGBzbV90ZW1wbGF0ZV9zdGF0dXNgIHwgYGRyYWZ0YCwgYGFw cHJvdmVkYCwgYGFyY2hpdmVkYCB8CnwgYHNtX2NhbGVuZGFyX3N0YXR1c2Ag fCBgc2NoZWR1bGVkYCwgYHNlbmRpbmdgLCBgc2VudGAsIGBmYWlsZWRgLCBg Y2FuY2VsbGVkYCB8CgotLS0KCiMjIFRhYmVsYXMKCiMjIyBgdXNlcl9yb2xl c2AKUkJBQy4gUHJpbWVpcm8gdXN1w6FyaW8g4oaSIGFkbWluOyBkZW1haXMg 4oaSIG9wZXJhdG9yLgoKfCBDb2x1bmEgfCBUaXBvIHwgTm90YXMgfAp8LS0t fC0tLXwtLS18CnwgYGlkYCB8IHV1aWQgUEsgfCB8CnwgYHVzZXJfaWRgIHwg dXVpZCBGSyBhdXRoLnVzZXJzIHwgQ0FTQ0FERSBERUxFVEUgfAp8IGByb2xl YCB8IGFwcF9yb2xlIHwgfAp8IGBjcmVhdGVkX2F0YCB8IHRpbWVzdGFtcHR6 IHwgfAoKKipSTFM6KiogdXN1w6FyaW8gbMOqIHByw7NwcmlvcyByb2xlcy4g RnVuw6fDtWVzOiBgaGFzX3JvbGUodXVpZCwgYXBwX3JvbGUpIOKGkiBib29s YCAoU0VDVVJJVFkgREVGSU5FUikuCgotLS0KCiMjIyBgc2FsZXNfbWFjaGlu ZV9ldmVudHNgCkluZ2VzdMOjbyBkZSB3ZWJob29rcyArIGF1ZGl0IGxvZyBk ZSBldmVudG9zLiAqKk7Do28gZGVsZXRhciDigJQgYXBwZW5kLW9ubHkuKioK CnwgQ29sdW5hIHwgVGlwbyB8IE5vdGFzIHwKfC0tLXwtLS18LS0tfAp8IGBp ZGAgfCB1dWlkIFBLIHwgfAp8IGBzb3VyY2VgIHwgc21fc291cmNlIHwgYGx1 eGAsIGBzaW5ndWAsIGBmYXRvcnhgLCBgbWFudWFsYCB8CnwgYGV2ZW50X3R5 cGVgIHwgdGV4dCB8IGV4OiBgaWNwX2NvbXBhbnlfZm91bmRgLCBgcmVwbHlg LCBgbWVldGluZ19ib29rZWRgIHwKfCBgZXh0ZXJuYWxfaWRgIHwgdGV4dCB8 IGlkIG9yaWdpbmFsIG5vIHNpc3RlbWEgZm9udGUgfAp8IGBlbnRpdHlfaWRg IHwgdXVpZCBGSyBlbnRpdHlfbWFwIHwgU0VUIE5VTEwgb24gZGVsZXRlIHwK fCBgcGF5bG9hZGAgfCBqc29uYiB8IGRhZG9zIGNvbXBsZXRvcyBkbyBldmVu dG8gfAp8IGBzdGF0dXNgIHwgc21fZXZlbnRfc3RhdHVzIHwgfAp8IGBlcnJv cmAgfCB0ZXh0IHwgfAp8IGByZWNlaXZlZF9hdGAgfCB0aW1lc3RhbXB0eiB8 IHwKfCBgcHJvY2Vzc2VkX2F0YCB8IHRpbWVzdGFtcHR6IHwgbnVsbGFibGUg fAoKKipDb25zdHJhaW50czoqKiBVTklRVUUoc291cmNlLCBleHRlcm5hbF9pZCkg4oCUIHByZXZpbmUgcmVwbGF5LgoqKsONbmRpY2VzOioqIGAoc291cmNlLCBl dmVudF90eXBlLCByZWNlaXZlZF9hdCBERVNDKWAsIGAoc3RhdHVzKSBXSEVS RSBzdGF0dXM8Picncm9jZXNzZWQnYCwgYChlbnRpdHlfaWQsIHJlY2VpdmVk X2F0IERFU0MpYC4KKipSTFM6KiogYWRtaW4gcG9kZSBsZXIuIHNlcnZpY2Vf cm9sZSBBTEwuCgotLS0KCiMjIyBgZW50aXR5X21hcGAKKipDaGF2ZSBjYW7D tm5pY2EqKiBxdWUgdW5lIG9zIDQgYmFuY29zIChMVVgg4oaUBFNJTkdVIOKG lCBGQVRPUiBYKS4KCnwgQ29sdW5hIHwgVGlwbyB8IE5vdGFzIHwKfC0tLXwt LS18LS0tfAp8IGBpZGAgfCB1dWlkIFBLIHwgZW50aXR5X2lkIHVzYWRvIGVt IHRvZG8gbyBzaXN0ZW1hIHwKfCBga2luZGAgfCB0ZXh0IENIRUNLIH8gYGNv bXBhbnlgIG91IGBjb250YWN0YCB8CnwgYGRpc3BsYXlfbmFtZWAgfCB0ZXh0 IHwgfAp8IGBsdXhfaWRgIHwgdGV4dCB8IGlkIGRhIGVtcHJlc2EvY29udGF0 byBubyBMVVggfAp8IGBzaW5ndV9pZGAgfCB0ZXh0IHwgaWQgbm8gU0lOR1Ug fAp8IGBmYXRvcnhfdGhyZWFkX2lkYCB8IHRleHQgfCB0aHJlYWQgZGUgY29u dmVyc2EgbmogRkFUT1IgWCB8CnwgYG1ldGFkYXRhYCB8IGpzb25iIHwgaW5j bHVpIGBsdXhfY29tcGFueV9pZGAgcC8gYW50aS1jYXJwZXQtYm9tYmluZyB8 CnwgYGNyZWF0ZWRfYXRgIC8gYHVwZGF0ZWRfYXRgIHwgdGltZXN0YW1wdHog fCB8CgoqKsONbmRpY2VzIMO6bmljb3M6KiogYChraW5kLCBsdXhfaWQpYCwg YChraW5kLCBzaW5ndV9pZClgLCBgKGZhdG9yeF90aHJlYWRfaWQpYCDigJQg dG9kb3MgcGFyY2lhaXMgKFdIRVJFIE5PVCBOVUxMKS4KKipMSU5EZXggR0lO OioqIGBtZXRhZGF0YSBXSEVSRSBLSU5EPSdjb250YWN0J2Ag4oCUIHVzYWRv IHBvciBgaGFzX3JlY2VudF9hY2NvdW50X3RvdWNocG9pbnQoKWAuCioqVXBz ZXJ0OioqIHNlbXByZSB1c2FyIGBJTlNFUlQgLi4uIE9OIENPTkZMSUNUIChr aW5kLCBsdXhfaWQpIERPIFVQREFURWAuCgotLS0KCiMjIyBgY2FkZW5jZV9y dWxlc2AKVGVtcGxhdGVzIGRlIGNhZMOqbmNpYSBtdWx0aWNhbmFsLgoKfCBD b2x1bmEgfCBUaXBvIHwgTm90YXMgfAp8LS0tfC0tLXwtLS18CnwgYGlkYCB8 IHV1aWQgUEsgfCB8CnwgYG5hbWVgIHwgdGV4dCB8IHwKfCBgZGVzY3JpcHRp b25gIHwgdGV4dCB8IHwKfCBgcHJlc2V0YCB8IHNtX2NhZGVuY2VfcHJlc2V0 IHwgYGFnZ3Jlc3NpdmVgL2BzdGFuZGFyZGAvYGVudGVycHJpc2VgL2BjdXN0 b21gIHwKfCBgc3RlcHNgIHwganNvbmIgfCBgW3siY2hhbm5lbCI6IndoYXRz YXBwIiwiZGVsYXlfZGF5cyI6MH0sIC4uLl1gIHwKfCBgb3duZXJfaWRgIHwg dXVpZCBGSyBhdXRoLnVzZXJzIHwgTlVMTCA9IGdsb2JhbC9zaXN0ZW1hIHwK fCBgaXNfYWN0aXZlYCB8IGJvb2xlYW4gfCB8CnwgYGNyZWF0ZWRfYXRgIC8g YHVwZGF0ZWRfYXRgIHwgdGltZXN0YW1wdHogfCB8CgoqKlNlZWQ6KiogMyBw cmVzZXRzIGdsb2JhaXMgKG93bmVyX2lkIE5VTEwpICsgMSBEZWZhdWx0IG11 bHRpY2hhbm5lbC4KCi0tLQoKIyMjIGBjYW1wYWlnbnNfb3JjaGVzdHJhdGlv bmAKQ2FtcGFuaGEgZGUgb3V0Ym91bmQvbWFya2V0aW5nLgoKfCBDb2x1bmEg fCBUaXBvIHwgTm90YXMgfAp8LS0tfC0tLXwtLS18CnwgYGlkYCB8IHV1aWQg UEsgfCB8CnwgYG5hbWVgIHwgdGV4dCB8IHwKfCBgaWNwX2ZpbHRlcmAgfCBq c29uYiB8IGNyaXTDqXJpb3MgcGFyYSBmaWx0cmFyIGVudGl0aWVzIHwKfCBg Y2hhbm5lbHNgIHwgc21fY2hhbm5lbFtdIHwgY2FuYWlzIGF0aXZvcyB8Cnwg YGZhdG9yeF9hZ2VudF9pZGAgfCB0ZXh0IHwgYWdlbnRlIGRvIEZBVE9SIFgg fAp8IGBjYWRlbmNlX3J1bGVfaWRgIHwgdXVpZCBGSyBjYWRlbmNlX3J1bGVz IHwgfAp8IGBjYWRlbmNlX3ByZXNldGAgfCBzbV9jYWRlbmNlX3ByZXNldCB8 IHwKfCBgc3RhdHVzYCB8IHNtX2NhbXBhaWduX3N0YXR1cyB8IHwKfCBgYWNj b3VudF9jb29sZG93bl9ob3Vyc2AgfCBpbnRlZ2VyIHwgZGVmYXVsdCA0OGgg YW50aS1jYXJwZXQtYm9tYmluZyB8CnwgYHJlcXVpcmVzX2h1bWFuX2FwcHJv dmFsYCB8IGJvb2xlYW4gfCBkZWZhdWx0IFRSVUUg4oCUIGdhdGUgZGUgYXBy b3Zhw6fDo28gfAp8IGBvd25lcl9pZGAgfCB1dWlkIEZLIGF1dGgudXNlcnMg fCB8CnwgYGNyZWF0ZWRfYXRgIC8gYHVwZGF0ZWRfYXRgIHwgdGltZXN0YW1w dHogfCB8CgotLS0KCiMjIyBgY2FtcGFpZ25fdGFyZ2V0c2AKKipTdGF0ZSBt YWNoaW5lIHBvciBsZWFkLioqIFVtIHJlZ2lzdHJvIHBvciAoY2FtcGFpZ24s IGVudGl0eSkuCgp8IENvbHVuYSB8IFRpcG8gfCBOb3RhcyB8CnwtLS18LS0t fC0tLXwKfCBgaWRgIHwgdXVpZCBQSyB8IHwKfCBgY2FtcGFpZ25faWRgIHwg dXVpZCBGSyBjYW1wYWlnbnNfb3JjaGVzdHJhdGlvbiB8IENBU0NBREUgfAp8 IGBlbnRpdHlfaWRgIHwgdXVpZCBGSyBlbnRpdHlfbWFwIHwgQ0FTQ0FERSR8 CnwgYGN1cnJlbnRfc3RlcGAgfCBpbnRlZ2VyIHwgw61uZGljZSBubyBhcnJh eSBkZSBzdGVwcyBkYSBjYWTDqm5jaWEgfAp8IGBuZXh0X3J1bl9hdGAgfCB0 aW1lc3RhbXB0eiB8IHF1YW5kbyBvIHRpY2sgZGV2ZSBwcm9jZXNzYXIgfAp8 IGBzdGF0dXNgIHwgdGV4dCB8IGxlZ2FkbyDigJQgbWFudGlkbyBlbSBzeW5j IGNvbSBgc3RhdGVgIHwKfCBgc3RhdGVgIHwgc21fdGFyZ2V0X3N0YXRlIHwg Kipmb250ZSBkZSB2ZXJkYWRlKiogfAp8IGBhdHRlbXB0c2AgfCBpbnRlZ2Vy IHwgdGVudGF0aXZhcyBubyBwYXNzbyBhdHVhbCB8CnwgYG1heF9hdHRlbXB0 c2AgfCBpbnRlZ2VyIHwgZGVmYXVsdCA1IHwKfCBgbG9ja2VkX3VudGlsYCB8 IHRpbWVzdGFtcHR6IHwgbG9jayBvdGltaXN0YSBkdXJhbnRlIHByb2Nlc3Nh bWVudG8gfAp8IGBsYXN0X3RyYW5zaXRpb25fYXRgIHwgdGltZXN0YW1wdHog fCB8CnwgYGxhc3RfZXJyb3JgIHwgdGV4dCB8IHwKCioqVHJhbnNpw6fDtWVz IHbDoWxpZGFzOioqCi0gYHF1ZXVlZGAg4oaSIGBydW5uaW5nYAotIGBydW5u aW5nYCDihpIgYHBhdXNlZGAsIGByZXBsaWVkYCwgYHN0b3BwZWRgLCBgbG9z dGAsIGBjb21wbGV0ZWRgLCBgZGVhZF9sZXR0ZXJgCi0gYHBhdXNlZGAg4oaS IGBxdWV1ZWRgLCBgc3RvcHBlZGAsIGBsb3N0YAotIGByZXBsaWVkYCDihpIg YGNvbXBsZXRlZGAKLSBgY29tcGxldGVkYCwgYHN0b3BwZWRgLCBgbG9zdGAg 4oaSICoqVEVSTUlOQUwqKiAobmVuaHVtYSkKLSBgZGVhZF9sZXR0ZXJgIOKG kiBgcXVldWVkYCAocmV0cnkgbWFudWFsKQoKKipUcmlnZ2VyczoqKiBgdGdf bG9nX3RhcmdldF9zdGF0ZV9jaGFuZ2VgIChhdWRpdCksIGB0Z19zeW5jX3Rh cmdldF9zdGF0dXNgIChjb21wYXQpLCBgdGdfdmFsaWRhdGVfdGFyZ2V0X3N0 YXRlX3RyYW5zaXRpb25gIChndWFyZCkuCioqU0tJUCBMT0NLRUQqKiBvYnJp Z2F0w7NyaW8gbm8gdGljayBwYXJhIGV2aXRhciByYWNlIGNvbmRpdGlvbi4K Ci0tLQoKIyMjIGBjYW1wYWlnbl90YXJnZXRfZXZlbnRzYAoqKkF1ZGl0IGxv ZyBpbXV0w6F2ZWwqKiBkZSB0cmFuc2nDp8O1ZXMgZGUgZXN0YWRvLgoKfCBD b2x1bmEgfCBUaXBvIHwgTm90YXMgfAp8LS0tfC0tLXwtLS18CnwgYGlkYCB8 IHV1aWQgUEsgfCB8CnwgYHRhcmdldF9pZGAgfCB1dWlkIEZLIGNhbXBhaWdu X3RhcmdldHMgfCBDQVNDQURFIHwKfCBgZnJvbV9zdGF0ZWAgfCBzbV90YXJn ZXRfc3RhdGUgfCBudWxsYWJsZSAoTlVMTCA9IGNyaWHDp8OjbykgfAp8IGB0 b19zdGF0ZWAgfCBzbV90YXJnZXRfc3RhdGUgfCB8CnwgYHJlYXNvbmAgfCB0 ZXh0IHwgfAp8IGBhY3RvcmAgfCB0ZXh0IHwgYHN5c3RlbWAsIGB3ZWJob29r YCwgYGh1bWFuYCB8CnwgYHBheWxvYWRgIHwganNvbmIgfCBjb250ZXh0byBh ZGljaW9uYWwgfAp8IGBlbnRpdHlfc25hcHNob3RgIHwganNvbmIgfCBzbmFw c2hvdCBkYSBlbnRpdHkgbm8gbW9tZW50byB8CnwgYGNyZWF0ZWRfYXRgIHwg dGltZXN0YW1wdHogfCAqKk5VTkNBIEFUVUFMSVpBUioqIHwKCi0tLQoKIyMj IGBjaGFubmVsX3F1b3Rhc2AKTGltaXRlIGRpw6FyaW8gZGUgZW52aW9zIHBv ciB1c3XDoXJpb8OXY2FuYWwuCgp8IENvbHVuYSB8IFRpcG8gfCBOb3RhcyB8 CnwtLS18LS0tfC0tLXwKfCBgaWRgIHwgdXVpZCBQSyB8IHwKfCBgdXNlcl9p ZGAgfCB1dWlkIEZLIGF1dGgudXNlcnMgfCBDQVNDQURFIHwKfCBgY2hhbm5l bGAgfCBzbV9jaGFubmVsIHwgfAp8IGBkYWlseV9jYXBgIHwgaW50ZWdlciB8 IGRlZmF1bHQgNTAgfAp8IGBjdXJyZW50X2NvdW50YCB8IGludGVnZXIgfCB8 CnwgYHJlc2V0X2F0YCB8IHRpbWVzdGFtcHR6IHwgcHLDs3hpbWEgbWVpYS1u b2l0ZSB8CgoqKkF0dWFsaXphw6fDo28gYXTDtG1pY2E6KiogYFVQREFURSAu Li4gU0VUIGxhc3RfdXBkYXRlZCA9IG5vdygpLCBjdXJyZW50X2NvdW50ID0g Y3VycmVudF9jb3VudCArIDEgV0hFUkUgY3VycmVudF9jb3VudCA8IGRhaWx5 X2NhcCBSRVRVUk5JTkcgKmAKCi0tLQoKIyMjIGBjb250YWN0X3RvdWNocG9p bnRzYApFc3BlbGhvIGRlIHRvcXVlcyBwYXJhIGRhc2hib2FyZHMuCgp8IENv bHVuYSB8IFRpcG8gfCBOb3RhcyB8CnwtLS18LS0tfC0tLXwKfCBgaWRgIHwg dXVpZCBQSyB8IHwKfCBgZW50aXR5X2lkYCB8IHV1aWQgRksgZW50aXR5X21h cCB8IENBU0NBREUgfAp8IGBjYW1wYWlnbl9pZGAgfCB1dWlkIEZLIGNhbXBh aWduc19vcmNoZXN0cmF0aW9uIHwgU0VUIE5VTEwgfAp8IGBjaGFubmVsYCB8 IHNtX2NoYW5uZWwgfCB8CnwgYGRpcmVjdGlvbmAgfCBzbV9kaXJlY3Rpb24g fCBgb3V0Ym91bmRgL2BpbmJvdW5kYCB8CnwgYHN0YXR1c2AgfCBzbV90b3Vj aHBvaW50X3N0YXR1cyB8IHwKfCBgZmF0b3J4X3RocmVhZF9pZGAgfCB0ZXh0 IHwgfAp8IGBzaW5ndV9pbnRlcmFjdGlvbl9pZGAgfCB0ZXh0IHwgfAp8IGBw YXlsb2FkYCB8IGpzb25iIHwgfAp8IGBlcnJvcmAgfCB0ZXh0IHwgfAp8IGBh dHRlbXB0c2AgfCBpbnRlZ2VyIHwgfAp8IGBtYXhfYXR0ZW1wdHNgIHwgaW50 ZWdlciB8IGRlZmF1bHQgNSB8CnwgYG5leHRfcmV0cnlfYXRgIHwgdGltZXN0 YW1wdHogfCBiYWNrb2ZmIGV4cG9uZW5jaWFsIHwKfCBgZW1haWxfbWVzc2Fn ZV9pZGAgfCB0ZXh0IHwgdGhyZWFkaW5nIFJGQyAyODIyIHwKfCBgZW1haWxf aW5fcmVwbHlfdG9gIHwgdGV4dCB8IHwKfCBgZW1haWxfcmVmZXJlbmNlc2Ag fCB0ZXh0W10gfCB8CgotLS0KCiMjIyBgY29uc2VudF9sZWRnZXJgCioqTEdQ RCBBCXJ0LiA3LzExLioqIE9wdC1pbi9vcHQtb3V0IHBvciBjb250YXRvw5dj YW5hbC4gKipDaGVjYXIgQU5URVMgZGUgcXVhbHF1ZXIgZW52aW8uKioKCnwg Q29sdW5hIHwgVGlwbyB8IE5vdGFzIHwKfC0tLXwtLS18LS0tfAp8IGBpZGAg fCB1dWlkIFBLIHwgfAp8IGBlbnRpdHlfaWRgIHwgdXVpZCBGSyBlbnRpdHlf bWFwIHwgQ0FTQ0FERSR8CnwgYGNoYW5uZWxgIHwgc21fY2hhbm5lbCB8IHwK fCBgc3RhdHVzYCB8IHNtX2NvbnNlbnRfc3RhdHVzIHwgZGVmYXVsdCBgdW5r bm93bmAgfAp8IGBsZWdhbF9iYXNpc2AgfCBzbV9sZWdhbF9iYXNpcyB8IGRl ZmF1bHQgYGxlZ2l0aW1hdGVfaW50ZXJlc3RgIHwKfCBgc291cmNlYCB8IHRl eHQgfCBgaW5ib3VuZF9rZXl3b3JkYCwgYGZvcm1gLCBgbWFudWFsYCB8Cnwg YG9wdGVkX2F0YCAvIGBvcHRlZF9vdXRfYXRgIHwgdGltZXN0YW1wdHogfCB8 CnwgYGlwX2FkZHJlc3NgIHwgaW5ldCB8IHwKfCBgbm90ZXNgIHwgdGV4dCB8 IHwKCioqRnVuw6fDo286KiogYGNoZWNrX2NvbnNlbnQoZW50aXR5X2lkLCBj aGFubmVsKSDihpIgYm9vbGAgIOKAlCByZXRvcm5hIEZBTFNFIHNlIG9wdGVk X291dC4KKirDjW5kaWNlOioqIGAoZW50aXR5X2lkLCBjaGFubmVsKSBXSEVS RSBzdGF0dXM9J29wdGVkX291dCdgIOKAlCBjb25zdWx0YSBkZSBibG9xdWVp byB1bHRyYXLDoXBpZGEuCgotLS0KCiMjIyBgc3RvcF93b3JkX2xpc3RzYApL ZXl3b3JkcyBkZSBvcHQtb3V0IHBvciBpZGlvbWHDl2NhbmFsLgoKfCBDb2x1 bmEgfCBUaXBvIHwgTm90YXMgfAp8LS0tfC0tLXwtLS18CnwgYGxhbmd1YWdl YCB8IHRleHQgfCBgcHQtQlJgLCBgZW5gIHwKfCBgY2hhbm5lbGAgfCBzbV9j aGFubmVsIHwgfAp8IGB3b3Jkc2AgfCB0ZXh0W10gfCBjb21wYXJhw6fDo28g Y2FzZS1pbnNlbnNpdGl2ZSBubyB3ZWJob29rLXNpbmd1IHwKCi0tLQoKIyMj IGBhZ2VudF9pZGVudGl0eV9jb25maWdgClBlcnNvbmEgKyBndWFyZHJhaWxz IGRvIGFnZW50ZSBkZSBJQSBwb3IgY2FtcGFuaGEvY2FuYWwuCgp8IENvbHVu YSB8IFRpcG8gfCBOb3RhcyB8CnwtLS18LS0tfC0tLXwKfCBgY2FtcGFpZ25f aWRgIHwgdXVpZCBGSyBjYW1wYWlnbnMgKG51bGxhYmxlKSB8IE5VTEwgPSBm YWxsYmFjayBnbG9iYWwgfAp8IGBjaGFubmVsYCB8IHNtX2NoYW5uZWwgKG51 bGxhYmxlKSB8IE5VTEwgPSB0b2RvcyBvcyBjYW5haXMgfAp8IGBwZXJzb25h X25hbWVgIHwgdGV4dCB8IGV4OiAiQXNzaXN0ZW50ZSBWaXJ0dWFsIiB8Cnwg YGNvbXBhbnlfbmFtZWAgfCB0ZXh0IHwgZXg6ICJQcm9tbyBCcmluZGVzIiB8 CnwgYGRpc2Nsb3N1cmVfdGV4dGAgfCB0ZXh0IHwgYXByZXNlbnRhZG8gbm8g cHJpbWVpcm8gY29udGF0byB8CnwgYHByb2hpYml0ZWRfdG9waWNzYCB8IHRl eHRbXSB8IHBvbMOtdGljYSwgcmVsaWdpw6NvLCBjb25jb3JyZW50ZXMuLi4g fAp8IGBwcm9oaWJpdGVkX2NvbW1pdG1lbnRzYCB8IHRleHRbXSB8IGRlc2Nv bnRvcyBuw6NvIGF1dG9yaXphZG9zLi4uIHwKfCBgbWF4X3R1cm5zX3Blcl9z ZXNzaW9uYCB8IGludGVnZXIgfCBkZWZhdWx0IDIwIHwKfCBgaWRlbnRpdHlf Z3VhcmRyYWlsX2VuYWJsZWRgIHwgYm9vbGVhbiB8IHNlIEZBTFNFLCBhZ2Vu dGUgcG9kZSBuZWdhciBpZGVudGlkYWRlIChuw6NvIHJlY29tZW5kYWRvKSB8 CnwgYHBpaV9kZXRlY3Rpb25fZW5hYmxlZGAgfCBib29sZWFuIHwgfAp8IGBz dG9wX3dvcmRfbGFuZ3VhZ2VgIHwgdGV4dCB8IHwKfCBgZmF0b3J4X2FnZW50 X2lkYCB8IHRleHQgfCBvdmVycmlkZSBkbyBhZ2VudGUgZG8gRkFUT1IgWCB8 CgotLS0KCiMjIyBgbWFya2V0aW5nX3RlbXBsYXRlc2AKVGVtcGxhdGVzIGFw cm92YWRvcyBwYXJhIE1vZHVsZSAwMi4KCnwgQ29sdW5hIHwgVGlwbyB8IE5v dGFzIHwKfC0tLXwtLS18LS0tfAp8IGBjaGFubmVsYCB8IHNtX2NoYW5uZWwg fCB8CnwgYHN0YXR1c2AgfCBzbV90ZW1wbGF0ZV9zdGF0dXMgfCBgZHJhZnRg 4oaSIGBhcHByb3ZlZGAg4oaSIGBhcmNoaXZlZGAgfAp8IGBzdWJqZWN0YCB8 IHRleHQgfCBlLW1haWwgb25seSB8CnwgYGJvZHlgIHwgdGV4dCB8IHZhcmnD oXZlaXMgY29tbyBge25vbWV9YCwgYHtlbXByZXNhfWAgfAp8IGByZXF1aXJl ZF92YXJzYCB8IHRleHRbXSB8IHZhbGlkYWRvIHBvciBgdmFsaWRhdGVfdGVt cGxhdGVfdmFycygpYCB8CnwgYGFsbG93ZWRfaG91cnNfc3RhcnRgIC8gYF9l bmRgIHwgc21hbGxpbnQgfCBqYW5lbGEgZGUgZW52aW8gKGRlZmF1bHQgOGgt MjBoKSB8CgotLS0KCiMjIyBgY29udGVudF9jYWxlbmRhcmAKQWdlbmRhbWVu dG8gZGUgYnJvYWRjYXN0IGRvIE1vZHVsZSAwMi4KCnwgQ29sdW5hIHwgVGlw byB8IE5vdGFzIHwKfC0tLXwtLS18LS0tfAp8IGB0ZW1wbGF0ZV9pZGAgfCB1 dWlkIEZLIG1hcmtldGluZ190ZW1wbGF0ZXMgfCBSRVNUUklDVCBkZWxldGUg fAp8IGBzY2hlZHVsZWRfYXRgIHwgdGltZXN0YW1wdHogfCBxdWFuZG8gZGlz cGFyYXIgfAp8IGBhdWRpZW5jZV9maWx0ZXJgIHwganNvbmIgfCBmaWx0cm8g ZGUgZW50aXRpZXMgfAp8IGBzdGF0dXNgIHwgc21fY2FsZW5kYXJfc3RhdHVz IHwgfAp8IGBsb2NrZWRfYnlgIC8gYGxvY2tlZF91bnRpbGAgfCB0ZXh0IC8g dGltZXN0YW1wdHogfCBsb2NrIGRlIGJyb2FkY2FzdCBlbSBwcm9ncmVzc28g fAoKLS0tCgojIyMgYHNpZ25hbF93ZWlnaHRzYApDb25maWd1cmHDp8OjbyBkbyBz Y29yaW5nIGNvbSBkZWNheS4KCnwgQ29sdW5hIHwgVGlwbyB8IE5vdGFzIHwK fC0tLXwtLS18LS0tfAp8IGBldmVudF90eXBlYCB8IHRleHQgUEsgfCB8Cnwg YHdlaWdodGAgfCBudW1lcmljIHwgKzEwMCByZXBseSwgLTUwMCBvcHRlZF9v dXQuLi4gfAp8IGBoYWxmX2xpZmVfaG91cnNgIHwgaW50ZWdlciB8IDI0aCBy ZXBseSwgODc2MGggb3B0ZWRfb3V0IHwKCioqRnVuw6fDo286KiogYHNpZ25h bF9zY29yZShlbnRpdHlfaWQpIOKGkiBudW1lcmljYCDihJMgc29tYSBgdyDDlyBleHAoLWxuKDIpIMOXIHQgLyBoYWxmbGlmZSlgLgoKLS0tCgojIyMgYHNlbmRl cl9oZWFsdGhgClNhw7pkZSBkbyBzZW5kZXIgZGUgZS1tYWlsICh3YXJtdXAp LgoKfCBDb2x1bmEgfCBUaXBvIHwgTm90YXMgfAp8LS0tfC0tLXwtLS18Cnwg YHNlbmRlcl9pZGAgfCB0ZXh0IHwgaWRlbnRpZmljYWRvciBkbyBtYWlsYm94 IHwKfCBgZGF5YCB8IGRhdGUgfCBVTklRVUUoc2VuZGVyX2lkLCBkYXkpIHwK fCBgc2VudGAgLyBgYm91bmNlZGAgLyBgcmVwbGllZGAgLyBgc3BhbV9yZXBv cnRzYCB8IGludGVnZXIgfCB8CnwgYGRhaWx5X2NhcGAgfCBpbnRlZ2VyIHwg fAoKKipGdW7Dp8OjbzoqKiBgY29tcHV0ZV9kYWlseV9jYXAoc2VuZGVyX2lk KSDihpIgaW50ZWdlcmAgLSByZXRvcm5hIDUwIHNlIGJvdW5jZSA+IDUlLCBz ZW7Do28gcmFtcCA1MCArICgxMCDDlyBkaWFzIGF0aXZvcyksIG3DoXggNTAw LgoKLS0tCgojIyMgYGFnZW50X2V2YWxfY2FzZXNgICsgYGFnZW50X2V2YWxf cnVuc2AKSGFybmVzcyBkZSBhdmFsaWHDp8OjbyBkbyBhZ2VudGUuCgpgYWdl bnRfZXZhbF9jYXNlc2A6IGRhdGFzZXQgcm90dWxhZG8gKGBzaWduYWxfanNv bmAg4oaSIGBleHBlY3RlZF9pbnRlbnRgLCBgZXhwZWN0ZWRfY2hhbm5lbGAp LiAxMCBjYXNlcyBzZW1lYWRvcy4KYGFnZW50X2V2YWxfcnVuc2A6IHJlc3Vs dGFkbyBkZSBjYWRhIGV4ZWN1w6fDo28gZG8gaGFybmVzcyAocGFzc2VkIGJv b2wsIGxhdGVuY3lfbXMsIGFjdHVhbF9vdXRwdXQpLgoKLS0tCgojIyBGdW7D p8O1ZXMgY2hhdmUKCnwgRnVuw6fDo28gfCBBc3NpbmF0dXJhIHwgUHJvcMOz c2l0byB8CnwtLS18LS0tfC0tLXwKfCBgaGFzX3JvbGVgIHwgYCh1dWlkLCBh cHBfcm9sZSkg4oaSIGJvb2xgIHwgU0VDVVJJVFkgREVGSU5FUiwgUkJBQyBj aGVjayB8CnwgYGNoZWNrX2NvbnNlbnRgIHwgYCh1dWlkLCBzbV9jaGFubmVs KSDihpIgYm9vbGAgfCBWZXJpZmljYSBvcHQtb3V0IGFudGVzIGRlIGVudmlv IHwKfCBgc2lnbmFsX3Njb3JlYCB8IGAodXVpZCkg4oaSIG51bWVyaWNgIHwg U2NvcmUgZGVjYXkgdGVtcG9yYWwgcG9yIGVudGl0eSB8CnwgYGhhc19yZWNl bnRfYWNjb3VudF90b3VjaHBvaW50YCB8IGAodXVpZCwgaG91cnMgaW50KSDi hpIgYm9vbGAgfCBBbnRpLWNhcnBldC1ib21iaW5nIHBvciBtcHJlc2EgfAp8 IGBjb21wdXRlX2RhaWx5X2NhcGAgfCBgKHRleHQpIOKGkiBpbnRgIHwgUmFt cC11cCBkZSBzZW5kZXIgZGUgZS1tYWlsIHwKfCBgZm5fcmVjb3Zlcl9zdGFs ZV9sb2Nrc2AgfCBgKCkg4oaSIGludGAgfCBMaWJlcmEgbG9ja3MgZGUgMTBt aW4rIHRyYXZhZG9zIHwKfCBgZm5fYXJjaGl2ZV9vbGRfdGFyZ2V0X2V2ZW50 c2AgfCBgKCkg4oaSIGludGAgfCBDbGVhbnVwIGRlIGV2ZW50b3MgPjEgYW5v IHwKfCBgZXhwb3J0X2VudGl0eV9wZXJzb25hbF9kYXRhYCB8IGAodXVpZCkg 4oaSIGpzb25iYCB8IExHUEQgQXJ0LjE4IGV4cG9ydCB8CnwgYGRlbGV0ZV9l bnRpdHlfcGVyc29uYWxfZGF0YWAgfCBgKHV1aWQsIHV1aWQpIOKGkiB2b2lk YCB8IExHUEQgQXJ0LjE4IGFwYWdhbWVudG8gKGFkbWluIG9ubHkpIHwKfCBg dmFsaWRhdGVfdGVtcGxhdGVfdmFyc2AgfCBgKHRleHQsIHRleHRbXSkg4oaS IGJvb2xgIHwgVmFsaWRhIHZhcmnDoXZlaXMgZW0gdGVtcGxhdGUgfAoKLS0t CgojIyBSZWdyYXMgY3LDrXRpY2FzIChubyB2aW9sYXIpCgoxLiAqKlNLSVAg TE9DS0VEIG9icmlnYXTDs3JpbyoqIG5vIHRpY2sgZGUgY2Fkw6puY2lhIOKA lCBgU0VMRUNUIC4uLiBGT1IgVVBEQVRFIFNLSVAgTE9DS0VEIExJTUlUIDEw MGAKMi4gKipjaGVja19jb25zZW50KCkgT0JSaUdBVMOTUklPKiogYW50ZXMg ZGUgcXVhbHF1ZXIgc2ludS1zZW5kLCBzbXMtc2VuZCwgZXRjLgozLiAqKlVO SVFVRXKODNCB1cmNlLCBleHRlcm5hbF9pZClgIGVtIHNhbGVzX21hY2hpbmVf ZXZlbnRzOiB1c2FyIElOU0VSVCAuLi4gT04gQ09ORkxJQ1QgRE8gTk9USElO RyBub3Mgd2ViaG9va3MKNC4gKiplbnRpdHlfbWFwIHVwc2VydCoqIOKAlCBJ TlNFUlQgLi4uIE9OIENPTkZMSUNUIChraW5kLCBsdXhfaWQpIERPIFVQREFU RSDigJQgbnVuY2EgSU5TRVJUIGRpcmV0bwouICoqVHJhbnNpw6fDtWVzIGRl IGVzdGFkbysKoHbDoWxpZGFzKiog4oCUIiBudW5jYSBVUERBVEUgY2FtcGFp Z25fdGFyZ2V0cy5zdGF0ZSBmb3JhIGRhIG3DoXF1aW5hIGRlIGVzdGFkb3MK Ni4gKipgbG9ja2VkX3VudGlsYCoqIOKAlCBzZW1wcmUgc2V0YXIgYW8gcGVn YXIgdW0gdGFyZ2V0OyBzZW1wcmUgbGltcGFyIGFvIHRlcm1pbmFyCjcuICoq YXVkaXQgdHJhaWwqKiDigJQgY2FtcGFpZ25fdGFyZ2V0X2V2ZW50cyDDqSBh cHBlbmQtb25seSwgbnVuY2EgZGVsZXRhciAoZXhjZXRvIG8gY2xlYW51cCBk ZSAxIGFubykKOC4gKipkaXNjbG9zdXJlX3RleHQqKiDigJQgaW5qZXRhciBuYSBwcmltZWlyYSBtZW5zYWdlbSBkbyBhZ2VudGUgKGFnZW50X2lkZW50aXR5 X2NvbmZpZykKOS4gKipzdG9wX3dvcmRfbGlzdHMqKiDigJQgZGV0ZWN0YXIg a2V5d29yZHMgZGUgb3B0LW91dCBlbSB3ZWJob29rLXNpbmd1LCBncmF2YXIg Y29uc2VudF9sZWRnZXIgaW1lZGlhdGFtZW50ZQoxMC4gKipMR1BEKiog4oCU IGRlbGV0ZV9lbnRpdHlfcGVyc29uYWxfZGF0YSgpIMOpIGEgw7puaWNhIGZv cm1hIGRlIGFwYWdhciBkYWRvcyBkZSBjb250YXRvCg==
+# SALES MACHINE — Schema Reference
+> **Banco:** Supabase Cloud · **Última atualizaçóo:** 2026-07-21 · **Migrations:** 009 aplicadas
+
+## Enums
+
+| Enum | Valores |
+|---|---|
+| `app_role` | `admin`, `operator`, `viewer` |
+| `sm_source` | `lux`, `singu`, `fatorx`, `manual` |
+| `sm_channel` | `linkedin`, `whatsapp`, `email`, `sms`, `instagram` |
+| `sm_event_status` | `received`, `processing`, `processed`, `error`, `ignored` |
+| `sm_direction` | `outbound`, `inbound` |
+| `sm_campaign_status` | `draft`, `active`, `paused`, `archived` |
+| `sm_touchpoint_status` | `queued`, `sent`, `delivered`, `read`, `replied`, `failed`, `opted_out`, `dead_letter`, `pending_approval`, `pending_provider` |
+| `sm_target_state` | `queued`, `running`, `paused`, `replied`, `stopped`, `lost`, `completed`, `dead_letter` |
+| `sm_cadence_preset` | `aggressive`, `standard`, `enterprise`, `custom` |
+| `sm_consent_status` | `opted_in`, `opted_out`, `pending`, `unknown` |
+| `sm_legal_basis` | `legitimate_interest`, `consent`, `contract`, `not_applicable` |
+| `sm_template_status` | `draft`, `approved`, `archived` |
+| `sm_calendar_status` | `scheduled`, `sending`, `sent`, `failed`, `cancelled` |
+
+---
+
+## Tabelas
+
+### `user_roles`
+RBAC. Primeiro usuário → admin; demais → operator.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `user_id` | uuid FK auth.users | CASCADE DELETE |
+| `role` | app_role | |
+| `created_at` | timestamptz | |
+
+**RLS:** usuário lê próprios roles. Funções: `has_role(uuid, app_role) → bool` (SECURITY DEFINER).
+
+---
+
+### `sales_machine_events`
+Ingestão de webhooks + audit log de eventos. **Não deletar — append-only.**
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `source` | sm_source | `lux`, `singu`, `fatorx`, `manual` |
+| `event_type` | text | ex: `icp_company_found`, `reply`, `meeting_booked` |
+| `external_id` | text | id original no sistema fonte |
+| `entity_id` | uuid FK entity_map | SET NULL on delete |
+| `payload` | jsonb | dados completos do evento |
+| `status` | sm_event_status | |
+| `error` | text | |
+| `received_at` | timestamptz | |
+| `processed_at` | timestamptz | nullable |
+
+**Constraints:** UNIQUE(source, external_id) — previne replay.
+**Índices:** `(source, event_type, received_at DESC)`, `(status) WHERE status<>''rocessed'`, `(entity_id, received_at DESC)`.
+**RLS:** admin pode ler. service_role ALL.
+
+---
+
+### `entity_map`
+**Chave canönica** que une os 4 bancos (LUX ↔SINGU ↔ FATOR X).
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | entity_id usado em todo o sistema |
+| `kind` | text CHECK  `company` ou `contact` |
+| `display_name` | text | |
+| `lux_id` | text | id da empresa/contato no LUX |
+| `singu_id` | text | id no SINGU |
+| `fatorx_thread_id` | text | thread de conversa nj FATOR X |
+| `metadata` | jsonb | inclui `lux_company_id` p/ anti-carpet-bombing |
+| `created_at` / `updated_at` | timestamptz | |
+
+**Índices únicos:** `(kind, lux_id)`, `(kind, singu_id)`, `(fatorx_thread_id)` — todos parciais (WHERE NOT NULL).
+**LINDex GIN:** `metadata WHERE KIND='contact'` — usado por `has_recent_account_touchpoint()`.
+**Upsert:** sempre usar `INSERT ... ON CONFLICT (kind, lux_id) DO UPDATE`.
+
+---
+
+### `cadence_rules`
+Templates de cadência multicanal.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `name` | text | |
+| `description` | text | |
+| `preset` | sm_cadence_preset | `aggressive`/`standard`/`enterprise`/`custom` |
+| `steps` | jsonb | `[{"channel":"whatsapp","delay_days":0}, ...]` |
+| `owner_id` | uuid FK auth.users | NULL = global/sistema |
+| `is_active` | boolean | |
+| `created_at` / `updated_at` | timestamptz | |
+
+**Seed:** 3 presets globais (owner_id NULL) + 1 Default multichannel.
+
+---
+
+### `campaigns_orchestration`
+Campanha de outbound/marketing.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `name` | text | |
+| `icp_filter` | jsonb | critérios para filtrar entities |
+| `channels` | sm_channel[] | canais ativos |
+| `fatorx_agent_id` | text | agente do FATOR X |
+| `cadence_rule_id` | uuid FK cadence_rules | |
+| `cadence_preset` | sm_cadence_preset | |
+| `status` | sm_campaign_status | |
+| `account_cooldown_hours` | integer | default 48h anti-carpet-bombing |
+| `requires_human_approval` | boolean | default TRUE — gate de aprovação |
+| `owner_id` | uuid FK auth.users | |
+| `created_at` / `updated_at` | timestamptz | |
+
+---
+
+### `campaign_targets`
+**State machine por lead.** Um registro por (campaign, entity).
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `campaign_id` | uuid FK campaigns_orchestration | CASCADE |
+| `entity_id` | uuid FK entity_map | CASCADE$|
+| `current_step` | integer | índice no array de steps da cadência |
+| `next_run_at` | timestamptz | quando o tick deve processar |
+| `status` | text | legado — mantido em sync com `state` |
+| `state` | sm_target_state | **fonte de verdade** |
+| `attempts` | integer | tentativas no passo atual |
+| `max_attempts` | integer | default 5 |
+| `locked_until` | timestamptz | lock otimista durante processamento |
+| `last_transition_at` | timestamptz | |
+| `last_error` | text | |
+
+**Transições válidas:**
+- `queued` → `running`
+- `running` → `paused`, `replied`, `stopped`, `lost`, `completed`, `dead_letter`
+- `paused` → `queued`, `stopped`, `lost`
+- `replied` → `completed`
+- `completed`, `stopped`, `lost` → **TERMINAL** (nenhuma)
+- `dead_letter` → `queued` (retry manual)
+
+**Triggers:** `tg_log_target_state_change` (audit), `tg_sync_target_status` (compat), `tg_validate_target_state_transition` (guard).
+**SKIP LOCKED** obrigatório no tick para evitar race condition.
+
+---
+
+### `campaign_target_events`
+**Audit log imutável** de transições de estado.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `target_id` | uuid FK campaign_targets | CASCADE |
+| `from_state` | sm_target_state | nullable (NULL = criação) |
+| `to_state` | sm_target_state | |
+| `reason` | text | |
+| `actor` | text | `system`, `webhook`, `human` |
+| `payload` | jsonb | contexto adicional |
+| `entity_snapshot` | jsonb | snapshot da entity no momento |
+| `created_at` | timestamptz | **NUNCA ATUALIZAR** |
+
+---
+
+### `channel_quotas`
+Limite diário de envios por usuário×canal.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `user_id` | uuid FK auth.users | CASCADE |
+| `channel` | sm_channel | |
+| `daily_cap` | integer | default 50 |
+| `current_count` | integer | |
+| `reset_at` | timestamptz | próxima meia-noite |
+
+**Atualização atômica:** `UPDATE ... SET last_updated = now(), current_count = current_count + 1 WHERE current_count < daily_cap RETURNING *`
+
+---
+
+### `contact_touchpoints`
+Espelho de toques para dashboards.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `entity_id` | uuid FK entity_map | CASCADE |
+| `campaign_id` | uuid FK campaigns_orchestration | SET NULL |
+| `channel` | sm_channel | |
+| `direction` | sm_direction | `outbound`/`inbound` |
+| `status` | sm_touchpoint_status | |
+| `fatorx_thread_id` | text | |
+| `singu_interaction_id` | text | |
+| `payload` | jsonb | |
+| `error` | text | |
+| `attempts` | integer | |
+| `max_attempts` | integer | default 5 |
+| `next_retry_at` | timestamptz | backoff exponencial |
+| `email_message_id` | text | threading RFC 2822 |
+| `email_in_reply_to` | text | |
+| `email_references` | text[] | |
+
+---
+
+### `consent_ledger`
+**LGPD A	rt. 7/11.** Opt-in/opt-out por contato×canal. **Checar ANTES de qualquer envio.**
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `entity_id` | uuid FK entity_map | CASCADE$|
+| `channel` | sm_channel | |
+| `status` | sm_consent_status | default `unknown` |
+| `legal_basis` | sm_legal_basis | default `legitimate_interest` |
+| `source` | text | `inbound_keyword`, `form`, `manual` |
+| `opted_at` / `opted_out_at` | timestamptz | |
+| `ip_address` | inet | |
+| `notes` | text | |
+
+**Função:** `check_consent(entity_id, channel) → bool`  — retorna FALSE se opted_out.
+**Índice:** `(entity_id, channel) WHERE status='opted_out'` — consulta de bloqueio ultrarápida.
+
+---
+
+### `stop_word_lists`
+Keywords de opt-out por idioma×canal.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `language` | text | `pt-BR`, `en` |
+| `channel` | sm_channel | |
+| `words` | text[] | comparação case-insensitive no webhook-singu |
+
+---
+
+### `agent_identity_config`
+Persona + guardrails do agente de IA por campanha/canal.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `campaign_id` | uuid FK campaigns (nullable) | NULL = fallback global |
+| `channel` | sm_channel (nullable) | NULL = todos os canais |
+| `persona_name` | text | ex: "Assistente Virtual" |
+| `company_name` | text | ex: "Promo Brindes" |
+| `disclosure_text` | text | apresentado no primeiro contato |
+| `prohibited_topics` | text[] | política, religião, concorrentes... |
+| `prohibited_commitments` | text[] | descontos não autorizados... |
+| `max_turns_per_session` | integer | default 20 |
+| `identity_guardrail_enabled` | boolean | se FALSE, agente pode negar identidade (não recomendado) |
+| `pii_detection_enabled` | boolean | |
+| `stop_word_language` | text | |
+| `fatorx_agent_id` | text | override do agente do FATOR X |
+
+---
+
+### `marketing_templates`
+Templates aprovados para Module 02.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `channel` | sm_channel | |
+| `status` | sm_template_status | `draft`→ `approved` → `archived` |
+| `subject` | text | e-mail only |
+| `body` | text | variáveis como `{nome}`, `{empresa}` |
+| `required_vars` | text[] | validado por `validate_template_vars()` |
+| `allowed_hours_start` / `_end` | smallint | janela de envio (default 8h-20h) |
+
+---
+
+### `content_calendar`
+Agendamento de broadcast do Module 02.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `template_id` | uuid FK marketing_templates | RESTRICT delete |
+| `scheduled_at` | timestamptz | quando disparar |
+| `audience_filter` | jsonb | filtro de entities |
+| `status` | sm_calendar_status | |
+| `locked_by` / `locked_until` | text / timestamptz | lock de broadcast em progresso |
+
+---
+
+### `signal_weights`
+Configuração do scoring com decay.
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `event_type` | text PK | |
+| `weight` | numeric | +100 reply, -500 opted_out... |
+| `half_life_hours` | integer | 24h reply, 8760h opted_out |
+
+**Função:** `signal_score(entity_id) → numeric` ℓ soma `w × exp(-ln(2) × t / halflife)`.
+
+---
+
+### `sender_health`
+Saúde do sender de e-mail (warmup).
+
+| Coluna | Tipo | Notas |
+|---|---|---|
+| `sender_id` | text | identificador do mailbox |
+| `day` | date | UNIQUE(sender_id, day) |
+| `sent` / `bounced` / `replied` / `spam_reports` | integer | |
+| `daily_cap` | integer | |
+
+**Função:** `compute_daily_cap(sender_id) → integer` - retorna 50 se bounce > 5%, senão ramp 50 + (10 × dias ativos), máx 500.
+
+---
+
+### `agent_eval_cases` + `agent_eval_runs`
+Harness de avaliação do agente.
+
+`agent_eval_cases`: dataset rotulado (`signal_json` → `expected_intent`, `expected_channel`). 10 cases semeados.
+`agent_eval_runs`: resultado de cada execução do harness (passed bool, latency_ms, actual_output).
+
+---
+
+## Funções chave
+
+| Função | Assinatura | Propósito |
+|---|---|---|
+| `has_role` | `(uuid, app_role) → bool` | SECURITY DEFINER, RBAC check |
+| `check_consent` | `(uuid, sm_channel) → bool` | Verifica opt-out antes de envio |
+| `signal_score` | `(uuid) → numeric` | Score decay temporal por entity |
+| `has_recent_account_touchpoint` | `(uuid, hours int) → bool` | Anti-carpet-bombing por mpresa |
+| `compute_daily_cap` | `(text) → int` | Ramp-up de sender de e-mail |
+| `fn_recover_stale_locks` | `() → int` | Libera locks de 10min+ travados |
+| `fn_archive_old_target_events` | `() → int` | Cleanup de eventos >1 ano |
+| `export_entity_personal_data` | `(uuid) → jsonb` | LGPD Art.18 export |
+| `delete_entity_personal_data` | `(uuid, uuid) → void` | LGPD Art.18 apagamento (admin only) |
+| `validate_template_vars` | `(text, text[]) → bool` | Valida variáveis em template |
+
+---
+
+## Regras críticas (no violar)
+
+1. **SKIP LOCKED obrigatório** no tick de cadência — `SELECT ... FOR UPDATE SKIP LOCKED LIMIT 100`
+2. **check_consent() OBRiGATÓRIO** antes de qualquer sinu-send, sms-send, etc.
+3. **UNIQUE `(source, external_id)`** em `sales_machine_events`: usar INSERT ... ON CONFLICT DO NOTHING nos webhooks
+4. **entity_map upsert** — INSERT ... ON CONFLICT (kind, lux_id) DO UPDATE — nunca INSERT direto
+5. **Transições de estado inválidas** — nunca UPDATE campaign_targets.state fora da máquina de estados
+6. **`locked_until`** — sempre setar ao pegar um target; sempre limpar ao terminar
+7. **audit trail** — campaign_target_events é append-only, nunca deletar (exceto o cleanup de 1 ano)
+8. **disclosure_text** — injetar na primeira mensagem do agente (agent_identity_config)
+9. **stop_word_lists** — detectar keywords de opt-out em webhook-singu, gravar consent_ledger imediatamente
+10. **LGPD** — delete_entity_personal_data() é a única forma de apagar dados de contato

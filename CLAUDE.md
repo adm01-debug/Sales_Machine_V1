@@ -1,1 +1,114 @@
-IyBTQUxFUyBNQUNISU5FIOKAlCBDTEFVREUubWQKPiBJbnN0cnXDp8O1ZXMgcGFyYSBDbGF1ZGUgQ29kZSBlIGFnZW50ZXMgZGUgSUEgdHJhYmFsaGFuZG8gbmVzdGUgcHJvamV0bwoKIyMgSWRlbnRpZGFkZSBkbyBwcm9qZXRvCi0gKipSZXBvOioqIGBhZG0wMS1kZWJ1Zy9zb2NpYWwtc2FsZXMtc3ltcGhvbnlgCi0gKipTdGFjazoqKiBWaXRlL1JlYWN0L1N1cGFiYXNlICsgRWRnZSBGdW5jdGlvbnMgKERlbm8vVHlwZVNjcmlwdCkKLSAqKkJhbmNvOioqIFN1cGFiYXNlIENsb3VkLCAxMCBtaWdyYXRpb25zIGFwbGljYWRhcyAoMDAx4oCTMDEwKQotICoqQnJhbmNoIHByaW5jaXBhbDoqKiBgbWFpbmAKCiMjIEFycXVpdGV0dXJhCgpgYGAKTFVYIChJQ1AgZGlzY292ZXJ5KSDilIDilIB3ZWJob29rLWx1eOKUgOKUgOKWtiBlbnRpdHlfbWFwICh1cHNlcnQpCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg4pSCCiAgICAgICAgICAgICAgICAgICAgICAgIHBnX2Nyb24g4pSA4pSAdGljay1jYWRlbmNl4pSA4pSA4pa2IGZuX2NsYWltX2NhZGVuY2VfYmF0Y2ggKFNLSVAgTE9DS0VEKQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKUgiBjaGVja19jb25zZW50KCkg4pyTIGhhc19yZWNlbnRfYWNjb3VudF90b3VjaHBvaW50KCkg4pyTCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg4pSCCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgRkFUT1IgWCBBUEkg4pSA4pSA4pa2IG1lbnNhZ2VtIGdlcmFkYQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKUggogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwZW5kaW5nX2FwcHJvdmFsIOKUgOKUgGFwcHJvdmUtdG91Y2hwb2ludOKUgOKUgOKWtiBvcGVyYXRvcgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBxdWV1ZWQgICAgICAgICAgIOKUgOKUgHNpbmd1LXNlbmTilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilrYgU0lOR1UgQVBJCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg4pSCCiAgICAgICAgICAgICAgIFNJTkdVIHdlYmhvb2sg4pSA4pSAd2ViaG9vay1zaW5ndeKUgOKUgOKWtiBjb25zZW50X2xlZGdlciAob3B0LW91dCkg4pa2IGNhbXBhaWduX3RhcmdldCBzdGF0ZQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKUggogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdGF0ZT0ncmVwbGllZCcg4pSA4pSAaGFuZG9mZi1kZWFs4pSA4pSA4pa2IFBST01PIENIQU1QSU9OUwogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKUggogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdGF0ZT0nY29tcGxldGVkJyAoVEVSTUlOQUwpCmBgYAoKIyMgVmFyacOhdmVpcyBkZSBhbWJpZW50ZSBuZWNlc3PDoXJpYXMgKFN1cGFiYXNlIFNlY3JldHMpCgpgYGBiYXNoCiMgQ29yZQpTVVBBQkFTRV9VUkw9aHR0cHM6Ly88cHJvamVjdD4uc3VwYWJhc2UuY28KU1VQQUJBU0VfU0VSVklDRV9ST0xFX0tFWT08c2VydmljZV9yb2xlX2tleT4KCiMgV2ViaG9va3MgKEhNQUMtU0hBMjU2KQpTTV9XRUJIT09LX1NFQ1JFVD08Z2xvYmFsX2ZhbGxiYWNrPgpTTV9XRUJIT09LX1NFQ1JFVF9MVVg9PGx1eF9zcGVjaWZpYz4KU01fV0VCSE9PS19TRUNSRVRfU0lOR1U9PHNpbmd1X3NwZWNpZmljPgpTTV9XRUJIT09LX1NFQ1JFVF9GQVRPUlg9PGZhdG9yeF9zcGVjaWZpYz4KCiMgU0lOR1UgKGNhbmFsIGV4ZWN1dG9yKQpTSU5HVV9BUElfVVJMPWh0dHBzOi8vYXBpLnNpbmd1LmNvbS5icgpTSU5HVV9BUElfS0VZPTxrZXk+CgojIEZBVE9SIFggKGdlcmHDp8OjbyBkZSBtZW5zYWdlbSBJQSkKRkFUT1JYX0FQSV9VUkw9aHR0cHM6Ly9hcGkuZmF0w7NyeC5jb20uYnIKRkFUT1JYX0FQSV9LRVk9PGtleT4KRkFUT1JYX0RFRkFVTFRfQUdFTlRfSUQ9PGFnZW50X3V1aWQ+CgojIFBST01PIENIQU1QSU9OUyAoaGFuZG9mZikKUFJPTU9fQ0hBTVBJT05TX0FQSV9VUkw9aHR0cHM6Ly9hcGkucHJvbW9jaGFtcGlvbnMuY29tLmJyClBST01PX0NIQU1QSU9OU19BUElfS0VZPTxrZXk+CmBgYAoKIyMgUmVncmFzIGNyw610aWNhcyBkbyBiYW5jbyAoTlVOQ0EgdmlvbGFyKQoKMS4gKipjaGVja19jb25zZW50KCkgT0JSSUdBVMOTUklPKiogYW50ZXMgZGUgcXVhbHF1ZXIgYHNpbmd1LXNlbmRgCjIuICoqU0tJUCBMT0NLRUQgb2JyaWdhdMOzcmlvKiogbm8gdGljayDigJQgYGZuX2NsYWltX2NhZGVuY2VfYmF0Y2hgIGrDoSBnYXJhbnRlCjMuICoqVU5JUVVFKHNvdXJjZSwgZXh0ZXJuYWxfaWQpKiogZW0gc2FsZXNfbWFjaGluZV9ldmVudHMg4oCUIHVzYXIgYE9OIENPTkZMSUNUIERPIE5PVEhJTkdgCjQuICoqZW50aXR5X21hcCB1cHNlcnQqKiDigJQgYE9OIENPTkZMSUNUIChraW5kLCBsdXhfaWQpIERPIFVQREFURWAg4oCUIG51bmNhIElOU0VSVCBkaXJldG8KNS4gKipTdGF0ZSBtYWNoaW5lKiog4oCUIHRyYW5zacOnw7VlcyB2aWEgdHJpZ2dlciBgdGdfdmFsaWRhdGVfdGFyZ2V0X3N0YXRlX3RyYW5zaXRpb25gCjYuICoqTEdQRCoqIOKAlCBgZGVsZXRlX2VudGl0eV9wZXJzb25hbF9kYXRhKClgIMOpIGEgw7puaWNhIGZvcm1hIGRlIGFwYWdhciBkYWRvcyBwZXNzb2Fpcwo3LiAqKmRpc2Nsb3N1cmVfdGV4dCoqIOKAlCBzZW1wcmUgaW5qZXRhciBuYSBwcmltZWlyYSBtZW5zYWdlbSAoYWdlbnRfaWRlbnRpdHlfY29uZmlnKQo4LiAqKnN0b3Bfd29yZF9saXN0cyoqIOKAlCBkZXRlY3RhciBlbSB3ZWJob29rLXNpbmd1IOKGkiBjb25zZW50X2xlZGdlciBpbWVkaWF0YW1lbnRlCgojIyBFZGdlIGZ1bmN0aW9ucyBkaXNwb27DrXZlaXMKCnwgRnVuw6fDo28gfCBUcmlnZ2VyIHwgUHJvcMOzc2l0byB8CnwtLS18LS0tfC0tLXwKfCBgd2ViaG9vay1sdXhgIHwgSFRUUCBQT1NUIChITUFDKSB8IEluZ2VzdMOjbyBMVVggfAp8IGB3ZWJob29rLXNpbmd1YCB8IEhUVFAgUE9TVCAoSE1BQykgfCBFdmVudG9zIGRlIGNhbmFsIHwKfCBgd2ViaG9vay1mYXRvcnhgIHwgSFRUUCBQT1NUIChITUFDKSB8IERlY2lzw6NvIGRvIGFnZW50ZSB8CnwgYHRpY2stY2FkZW5jZWAgfCBwZ19jcm9uICgxbWluKSB8IE9ycXVlc3RyYWRvciAxOjEgfAp8IGB0aWNrLW1hcmtldGluZ2AgfCBwZ19jcm9uICg1bWluKSB8IEJyb2FkY2FzdCAxOm1hbnkgfAp8IGBzaW5ndS1zZW5kYCB8IEludGVybmFsIHwgRGVzcGFjaGEgbWVuc2FnZW0gfAp8IGBhcHByb3ZlLXRvdWNocG9pbnRgIHwgSFRUUCBQT1NUIChKV1QpIHwgR2F0ZSBodW1hbm8gfAp8IGBoYW5kb2ZmLWRlYWxgIHwgSW50ZXJuYWwgfCBIYW5kb2ZmIFBST01PIHwKCiMjIHBnX2Nyb24g4oCUIGNvbmZpZ3VyYXIgYXDDs3MgZGVwbG95CgpgYGBzcWwKLS0gRGVzY29tZW50YXIgZSBhZGFwdGFyIG5hIG1pZ3JhdGlvbiAwMTAgYXDDs3MgZGVwbG95OgpTRUxFQ1QgY3Jvbi5zY2hlZHVsZSgnc20tY2FkZW5jZS10aWNrJywgJyogKiAqICogKicsCiAgJCRTRUxFQ1QgbmV0Lmh0dHBfcG9zdCgKICAgIHVybCA6PSBjdXJyZW50X3NldHRpbmcoJ2FwcC5zdXBhYmFzZV91cmwnKSB8fCAnL2Z1bmN0aW9ucy92MS90aWNrLWNhZGVuY2UnLAogICAgaGVhZGVycyA6PSBqc29uYl9idWlsZF9vYmplY3QoJ0F1dGhvcml6YXRpb24nLCAnQmVhcmVyICcgfHwgY3VycmVudF9zZXR0aW5nKCdhcHAuc2VydmljZV9yb2xlX2tleScpKQogICkkJAopOwoKU0VMRUNUIGNyb24uc2NoZWR1bGUoJ3NtLW1hcmtldGluZy10aWNrJywgJyovNSAqICogKiAqJywKICAkJFNFTEVDVCBuZXQuaHR0cF9wb3N0KAogICAgdXJsIDo9IGN1cnJlbnRfc2V0dGluZygnYXBwLnN1cGFiYXNlX3VybCcpIHx8ICcvZnVuY3Rpb25zL3YxL3RpY2stbWFya2V0aW5nJywKICAgIGhlYWRlcnMgOj0ganNvbmJfYnVpbGRfb2JqZWN0KCdBdXRob3JpemF0aW9uJywgJ0JlYXJlciAnIHx8IGN1cnJlbnRfc2V0dGluZygnYXBwLnNlcnZpY2Vfcm9sZV9rZXknKSkKICApJCQKKTsKClNFTEVDVCBjcm9uLnNjaGVkdWxlKCdzbS1xdW90YS1yZXNldCcsICcwIDAgKiAqIConLCAnU0VMRUNUIHB1YmxpYy5mbl9yZXNldF9kYWlseV9xdW90YXMoKScpOwpTRUxFQ1QgY3Jvbi5zY2hlZHVsZSgnc20tYXJjaGl2ZS1ldmVudHMnLCAnMCAzICogKiAwJywgJ1NFTEVDVCBwdWJsaWMuZm5fYXJjaGl2ZV9vbGRfdGFyZ2V0X2V2ZW50cygpJyk7CmBgYAoKIyMgTW9uaXRvcmFtZW50bwoKYGBgc3FsCi0tIERhc2hib2FyZCBkZSBzYcO6ZGUgZW0gdGVtcG8gcmVhbDoKU0VMRUNUICogRlJPTSBwdWJsaWMudl9zZWN1cml0eV9hdWRpdDsKCi0tIFRhcmdldHMgdHJhdmFkb3M6ClNFTEVDVCBpZCwgc3RhdGUsIGxvY2tlZF91bnRpbCBGUk9NIGNhbXBhaWduX3RhcmdldHMgV0hFUkUgc3RhdGU9J3J1bm5pbmcnIEFORCBsb2NrZWRfdW50aWwgPCBub3coKTsKCi0tIE9wdC1vdXRzIHJlY2VudGVzOgpTRUxFQ1QgZW50aXR5X2lkLCBjaGFubmVsLCBvcHRlZF9vdXRfYXQgRlJPTSBjb25zZW50X2xlZGdlciBXSEVSRSBzdGF0dXM9J29wdGVkX291dCcgT1JERVIgQlkgb3B0ZWRfb3V0X2F0IERFU0MgTElNSVQgMjA7CmBgYAo=
+# SALES MACHINE — CLAUDE.md
+> Instruções para Claude Code e agentes de IA trabalhando neste projeto
+
+## Identidade do projeto
+- **Repo:** `adm01-debug/social-sales-symphony`
+- **Stack:** Vite/React/Supabase + Edge Functions (Deno/TypeScript)
+- **Banco:** Supabase Cloud, 10 migrations aplicadas (001–010)
+- **Branch principal:** `main`
+
+## Arquitetura
+
+```
+LUX (ICP discovery) ──webhook-lux──▶ entity_map (upsert)
+                                            │
+                        pg_cron ──tick-cadence──▶ fn_claim_cadence_batch (SKIP LOCKED)
+                                            │ check_consent() ✓ has_recent_account_touchpoint() ✓
+                                            │
+                                      FATOR X API ──▶ mensagem gerada
+                                            │
+                              pending_approval ──approve-touchpoint──▶ operator
+                              queued           ──singu-send──────────▶ SINGU API
+                                            │
+               SINGU webhook ──webhook-singu──▶ consent_ledger (opt-out) ▶ campaign_target state
+                                            │
+                              state='replied' ──handoff-deal──▶ PROMO CHAMPIONS
+                                            │
+                              state='completed' (TERMINAL)
+```
+
+## Variáveis de ambiente necessárias (Supabase Secrets)
+
+```bash
+# Core
+SUPABASE_URL=https://<project>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<service_role_key>
+
+# Webhooks (HMAC-SHA256)
+SM_WEBHOOK_SECRET=<global_fallback>
+SM_WEBHOOK_SECRET_LUX=<lux_specific>
+SM_WEBHOOK_SECRET_SINGU=<singu_specific>
+SM_WEBHOOK_SECRET_FATORX=<fatorx_specific>
+
+# SINGU (canal executor)
+SINGU_API_URL=https://api.singu.com.br
+SINGU_API_KEY=<key>
+
+# FATOR X (geração de mensagem IA)
+FATORX_API_URL=https://api.fatórx.com.br
+FATORX_API_KEY=<key>
+FATORX_DEFAULT_AGENT_ID=<agent_uuid>
+
+# PROMO CHAMPIONS (handoff)
+PROMO_CHAMPIONS_API_URL=https://api.promochampions.com.br
+PROMO_CHAMPIONS_API_KEY=<key>
+```
+
+## Regras críticas do banco (NUNCA violar)
+
+1. **check_consent() OBRIGATÓRIO** antes de qualquer `singu-send`
+2. **SKIP LOCKED obrigatório** no tick — `fn_claim_cadence_batch` já garante
+3. **UNIQUE(source, external_id)** em sales_machine_events — usar `ON CONFLICT DO NOTHING`
+4. **entity_map upsert** — `ON CONFLICT (kind, lux_id) DO UPDATE` — nunca INSERT direto
+5. **State machine** — transições via trigger `tg_validate_target_state_transition`
+6. **LGPD** — `delete_entity_personal_data()` é a única forma de apagar dados pessoais
+7. **disclosure_text** — sempre injetar na primeira mensagem (agent_identity_config)
+8. **stop_word_lists** — detectar em webhook-singu → consent_ledger imediatamente
+
+## Edge functions disponíveis
+
+| Função | Trigger | Propósito |
+|---|---|---|
+| `webhook-lux` | HTTP POST (HMAC) | Ingestão LUX |
+| `webhook-singu` | HTTP POST (HMAC) | Eventos de canal |
+| `webhook-fatorx` | HTTP POST (HMAC) | Decisão do agente |
+| `tick-cadence` | pg_cron (1min) | Orquestrador 1:1 |
+| `tick-marketing` | pg_cron (5min) | Broadcast 1:many |
+| `singu-send` | Internal | Despacha mensagem |
+| `approve-touchpoint` | HTTP POST (JWT) | Gate humano |
+| `handoff-deal` | Internal | Handoff PROMO |
+
+## pg_cron — configurar após deploy
+
+```sql
+-- Descomentar e adaptar na migration 010 após deploy:
+SELECT cron.schedule('sm-cadence-tick', '* * * * *',
+  $$SELECT net.http_post(
+    url := current_setting('app.supabase_url') || '/functions/v1/tick-cadence',
+    headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'))
+  )$$
+);
+
+SELECT cron.schedule('sm-marketing-tick', '*/5 * * * *',
+  $$SELECT net.http_post(
+    url := current_setting('app.supabase_url') || '/functions/v1/tick-marketing',
+    headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'))
+  )$$
+);
+
+SELECT cron.schedule('sm-quota-reset', '0 0 * * *', 'SELECT public.fn_reset_daily_quotas()');
+SELECT cron.schedule('sm-archive-events', '0 3 * * 0', 'SELECT public.fn_archive_old_target_events()');
+```
+
+## Monitoramento
+
+```sql
+-- Dashboard de saúde em tempo real:
+SELECT * FROM public.v_security_audit;
+
+-- Targets travados:
+SELECT id, state, locked_until FROM campaign_targets WHERE state='running' AND locked_until < now();
+
+-- Opt-outs recentes:
+SELECT entity_id, channel, opted_out_at FROM consent_ledger WHERE status='opted_out' ORDER BY opted_out_at DESC LIMIT 20;
+```
