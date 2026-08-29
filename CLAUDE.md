@@ -1,114 +1,95 @@
-# SALES MACHINE — CLAUDE.md
-> Instruções para Claude Code e agentes de IA trabalhando neste projeto
+# Instruções para Agentes — Sales_Machine_V1
 
-## Identidade do projeto
-- **Repo:** `adm01-debug/social-sales-symphony`
-- **Stack:** Vite/React/Supabase + Edge Functions (Deno/TypeScript)
-- **Banco:** Supabase Cloud, 10 migrations aplicadas (001–010)
-- **Branch principal:** `main`
+> Memória operacional do repo (Guia PromptOps v2.0, sec. 3.2). Governança em `00-governanca/` sobrepõe qualquer instrução aqui. Snapshot estrutural em `.contexto-compartilhado/dump-arquitetura.json`.
 
-## Arquitetura
+## O que é este sistema
 
-```
-LUX (ICP discovery) ──webhook-lux──▶ entity_map (upsert)
-                                            │
-                        pg_cron ──tick-cadence──▶ fn_claim_cadence_batch (SKIP LOCKED)
-                                            │ check_consent() ✓ has_recent_account_touchpoint() ✓
-                                            │
-                                      FATOR X API ──▶ mensagem gerada
-                                            │
-                              pending_approval ──approve-touchpoint──▶ operator
-                              queued           ──singu-send──────────▶ SINGU API
-                                            │
-               SINGU webhook ──webhook-singu──▶ consent_ledger (opt-out) ▶ campaign_target state
-                                            │
-                              state='replied' ──handoff-deal──▶ PROMO CHAMPIONS
-                                            │
-                              state='completed' (TERMINAL)
-```
+Sistema de **prospecção outbound com IA** (SaaS B2B). Funil: **LUX** (descoberta de ICP/leads) → orquestração de cadências multicanal 1:1 (WhatsApp, email, SMS; LinkedIn/Instagram em stub) → **SINGU** (canal executor/CRM) → **FATOR X** (geração de mensagens com IA) → **PROMO CHAMPIONS** (handoff de deals quentes). Também tem módulo broadcast 1:many (journeys, audiências, lead forms).
+**Criticidade:** envia mensagens reais para pessoas reais. Erro = spam, bloqueio de sender e violação de LGPD. Consentimento (`check_consent`) e disclosure de IA são inegociáveis.
 
-## Variáveis de ambiente necessárias (Supabase Secrets)
+## Stack (versões exatas)
+
+- **Runtime/linguagem:** TypeScript 5.8 (strict) · React 19.2 · Node 22 (tipos) · **bun** (gerenciador canônico — `bunfig.toml` presente; nunca npm/yarn)
+- **Framework:** TanStack Start 1.168 + Router 1.170 + Query 5.101 · Vite 8 · Nitro 3 (beta)
+- **UI:** Tailwind CSS 4.2 + shadcn/ui (Radix) · formulários: react-hook-form 7 + Zod 3.24
+- **Banco:** PostgreSQL (Supabase Cloud), schema `public`, RLS em todas as tabelas, pg_cron
+- **Testes:** Vitest 4.1 · Lint: ESLint 9 + Prettier 3
+- **Cliente Supabase:** @supabase/supabase-js 2.110
+
+## Comandos canônicos
 
 ```bash
-# Core
-SUPABASE_URL=https://<project>.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=<service_role_key>
-
-# Webhooks (HMAC-SHA256)
-SM_WEBHOOK_SECRET=<global_fallback>
-SM_WEBHOOK_SECRET_LUX=<lux_specific>
-SM_WEBHOOK_SECRET_SINGU=<singu_specific>
-SM_WEBHOOK_SECRET_FATORX=<fatorx_specific>
-
-# SINGU (canal executor)
-SINGU_API_URL=https://api.singu.com.br
-SINGU_API_KEY=<key>
-
-# FATOR X (geração de mensagem IA)
-FATORX_API_URL=https://api.fatórx.com.br
-FATORX_API_KEY=<key>
-FATORX_DEFAULT_AGENT_ID=<agent_uuid>
-
-# PROMO CHAMPIONS (handoff)
-PROMO_CHAMPIONS_API_URL=https://api.promochampions.com.br
-PROMO_CHAMPIONS_API_KEY=<key>
+bun install          # instalar deps
+bun run dev          # dev server (vite dev)
+bun run build        # build de produção
+bun test             # testes (vitest run)
+bun run lint         # eslint .
+bun run format       # prettier --write .
+bunx tsc --noEmit    # typecheck (não há script dedicado)
+python3 scripts/gerar-dump-arquitetura.py   # regerar dump após mudança estrutural (Lei 12)
 ```
 
-## Regras críticas do banco (NUNCA violar)
+## Convenções que NÃO se discutem
 
-1. **check_consent() OBRIGATÓRIO** antes de qualquer `singu-send`
-2. **SKIP LOCKED obrigatório** no tick — `fn_claim_cadence_batch` já garante
-3. **UNIQUE(source, external_id)** em sales_machine_events — usar `ON CONFLICT DO NOTHING`
-4. **entity_map upsert** — `ON CONFLICT (kind, lux_id) DO UPDATE` — nunca INSERT direto
-5. **State machine** — transições via trigger `tg_validate_target_state_transition`
-6. **LGPD** — `delete_entity_personal_data()` é a única forma de apagar dados pessoais
-7. **disclosure_text** — sempre injetar na primeira mensagem (agent_identity_config)
-8. **stop_word_lists** — detectar em webhook-singu → consent_ledger imediatamente
+- **TSS é a fonte da verdade dos endpoints.** As edge functions Deno legadas já foram removidas (`supabase/functions/` ausente desde antes de 2026-08-29); reintroduzi-las exige ADR.
+- **Server functions** (`src/lib/*.functions.ts`): sempre `requireSupabaseAuth` + validador Zod.
+- **Webhooks públicos** (`src/routes/api/public/`): sempre verificação HMAC-SHA256 com timing-safe compare.
+- **Banco:** snake_case; datas `timestamptz` UTC; migrations sempre **novas** (nunca editar aplicada).
+- **Imports:** alias `@/` para `src/`.
 
-## Edge functions disponíveis
+### As 10 regras críticas do banco (NUNCA violar)
 
-| Função | Trigger | Propósito |
-|---|---|---|
-| `webhook-lux` | HTTP POST (HMAC) | Ingestão LUX |
-| `webhook-singu` | HTTP POST (HMAC) | Eventos de canal |
-| `webhook-fatorx` | HTTP POST (HMAC) | Decisão do agente |
-| `tick-cadence` | pg_cron (1min) | Orquestrador 1:1 |
-| `tick-marketing` | pg_cron (5min) | Broadcast 1:many |
-| `singu-send` | Internal | Despacha mensagem |
-| `approve-touchpoint` | HTTP POST (JWT) | Gate humano |
-| `handoff-deal` | Internal | Handoff PROMO |
+1. **SKIP LOCKED** no tick de cadência (`FOR UPDATE SKIP LOCKED LIMIT 100`)
+2. **`check_consent()` obrigatório** antes de qualquer envio (singu-send, sms, email...)
+3. **`UNIQUE(source, external_id)`** em `sales_machine_events` → `INSERT ... ON CONFLICT DO NOTHING`
+4. **`entity_map` upsert** — `ON CONFLICT (kind, lux_id) DO UPDATE`; nunca INSERT direto
+5. **Nunca** UPDATE em `campaign_targets.state` fora da máquina de estados (triggers `tg_*`)
+6. **`locked_until`** — sempre setar ao pegar um target; sempre limpar ao terminar
+7. **`campaign_target_events` / `sales_machine_events` são append-only** (cleanup só >1 ano)
+8. **Disclosure de IA** na primeira mensagem do agente
+9. **Stop words de opt-out** detectadas no webhook SINGU → `consent_ledger` imediatamente
+10. **LGPD** — apagamento de dados pessoais só via função dedicada (admin), nunca DELETE manual
 
-## pg_cron — configurar após deploy
+## Mapa do código
 
-```sql
--- Descomentar e adaptar na migration 010 após deploy:
-SELECT cron.schedule('sm-cadence-tick', '* * * * *',
-  $$SELECT net.http_post(
-    url := current_setting('app.supabase_url') || '/functions/v1/tick-cadence',
-    headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'))
-  )$$
-);
+- **Páginas (UI autenticada):** `src/routes/_authenticated/` (dashboard, campaigns, approvals, journeys, audiences, forms, compliance, deliverability, evals, ops...)
+- **Endpoints públicos (API):** `src/routes/api/public/` — `webhooks/{lux,singu,singu-bounce,fatorx,fuxico}`, `hooks/{tick-cadence,tick-journeys,tick-marketing,alert-sweep,budget-reallocate}`, `track/{open.gif,click}`, `unsubscribe`, `agent-tools/send-message`
+- **Lógica de domínio:** `src/lib/` — engines: `cadence-engine`, `journey-engine`, `budget*`, `compliance*`, `message-preflight`, `email-preflight`, `ops-*`, `sentiment`; server fns: `*.functions.ts`
+- **Integrações:** `src/integrations/{supabase,external,lovable,social}` — clients LUX/SINGU/FATOR X em `external/`
+- **Banco:** `supabase/migrations/` (45 aplicadas) · referência de schema: `.contexto-compartilhado/dicionario-dados.md`
+- **Testes:** `*.test.ts` colocados junto ao código + `src/test/` (fake-supabase)
 
-SELECT cron.schedule('sm-marketing-tick', '*/5 * * * *',
-  $$SELECT net.http_post(
-    url := current_setting('app.supabase_url') || '/functions/v1/tick-marketing',
-    headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'))
-  )$$
-);
+## Armadilhas conhecidas deste repo
 
-SELECT cron.schedule('sm-quota-reset', '0 0 * * *', 'SELECT public.fn_reset_daily_quotas()');
-SELECT cron.schedule('sm-archive-events', '0 3 * * 0', 'SELECT public.fn_archive_old_target_events()');
+- **Baseline de qualidade vermelha (pré-existente, 2026-08-29):** lint com 2.639 problemas e 61 testes falhando. Não piore; saneamento é pendência registrada (ver `.contexto-compartilhado/pendencias-conhecidas.md`).
+- **`docs/SCHEMA_REFERENCE.md` está desatualizado** (diz "009 migrations", cita enums/tabelas aspiracionais). Fonte canônica: `.contexto-compartilhado/dump-arquitetura.json` + `dicionario-dados.md`.
+- **Dois lockfiles:** bun é canônico; **não delete** `package-lock.json` (pendência aberta do dono).
+- **MCP Supabase pode apontar para o banco errado** — valide o schema antes de confiar na introspecção.
+- **Não há CI** (`.github/` inexistente): testes e lint não rodam automaticamente — rodar local é obrigação sua.
+- **`.env` existe mas não há `.env.example`** — variáveis documentadas abaixo; nunca commitar valores.
+
+### Variáveis de ambiente (nomes REAIS, conferidos no código em 2026-08-29)
+
+```bash
+SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY / SUPABASE_PUBLISHABLE_KEY  # core (publishable autentica os hooks pg_cron via header `apikey`)
+LUX_URL / LUX_SERVICE_KEY / LUX_WEBHOOK_SECRET                       # por sistema externo,
+SINGU_URL / SINGU_SERVICE_KEY / SINGU_WEBHOOK_SECRET                 # mesmo padrão
+FATORX_URL / FATORX_SERVICE_KEY / FATORX_WEBHOOK_SECRET / FATORX_AGENT_ID_DEFAULT
+FUXICO_URL / FUXICO_SERVICE_KEY / FUXICO_WEBHOOK_SECRET              # tracking
+SM_WEBHOOK_SECRET                                                    # assinatura de unsubscribe tokens
+UNIPILE_* (stubs sociais — ver src/integrations/social/types.ts)     # ainda não configurado
 ```
 
-## Monitoramento
+> ⚠️ O CLAUDE.md antigo (pré-2026-08-29) citava nomes errados (`SINGU_API_KEY`, `SM_WEBHOOK_SECRET_LUX`...). A fonte é `src/integrations/external/config.server.ts` — lidos em `process.env` **em request time**, nunca em module scope.
 
-```sql
--- Dashboard de saúde em tempo real:
-SELECT * FROM public.v_security_audit;
+## O que o agente NUNCA faz aqui
 
--- Targets travados:
-SELECT id, state, locked_until FROM campaign_targets WHERE state='running' AND locked_until < now();
+- Bypassar `check_consent()` ou qualquer gate de consentimento — **em hipótese nenhuma**
+- UPDATE direto em `campaign_targets.state`; INSERT direto em `entity_map`; DELETE em tabelas append-only
+- Apagar dados pessoais por DELETE manual (só função LGPD dedicada)
+- Alterar migration já aplicada; desabilitar RLS "temporariamente"
+- Commitar segredos ou `.env`; expor valores de env em logs/respostas
+- Force-push, rebase ou squash de histórico publicado (repo conectado ao Lovable — ver `AGENTS.md`)
+- Criar endpoints públicos sem HMAC/auth explícito
+- "Corrigir" a baseline de lint/test em massa sem autorização (escopo próprio)
 
--- Opt-outs recentes:
-SELECT entity_id, channel, opted_out_at FROM consent_ledger WHERE status='opted_out' ORDER BY opted_out_at DESC LIMIT 20;
-```

@@ -1,0 +1,1046 @@
+{
+  "atualizado_em": "2026-08-29T19:53:43+00:00",
+  "commit": "347301a",
+  "fonte": "migrations+src (analise estatica; nao introspeccao do banco ao vivo)",
+  "migrations_aplicadas": 45,
+  "banco": {
+    "tabelas": {
+      "agent_eval_cases": {
+        "colunas": {
+          "id": "uuid pk",
+          "name": "text not null",
+          "signal_json": "jsonb not null",
+          "expected_intent": "text not null",
+          "expected_channel": "public.sm_channel",
+          "notes": "text",
+          "agent_id": "text",
+          "created_at": "timestamptz not null",
+          "updated_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": []
+      },
+      "agent_eval_runs": {
+        "colunas": {
+          "id": "uuid pk",
+          "case_id": "uuid fk->public.agent_eval_cases not null",
+          "passed": "boolean not null",
+          "actual_output": "jsonb not null",
+          "latency_ms": "integer",
+          "error": "text",
+          "ran_by": "uuid fk->auth.users",
+          "ran_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": []
+      },
+      "audience_members": {
+        "colunas": {
+          "id": "uuid pk",
+          "audience_id": "uuid fk->public.audiences not null",
+          "entity_id": "uuid fk->public.entity_map not null",
+          "snapshot": "jsonb not null",
+          "created_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [
+          "idx_audience_members_audience",
+          "idx_audience_members_entity"
+        ],
+        "triggers": []
+      },
+      "audiences": {
+        "colunas": {
+          "id": "uuid pk",
+          "name": "text not null",
+          "description": "text",
+          "rules": "jsonb not null",
+          "member_count": "integer not null",
+          "last_refreshed_at": "timestamptz",
+          "archived": "boolean not null",
+          "created_by": "uuid",
+          "created_at": "timestamptz not null",
+          "updated_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": [
+          "trg_audiences_touch"
+        ]
+      },
+      "budget_reallocations": {
+        "colunas": {
+          "id": "UUID pk not null",
+          "applied_at": "TIMESTAMPTZ not null",
+          "actor_user_id": "UUID",
+          "moved_total_brl": "NUMERIC(12,2) not null",
+          "total_before_brl": "NUMERIC(12,2) not null",
+          "total_after_brl": "NUMERIC(12,2) not null",
+          "channels_changed": "INTEGER not null",
+          "transfers": "JSONB not null",
+          "changes": "JSONB not null",
+          "unmet": "JSONB not null"
+        },
+        "rls": true,
+        "indices": [
+          "budget_reallocations_applied_at_idx"
+        ],
+        "triggers": []
+      },
+      "cadence_rules": {
+        "colunas": {
+          "id": "UUID pk",
+          "name": "TEXT not null",
+          "description": "TEXT",
+          "steps": "JSONB not null",
+          "owner_id": "UUID fk->auth.users",
+          "is_active": "BOOLEAN not null",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null",
+          "preset": "public.sm_cadence_preset NOT NULL DEFAULT 'custom'"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": [
+          "trg_cadence_rules_touch"
+        ]
+      },
+      "campaign_sends": {
+        "colunas": {
+          "id": "uuid pk",
+          "campaign_id": "uuid fk->public.marketing_campaigns not null",
+          "variant_id": "uuid fk->public.campaign_variants",
+          "entity_id": "uuid fk->public.entity_map not null",
+          "touchpoint_id": "uuid fk->public.contact_touchpoints",
+          "state": "text not null",
+          "attempts": "integer not null",
+          "max_attempts": "integer not null",
+          "next_run_at": "timestamptz not null",
+          "locked_until": "timestamptz",
+          "last_error": "text",
+          "sent_at": "timestamptz",
+          "created_at": "timestamptz not null",
+          "updated_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [
+          "idx_campaign_sends_campaign",
+          "idx_campaign_sends_due",
+          "idx_campaign_sends_entity",
+          "idx_campaign_sends_skipped"
+        ],
+        "triggers": [
+          "trg_campaign_sends_touch"
+        ]
+      },
+      "campaign_target_events": {
+        "colunas": {
+          "id": "uuid pk",
+          "target_id": "uuid fk->public.campaign_targets not null",
+          "from_state": "public.sm_target_state",
+          "to_state": "public.sm_target_state not null",
+          "reason": "text",
+          "actor": "text not null",
+          "payload": "jsonb not null",
+          "created_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [
+          "idx_campaign_target_events_operator",
+          "idx_campaign_target_events_target"
+        ],
+        "triggers": []
+      },
+      "campaign_targets": {
+        "colunas": {
+          "id": "UUID pk not null",
+          "campaign_id": "UUID fk->public.campaigns_orchestration not null",
+          "entity_id": "UUID fk->public.entity_map not null",
+          "current_step": "INT not null",
+          "next_run_at": "TIMESTAMPTZ not null",
+          "status": "TEXT not null",
+          "last_error": "TEXT",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null",
+          "state": "public.sm_target_state NOT NULL DEFAULT 'queued'"
+        },
+        "rls": true,
+        "indices": [
+          "campaign_targets_campaign_idx",
+          "campaign_targets_entity_idx",
+          "campaign_targets_next_run_idx",
+          "idx_campaign_targets_consent_blocked",
+          "idx_campaign_targets_dead_letter_recovery",
+          "idx_campaign_targets_state_run"
+        ],
+        "triggers": [
+          "tg_campaign_targets_touch",
+          "trg_campaign_targets_state_log",
+          "trg_campaign_targets_status_sync",
+          "trg_log_target_state_change",
+          "trg_sync_target_status",
+          "trg_touch_campaign_targets"
+        ]
+      },
+      "campaign_variants": {
+        "colunas": {
+          "id": "uuid pk",
+          "campaign_id": "uuid fk->public.marketing_campaigns not null",
+          "label": "text not null",
+          "subject": "text",
+          "body": "text not null",
+          "media_url": "text",
+          "rcs_payload": "jsonb",
+          "split_percent": "integer not null",
+          "created_at": "timestamptz not null",
+          "updated_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [
+          "idx_campaign_variants_campaign"
+        ],
+        "triggers": [
+          "trg_campaign_variants_touch"
+        ]
+      },
+      "campaigns_orchestration": {
+        "colunas": {
+          "id": "UUID pk",
+          "name": "TEXT not null",
+          "description": "TEXT",
+          "icp_filter": "JSONB not null",
+          "channels": "public.sm_channel[] not null",
+          "fatorx_agent_id": "TEXT",
+          "cadence_rule_id": "UUID fk->public.cadence_rules",
+          "status": "public.sm_campaign_status not null",
+          "owner_id": "UUID fk->auth.users",
+          "requires_human_approval": "BOOLEAN not null",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null",
+          "cadence_preset": "public.sm_cadence_preset NOT NULL DEFAULT 'standard'",
+          "account_cooldown_hours": "integer NOT NULL DEFAULT 48"
+        },
+        "rls": true,
+        "indices": [
+          "idx_campaigns_status"
+        ],
+        "triggers": [
+          "trg_campaigns_touch"
+        ]
+      },
+      "channel_budgets": {
+        "colunas": {
+          "channel": "TEXT pk",
+          "daily_limit_brl": "NUMERIC(12,2) not null",
+          "monthly_limit_brl": "NUMERIC(12,2) not null",
+          "enabled": "BOOLEAN not null",
+          "note": "TEXT",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": [
+          "tg_channel_budgets_touch"
+        ]
+      },
+      "channel_quotas": {
+        "colunas": {
+          "id": "UUID pk",
+          "user_id": "UUID fk->auth.users not null",
+          "channel": "public.sm_channel not null",
+          "daily_cap": "INTEGER not null",
+          "current_count": "INTEGER not null",
+          "reset_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": [
+          "trg_quotas_touch"
+        ]
+      },
+      "channel_roi_stats": {
+        "colunas": {
+          "id": "UUID pk",
+          "channel": "public.sm_channel not null",
+          "date": "DATE not null",
+          "total_spent_brl": "DECIMAL(12, 4) not null",
+          "total_messages_sent": "INTEGER not null",
+          "total_conversions": "INTEGER not null",
+          "cac_brl": "DECIMAL(12, 4) GENERATED ALWAYS AS (",
+          "CASE": "WHEN total_messages_sent > 0 THEN (total_conversions::DECIMAL / total_messages_sent) * 100 ELSE 0 END",
+          "conversion_rate": "DECIMAL(5, 2) GENERATED ALWAYS AS (",
+          "created_at": "TIMESTAMPTZ",
+          "updated_at": "TIMESTAMPTZ"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": []
+      },
+      "compliance_terms": {
+        "colunas": {
+          "id": "UUID pk not null",
+          "term": "TEXT not null",
+          "niche": "public.sm_compliance_niche not null",
+          "severity": "public.sm_compliance_severity not null",
+          "reason": "TEXT not null",
+          "suggestion": "TEXT",
+          "is_active": "BOOLEAN not null",
+          "created_by": "UUID fk->auth.users not null",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null"
+        },
+        "rls": true,
+        "indices": [
+          "idx_compliance_terms_active",
+          "idx_compliance_terms_created_by",
+          "uq_compliance_terms_owner_niche_term"
+        ],
+        "triggers": [
+          "trg_compliance_terms_updated_at"
+        ]
+      },
+      "compliance_violations_log": {
+        "colunas": {
+          "id": "uuid pk",
+          "campaign_id": "uuid fk->public.marketing_campaigns",
+          "user_id": "uuid fk->auth.users not null",
+          "niche": "text not null",
+          "term": "text not null",
+          "severity": "text not null",
+          "reason": "text not null",
+          "text_snapshot": "text not null",
+          "action": "text not null",
+          "created_at": "timestamptz"
+        },
+        "rls": true,
+        "indices": [
+          "idx_compliance_violations_campaign_id",
+          "idx_compliance_violations_user_id"
+        ],
+        "triggers": []
+      },
+      "consent_ledger": {
+        "colunas": {
+          "id": "UUID pk not null",
+          "entity_id": "UUID fk->public.entity_map not null",
+          "channel": "sm_channel not null",
+          "status": "TEXT not null",
+          "source": "TEXT not null",
+          "reason": "TEXT",
+          "evidence": "JSONB not null",
+          "created_at": "TIMESTAMPTZ not null"
+        },
+        "rls": true,
+        "indices": [
+          "idx_consent_ledger_entity_channel"
+        ],
+        "triggers": []
+      },
+      "contact_churn_scores": {
+        "colunas": {
+          "id": "UUID pk",
+          "contact_id": "UUID fk->public.campaign_targets not null",
+          "risk_score": "DECIMAL(5, 2) not null",
+          "risk_level": "TEXT not null",
+          "reasoning": "TEXT, -- Explicação da IA para o score",
+          "metadata": "JSONB",
+          "calculated_at": "TIMESTAMPTZ",
+          "created_at": "TIMESTAMPTZ"
+        },
+        "rls": true,
+        "indices": [
+          "idx_churn_contact_id",
+          "idx_churn_risk_level"
+        ],
+        "triggers": []
+      },
+      "contact_touchpoints": {
+        "colunas": {
+          "id": "UUID pk",
+          "entity_id": "UUID fk->public.entity_map not null",
+          "campaign_id": "UUID fk->public.campaigns_orchestration",
+          "channel": "public.sm_channel not null",
+          "direction": "public.sm_direction not null",
+          "status": "public.sm_touchpoint_status not null",
+          "fatorx_thread_id": "TEXT",
+          "payload": "JSONB not null",
+          "singu_interaction_id": "TEXT",
+          "error": "TEXT",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null",
+          "attempts": "integer NOT NULL DEFAULT 0",
+          "email_message_id": "text",
+          "fuxico_tracking_id": "text"
+        },
+        "rls": true,
+        "indices": [
+          "contact_touchpoints_fuxico_tracking_id_idx",
+          "contact_touchpoints_fuxico_tracking_id_key",
+          "idx_contact_touchpoints_outbound_day",
+          "idx_contact_touchpoints_retry",
+          "idx_touchpoints_campaign",
+          "idx_touchpoints_email_message_id",
+          "idx_touchpoints_entity",
+          "idx_touchpoints_status"
+        ],
+        "triggers": [
+          "trg_touchpoints_touch"
+        ]
+      },
+      "email_deliverability_events": {
+        "colunas": {
+          "id": "UUID pk not null",
+          "touchpoint_id": "UUID fk->public.contact_touchpoints",
+          "entity_id": "UUID fk->public.entity_map",
+          "event_type": "TEXT not null",
+          "provider": "TEXT not null",
+          "external_id": "TEXT",
+          "raw": "JSONB not null",
+          "created_at": "TIMESTAMPTZ not null"
+        },
+        "rls": true,
+        "indices": [
+          "email_deliverability_events_external_id_key",
+          "idx_email_deliv_audit",
+          "idx_email_deliv_entity",
+          "idx_email_deliv_touchpoint"
+        ],
+        "triggers": []
+      },
+      "entity_map": {
+        "colunas": {
+          "id": "UUID pk",
+          "kind": "TEXT not null",
+          "display_name": "TEXT",
+          "lux_id": "TEXT",
+          "singu_id": "TEXT",
+          "fatorx_thread_id": "TEXT",
+          "metadata": "JSONB not null",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null",
+          "fuxico_id": "text"
+        },
+        "rls": true,
+        "indices": [
+          "entity_map_fuxico_id_key",
+          "uq_entity_map_lux",
+          "uq_entity_map_singu",
+          "uq_entity_map_thread"
+        ],
+        "triggers": [
+          "trg_entity_map_touch"
+        ]
+      },
+      "journey_edges": {
+        "colunas": {
+          "id": "uuid pk",
+          "journey_id": "uuid fk->public.journeys not null",
+          "from_node_id": "uuid fk->public.journey_nodes not null",
+          "to_node_id": "uuid fk->public.journey_nodes not null",
+          "branch": "text not null",
+          "ordinal": "smallint not null",
+          "created_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [
+          "journey_edges_from_idx",
+          "journey_edges_journey_idx"
+        ],
+        "triggers": []
+      },
+      "journey_enrollment_events": {
+        "colunas": {
+          "id": "uuid pk",
+          "enrollment_id": "uuid fk->public.journey_enrollments not null",
+          "node_id": "uuid fk->public.journey_nodes",
+          "action": "text not null",
+          "detail": "jsonb not null",
+          "created_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [
+          "journey_enrollment_events_enrollment_idx"
+        ],
+        "triggers": []
+      },
+      "journey_enrollments": {
+        "colunas": {
+          "id": "uuid pk",
+          "journey_id": "uuid fk->public.journeys not null",
+          "entity_id": "uuid fk->public.entity_map not null",
+          "current_node_id": "uuid fk->public.journey_nodes",
+          "state": "public.sm_enrollment_state not null",
+          "next_run_at": "timestamptz not null",
+          "locked_until": "timestamptz",
+          "attempts": "integer not null",
+          "last_error": "text",
+          "context": "jsonb not null",
+          "entered_at": "timestamptz not null",
+          "finished_at": "timestamptz",
+          "created_at": "timestamptz not null",
+          "updated_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [
+          "journey_enrollments_active_uniq",
+          "journey_enrollments_due_idx"
+        ],
+        "triggers": [
+          "journey_enrollments_touch"
+        ]
+      },
+      "journey_nodes": {
+        "colunas": {
+          "id": "uuid pk",
+          "journey_id": "uuid fk->public.journeys not null",
+          "kind": "public.sm_journey_node_kind not null",
+          "label": "text not null",
+          "config": "jsonb not null",
+          "position_x": "integer not null",
+          "position_y": "integer not null",
+          "created_at": "timestamptz not null",
+          "updated_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [
+          "journey_nodes_journey_idx"
+        ],
+        "triggers": [
+          "journey_nodes_touch"
+        ]
+      },
+      "journeys": {
+        "colunas": {
+          "id": "uuid pk",
+          "name": "text not null",
+          "description": "text",
+          "status": "public.sm_journey_status not null",
+          "entry_daily_cap": "integer not null",
+          "send_window_start": "smallint not null",
+          "send_window_end": "smallint not null",
+          "requires_human_approval": "boolean not null",
+          "allow_reentry": "boolean not null",
+          "metadata": "jsonb not null",
+          "created_by": "uuid",
+          "created_at": "timestamptz not null",
+          "updated_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": [
+          "journeys_touch"
+        ]
+      },
+      "lead_form_submissions": {
+        "colunas": {
+          "id": "UUID pk not null",
+          "form_id": "UUID fk->public.lead_forms not null",
+          "entity_id": "UUID fk->public.entity_map",
+          "email": "TEXT",
+          "phone": "TEXT",
+          "full_name": "TEXT",
+          "company_name": "TEXT",
+          "payload": "JSONB not null",
+          "status": "TEXT not null",
+          "confirm_token_hash": "TEXT",
+          "confirm_expires_at": "TIMESTAMPTZ",
+          "confirmed_at": "TIMESTAMPTZ",
+          "ip_hash": "TEXT",
+          "user_agent": "TEXT",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null"
+        },
+        "rls": true,
+        "indices": [
+          "idx_lead_form_submissions_email",
+          "idx_lead_form_submissions_form",
+          "idx_lead_form_submissions_status"
+        ],
+        "triggers": [
+          "trg_lead_form_submissions_touch"
+        ]
+      },
+      "lead_forms": {
+        "colunas": {
+          "id": "UUID pk not null",
+          "slug": "TEXT not null",
+          "name": "TEXT not null",
+          "title": "TEXT not null",
+          "description": "TEXT",
+          "fields": "JSONB not null",
+          "submit_label": "TEXT not null",
+          "success_message": "TEXT not null",
+          "consent_text": "TEXT not null",
+          "double_opt_in": "BOOLEAN not null",
+          "confirm_ttl_hours": "INTEGER not null",
+          "channel": "public.sm_channel not null",
+          "journey_id": "UUID fk->public.journeys",
+          "tags": "TEXT[] not null",
+          "status": "TEXT not null",
+          "submission_count": "INTEGER not null",
+          "created_by": "UUID",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null"
+        },
+        "rls": true,
+        "indices": [
+          "idx_lead_forms_status"
+        ],
+        "triggers": [
+          "trg_lead_forms_touch"
+        ]
+      },
+      "marketing_campaigns": {
+        "colunas": {
+          "id": "uuid pk",
+          "name": "text not null",
+          "objective": "text not null",
+          "status": "text not null",
+          "channel": "public.sm_channel not null",
+          "audience_id": "uuid fk->public.audiences",
+          "scheduled_at": "timestamptz",
+          "send_window_start": "time",
+          "send_window_end": "time",
+          "daily_cap": "integer not null",
+          "requires_human_approval": "boolean not null",
+          "started_at": "timestamptz",
+          "completed_at": "timestamptz",
+          "metadata": "jsonb not null",
+          "created_by": "uuid",
+          "created_at": "timestamptz not null",
+          "updated_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [
+          "idx_mkt_campaigns_status"
+        ],
+        "triggers": [
+          "trg_mkt_campaigns_touch"
+        ]
+      },
+      "message_templates": {
+        "colunas": {
+          "id": "UUID pk",
+          "name": "TEXT not null",
+          "channel": "public.sm_channel not null",
+          "body": "TEXT not null",
+          "media_url": "TEXT",
+          "rcs_payload": "JSONB",
+          "variables": "JSONB not null",
+          "archived": "BOOLEAN not null",
+          "created_by": "UUID fk->auth.users",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null",
+          "subject": "text",
+          "email_blocks": "jsonb"
+        },
+        "rls": true,
+        "indices": [
+          "idx_message_templates_channel",
+          "idx_message_templates_created_by"
+        ],
+        "triggers": [
+          "trg_message_templates_touch"
+        ]
+      },
+      "ops_alert_notifications": {
+        "colunas": {
+          "id": "UUID pk not null",
+          "alert_id": "TEXT not null",
+          "level": "TEXT not null",
+          "title": "TEXT not null",
+          "detail": "TEXT not null",
+          "first_notified_at": "TIMESTAMPTZ not null",
+          "last_notified_at": "TIMESTAMPTZ not null",
+          "occurrences": "INTEGER not null",
+          "resolved_at": "TIMESTAMPTZ",
+          "created_at": "TIMESTAMPTZ not null",
+          "updated_at": "TIMESTAMPTZ not null"
+        },
+        "rls": true,
+        "indices": [
+          "ops_alert_notifications_active_uidx",
+          "ops_alert_notifications_recent_idx"
+        ],
+        "triggers": [
+          "trg_ops_alert_notifications_touch"
+        ]
+      },
+      "sales_machine_events": {
+        "colunas": {
+          "id": "UUID pk",
+          "source": "public.sm_source not null",
+          "event_type": "TEXT not null",
+          "external_id": "TEXT",
+          "payload": "JSONB not null",
+          "status": "public.sm_event_status not null",
+          "error": "TEXT",
+          "received_at": "TIMESTAMPTZ not null",
+          "processed_at": "TIMESTAMPTZ"
+        },
+        "rls": true,
+        "indices": [
+          "idx_sm_events_source_type",
+          "idx_sm_events_status"
+        ],
+        "triggers": []
+      },
+      "sender_health": {
+        "colunas": {
+          "id": "uuid pk",
+          "sender_id": "text not null",
+          "day": "date not null",
+          "sent": "integer not null",
+          "bounced": "integer not null",
+          "replied": "integer not null",
+          "spam_reports": "integer not null",
+          "daily_cap": "integer not null",
+          "created_at": "timestamptz not null",
+          "updated_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": []
+      },
+      "signal_weights": {
+        "colunas": {
+          "event_type": "text pk",
+          "weight": "numeric not null",
+          "half_life_hours": "integer not null",
+          "updated_at": "timestamptz not null"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": []
+      },
+      "template_preflight_history": {
+        "colunas": {
+          "id": "UUID pk",
+          "template_id": "UUID fk->public.message_templates not null",
+          "score": "INTEGER not null",
+          "findings": "JSONB not null",
+          "created_at": "TIMESTAMPTZ not null",
+          "created_by": "UUID fk->auth.users"
+        },
+        "rls": true,
+        "indices": [
+          "idx_template_preflight_history_created_at",
+          "idx_template_preflight_history_template_id"
+        ],
+        "triggers": []
+      },
+      "user_roles": {
+        "colunas": {
+          "id": "UUID pk",
+          "user_id": "UUID fk->auth.users not null",
+          "role": "public.app_role not null",
+          "created_at": "TIMESTAMPTZ not null"
+        },
+        "rls": true,
+        "indices": [],
+        "triggers": []
+      }
+    },
+    "enums": {
+      "app_role": [
+        "admin",
+        "operator",
+        "viewer"
+      ],
+      "sm_cadence_preset": [
+        "aggressive",
+        "standard",
+        "enterprise",
+        "custom"
+      ],
+      "sm_campaign_status": [
+        "draft",
+        "active",
+        "paused",
+        "archived"
+      ],
+      "sm_channel": [
+        "linkedin",
+        "whatsapp",
+        "email",
+        "sms",
+        "instagram",
+        "rcs",
+        "mms"
+      ],
+      "sm_compliance_niche": [
+        "geral",
+        "saude",
+        "financeiro",
+        "juridico",
+        "apostas",
+        "suplementos",
+        "custom"
+      ],
+      "sm_compliance_severity": [
+        "error",
+        "warning",
+        "info"
+      ],
+      "sm_direction": [
+        "outbound",
+        "inbound"
+      ],
+      "sm_enrollment_state": [
+        "active",
+        "waiting",
+        "completed",
+        "exited",
+        "goal_reached",
+        "failed"
+      ],
+      "sm_event_status": [
+        "received",
+        "processing",
+        "processed",
+        "error",
+        "ignored"
+      ],
+      "sm_journey_node_kind": [
+        "trigger",
+        "send",
+        "wait",
+        "condition",
+        "split",
+        "goal",
+        "exit"
+      ],
+      "sm_journey_status": [
+        "draft",
+        "active",
+        "paused",
+        "archived"
+      ],
+      "sm_source": [
+        "lux",
+        "singu",
+        "fatorx",
+        "manual",
+        "fuxico"
+      ],
+      "sm_target_state": [
+        "queued",
+        "running",
+        "paused",
+        "replied",
+        "stopped",
+        "lost",
+        "completed",
+        "dead_letter"
+      ],
+      "sm_touchpoint_status": [
+        "queued",
+        "sent",
+        "delivered",
+        "read",
+        "replied",
+        "failed",
+        "opted_out",
+        "pending_provider",
+        "dead_letter",
+        "pending_approval"
+      ]
+    },
+    "functions": [
+      "check_consent(_entity_id UUID, _channel sm_channel)",
+      "compute_daily_cap(_sender_id text)",
+      "fn_calculate_churn_risk(_contact_id UUID)",
+      "fn_refresh_roi_stats(_days INTEGER)",
+      "handle_new_user()",
+      "has_recent_account_touchpoint(_entity_id uuid, _hours integer)",
+      "has_role(_user_id UUID, _role public.app_role)",
+      "refresh_pipeline_health()",
+      "signal_score(_entity_id uuid)",
+      "tg_log_target_state_change()",
+      "tg_sync_target_status()",
+      "tg_touch_updated_at()"
+    ]
+  },
+  "api": {
+    "rotas": [
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/agent-tools/send-message",
+        "handler": "src/routes/api/public/agent-tools/send-message.ts"
+      },
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/hooks/alert-sweep",
+        "handler": "src/routes/api/public/hooks/alert-sweep.ts"
+      },
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/hooks/budget-reallocate",
+        "handler": "src/routes/api/public/hooks/budget-reallocate.ts"
+      },
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/hooks/tick-cadence",
+        "handler": "src/routes/api/public/hooks/tick-cadence.ts"
+      },
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/hooks/tick-journeys",
+        "handler": "src/routes/api/public/hooks/tick-journeys.ts"
+      },
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/hooks/tick-marketing",
+        "handler": "src/routes/api/public/hooks/tick-marketing.ts"
+      },
+      {
+        "metodos": [
+          "GET"
+        ],
+        "path": "/api/public/track/click",
+        "handler": "src/routes/api/public/track/click.ts"
+      },
+      {
+        "metodos": [
+          "GET"
+        ],
+        "path": "/api/public/track/open.gif",
+        "handler": "src/routes/api/public/track/open[.]gif.ts"
+      },
+      {
+        "metodos": [
+          "GET",
+          "POST"
+        ],
+        "path": "/api/public/unsubscribe",
+        "handler": "src/routes/api/public/unsubscribe.tsx"
+      },
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/webhooks/fatorx",
+        "handler": "src/routes/api/public/webhooks/fatorx.ts"
+      },
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/webhooks/fuxico",
+        "handler": "src/routes/api/public/webhooks/fuxico.ts"
+      },
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/webhooks/lux",
+        "handler": "src/routes/api/public/webhooks/lux.ts"
+      },
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/webhooks/singu-bounce",
+        "handler": "src/routes/api/public/webhooks/singu-bounce.ts"
+      },
+      {
+        "metodos": [
+          "POST"
+        ],
+        "path": "/api/public/webhooks/singu",
+        "handler": "src/routes/api/public/webhooks/singu.ts"
+      }
+    ],
+    "nota": "server routes TanStack Start; webhooks publicos com HMAC-SHA256"
+  },
+  "frontend": {
+    "paginas": [
+      "/__root",
+      "/_authenticated/approvals",
+      "/_authenticated/audiences.$id",
+      "/_authenticated/audiences",
+      "/_authenticated/campaigns.$id",
+      "/_authenticated/campaigns",
+      "/_authenticated/companies.$id",
+      "/_authenticated/companies",
+      "/_authenticated/compliance",
+      "/_authenticated/contacts.$id",
+      "/_authenticated/contacts",
+      "/_authenticated/dashboard",
+      "/_authenticated/deliverability",
+      "/_authenticated/evals",
+      "/_authenticated/forms.$id",
+      "/_authenticated/forms",
+      "/_authenticated/journeys.$id",
+      "/_authenticated/journeys",
+      "/_authenticated/library",
+      "/_authenticated/ops/index",
+      "/_authenticated/ops",
+      "/_authenticated/prospecting",
+      "/_authenticated/route",
+      "/auth",
+      "/confirmar",
+      "/f.$slug",
+      "/index"
+    ],
+    "estado_global": [
+      "QueryClient (@tanstack/react-query)"
+    ]
+  },
+  "integracoes": [
+    {
+      "nome": "config",
+      "client": "src/integrations/external/config.server.ts"
+    },
+    {
+      "nome": "fatorx",
+      "client": "src/integrations/external/fatorx.server.ts"
+    },
+    {
+      "nome": "fuxico",
+      "client": "src/integrations/external/fuxico.server.ts"
+    },
+    {
+      "nome": "lux",
+      "client": "src/integrations/external/lux.server.ts"
+    },
+    {
+      "nome": "singu",
+      "client": "src/integrations/external/singu.server.ts"
+    }
+  ],
+  "jobs": [
+    {
+      "nome": "sm-tick-marketing",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "nome": "sm-alert-sweep",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "nome": "sm-prune-target-events",
+      "schedule": "20 3 * * 0"
+    },
+    {
+      "nome": "sm-tick-journeys",
+      "schedule": "* * * * *"
+    }
+  ]
+}
