@@ -4,7 +4,7 @@
 
 ## 2026-08-29 — Adoção do padrão PromptOps v2.0 (fundação)
 
-- **Contexto podre eliminado:** `CLAUDE.md` e `docs/SCHEMA_REFERENCE.md` estavam gravados em base64 (ilegível para agentes). Decodificados para markdown. O SCHEMA tinha 1 char extra no stream base64 (desalinhamento); recuperação byte-exata exceto 2 trechos de transição reconstruídos semanticamente (regras 3 e 5 da lista crítica). Detalhes no commit `347301a`.
+- **Contexto podre eliminado:** `CLAUDE.md` e `docs/SCHEMA_REFERENCE.md` estavam gravados em base64 (ilegível para agentes). Decodificados para markdown. O SCHEMA tinha 1 char extra no stream base64 (desalinhamento); recuperação byte-exata exceto 2 trechos de transição reconstruídos semanticamente (regras 3 e 5 da lista crítica). Detalhes no commit `5609fa4`.
 - **bun declarado gerenciador canônico.** O repo tem dois lockfiles (`bun.lock` + `package-lock.json`) e `bunfig.toml`. Decisão: bun é canônico; `package-lock.json` **não** foi deletado (Lei 8 — reversibilidade) e a remoção ficou como pendência a decidir pelo dono.
 - **Dump de arquitetura gerado por análise estática** (migrations + `src/routes`), não por introspecção do banco: o MCP Supabase disponível está conectado ao banco errado. Gerador versionado em `scripts/gerar-dump-arquitetura.py` — rodar após qualquer mudança estrutural (Lei 12).
 - **Identidade do repo corrigida** no CLAUDE.md: era `social-sales-symphony` / "Vite/React, 10 migrations"; real: `adm01-debug/Sales_Machine_V1`, TanStack Start, 45 migrations.

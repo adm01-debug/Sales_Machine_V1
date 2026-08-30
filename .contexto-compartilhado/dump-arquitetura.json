@@ -1,6 +1,6 @@
 {
-  "atualizado_em": "2026-08-29T19:53:43+00:00",
-  "commit": "347301a",
+  "atualizado_em": "2026-08-30T10:50:37+00:00",
+  "commit": "34453a0",
   "fonte": "migrations+src (analise estatica; nao introspeccao do banco ao vivo)",
   "migrations_aplicadas": 45,
   "banco": {
