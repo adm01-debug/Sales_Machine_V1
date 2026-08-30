@@ -9,8 +9,8 @@
 | Enum | Valores | Uso |
 |---|---|---|
 | `app_role` | `admin`, `operator`, `viewer` | RBAC via `user_roles` + `has_role()` |
-| `sm_source` | `lux`, `singu`, `fatorx`, `manual` | Origem de eventos/entidades |
-| `sm_channel` | `linkedin`, `whatsapp`, `email`, `sms`, `instagram` | Canal de contato |
+| `sm_source` | `lux`, `singu`, `fatorx`, `manual`, `fuxico` | Origem de eventos/entidades |
+| `sm_channel` | `linkedin`, `whatsapp`, `email`, `sms`, `instagram`, `rcs`, `mms` | Canal de contato (rcs/mms via ALTER TYPE posterior) |
 | `sm_event_status` | `received`, `processing`, `processed`, `error`, `ignored` | Pipeline de ingestão |
 | `sm_direction` | `outbound`, `inbound` | Direção do touchpoint |
 | `sm_campaign_status` | `draft`, `active`, `paused`, `archived` | Ciclo de vida de campanha |
