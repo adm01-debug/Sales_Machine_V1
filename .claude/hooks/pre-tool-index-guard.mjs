@@ -188,7 +188,7 @@ process.stdout.write(
   JSON.stringify({
     hookSpecificOutput: {
       hookEventName: "PreToolUse",
-      additionalContext: `Indice de contexto (${DUMP}, gerado das migrations + src) ja descreve o que esta busca procura:\n${linhas}\nUse o indice antes de varrer o repo (AGENTS.md > Contexto gerado). Se precisar do codigo em si, va direto ao arquivo citado. Ressalva: o gerador perde coluna adicionada em lote (um ALTER TABLE com varios ADD COLUMN registra so a primeira), entao a lista de colunas de uma tabela pode estar incompleta.`,
+      additionalContext: `Indice de contexto (${DUMP}, gerado das migrations + src) ja descreve o que esta busca procura:\n${linhas}\nUse o indice antes de varrer o repo (AGENTS.md > Contexto gerado). Se precisar do codigo em si, va direto ao arquivo citado.`,
     },
   }),
 );
