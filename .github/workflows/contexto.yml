@@ -1,0 +1,427 @@
+# docs:
+#   gatilho: push em main que toque código, banco, scripts das automações ou docs/contexto/regras/manual/; a cada hora (minuto 7); dispatch
+#   prova: branch contexto com docs/contexto/{codigo,supabase,regras}/ regerados das três fontes de verdade (código em main, banco oficial, código+migrations+manual/) e docs/contexto/00-INDEX.md montado a partir dos manifests
+#   falha: falha fatal de produtor reprova o workflow; fontes com artefato publicam e as demais mantêm a última versão; erro de download impede a publicação
+#   avisa: ninguém (a branch contexto é a prova; errors.md em supabase/ e erros_do_gerador em codigo/ listam seções com falha)
+# nao-e-bug:
+#   - sem-commit: "nada mudou" no publicar significa que nenhuma das três fontes mudou desde a última publicação
+#   - metricas: métricas/manifests do banco aguardam 60 min desde a coleta publicada; commits de código não reiniciam o prazo; data ausente/inválida/futura e mudanças de saúde/estado do índice publicam sem espera
+#   - banco-pulado: sem o secret SUPABASE_DB_URL o job do banco sai verde com aviso e a pasta supabase/ fica como estava
+name: Contexto para agentes de IA (horário)
+
+# UM workflow, TRÊS produtores independentes (um job cada), UM índice, UMA branch:
+# Falha fatal deixa o workflow vermelho; publicar ainda reúne as fontes disponíveis via !cancelled().
+#
+#   codigo/   ← scripts/ai-context/gerar.mjs   (rotas, módulos, hooks, edges, grafo, testes, convenções, baseline)
+#   supabase/ ← scripts/supabase_snapshot/     (banco OFICIAL ao vivo: tabelas, RLS, funções, triggers, cron, lints)
+#   regras/   ← scripts/regras_negocio/        (regras de negócio: RLS por operação, estados, validações, fórmulas, lacunas, manual/)
+#   00-INDEX.md ← scripts/regras_negocio/indice.py (lê o manifest.json de cada pasta; diz quem é dono de cada fato)
+#
+# Cada fato tem um dono: schema real = supabase/; onde fica o código = codigo/; o que pode/não pode = regras/.
+# Onde fica: branch `contexto` (gerada, com histórico; nunca abra PR dela) — a main não recebe push
+# direto deste workflow. Push com GITHUB_TOKEN não dispara outros workflows (anti-loop). A Vercel/Lovable
+# não buildam a branch (vercel.json próprio com ignoreCommand).
+# Como ler: git fetch origin contexto && git show origin/contexto:docs/contexto/00-INDEX.md, ou MCP
+# get_file(ref=contexto), ou raw.githubusercontent.com/<owner>/<repo>/contexto/docs/contexto/00-INDEX.md.
+# Custo: no agendamento, codigo/ e regras/ saem em segundos se a main não mudou; supabase/ sempre coleta.
+# Cadência de 1 h (no Zapp_Web_V2 é 10 min): este repo não tem CI e o banco muda devagar; para voltar a
+# 10 min troque o cron por '3-59/10 * * * *'.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'supabase/**'
+      - 'scripts/ai-context/**'
+      - 'scripts/regras_negocio/**'
+      - 'scripts/supabase_snapshot/**'
+      - 'docs/contexto/regras/manual/**'
+      - 'ai-context.config.json'
+      - 'package.json'
+      - 'tsconfig*.json'
+      - '.github/workflows/**'
+  schedule:
+    - cron: '7 * * * *' # minuto 7: fora do minuto 0 (fila do GitHub)
+  workflow_dispatch:
+    inputs:
+      graphify:
+        description: 'Rodar graphify (grafo por AST) no job de código'
+        type: boolean
+        default: true
+      force:
+        description: 'Regenerar tudo ignorando o estado anterior da branch'
+        type: boolean
+        default: false
+
+concurrency:
+  group: contexto
+  cancel-in-progress: false # push em main nunca é cancelado; o gate por commit evita trabalho repetido
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+env:
+  CONTEXTO_BRANCH: contexto
+  CONTEXTO_DIR: docs/contexto
+
+jobs:
+  gate:
+    name: O que precisa rodar
+    # O dispatch não deve executar código de uma ref arbitrária com token de escrita.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      codigo: ${{ steps.g.outputs.codigo }}
+      regras: ${{ steps.g.outputs.regras }}
+      banco: ${{ steps.g.outputs.banco }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Comparar HEAD de main com os manifests da branch contexto
+        id: g
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          head="$(git rev-parse HEAD)"
+          last_codigo=""; last_regras=""
+          if git fetch -q --depth=1 origin "$CONTEXTO_BRANCH" 2>/dev/null; then
+            last_codigo="$(git show "FETCH_HEAD:$CONTEXTO_DIR/codigo/manifest.json" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin).get("commit",""))' 2>/dev/null || echo "")"
+            last_regras="$(git show "FETCH_HEAD:$CONTEXTO_DIR/regras/manifest.json" 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin).get("commit",""))' 2>/dev/null || echo "")"
+          fi
+          codigo=true; regras=true
+          if [ "$EVENT_NAME" = "schedule" ] && [ "$FORCE" != "true" ]; then
+            [ "$head" = "$last_codigo" ] && codigo=false
+            [ "$head" = "$last_regras" ] && regras=false
+          fi
+          # banco muda sem push: coleta no agendamento e no dispatch, nunca no push
+          banco=true; [ "$EVENT_NAME" = "push" ] && banco=false
+          echo "codigo=$codigo" >> "$GITHUB_OUTPUT"
+          echo "regras=$regras" >> "$GITHUB_OUTPUT"
+          echo "banco=$banco" >> "$GITHUB_OUTPUT"
+          echo "head=$head codigo=$codigo (último $last_codigo) regras=$regras (último $last_regras) banco=$banco"
+
+  codigo:
+    name: Produtor codigo/ (gerar.mjs)
+    needs: gate
+    if: needs.gate.outputs.codigo == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 300 # baseline.json usa git log dos últimos 90 dias
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Testar o gerador
+        run: node --test scripts/ai-context/gerar.unit.mjs
+
+      - name: Cache do graphify (AST já extraída)
+        if: github.event_name != 'workflow_dispatch' || inputs.graphify
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: graphify-out/cache
+          key: graphify-cache-${{ github.sha }}
+          restore-keys: |
+            graphify-cache-
+
+      - name: Grafo de código (graphify, opcional)
+        if: github.event_name != 'workflow_dispatch' || inputs.graphify
+        continue-on-error: true # grafo é extra: se falhar, o inventário sai sem ele
+        env:
+          GRAPHIFY_VERSION: '0.9.68'
+        run: |
+          if ! command -v uvx >/dev/null 2>&1; then pip install --quiet --user uv && export PATH="$HOME/.local/bin:$PATH"; fi
+          uvx --from "graphifyy[sql]==${GRAPHIFY_VERSION}" graphify update . --force
+          rm -f graphify-out/graph.html
+
+      - name: Gerar codigo/
+        run: |
+          node scripts/ai-context/gerar.mjs --out "$CONTEXTO_DIR/codigo"
+          if [ -f graphify-out/GRAPH_REPORT.md ]; then cp graphify-out/GRAPH_REPORT.md "$CONTEXTO_DIR/codigo/GRAPH_REPORT.md"; fi
+          ls "$CONTEXTO_DIR/codigo"
+
+      - name: Guardar para o publicar
+        id: upload
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: contexto-codigo
+          path: docs/contexto/codigo
+          if-no-files-found: error
+          retention-days: 1
+
+  banco:
+    name: Produtor supabase/ (snapshot.py)
+    needs: gate
+    if: needs.gate.outputs.banco == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+    env:
+      SNAPSHOT_DIR: docs/contexto/supabase
+      # schema.sql exigiria pg_dump 17 (o runner tem o client 16); types.ts já vem do types-sync.yml.
+      PGDUMP: 'false'
+      GEN_TYPES: 'false'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Dependências Python (runner ubuntu-24.04 já tem python3)
+        run: |
+          python3 -m pip install --quiet --break-system-packages --only-binary :all: -r scripts/supabase_snapshot/requirements.txt
+
+      - name: Recuperar snapshot anterior da branch contexto (CHANGELOG precisa do estado anterior)
+        env:
+          FORCE: ${{ inputs.force }}
+        run: |
+          mkdir -p "$SNAPSHOT_DIR"
+          if git fetch --quiet --depth 1 origin "$CONTEXTO_BRANCH" 2>/dev/null; then
+            git archive FETCH_HEAD -- "$SNAPSHOT_DIR" 2>/dev/null | tar -x || echo "::warning::branch existe mas sem $SNAPSHOT_DIR — recomeçando do zero"
+          else
+            echo "Branch $CONTEXTO_BRANCH ainda não existe: primeira coleta."
+          fi
+          if [ "$FORCE" = "true" ] && [ -f "$SNAPSHOT_DIR/snapshot.json" ]; then
+            python3 - "$SNAPSHOT_DIR" <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          output = pathlib.Path(sys.argv[1])
+          snapshot = output / "snapshot.json"
+          data = json.loads(snapshot.read_text(encoding="utf-8"))
+          if not (
+              isinstance(data, dict)
+              and data.get("format_version") == 2
+              and isinstance(data.get("db"), dict)
+              and isinstance(data.get("api"), dict)
+          ):
+              raise SystemExit("snapshot anterior inválido; regeneração forçada recusada")
+          (output / ".supabase-snapshot-output").write_text("supabase-snapshot-v2\n", encoding="utf-8")
+          snapshot.unlink()
+          PY
+          fi
+
+      - name: Testar o coletor (109 regressões offline)
+        run: python3 scripts/supabase_snapshot/test_snapshot.py
+
+      - name: Gerar supabase/
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          EVENTO: ${{ github.event_name }}
+        run: |
+          if [ -z "${SUPABASE_DB_URL:-}" ]; then
+            # Sem o secret não há o que coletar. No agendamento sai verde com aviso para não pintar
+            # 144 runs/dia de vermelho; no dispatch manual falha para a pessoa ver.
+            echo "::warning::Secret SUPABASE_DB_URL não definido — snapshot pulado (ver scripts/supabase_snapshot/README.md)"
+            echo "SNAPSHOT_SKIPPED=1" >> "$GITHUB_ENV"
+            if [ "$EVENTO" = "workflow_dispatch" ]; then exit 1; fi
+            exit 0
+          fi
+          python3 scripts/supabase_snapshot/snapshot.py
+
+      - name: Guard — nenhum segredo na saída
+        if: env.SNAPSHOT_SKIPPED != '1'
+        run: |
+          if grep -rIEl 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|sb_secret_|sb_publishable_|postgres(ql)?://[^ ]*:[^ @]+@' "$SNAPSHOT_DIR"; then
+            echo "::error::Possível segredo detectado no snapshot — publicação abortada"; exit 1
+          fi
+
+      - name: Reportar seções com erro (não falha o job)
+        if: always() && env.SNAPSHOT_SKIPPED != '1'
+        run: |
+          if [ -f "$SNAPSHOT_DIR/errors.md" ] && ! grep -q '_nenhum_' "$SNAPSHOT_DIR/errors.md"; then
+            echo "::warning::Algumas seções falharam — veja $SNAPSHOT_DIR/errors.md na branch $CONTEXTO_BRANCH"
+            cat "$SNAPSHOT_DIR/errors.md"
+          fi
+
+      - name: Guardar para o publicar
+        if: env.SNAPSHOT_SKIPPED != '1'
+        id: upload
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: contexto-supabase
+          path: docs/contexto/supabase
+          if-no-files-found: error
+          retention-days: 1
+
+  regras:
+    name: Produtor regras/ (generate.py)
+    needs: gate
+    if: needs.gate.outputs.regras == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 60 # o último commit não-bot vira o `commit` do manifest
+
+      - name: Testar o gerador
+        run: python3 scripts/regras_negocio/test_generate.py
+
+      - name: Gerar regras/
+        run: |
+          python3 scripts/regras_negocio/generate.py --repo . --out "$CONTEXTO_DIR/regras" \
+            --profile regras --schema-snapshot "$CONTEXTO_DIR/supabase" --index-path "$CONTEXTO_DIR/00-INDEX.md" --no-pointer
+          ls "$CONTEXTO_DIR/regras"
+
+      - name: Guardar para o publicar
+        id: upload
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: contexto-regras
+          path: docs/contexto/regras
+          if-no-files-found: error
+          retention-days: 1
+
+  publicar:
+    name: Índice único + branch contexto
+    needs: [gate, codigo, banco, regras]
+    # roda mesmo com produtor pulado ou vermelho: publica o que saiu e mantém o resto como estava
+    if: ${{ !cancelled() && needs.gate.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:  # zizmor: ignore[excessive-permissions]
+      contents: write # push na branch gerada contexto
+    steps:
+      - name: Checkout (main — indice.py e manual/ vêm daqui)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      # Com um único artefato, a action extrai diretamente em path. Cada fonte tem destino explícito.
+      - name: Baixar codigo/
+        if: needs.codigo.outputs.artifact-id != ''
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          artifact-ids: ${{ needs.codigo.outputs.artifact-id }}
+          path: ${{ runner.temp }}/art/contexto-codigo
+
+      - name: Baixar supabase/
+        if: needs.banco.outputs.artifact-id != ''
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          artifact-ids: ${{ needs.banco.outputs.artifact-id }}
+          path: ${{ runner.temp }}/art/contexto-supabase
+
+      - name: Baixar regras/
+        if: needs.regras.outputs.artifact-id != ''
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          artifact-ids: ${{ needs.regras.outputs.artifact-id }}
+          path: ${{ runner.temp }}/art/contexto-regras
+
+      - name: Montar a branch e publicar (só se algo mudou)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_MAIN: ${{ github.sha }}
+          VOLATILE_MIN_INTERVAL_MIN: '60'
+          HUSKY: '0'
+        run: |
+          ART="$RUNNER_TEMP/art"
+          PUB="$RUNNER_TEMP/pub"
+          git worktree remove --force "$PUB" 2>/dev/null || true
+          rm -rf "$PUB"; git worktree prune
+          REMOTE="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git fetch --quiet --depth 1 origin "$CONTEXTO_BRANCH" 2>/dev/null; then
+            git worktree add --quiet --detach "$PUB" FETCH_HEAD
+            ( cd "$PUB" && git checkout --quiet -B "$CONTEXTO_BRANCH" )
+          else
+            mkdir -p "$PUB"
+            ( cd "$PUB" && git init --quiet -b "$CONTEXTO_BRANCH" )
+          fi
+          mkdir -p "$PUB/$CONTEXTO_DIR"
+          novos=0
+          for fonte in codigo supabase regras; do
+            if [ -d "$ART/contexto-$fonte" ]; then
+              rm -rf "${PUB:?}/$CONTEXTO_DIR/$fonte"
+              cp -a "$ART/contexto-$fonte" "$PUB/$CONTEXTO_DIR/$fonte"
+              novos=$((novos + 1))
+            else
+              echo "$fonte/: sem artefato neste run — mantém o que está na branch"
+            fi
+          done
+          # manual/ é texto humano e vive em main: a cópia na branch segue a main
+          if [ -d "$CONTEXTO_DIR/regras/manual" ]; then
+            rm -rf "$PUB/$CONTEXTO_DIR/regras/manual"; mkdir -p "$PUB/$CONTEXTO_DIR/regras"
+            cp -a "$CONTEXTO_DIR/regras/manual" "$PUB/$CONTEXTO_DIR/regras/manual"
+          fi
+          python3 scripts/regras_negocio/indice.py --repo "$PUB" --out "$CONTEXTO_DIR/00-INDEX.md" --head "$HEAD_MAIN" \
+            --remote "$GITHUB_REPOSITORY" \
+            --fonte "banco real=$CONTEXTO_DIR/supabase" \
+            --fonte "código=$CONTEXTO_DIR/codigo" \
+            --fonte "regras de negócio=$CONTEXTO_DIR/regras"
+          cat > "$PUB/README.md" <<'EOF'
+          # Branch gerada: contexto para agentes de IA
+
+          Comece por `docs/contexto/00-INDEX.md`. Pastas `codigo/`, `supabase/` e `regras/` são regeradas a cada
+          10 min pelo workflow `contexto.yml` da main — não edite nem abra PR desta branch. Regras humanas vivem
+          em `docs/contexto/regras/manual/` na **main**.
+          EOF
+          # Sem isto a Vercel faria um preview deploy a cada push (a Vercel lê o vercel.json do commit deployado).
+          cat > "$PUB/vercel.json" <<'EOF'
+          { "ignoreCommand": "exit 0", "git": { "deploymentEnabled": { "contexto": false } } }
+          EOF
+          cd "$PUB"
+          git config user.name 'contexto[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then echo "nada mudou em nenhuma das fontes."; exit 0; fi
+          # Falha, recuperação e estado do índice são publicados imediatamente; só métricas aguardam.
+          STRUCTURAL=$(git diff --cached --name-only | grep -vE '(/stats\.md|/stats\.json|/cron-runs\.md|/manifest\.json|/baseline\.json)$' || true)
+          if [ -z "$STRUCTURAL" ] && git rev-parse --verify -q HEAD >/dev/null; then
+            if [ -d "$ART/contexto-supabase" ]; then
+              # HEAD contém o manifest já publicado, mesmo no checkout raso e após commits só de código.
+              LAST=$(git show "HEAD:$CONTEXTO_DIR/supabase/manifest.json" 2>/dev/null | python3 -c '
+          import json, sys
+          from datetime import datetime, timezone
+          try:
+              stamp = json.load(sys.stdin).get("gerado_em", "")
+              value = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+              timestamp = int(value.timestamp())
+              now = int(datetime.now(timezone.utc).timestamp())
+              print(timestamp if value.tzinfo is not None and 0 < timestamp <= now else 0)
+          except Exception:
+              print(0)
+          ') || LAST=0
+              if [ "$LAST" -eq 0 ]; then
+                echo "Não foi possível validar a data bancária publicada — publicando sem esperar."
+              fi
+            else
+              LAST=$(git log -1 --format=%ct)
+            fi
+            AGE_MIN=$(( ( $(date +%s) - LAST ) / 60 ))
+            if [ "$AGE_MIN" -lt "$VOLATILE_MIN_INTERVAL_MIN" ]; then
+              echo "Só métricas/manifests mudaram (referência publicada há ${AGE_MIN} min) — aguardando."; exit 0
+            fi
+          fi
+          git commit --quiet -m "chore(contexto): $novos fonte(s) regerada(s) @ main ${HEAD_MAIN:0:7} [skip ci]"
+          git push --quiet "$REMOTE" "HEAD:refs/heads/$CONTEXTO_BRANCH"
+          echo "Publicado em $CONTEXTO_BRANCH: $(git rev-parse --short HEAD) (fontes novas: $novos)"
+
