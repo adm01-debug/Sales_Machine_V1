@@ -22,6 +22,11 @@ confiar em qualquer introspecção (ver `docs/agentes/banco.md`).
 - Reviewer: correção, segurança e regressão
 - Docs researcher: verificação de API e release notes
 
+## CI
+
+Um único workflow (`.github/workflows/agents-md-guard.yml`) vigia a integridade das instruções de
+agente. Lint, teste e typecheck não rodam em CI — rode local o que tocou.
+
 ## Ordem de leitura
 
 `AGENTS.md` → `docs/agentes/<tema>.md` do tema que você vai tocar → `00-governanca/01-leis-do-agente.md`

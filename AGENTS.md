@@ -55,7 +55,7 @@ violação de LGPD.
   `node_modules`). Só erro seu conta; erro herdado da `main` → "Próximos passos". A baseline é
   vermelha de propósito (2.639 problemas de lint, 61 testes falhando): a régua é **não piorar**.
 - "Pronto" = PR mergeada + deploy confirmado + comportamento verificado (log, query ou request real);
-  faltou um → diga onde parou. Aqui não há CI nem check de deploy: ver `docs/agentes/deploy-lovable.md`.
+  faltou um → diga onde parou. Aqui o CI não cobre build nem deploy: ver `docs/agentes/deploy-lovable.md`.
 - Funcionalidade pronta = integrada ponta a ponta (rota registrada, entrada na UI, server fn/hook
   chamados, tabela com RLS, estados erro/loading/vazio, submit), sem mock, hardcode ou TODO. Pela
   metade não é pronto; não cabe na sessão → entregue o funcional e liste o que falta, em ordem, com
@@ -89,10 +89,12 @@ violação de LGPD.
   padrão mesmo assim.
 - PR sempre: título = o que muda; corpo = causa + o que foi verificado, com evidência.
 - Mergeie sem aprovação (squash, apague a branch) PR sua pronta: sem conflito, escopo comum (front,
-  server route, server function, docs, config) e com o que você tocou verificado. **Não existe CI
-  neste repo — nunca escreva "CI verde" numa PR daqui.**
-- **Deixe aberta e chame o dono**: DDL/migration em produção; segredos e rotação; criar `.github/`
-  (workflows); deleção de dado; arquitetura ou custo; qualquer coisa que afrouxe consentimento, RLS ou
+  server route, server function, docs, config) e com o que você tocou verificado. **O único check
+  automático é o guard das instruções — nunca escreva "CI verde" numa PR daqui**, porque lint, teste e
+  typecheck não rodam em CI. O status `Vercel` nasce vermelho em toda PR (preview quebrado, ver
+  `docs/agentes/deploy-lovable.md`).
+- **Deixe aberta e chame o dono**: DDL/migration em produção; segredos e rotação; mexer em
+  `.github/workflows/`; deleção de dado; arquitetura ou custo; qualquer coisa que afrouxe consentimento, RLS ou
   LGPD; pendências travadas pelo dono (`package-lock.json`, edge function residual); conflito com PR
   de outro agente.
 - Merge em `main` = sincroniza com o Lovable. Confira o que der para conferir e reporte. Fim: link da
@@ -145,8 +147,10 @@ violação de LGPD.
   confirme pelo MCP `Vercel` (`state: READY`, `target: production`, SHA). Merge em `main` também
   sincroniza com o Lovable. Os jobs de cron, por outro lado, chamam a **URL de preview do Lovable**
   gravada nas migrations.
-- **GitHub/CI** — ler `docs/agentes/github-ci.md`. **Não há `.github/`**: nada roda automaticamente;
-  criar o primeiro workflow é mudança de perímetro (chamar o dono).
+- **GitHub/CI** — ler `docs/agentes/github-ci.md`. Há **um único** workflow
+  (`.github/workflows/agents-md-guard.yml`), que vigia a integridade destas instruções; **lint, teste,
+  typecheck, migration e eval continuam sem CI** — rodar local é obrigação sua, e "CI verde" não é
+  critério de merge aqui. Workflow novo é mudança de perímetro (chamar o dono).
 - **Regras de domínio** — ler `docs/agentes/regras-dominio.md` ao mexer em consentimento, opt-out,
   estado de target, tracking ou compliance de texto.
 
@@ -187,8 +191,8 @@ estática de `supabase/migrations/*.sql` + `src/routes` + `src/integrations`
 ## Armadilhas deste repo (verificadas em 2026-11-08)
 - **Baseline vermelha pré-existente** (2026-08-29): lint com 2.639 problemas, 61 de 478 testes
   falhando. Não piore; saneamento em massa é escopo próprio e precisa de autorização.
-- **`node_modules` não vem no clone** e não há CI: sem `bun install`, lint/teste/typecheck são
-  `NÃO VERIFICADO`.
+- **`node_modules` não vem no clone** e o único workflow não roda lint/teste/typecheck: sem
+  `bun install`, essas três coisas são `NÃO VERIFICADO`.
 - **Três migrations em base64** (`009`, `010`, `012`) → 4 tabelas, 9 funções e 1 view documentadas que
   **não existem** no banco.
 - **`supabase/functions/migrate-helper/`** com `verify_jwt = false`, CORS `*`, chave hardcoded e ação

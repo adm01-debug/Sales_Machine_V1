@@ -3,6 +3,37 @@
 > Histórico versionado de mudanças nos artefatos de contexto e governança (não confundir com CHANGELOG de produto).
 > Formato: versão · data · o que mudou · por quê.
 
+## v2.1 — 2026-11-08 — Fecha as duas lacunas do padrão (hook PreToolUse + CI)
+
+**Contexto:** a v2.0 deixou de fora dois itens que o `Zapp_Web_V2` tem. O dono pediu os dois.
+
+**Criado:**
+- `.claude/hooks/pre-tool-index-guard.mjs` + hook `PreToolUse` (`Bash|Grep`) no
+  `.claude/settings.json` — equivalente local do `graphify hook-guard search` do Zapp, que aqui não
+  existe: quando uma busca por texto procura nome de tabela, coluna, enum, função SQL, rota, job ou
+  integração que o `dump-arquitetura.json` conhece, devolve o que o índice diz via
+  `additionalContext`. **Não bloqueia** (nenhum `permissionDecision`) e é no-op para termo
+  desconhecido, comando que não é busca, stdin inválido ou dump ilegível.
+- `.github/workflows/agents-md-guard.yml` — **primeiro workflow do repo**. Roda o guard das
+  instruções em PR e push na `main` (só quando o diff toca as instruções), Node 22, sem instalar
+  dependências, actions pinadas por SHA, `permissions: contents: read`. Sem required check: é sinal,
+  não bloqueio.
+
+**Modificado:** `AGENTS.md`, `docs/agentes/{github-ci,mapa-repo,deploy-lovable}.md`, `.codex/AGENTS.md`,
+`scripts/ci/check-agents-md-integrity.mjs` e `pendencias-conhecidas.md` — todas as afirmações de que
+"não há `.github/`" / "não existe CI" foram trocadas pelo que passa a ser verdade: existe **um**
+workflow, e ele vigia só as instruções; lint, teste, typecheck, migration e eval continuam sem CI.
+
+**Achado da implementação (não corrigido — fora de escopo):** o gerador do índice casa
+`ALTER TABLE … ADD COLUMN` uma vez por statement (`scripts/gerar-dump-arquitetura.py:80`), então um
+`ALTER TABLE` com vários `ADD COLUMN` registra só a primeira coluna. É por isso que
+`campaign_targets` aparece sem `locked_until`, `attempts`, `max_attempts` e `last_transition_at`
+(`supabase/migrations/20260720181807_….sql:8-12`). O hook avisa dessa ressalva no próprio texto, e a
+limitação está documentada em `docs/agentes/mapa-repo.md`.
+
+**Continua fora do padrão do Zapp:** `.claude/commands/` (lá é um slash command de projeto) e
+`.claude/ecc-tools.json` + `.claude/homunculus/` (artefatos gerados por ferramenta externa).
+
 ## v2.0 — 2026-11-08 — Padrão de instruções de agente do Zapp Web V2
 
 **Contexto:** o dono padronizou as instruções de agente no `Zapp_Web_V2` e pediu a réplica aqui. O

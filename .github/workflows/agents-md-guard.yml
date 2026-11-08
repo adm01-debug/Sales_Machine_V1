@@ -1,0 +1,65 @@
+# docs:
+#   gatilho: pull_request e push na main que toquem as instrucoes de agente, mais dispatch manual
+#   prova: AGENTS.md tem as 8 secoes obrigatorias e o conjunto de instrucoes nao foi apagado nem
+#          esvaziado por outra sessao (encolhimento >30% do conjunto ou >50% de um arquivo reprova)
+#   falha: o check fica vermelho na PR; nao ha required check configurado neste repo, entao e sinal
+#          para o autor, nao bloqueio de merge
+#   avisa: autor da PR, pelo check do GitHub
+# nao-e-bug:
+#   - nao roda lint, teste nem typecheck: este repo nao tem CI desses (baseline vermelha conhecida,
+#     ver .contexto-compartilhado/pendencias-conhecidas.md). Este workflow cobre so as instrucoes.
+#   - nao instala dependencias: o guard usa apenas a stdlib do Node.
+name: Guarda das instrucoes de agente
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - "docs/agentes/**"
+      - "00-governanca/**"
+      - "scripts/ci/check-agents-md-integrity.mjs"
+      - ".github/workflows/agents-md-guard.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - "docs/agentes/**"
+      - "00-governanca/**"
+      - "scripts/ci/check-agents-md-integrity.mjs"
+      - ".github/workflows/agents-md-guard.yml"
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agents-md-guard-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  guarda:
+    name: 🛡️ Integridade do AGENTS.md
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: 🟢 Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: 🛡️ Guard
+        run: |
+          # Compara com a main buscada: no checkout da PR o HEAD e o proprio arquivo, e a
+          # comparacao com HEAD viraria no-op.
+          git fetch --no-tags --depth=1 origin main
+          AGENTS_MD_BASE=FETCH_HEAD node scripts/ci/check-agents-md-integrity.mjs
