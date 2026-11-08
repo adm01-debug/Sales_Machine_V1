@@ -83,6 +83,17 @@
 - **Nomenclatura de triggers inconsistente** (`trg_*` domina, há `tg_*` e alguns sem prefixo, como
   `journeys_touch`); `20260721142041_….sql:3,8,14` recria três triggers de `campaign_targets` (F2 do QA).
 
+- **O preview do Vercel falha em qualquer branch (não é regressão de PR).** Medido em 2026-11-08 com
+  três deployments: `59a1e3f` (docs) → `ERROR`, `0e115ed` (docs) → `ERROR` e um commit de controle
+  (`fd3f0ef`, `main` + um arquivo de 1 linha, branch descartada depois) → `ERROR`, enquanto o
+  deployment de **produção** da `main` (`ae912a3`) está `READY`. Ou seja: a integração Git do projeto
+  `sales-machine-v1` (team `juca1`) não consegue construir *preview*, e toda PR deste repo nasce com o
+  commit status `Vercel` vermelho. *Causa: **NÃO VERIFICADO** — o conector Vercel desta sessão só
+  responde `list_projects`/`list_deployments`; `get_deployment`, o log de build e `filter_project_envs`
+  devolvem 404 por escopo. O log fica em `https://vercel.com/juca1/sales-machine-v1/<id>` (acesso do
+  dono). Hipóteses não confirmadas: variável de ambiente só existente em Production, ou o
+  `minimumReleaseAge` do `bunfig.toml` durante o `bun install` do build.*
+
 ## 🔵 Aceitos com justificativa
 
 - **Linter Supabase "Extension in Public"** (F3 do QA): `pg_cron`/`pg_net` no schema `public` — design da Supabase; não corrigível sem quebrar cron.
