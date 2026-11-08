@@ -139,9 +139,12 @@ violação de LGPD.
   endurecer isso exige trocar o header nas migrations de cron no mesmo ciclo.
 - **Canais sociais** — LinkedIn/Instagram são **stub** (`src/integrations/social/types.ts`); sem
   `UNIPILE_*`/`PHANTOMBUSTER_API_KEY` configurados, são no-op. Não prometa envio social.
-- **Lovable / deploy** — ler `docs/agentes/deploy-lovable.md` antes de dizer que algo está no ar. Não
-  há workflow de deploy; merge em `main` sincroniza com o Lovable, e os jobs de cron chamam a **URL de
-  preview do Lovable** gravada nas migrations.
+- **Deploy (Vercel + Lovable)** — ler `docs/agentes/deploy-lovable.md` antes de dizer que algo está
+  no ar. Não há workflow de deploy, mas **a Vercel está ligada por integração Git**: projeto
+  `sales-machine-v1` no team `juca1` — push em branch gera preview, merge em `main` gera produção;
+  confirme pelo MCP `Vercel` (`state: READY`, `target: production`, SHA). Merge em `main` também
+  sincroniza com o Lovable. Os jobs de cron, por outro lado, chamam a **URL de preview do Lovable**
+  gravada nas migrations.
 - **GitHub/CI** — ler `docs/agentes/github-ci.md`. **Não há `.github/`**: nada roda automaticamente;
   criar o primeiro workflow é mudança de perímetro (chamar o dono).
 - **Regras de domínio** — ler `docs/agentes/regras-dominio.md` ao mexer em consentimento, opt-out,
