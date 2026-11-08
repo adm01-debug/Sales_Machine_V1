@@ -56,6 +56,24 @@ test('stdin vazio (/dev/null) gera edges sem criar tabelas-uso.json', () => {
   assert.equal(edges.edge_functions.exemplo.sem_chamador, true, 'exit 1 do rg significa busca sem resultado');
 });
 
+test('sem supabase/functions/ (ou pasta vazia, que o git nao versiona) gera edges.json vazio, nao falha', () => {
+  const root = mkdtempSync(join(tmpdir(), 'inventario-repo-'));
+  for (const dir of ['scripts/inventario', 'src', 'inventario/estado']) mkdirSync(join(root, dir), { recursive: true });
+  copyFileSync(SCRIPT, join(root, 'scripts/inventario/gerar-repo.mjs'));
+
+  const result = spawnSync(process.execPath, [join(root, 'scripts/inventario/gerar-repo.mjs')], {
+    cwd: root,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+
+  assert.equal(result.status, 0, result.stderr);
+  const edges = JSON.parse(readFileSync(join(root, 'inventario/estado/edges.json'), 'utf8'));
+  assert.deepEqual(edges.edge_functions, {});
+  assert.equal(edges.total, 0);
+  assert.deepEqual(edges.sem_chamador_no_repo, []);
+});
+
 test('rg ausente falha fechado e não publica edges.json incompleto', () => {
   const root = fixture();
   const pathVazio = join(root, 'path-sem-rg');

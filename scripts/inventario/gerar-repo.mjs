@@ -45,9 +45,13 @@ function rgFiles(pattern, paths) {
     .split('\n').filter(Boolean).map((f) => f.slice(RAIZ.length));
 }
 
-const edges = readdirSync(FDIR, { withFileTypes: true })
-  .filter((d) => d.isDirectory() && !d.name.startsWith('_') && existsSync(join(FDIR, d.name, 'index.ts')))
-  .map((d) => d.name).sort();
+// Repo sem supabase/functions/ (ou com a pasta vazia, que o git nao versiona) nao tem edge
+// function nenhuma — nao e erro de execucao, e o estado real.
+const edges = existsSync(FDIR)
+  ? readdirSync(FDIR, { withFileTypes: true })
+      .filter((d) => d.isDirectory() && !d.name.startsWith('_') && existsSync(join(FDIR, d.name, 'index.ts')))
+      .map((d) => d.name).sort()
+  : [];
 
 const inventario = {};
 for (const f of edges) {
