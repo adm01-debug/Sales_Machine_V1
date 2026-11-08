@@ -1,1 +1,1 @@
-{"gerado_em":"2026-11-08T22:26:57.418Z","total":1,"sem_chamador_no_repo":["migrate-helper"],"edge_functions":{"migrate-helper":{"linhas":35,"segredos_lidos":["SUPABASE_DB_URL","SUPABASE_SERVICE_ROLE_KEY","SUPABASE_URL"],"chamada_em":{"src":0,"migrations":0,"outras_edges":0,"e2e":0,"ci_config":1},"sem_chamador":true}}}
+{"gerado_em":"2026-11-08T22:45:42.641Z","total":0,"sem_chamador_no_repo":[],"edge_functions":{}}
