@@ -57,6 +57,26 @@ export const Route = createFileRoute("/api/public/agent-tools/send-message")({
           );
         }
 
+        // Consentimento (LGPD) — bloqueia opt-outs por canal antes de qualquer envio, mesmo stub.
+        // Falha do RPC não pode virar envio silencioso a quem deu opt-out (fail-closed, mesmo
+        // padrão dos ticks).
+        const { data: allowed, error: consentErr } = await supabaseAdmin.rpc("check_consent", {
+          _entity_id: entity.id,
+          _channel: input.channel as never,
+        });
+        if (consentErr) {
+          return Response.json(
+            { ok: false, error: `check_consent indisponível: ${consentErr.message}` },
+            { status: 503 },
+          );
+        }
+        if (allowed === false) {
+          return Response.json(
+            { ok: false, error: "opt-out registrado para o canal" },
+            { status: 409 },
+          );
+        }
+
         // Insert touchpoint as queued for auditability, then dispatch.
         const { data: tp } = await supabaseAdmin
           .from("contact_touchpoints")

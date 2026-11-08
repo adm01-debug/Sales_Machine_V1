@@ -131,11 +131,25 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
               continue;
             }
 
-            // Consentimento (LGPD) — bloqueia opt-outs por canal.
-            const { data: allowed } = await supabaseAdmin.rpc("check_consent", {
+            // Consentimento (LGPD) — bloqueia opt-outs por canal. Falha do RPC não pode virar
+            // envio silencioso a quem deu opt-out: devolve para a fila e tenta de novo no próximo
+            // tick (mesmo padrão fail-closed de tick-cadence/tick-journeys).
+            const { data: allowed, error: consentErr } = await supabaseAdmin.rpc("check_consent", {
               _entity_id: send.entity_id,
               _channel: campaign.channel as never,
             });
+            if (consentErr) {
+              console.error("[tick-marketing] check_consent falhou", consentErr);
+              await supabaseAdmin
+                .from("campaign_sends")
+                .update({
+                  state: "queued",
+                  next_run_at: new Date(Date.now() + 15 * 60_000).toISOString(),
+                  last_error: `check_consent indisponível: ${consentErr.message}`,
+                })
+                .eq("id", send.id);
+              continue;
+            }
             if (allowed === false) {
               skipped_consent++;
               await supabaseAdmin

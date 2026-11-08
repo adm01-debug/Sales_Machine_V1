@@ -136,6 +136,20 @@ describe("tick-marketing (integração)", () => {
     expect(fake.tables.campaign_sends[0]).toMatchObject({ state: "skipped" });
   });
 
+  it("falha fechado (não envia) quando check_consent fica indisponível", async () => {
+    fake = createFakeSupabase({
+      tables: baseTables(),
+      rpcErrors: { check_consent: { message: "connection refused" } },
+    });
+    const out = await tick();
+    expect(out).toMatchObject({ processed: 0, skipped_consent: 0, failed: 0 });
+    expect(sent).toHaveLength(0);
+    expect(fake.tables.campaign_sends[0]).toMatchObject({
+      state: "queued",
+      last_error: "check_consent indisponível: connection refused",
+    });
+  });
+
   it("respeita o cap diário da campanha sem consumir a fila", async () => {
     const tables = baseTables({ campaign: { daily_cap: 1 } });
     tables.campaign_sends.push({

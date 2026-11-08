@@ -116,9 +116,9 @@ violação de LGPD.
    (`src/routes/api/public/hooks/tick-cadence.ts:42-49,72-80`), não `FOR UPDATE SKIP LOCKED` — a função
    `fn_claim_cadence_batch`, que faria isso, está numa migration base64 e **nunca é chamada**. Mantenha
    o padrão otimista até alguém decidir migrar; não misture os dois.
-2. **`check_consent()` antes de qualquer envio.** Cumprido em `tick-cadence` (L119, fail-closed) e
-   `tick-journeys` (L212, fail-closed); **fail-open** em `tick-marketing` (L135) e **ausente** em
-   `src/routes/api/public/agent-tools/send-message.ts`. São furos abertos, não licença: nada novo entra sem o gate.
+2. **`check_consent()` antes de qualquer envio.** Cumprido nos 4 caminhos: `tick-cadence` (L119),
+   `tick-journeys` (L212), `tick-marketing` (L137) e `agent-tools/send-message.ts` (L63) — todos
+   fail-closed (os dois últimos corrigidos em 2026-11-08; ver `docs/agentes/regras-dominio.md`).
 3. **`UNIQUE(source, external_id)` em `sales_machine_events`** → `INSERT … ON CONFLICT DO NOTHING`.
 4. **`entity_map` por upsert** — `ON CONFLICT (kind, lux_id)` / `(kind, singu_id)`; nunca INSERT direto.
 5. **Nunca `UPDATE` direto em `campaign_targets.state`** fora do fluxo do worker. O trigger de
