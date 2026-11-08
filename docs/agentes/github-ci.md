@@ -75,5 +75,7 @@ problemas** e **61 de 478 testes falhando**. Isso é herança da `main`, não re
 
 ## Deploy
 
-Não há deploy por workflow. Merge em `main` sincroniza com o Lovable e é o que chega perto de
-produção — ver `docs/agentes/deploy-lovable.md` antes de dizer que algo "está no ar".
+Não há deploy por workflow, mas há deploy automático: a **Vercel** está ligada por integração Git
+(push em branch = preview, merge em `main` = produção) e o merge também sincroniza com o **Lovable**.
+Ver `docs/agentes/deploy-lovable.md` antes de dizer que algo "está no ar" — a confirmação vem do MCP
+`Vercel`, não do GitHub.
