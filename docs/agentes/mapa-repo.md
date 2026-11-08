@@ -32,8 +32,9 @@ Ler quando precisar saber onde fica algo **antes** de buscar por texto.
 | `supabase/migrations/` | 45 `.sql` aplicados (`20260720132748_…` → `20260802125202_…`) |
 | `supabase/functions/migrate-helper/` | edge function Deno **residual e perigosa** — ver `docs/agentes/banco.md` antes de tocar |
 | `scripts/gerar-dump-arquitetura.py` | gerador do índice de contexto (Python 3, stdlib) |
-| `scripts/ci/check-agents-md-integrity.mjs` | guarda das instruções de agente (rodar à mão; não há CI) |
-| `.claude/`, `.agents/`, `.codex/` | skills, hook de início de sessão e baseline multi-agente |
+| `scripts/ci/check-agents-md-integrity.mjs` | guarda das instruções de agente — roda no CI (`.github/workflows/agents-md-guard.yml`) e à mão |
+| `.claude/`, `.agents/`, `.codex/` | skills, hooks (`session-start.sh`, `pre-tool-index-guard.mjs`) e baseline multi-agente |
+| `.github/workflows/` | **um** workflow: `agents-md-guard.yml` (integridade das instruções de agente) |
 
 ## Comandos
 
@@ -49,7 +50,7 @@ bun run lint                # eslint . (prettier é erro de lint)
 bun run format              # prettier --write .
 bunx tsc --noEmit           # typecheck — NÃO existe script dedicado
 python3 scripts/gerar-dump-arquitetura.py             # regerar o índice (Lei 12)
-node scripts/ci/check-agents-md-integrity.mjs         # guarda das instruções de agente
+node scripts/ci/check-agents-md-integrity.mjs         # guarda das instruções (o mesmo que o CI roda)
 ```
 
 Só o que você tocou: `bunx vitest run src/lib/<arquivo>.test.ts`, `bunx eslint <arquivos>`.
@@ -72,3 +73,16 @@ estática das migrations + `src/routes` + `src/integrations`:
 
 O dump **não** consulta o banco ao vivo (o MCP do Supabase já apontou para o projeto errado — ver
 `docs/agentes/banco.md`): ele descreve o que as migrations dizem, que é o contrato do repo.
+
+**Limitação medida em 2026-11-08:** o gerador casa `ALTER TABLE … ADD COLUMN` uma vez por statement
+(`scripts/gerar-dump-arquitetura.py:80`), então num `ALTER TABLE x ADD COLUMN a …, ADD COLUMN b …` só
+a primeira coluna entra. É por isso que `campaign_targets` aparece com 10 colunas e **sem**
+`locked_until`, `attempts`, `max_attempts` e `last_transition_at`, todas adicionadas no mesmo
+statement (`supabase/migrations/20260720181807_….sql:8-12`). Para colunas, confirme em
+`src/integrations/supabase/types.ts` (gerado do banco real) ou na migration.
+
+O hook `PreToolUse` (`.claude/hooks/pre-tool-index-guard.mjs`) usa esse índice: quando uma busca por
+texto procura nome de tabela, coluna, enum, função SQL, rota, job ou integração que o dump conhece,
+ele devolve o que o índice diz, junto ao resultado da busca. Não bloqueia nada (só
+`additionalContext`) e é no-op se o termo for desconhecido, se o comando não for busca ou se o dump
+não puder ser lido.

@@ -17,8 +17,9 @@
  * Uso:  node scripts/ci/check-agents-md-integrity.mjs
  *       AGENTS_MD_BASE=origin/main node scripts/ci/check-agents-md-integrity.mjs
  *
- * Nao ha workflow de CI neste repo (`.github/` nao existe): rodar a mao antes de fechar qualquer
- * tarefa que toque AGENTS.md, docs/agentes/ ou 00-governanca/.
+ * No CI roda em `.github/workflows/agents-md-guard.yml` (PR e push na main, AGENTS_MD_BASE=FETCH_HEAD).
+ * Rode a mao tambem, antes de fechar qualquer tarefa que toque AGENTS.md, docs/agentes/ ou
+ * 00-governanca/, para nao descobrir o problema depois do push.
  */
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { execSync } from "node:child_process";

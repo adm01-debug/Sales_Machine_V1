@@ -38,19 +38,28 @@ Ler antes de commitar, abrir PR, mergear ou prometer que "o CI está verde".
   function, docs, config): sem conflito com `main`, com o que você tocou verificado. Squash-merge e
   apague a branch.
 - **Deixe a PR aberta e chame o dono** quando envolver: DDL/migration em produção; segredos ou
-  rotação de chave; criação de workflow de CI (`.github/`); deleção de dado; mudança de arquitetura
+  rotação de chave; mexer em `.github/workflows/`; deleção de dado; mudança de arquitetura
   ou de custo; remoção das pendências travadas pelo dono (`package-lock.json`, edge function
   residual); qualquer coisa que afrouxe consentimento, RLS ou LGPD; conflito com PR de outro agente.
 
-## CI: não existe
+## CI: um único workflow
 
-- **Não há `.github/`** neste repo: nenhum workflow, nenhum check obrigatório, nenhum required status.
-  Nada roda lint, teste, typecheck, migration-replay ou auditoria automaticamente.
-- Consequência direta: **"CI verde" não é critério de merge aqui, porque não há CI.** O critério é o
-  que você executou e colou como evidência. Nunca escreva "CI verde" numa PR deste repo.
-- `agent_eval_cases` (harness de eval do FATOR X) também não roda em lugar nenhum por isso.
-- Criar o primeiro workflow é mudança de perímetro → **PR aberta + chamar o dono** (matriz de
-  autonomia). Enquanto não houver, estes guards rodam **à mão** antes de fechar a tarefa:
+`.github/workflows/agents-md-guard.yml` é o único workflow do repo. Roda
+`scripts/ci/check-agents-md-integrity.mjs` em PR e push na `main`, quando o diff toca `AGENTS.md`,
+`CLAUDE.md`, `docs/agentes/**`, `00-governanca/**`, o próprio guard ou o workflow: exige as 8 seções
+do `AGENTS.md` e reprova se o conjunto de instruções encolher mais de 30% (ou mais de 50% num
+arquivo) contra a `main` — é a proteção contra wipe por sessão paralela. Node 22, sem instalar
+dependências (o guard é stdlib), actions pinadas por SHA.
+
+- **Não há required check configurado**: o resultado é sinal para o autor, não bloqueio de merge.
+- **Nada mais roda em CI:** lint, teste, typecheck, replay de migration, auditoria e os
+  `agent_eval_cases` (harness de eval do FATOR X) continuam fora.
+- Consequência direta: **"CI verde" não é critério de merge aqui.** O critério é o que você executou e
+  colou como evidência. Nunca escreva "CI verde" numa PR deste repo.
+- O status `Vercel` nasce **vermelho** em toda PR: o preview do projeto está quebrado
+  independentemente do diff (ver `docs/agentes/deploy-lovable.md`). Não confunda com regressão sua.
+- Workflow novo, ou mudança neste, é mudança de perímetro → **PR aberta + chamar o dono** (matriz de
+  autonomia). Estes guards rodam **à mão** antes de fechar a tarefa:
 
 ```bash
 bun install                                              # uma vez por sessão
@@ -58,7 +67,7 @@ bunx tsc --noEmit                                        # typecheck (não há s
 bunx vitest run <arquivos que você tocou>
 bunx eslint <arquivos que você tocou>
 node scripts/ci/check-agents-md-integrity.mjs            # se tocou AGENTS.md/docs/agentes/00-governanca
-AGENTS_MD_BASE=origin/main node scripts/ci/check-agents-md-integrity.mjs   # comparando com a main
+AGENTS_MD_BASE=origin/main node scripts/ci/check-agents-md-integrity.mjs   # igual ao que o workflow roda
 ```
 
 ## Baseline vermelha: o que conta como seu erro

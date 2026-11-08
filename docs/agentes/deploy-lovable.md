@@ -4,7 +4,7 @@ Ler antes de dizer que algo foi entregue, ou ao mexer em build, env de execuçã
 
 ## Como este projeto chega em produção
 
-Há **dois** destinos, e nenhum deles é workflow deste repo (não existe `.github/`):
+Há **dois** destinos, e nenhum passa por workflow do repo (o único workflow vigia as instruções de agente, não constrói nada):
 
 | Destino | O que recebe | Evidência |
 |---|---|---|
