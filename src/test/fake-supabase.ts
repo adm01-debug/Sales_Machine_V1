@@ -14,6 +14,8 @@ export type Tables = Record<string, Row[]>;
 export interface FakeSupabaseOptions {
   tables: Tables;
   rpc?: Record<string, (args: Row) => unknown>;
+  /** Simula RPC indisponível: se o nome estiver aqui, devolve esse erro em vez de chamar `rpc`. */
+  rpcErrors?: Record<string, { message: string }>;
   /** Permite simular corrida de lock retornando `false` para abortar o update. */
   onUpdate?: (table: string, patch: Row, matched: Row[]) => boolean | void;
 }
@@ -225,6 +227,8 @@ export function createFakeSupabase(options: FakeSupabaseOptions) {
     from: (table: string) => builder(table),
     rpc: async (name: string, args: Row) => {
       calls.push({ op: `rpc:${name}`, table: name, payload: args });
+      const err = options.rpcErrors?.[name];
+      if (err) return { data: null, error: err };
       const fn = options.rpc?.[name];
       return { data: fn ? fn(args) : null, error: null };
     },

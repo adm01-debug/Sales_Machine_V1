@@ -18,13 +18,14 @@ Estado real dos quatro caminhos de envio:
 |---|---|---|
 | `src/routes/api/public/hooks/tick-cadence.ts:119` | ✅ antes de qualquer despacho | **fail-closed**: adia 15 min, volta a `queued`, grava `last_error` (L125-137) |
 | `src/routes/api/public/hooks/tick-journeys.ts:212` | ✅ | **fail-closed**: `waiting` + 15 min (L221-229) |
-| `src/routes/api/public/hooks/tick-marketing.ts:135` | ✅ | ⚠️ **fail-open**: só trata `allowed === false` (L139); erro do RPC deixa `allowed` nulo e o envio segue |
-| `src/routes/api/public/agent-tools/send-message.ts` | 🔴 **não chama** | — envia por `singuClient` (L92-109) com bearer `AGENT_TOOL_TOKEN` válido e **sem nenhum gate de consentimento** |
+| `src/routes/api/public/hooks/tick-marketing.ts:137` | ✅ | **fail-closed** desde 2026-11-08: adia 15 min, volta a `queued`, grava `last_error` (L141-150) |
+| `src/routes/api/public/agent-tools/send-message.ts:63` | ✅ desde 2026-11-08 | **fail-closed**: 503 sem despachar, nem para canal stub (L67-77) |
 
-Isso significa que a regra "nunca enviar sem `check_consent`" **tem dois furos abertos hoje**
-(fail-open no marketing, ausência total no endpoint de agente). Eles estão registrados em
-`.contexto-compartilhado/pendencias-conhecidas.md`. Ao mexer nesses arquivos, feche o furo do arquivo
-que você está tocando; não "aproveite" para reescrever os outros sem pedir.
+Os dois furos que existiam (fail-open no marketing, ausência total no endpoint de agente) foram
+fechados no mesmo ciclo da adoção deste padrão de docs — ver
+`.contexto-compartilhado/pendencias-conhecidas.md` e `00-governanca/04-changelog-prompts.md`.
+Reabrir qualquer um dos dois exige o mesmo nível de evidência que fechou (teste de regressão +
+diff mínimo).
 
 Proibido em qualquer hipótese: remover, afrouxar ou condicionar o gate; enviar mensagem real para lead
 em teste; apagar dado pessoal com `DELETE` manual.

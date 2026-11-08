@@ -3,6 +3,39 @@
 > Histórico versionado de mudanças nos artefatos de contexto e governança (não confundir com CHANGELOG de produto).
 > Formato: versão · data · o que mudou · por quê.
 
+## v2.2 — 2026-11-08 — Fecha os dois furos de check_consent() do menu de próximos passos
+
+**Contexto:** execução dos itens 2 e 3 do menu "Próximos passos" da v2.1 (item 1, rotação de service_role, fica aberto — regra 8 do Fluxo Git).
+
+**Corrigido:**
+- `src/routes/api/public/hooks/tick-marketing.ts` — o gate de consentimento era fail-open: erro do
+  RPC `check_consent` deixava `allowed` nulo e o envio seguia. Agora captura `error: consentErr` e,
+  em erro, devolve o envio para `queued` com retry em 15min (mesmo padrão de
+  `tick-cadence`/`tick-journeys`).
+- `src/routes/api/public/agent-tools/send-message.ts` — único caminho de envio sem gate de
+  consentimento. Adicionado `check_consent()` fail-closed antes de inserir o touchpoint, cobrindo
+  também os canais stub (linkedin/instagram).
+- `src/test/fake-supabase.ts` — extensão aditiva (`rpcErrors`) para simular RPC indisponível nos
+  testes; não muda o comportamento padrão (`rpc` sem `rpcErrors` continua igual).
+
+**Testes:** regressão em `tick-marketing.test.ts` (fail-closed em erro de RPC) e arquivo novo
+`send-message.test.ts` (4 casos: bearer inválido, despacho permitido, bloqueio por opt-out, falha
+fechada em RPC indisponível, bloqueio em canal stub).
+
+**Verificado:** `node --experimental-strip-types --check` nos 5 arquivos tocados (sem erro de
+sintaxe); `tsc --noEmit` antes/depois do diff — mesmos erros pré-existentes, nenhum novo (só 2
+linhas extras, esperadas, do arquivo de teste novo: "Cannot find module 'vitest'"/"Cannot find
+name 'process'", ausentes em todo teste do repo por falta de `@types/node`); `eslint` antes/depois —
+mesmos 16 problemas pré-existentes (baseline), nenhum novo; o arquivo de teste novo ficou com 0
+problemas após `--fix`. **NÃO VERIFICADO: execução real da suíte (`vitest run`)** — `node_modules`
+incompleto (`bun install` bloqueado: tarballs de `registry.npmjs.org` voltam `403` do proxy desta
+sessão mesmo com o host em `NO_PROXY`, reproduzido 2x).
+
+**Item 1 do menu não executado:** tirar `supabase/functions/migrate-helper/` do ar e rotacionar a
+`service_role` é "segredos e rotação" — regra 8 do Fluxo Git (`AGENTS.md` > Fluxo Git): fica aberto
+para o dono decidir, e nenhum MCP desta sessão alcança `twkajyybcwvideusutsb` para executar mesmo
+que fosse autônomo.
+
 ## v2.1 — 2026-11-08 — Fecha as duas lacunas do padrão (hook PreToolUse + CI)
 
 **Contexto:** a v2.0 deixou de fora dois itens que o `Zapp_Web_V2` tem. O dono pediu os dois.

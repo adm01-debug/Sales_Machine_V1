@@ -45,12 +45,14 @@
   `fn_archive_old_target_events`, `fn_try_decrement_quota`, `increment_sender_health`,
   `fn_reset_daily_quotas`; view `v_security_audit`. *Ação: decidir com o dono o que reaplicar — é DDL
   em produção, e parte redefine funções que já existem.*
-- **`agent-tools/send-message.ts` envia sem `check_consent()`.** Único caminho de envio sem o gate
-  LGPD (grep por `consent` no arquivo = 0); autentica por bearer `AGENT_TOOL_TOKEN` constant-time
-  (L26-31) e despacha por `singuClient` (L92-109). Viola a regra crítica 2.
-- **`tick-marketing.ts` é fail-open no consentimento.** L135-139 só trata `allowed === false`; erro do
-  RPC deixa `allowed` nulo e o envio segue. `tick-cadence` (L119-137) e `tick-journeys` (L212-229) são
-  fail-closed. Viola a regra crítica 2 em caso de indisponibilidade.
+- ~~**`agent-tools/send-message.ts` envia sem `check_consent()`**~~ **CORRIGIDO em 2026-11-08**:
+  gate fail-closed antes do insert do touchpoint, cobrindo também canal stub
+  (`src/routes/api/public/agent-tools/send-message.ts:63-77`). Teste em
+  `send-message.test.ts` (3 casos: opt-out, RPC indisponível, stub).
+- ~~**`tick-marketing.ts` é fail-open no consentimento**~~ **CORRIGIDO em 2026-11-08**: agora captura
+  `error: consentErr` e, em erro, devolve o envio para `queued` com retry em 15min — mesmo padrão de
+  `tick-cadence`/`tick-journeys` (`tick-marketing.ts:137-155`). Teste de regressão em
+  `tick-marketing.test.ts` ("falha fechado... quando check_consent fica indisponível").
 - **Disclosure de IA não existe no código** (regra crítica 8): `grep -rn "disclosure|agent_identity|identity_config" src/` = 0.
 - **Nenhum cron para `tick-cadence`.** `grep -rl tick-cadence supabase/migrations` = vazio; os
   schedules `sm-cadence-tick`/`sm-quota-reset`/`sm-archive-events` estão comentados dentro da migration
