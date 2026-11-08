@@ -1,0 +1,125 @@
+# docs:
+#   gatilho: agendado (seg 10:23 UTC) e dispatch
+#   prova: inventario/estado (banco, edges) regerado do banco oficial e do codigo
+#   falha: o job fica vermelho e o inventario nao e atualizado
+#   avisa: PR automation/inventario-estado com o inventario novo
+name: Inventário do estado real (semanal)
+
+# Refaz inventario/estado/ (banco e edge functions) a partir do banco oficial
+# (somente leitura, Management API) e do código, e abre PR se algo mudou.
+# Scripts: scripts/inventario/gerar-banco.mjs e gerar-repo.mjs (portados do Zapp_Web_V2).
+# As rotas/telas deste repo (TanStack Start, roteador por arquivos) saem em
+# docs/contexto/codigo/rotas.json, pelo contexto.yml — por isso aqui não há gerar-rotas.mjs.
+# Nunca faz push direto em main — entrega via PR na branch automation/inventario-estado.
+#
+# Secrets:
+#   - SUPABASE_ACCESS_TOKEN (criar em Settings > Secrets > Actions): só leitura aqui —
+#     POST /database/query/read-only e GET /functions do projeto twkajyybcwvideusutsb.
+#     Sem o secret o job falha de propósito: inventário desatualizado em silêncio é pior.
+
+on:
+  schedule:
+    - cron: '23 10 * * 1' # segunda 10:23 UTC (07:23 BRT)
+  workflow_dispatch:
+
+concurrency:
+  group: inventario-estado-semanal
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+jobs:
+  gerar:
+    name: Refazer inventario/estado
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:  # zizmor: ignore[excessive-permissions]
+      contents: write       # branch do PR
+      pull-requests: write  # abrir/atualizar o PR
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Instalar ripgrep (usado pelo gerar-repo.mjs)
+        run: command -v rg || sudo apt-get install -y --no-install-recommends ripgrep
+
+      - name: Testar as funções puras do inventário
+        run: node --test "scripts/ci/inventario-*.unit.mjs"
+
+      - name: Inventário do banco (somente leitura)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "::error::SUPABASE_ACCESS_TOKEN ausente."
+            exit 1
+          fi
+          node scripts/inventario/gerar-banco.mjs
+
+      - name: Inventário do repositório (edge functions)
+        # < /dev/null: sem lista de tabelas no stdin o script so grava edges.json (o uso de tabelas sai no banco.json)
+        run: node scripts/inventario/gerar-repo.mjs < /dev/null
+
+      - name: Decidir se vale PR
+        id: mudou
+        # Compara o JSON sem os carimbos de data (medido_em/gerado_em), arquivo a arquivo contra o
+        # HEAD. Filtrar linhas do diff não serve: o edges.json é gravado numa linha só, com a data.
+        run: |
+          valor="$(node scripts/inventario/mudou-conteudo.mjs inventario/estado/banco.json inventario/estado/edges.json)"
+          echo "valor=$valor" >> "$GITHUB_OUTPUT"
+          if [ "$valor" != "true" ]; then
+            echo "Inventário sem mudança de conteúdo — nenhum PR a abrir."
+          fi
+
+      - name: Abrir ou atualizar PR do inventário
+        id: pull-request
+        if: steps.mudou.outputs.valor == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        env:
+          HUSKY: '0'  # Evita que o hook pre-push do Husky bloqueie o push interno da action
+        with:
+          token: ${{ github.token }}
+          base: main
+          branch: automation/inventario-estado
+          delete-branch: true
+          commit-message: 'chore: inventario do estado real [auto]'
+          title: 'chore: inventário do estado real (semanal)'
+          body: |
+            Inventário refeito automaticamente por `.github/workflows/inventario-estado-semanal.yml`:
+            banco oficial (somente leitura, Management API) + código. Só arquivos em `inventario/estado/`.
+
+            - main de origem: `${{ github.sha }}`
+            - run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          labels: inventario
+          add-paths: |
+            inventario/estado/banco.json
+            inventario/estado/edges.json
+
+      - name: Habilitar auto-merge no PR do inventário
+        if: steps.pull-request.outputs.pull-request-number != ''
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pull-request.outputs.pull-request-number }}
+        run: gh pr merge --auto --squash "$PR_NUMBER" --repo "$GITHUB_REPOSITORY"
+
+      - name: Upload do inventário
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: inventario-estado-${{ github.run_id }}
+          path: inventario/estado/
+          retention-days: 14

@@ -6,3 +6,16 @@ pnpm-lock.yaml
 package-lock.json
 bun.lock
 routeTree.gen.ts
+
+# Scripts autônomos portados do Zapp_Web_V2: formatação é a de origem (singleQuote),
+# reformatar aqui só cria divergência e dificulta sincronizar correções entre os repos.
+scripts/ai-context/
+scripts/ci/
+scripts/inventario/
+scripts/regras_negocio/
+scripts/supabase_snapshot/
+.github/workflows/
+
+# Saída gerada por script (o gerador decide o formato; prettier brigaria com ele a cada run)
+inventario/estado/
+docs/contexto/

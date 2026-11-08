@@ -10,7 +10,14 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "guards": "node --test \"scripts/ci/*.unit.mjs\"",
+    "contexto:ia": "node scripts/ai-context/gerar.mjs --out docs/contexto/codigo",
+    "contexto:ia:test": "node --test scripts/ai-context/gerar.unit.mjs",
+    "contexto:regras": "python3 scripts/regras_negocio/generate.py --repo . --out docs/contexto/regras --profile regras --schema-snapshot docs/contexto/supabase --index-path docs/contexto/00-INDEX.md --no-pointer",
+    "contexto:indice": "python3 scripts/regras_negocio/indice.py --repo . --out docs/contexto/00-INDEX.md --fonte \"banco real=docs/contexto/supabase\" --fonte \"código=docs/contexto/codigo\" --fonte \"regras de negócio=docs/contexto/regras\"",
+    "inventario:repo": "node scripts/inventario/gerar-repo.mjs",
+    "inventario:banco": "node scripts/inventario/gerar-banco.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
