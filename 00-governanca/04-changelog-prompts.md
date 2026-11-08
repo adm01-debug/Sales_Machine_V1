@@ -24,12 +24,13 @@
 "não há `.github/`" / "não existe CI" foram trocadas pelo que passa a ser verdade: existe **um**
 workflow, e ele vigia só as instruções; lint, teste, typecheck, migration e eval continuam sem CI.
 
-**Achado da implementação (não corrigido — fora de escopo):** o gerador do índice casa
-`ALTER TABLE … ADD COLUMN` uma vez por statement (`scripts/gerar-dump-arquitetura.py:80`), então um
-`ALTER TABLE` com vários `ADD COLUMN` registra só a primeira coluna. É por isso que
-`campaign_targets` aparece sem `locked_until`, `attempts`, `max_attempts` e `last_transition_at`
-(`supabase/migrations/20260720181807_….sql:8-12`). O hook avisa dessa ressalva no próprio texto, e a
-limitação está documentada em `docs/agentes/mapa-repo.md`.
+**Achado da implementação, corrigido no mesmo ciclo:** o gerador do índice casava
+`ALTER TABLE … ADD COLUMN` uma vez por statement, então um `ALTER TABLE` com vários `ADD COLUMN`
+registrava só a primeira coluna — `campaign_targets` aparecia sem `locked_until`, `attempts`,
+`max_attempts` e `last_transition_at`. Corrigido em `scripts/gerar-dump-arquitetura.py` (extrai o
+statement completo até o `;` e procura cada `ADD COLUMN` dentro dele) e `dump-arquitetura.json`
+regenerado: 8 colunas novas em `campaign_targets` e `contact_touchpoints`, nenhum outro campo do
+dump mudou (comparado chave a chave contra o dump anterior).
 
 **Continua fora do padrão do Zapp:** `.claude/commands/` (lá é um slash command de projeto) e
 `.claude/ecc-tools.json` + `.claude/homunculus/` (artefatos gerados por ferramenta externa).

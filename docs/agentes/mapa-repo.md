@@ -74,12 +74,17 @@ estática das migrations + `src/routes` + `src/integrations`:
 O dump **não** consulta o banco ao vivo (o MCP do Supabase já apontou para o projeto errado — ver
 `docs/agentes/banco.md`): ele descreve o que as migrations dizem, que é o contrato do repo.
 
-**Limitação medida em 2026-11-08:** o gerador casa `ALTER TABLE … ADD COLUMN` uma vez por statement
-(`scripts/gerar-dump-arquitetura.py:80`), então num `ALTER TABLE x ADD COLUMN a …, ADD COLUMN b …` só
-a primeira coluna entra. É por isso que `campaign_targets` aparece com 10 colunas e **sem**
-`locked_until`, `attempts`, `max_attempts` e `last_transition_at`, todas adicionadas no mesmo
-statement (`supabase/migrations/20260720181807_….sql:8-12`). Para colunas, confirme em
-`src/integrations/supabase/types.ts` (gerado do banco real) ou na migration.
+**Bug corrigido em 2026-11-08:** até esta data, o gerador só casava `ALTER TABLE … ADD COLUMN` uma
+vez por statement (`scripts/gerar-dump-arquitetura.py:80`), então num
+`ALTER TABLE x ADD COLUMN a …, ADD COLUMN b …` só a primeira coluna entrava — `campaign_targets`
+aparecia sem `locked_until`, `attempts`, `max_attempts` e `last_transition_at`
+(`supabase/migrations/20260720181807_….sql:8-12`), e `contact_touchpoints` sem `max_attempts`,
+`next_retry_at`, `email_in_reply_to` e `email_references`. Agora o gerador extrai o statement
+completo (até o `;`) e procura cada `ADD COLUMN` dentro dele; as 8 colunas passaram a aparecer no
+índice sem mudar nenhum outro campo (enums, funções, rotas, páginas, integrações e jobs ficaram
+idênticos — conferido comparando o dump antigo com o novo). Mesmo assim, para o estado real da
+produção a melhor pista continua sendo `src/integrations/supabase/types.ts` (gerado do banco), já
+que o dump descreve as migrations, não o banco ao vivo.
 
 O hook `PreToolUse` (`.claude/hooks/pre-tool-index-guard.mjs`) usa esse índice: quando uma busca por
 texto procura nome de tabela, coluna, enum, função SQL, rota, job ou integração que o dump conhece,

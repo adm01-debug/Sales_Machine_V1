@@ -77,10 +77,22 @@ def main() -> None:
         block = balanced_block(sql, sql.index("(", m.end() - 1))
         tabelas.setdefault(nome, {"colunas": {}, "rls": False, "indices": [], "triggers": []})
         tabelas[nome]["colunas"].update(parse_columns(block))
-    for m in re.finditer(r"ALTER\s+TABLE\s+(?:ONLY\s+)?" + IDENT + r"\s+ADD\s+COLUMN\s+(?:IF\s+NOT\s+EXISTS\s+)?\"?([a-z_][a-z0-9_]*)\"?\s+([^,;]+)", sql, re.IGNORECASE):
-        tbl, col, resto = m.group(1), m.group(2), m.group(3).strip()
-        if tbl in tabelas and col not in tabelas[tbl]["colunas"]:
-            tabelas[tbl]["colunas"][col] = re.sub(r"\s+", " ", resto)
+    # Um `ALTER TABLE x ADD COLUMN a ..., ADD COLUMN b ...;` so tem "ALTER TABLE x" colado no
+    # PRIMEIRO "ADD COLUMN" — os demais ficam depois de uma virgula. Por isso pega o statement
+    # inteiro (ate o ";") e procura cada "ADD COLUMN" dentro dele, em vez de casar os dois juntos.
+    for m in re.finditer(r"ALTER\s+TABLE\s+(?:ONLY\s+)?" + IDENT + r"\s+([\s\S]*?);", sql, re.IGNORECASE):
+        tbl, corpo = m.group(1), m.group(2)
+        if tbl not in tabelas:
+            continue
+        for m2 in re.finditer(
+            r"ADD\s+COLUMN\s+(?:IF\s+NOT\s+EXISTS\s+)?\"?([a-z_][a-z0-9_]*)\"?\s+(.+?)"
+            r"(?=,\s*ADD\s+COLUMN\b|,\s*ADD\s+CONSTRAINT\b|,\s*DROP\b|,\s*ALTER\b|$)",
+            corpo,
+            re.IGNORECASE | re.DOTALL,
+        ):
+            col, resto = m2.group(1), m2.group(2).strip()
+            if col not in tabelas[tbl]["colunas"]:
+                tabelas[tbl]["colunas"][col] = re.sub(r"\s+", " ", resto)
 
     # --- RLS ---
     for m in re.finditer(r"ALTER\s+TABLE\s+(?:ONLY\s+)?" + IDENT + r"\s+ENABLE\s+ROW\s+LEVEL\s+SECURITY", sql, re.IGNORECASE):
