@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 
 import {
   extrairInventario, contarUsoNoCodigo, montarInventario, compararEdges, conferirOrigem, LIMIARES, PARECE_CREDENCIAL,
-  rodaTodoDia, versoesDoRepo, tabelasDosTypes,
+  rodaTodoDia, versoesDoRepo, tabelasDosTypes, edgesNoRepo,
 } from '../inventario/gerar-banco.mjs';
 
 const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -188,4 +188,10 @@ test('cron_sem_execucao: job ativo diario sem nenhuma execucao em 24 h (cron 100
 
 test('banco saudavel nao gera alerta nenhum', () => {
   assert.deepEqual(montarInventario(base(), {}).alertas, []);
+});
+
+test('sem supabase/functions/ (repo sem edge functions) edgesNoRepo retorna [] sem lancar ENOENT', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'inv-banco-edges-'));
+  assert.deepEqual(edgesNoRepo(dir), [], 'pasta ausente nao deve lancar excecao');
+  fs.rmdirSync(dir);
 });

@@ -150,6 +150,7 @@ export function tabelasDosTypes(raiz) {
 /** Edge functions do repo (pastas com index.ts, sem _shared). */
 export function edgesNoRepo(raiz) {
   const dir = path.join(raiz, 'supabase/functions');
+  if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory() && !d.name.startsWith('_') && fs.existsSync(path.join(dir, d.name, 'index.ts')))
     .map((d) => d.name).sort();
