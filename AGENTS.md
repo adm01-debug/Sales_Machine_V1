@@ -116,9 +116,10 @@ violação de LGPD.
    (`src/routes/api/public/hooks/tick-cadence.ts:42-49,72-80`), não `FOR UPDATE SKIP LOCKED` — a função
    `fn_claim_cadence_batch`, que faria isso, está numa migration base64 e **nunca é chamada**. Mantenha
    o padrão otimista até alguém decidir migrar; não misture os dois.
-2. **`check_consent()` antes de qualquer envio.** Cumprido nos 4 caminhos: `tick-cadence` (L119),
-   `tick-journeys` (L212), `tick-marketing` (L137) e `agent-tools/send-message.ts` (L63) — todos
-   fail-closed (os dois últimos corrigidos em 2026-11-08; ver `docs/agentes/regras-dominio.md`).
+2. **`check_consent()` antes de qualquer envio.** Cumprido nos 5 caminhos: `tick-cadence` (L119),
+   `tick-journeys` (L212), `tick-marketing` (L137), `agent-tools/send-message.ts` (L63) e
+   `orchestrator.functions.ts:decideApproval` (L386) — todos fail-closed (os três últimos corrigidos
+   em 2026-11-08/09; ver `docs/agentes/regras-dominio.md`).
 3. **`UNIQUE(source, external_id)` em `sales_machine_events`** → `INSERT … ON CONFLICT DO NOTHING`.
 4. **`entity_map` por upsert** — `ON CONFLICT (kind, lux_id)` / `(kind, singu_id)`; nunca INSERT direto.
 5. **Nunca `UPDATE` direto em `campaign_targets.state`** fora do fluxo do worker. O trigger de
@@ -171,8 +172,8 @@ violação de LGPD.
   `*.functions.ts` (server fn: **sempre** `requireSupabaseAuth` + validador Zod — os 13 arquivos
   cumprem), `*.test.ts` (ao lado do módulo). Alias `@/` = `src/`.
 - Endpoints = rotas TanStack Start em `src/routes/api/public/` (ADR-0001). Reintroduzir edge function
-  Deno exige ADR — e repare que `supabase/functions/migrate-helper/` **existe** e é perigosa (ver
-  `docs/agentes/banco.md`).
+  Deno exige ADR. `supabase/functions/migrate-helper/` foi **removida do repo** (2026-11-09); ainda
+  pendente deletar no dashboard e rotacionar `SUPABASE_SERVICE_ROLE_KEY` (ação do dono).
 
 ## Contexto gerado (índice do repo)
 Não há grafo AST aqui. O índice é `.contexto-compartilhado/dump-arquitetura.json`, gerado por análise
@@ -195,9 +196,9 @@ estática de `supabase/migrations/*.sql` + `src/routes` + `src/integrations`
   `bun install`, essas três coisas são `NÃO VERIFICADO`.
 - **Três migrations em base64** (`009`, `010`, `012`) → 4 tabelas, 9 funções e 1 view documentadas que
   **não existem** no banco.
-- **`supabase/functions/migrate-helper/`** com `verify_jwt = false`, CORS `*`, chave hardcoded e ação
-  que devolve `SUPABASE_SERVICE_ROLE_KEY` — a doc antiga afirmava que `supabase/functions/` não
-  existia mais.
+- ~~**`supabase/functions/migrate-helper/`**~~ **REMOVIDO DO REPO (2026-11-09)**: arquivo deletado e entrada
+  `[functions.migrate-helper]` limpa do `supabase/config.toml`. Ainda pendente: deletar no dashboard
+  Supabase se publicada, e rotacionar `SUPABASE_SERVICE_ROLE_KEY` (ação do dono).
 - **`.env` versionado** e fora do `.gitignore`; tem 6 linhas, mas só 2 batem com as 25 variáveis
   lidas via `process.env` em `src/` — as outras 4 são `VITE_*` (import.meta.env) ou não são lidas.
 - **`docs/SCHEMA_REFERENCE.md` desatualizado** (diz "009 migrations", documenta tabelas inexistentes).
