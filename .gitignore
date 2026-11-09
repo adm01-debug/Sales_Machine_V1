@@ -30,3 +30,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python bytecode cache
+__pycache__/
+
+# grafo de código (graphify), gerado sob demanda
+graphify-out/
+
+# gerado pelo contexto.yml na branch contexto (nunca em main); manual/ e texto humano e fica em main
+docs/contexto/*
+!docs/contexto/regras/
+docs/contexto/regras/*
+!docs/contexto/regras/manual/
+
+# inventario: so banco.json e edges.json sao versionados (PR semanal)
+inventario/estado/tabelas-uso.json

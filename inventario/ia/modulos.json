@@ -1,0 +1,1259 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "descricao": "menu → módulo (pasta de domínio) → telas/rotas → hooks → edge functions → tabelas → dependências entre módulos. edges/tabelas/rpcs são TRANSITIVOS (tudo que os arquivos do módulo puxam); `diretos` tem só o que está escrito nos arquivos do próprio módulo.",
+ "modulos": [
+  {
+   "modulo": "components",
+   "arquivos": 11,
+   "testes": 0,
+   "linhas": 1058,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 10,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "tabelas": [
+    "compliance_terms",
+    "contact_touchpoints",
+    "entity_map",
+    "message_templates",
+    "template_preflight_history"
+   ],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "FATORX_AGENT_ID_DEFAULT",
+    "FATORX_SERVICE_KEY",
+    "FATORX_URL",
+    "FATORX_WEBHOOK_SECRET",
+    "FUXICO_SERVICE_KEY",
+    "FUXICO_URL",
+    "FUXICO_WEBHOOK_SECRET",
+    "LUX_SERVICE_KEY",
+    "LUX_URL",
+    "LUX_WEBHOOK_SECRET",
+    "SINGU_SERVICE_KEY",
+    "SINGU_URL",
+    "SINGU_WEBHOOK_SECRET",
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [
+    "button",
+    "presentation"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "routes/_authenticated"
+   ],
+   "depende_de_modulos": [
+    "components/ui",
+    "integrations/supabase",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "@tanstack/react-query",
+    "@tanstack/react-router",
+    "@tanstack/react-start",
+    "date-fns",
+    "lucide-react",
+    "recharts",
+    "sonner"
+   ]
+  },
+  {
+   "modulo": "components/campaigns",
+   "arquivos": 1,
+   "testes": 0,
+   "linhas": 133,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 1,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [
+    "audience_members",
+    "audiences",
+    "campaign_sends",
+    "campaign_variants",
+    "channel_budgets",
+    "compliance_terms",
+    "compliance_violations_log",
+    "contact_touchpoints",
+    "entity_map",
+    "marketing_campaigns"
+   ],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "routes/_authenticated"
+   ],
+   "depende_de_modulos": [
+    "components/ui",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "@tanstack/react-query",
+    "@tanstack/react-start",
+    "lucide-react"
+   ]
+  },
+  {
+   "modulo": "components/dashboard",
+   "arquivos": 3,
+   "testes": 0,
+   "linhas": 1097,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 3,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [
+    "campaign_sends",
+    "campaign_variants",
+    "contact_churn_scores",
+    "contact_touchpoints",
+    "marketing_campaigns"
+   ],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "routes/_authenticated"
+   ],
+   "depende_de_modulos": [
+    "components/ui",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "@tanstack/react-query",
+    "@tanstack/react-router",
+    "@tanstack/react-start",
+    "lucide-react",
+    "recharts"
+   ]
+  },
+  {
+   "modulo": "components/email",
+   "arquivos": 2,
+   "testes": 0,
+   "linhas": 281,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 2,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "routes/_authenticated"
+   ],
+   "depende_de_modulos": [
+    "components/ui",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "lucide-react"
+   ]
+  },
+  {
+   "modulo": "components/forms",
+   "arquivos": 1,
+   "testes": 0,
+   "linhas": 146,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 1,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "routes/_authenticated"
+   ],
+   "depende_de_modulos": [
+    "components/ui",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "lucide-react"
+   ]
+  },
+  {
+   "modulo": "components/journeys",
+   "arquivos": 2,
+   "testes": 0,
+   "linhas": 322,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 2,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "routes/_authenticated"
+   ],
+   "depende_de_modulos": [
+    "components/ui",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "lucide-react"
+   ]
+  },
+  {
+   "modulo": "components/ops",
+   "arquivos": 7,
+   "testes": 0,
+   "linhas": 1082,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 7,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [
+    "budget_reallocations",
+    "campaign_sends",
+    "campaign_target_events",
+    "channel_budgets",
+    "channel_roi_stats",
+    "compliance_violations_log",
+    "consent_ledger",
+    "contact_touchpoints"
+   ],
+   "rpcs": [
+    "fn_refresh_roi_stats"
+   ],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [
+    "alert",
+    "donor",
+    "status"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "routes/_authenticated"
+   ],
+   "depende_de_modulos": [
+    "components/ui",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "@tanstack/react-query",
+    "@tanstack/react-start",
+    "date-fns",
+    "lucide-react"
+   ]
+  },
+  {
+   "modulo": "components/ui",
+   "arquivos": 46,
+   "testes": 0,
+   "linhas": 4417,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 44,
+   "hooks_locais": [
+    "useFormField",
+    "useIsMobile",
+    "useSidebar"
+   ],
+   "hooks_definidos": [
+    "useFormField",
+    "useSidebar"
+   ],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [],
+   "flags": [],
+   "papeis": [
+    "alert",
+    "group",
+    "link",
+    "navigation",
+    "presentation",
+    "region",
+    "separator"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "components",
+    "components/campaigns",
+    "components/dashboard",
+    "components/email",
+    "components/forms",
+    "components/journeys",
+    "components/ops",
+    "routes",
+    "routes/_authenticated"
+   ],
+   "depende_de_modulos": [
+    "hooks",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "@radix-ui/react-accordion",
+    "@radix-ui/react-alert-dialog",
+    "@radix-ui/react-aspect-ratio",
+    "@radix-ui/react-avatar",
+    "@radix-ui/react-checkbox",
+    "@radix-ui/react-collapsible",
+    "@radix-ui/react-context-menu",
+    "@radix-ui/react-dialog",
+    "@radix-ui/react-dropdown-menu",
+    "@radix-ui/react-hover-card",
+    "@radix-ui/react-label",
+    "@radix-ui/react-menubar",
+    "@radix-ui/react-navigation-menu",
+    "@radix-ui/react-popover",
+    "@radix-ui/react-progress",
+    "@radix-ui/react-radio-group",
+    "@radix-ui/react-scroll-area",
+    "@radix-ui/react-select",
+    "@radix-ui/react-separator",
+    "@radix-ui/react-slider",
+    "@radix-ui/react-slot",
+    "@radix-ui/react-switch",
+    "@radix-ui/react-tabs",
+    "@radix-ui/react-toggle",
+    "@radix-ui/react-toggle-group",
+    "@radix-ui/react-tooltip",
+    "class-variance-authority",
+    "cmdk",
+    "embla-carousel-react",
+    "input-otp",
+    "lucide-react",
+    "react-day-picker",
+    "react-hook-form",
+    "react-resizable-panels",
+    "recharts",
+    "sonner",
+    "vaul"
+   ]
+  },
+  {
+   "modulo": "hooks",
+   "arquivos": 1,
+   "testes": 0,
+   "linhas": 20,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 0,
+   "hooks_locais": [
+    "useIsMobile"
+   ],
+   "hooks_definidos": [
+    "useIsMobile"
+   ],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "components/ui"
+   ],
+   "depende_de_modulos": [],
+   "pacotes_externos": []
+  },
+  {
+   "modulo": "integrations/external",
+   "arquivos": 5,
+   "testes": 0,
+   "linhas": 315,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 0,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "create-tracking",
+    "enrich-contacts",
+    "evolution-api",
+    "get-tracking-history",
+    "get-tracking-stats",
+    "incoming-webhook",
+    "next-best-action",
+    "oracle-enrich-contact",
+    "oracle-search-decisors",
+    "playbook-generator",
+    "public-api",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "FATORX_AGENT_ID_DEFAULT",
+    "FATORX_SERVICE_KEY",
+    "FATORX_URL",
+    "FATORX_WEBHOOK_SECRET",
+    "FUXICO_SERVICE_KEY",
+    "FUXICO_URL",
+    "FUXICO_WEBHOOK_SECRET",
+    "LUX_SERVICE_KEY",
+    "LUX_URL",
+    "LUX_WEBHOOK_SECRET",
+    "SINGU_SERVICE_KEY",
+    "SINGU_URL",
+    "SINGU_WEBHOOK_SECRET"
+   ],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [
+     "agent-workflow-runner",
+     "cerebro-query",
+     "create-tracking",
+     "enrich-contacts",
+     "evolution-api",
+     "get-tracking-history",
+     "get-tracking-stats",
+     "incoming-webhook",
+     "next-best-action",
+     "oracle-enrich-contact",
+     "oracle-search-decisors",
+     "playbook-generator",
+     "public-api",
+     "quick-agent-test",
+     "send-email",
+     "send-sms-campaign",
+     "sequence-processor"
+    ],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "lib",
+    "routes/api"
+   ],
+   "depende_de_modulos": [],
+   "pacotes_externos": []
+  },
+  {
+   "modulo": "integrations/lovable",
+   "arquivos": 1,
+   "testes": 0,
+   "linhas": 39,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 0,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "routes"
+   ],
+   "depende_de_modulos": [
+    "integrations/supabase"
+   ],
+   "pacotes_externos": [
+    "@lovable.dev/cloud-auth-js"
+   ]
+  },
+  {
+   "modulo": "integrations/social",
+   "arquivos": 1,
+   "testes": 0,
+   "linhas": 83,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 0,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "PHANTOMBUSTER_API_KEY",
+    "UNIPILE_API_KEY",
+    "UNIPILE_URL"
+   ],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "lib",
+    "routes/api"
+   ],
+   "depende_de_modulos": [],
+   "pacotes_externos": []
+  },
+  {
+   "modulo": "integrations/supabase",
+   "arquivos": 5,
+   "testes": 0,
+   "linhas": 2377,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 0,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "components",
+    "integrations/lovable",
+    "lib",
+    "routes",
+    "routes/_authenticated",
+    "routes/api"
+   ],
+   "depende_de_modulos": [],
+   "pacotes_externos": [
+    "@supabase/supabase-js",
+    "@tanstack/react-start"
+   ]
+  },
+  {
+   "modulo": "lib",
+   "arquivos": 59,
+   "testes": 28,
+   "linhas": 9704,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 0,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "create-tracking",
+    "enrich-contacts",
+    "evolution-api",
+    "get-tracking-history",
+    "get-tracking-stats",
+    "incoming-webhook",
+    "next-best-action",
+    "oracle-enrich-contact",
+    "oracle-search-decisors",
+    "playbook-generator",
+    "public-api",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "tabelas": [
+    "agent_eval_cases",
+    "agent_eval_runs",
+    "audience_members",
+    "audiences",
+    "budget_reallocations",
+    "cadence_rules",
+    "campaign_sends",
+    "campaign_target_events",
+    "campaign_targets",
+    "campaign_variants",
+    "campaigns_orchestration",
+    "channel_budgets",
+    "channel_roi_stats",
+    "compliance_terms",
+    "compliance_violations_log",
+    "consent_ledger",
+    "contact_churn_scores",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "entity_map",
+    "journey_edges",
+    "journey_enrollments",
+    "journey_nodes",
+    "journeys",
+    "lead_form_submissions",
+    "lead_forms",
+    "marketing_campaigns",
+    "message_templates",
+    "sales_machine_events",
+    "template_preflight_history",
+    "v_contact_profiles"
+   ],
+   "rpcs": [
+    "fn_refresh_roi_stats"
+   ],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "AGENT_TOOL_TOKEN",
+    "FATORX_AGENT_ID_DEFAULT",
+    "FATORX_SERVICE_KEY",
+    "FATORX_URL",
+    "FATORX_WEBHOOK_SECRET",
+    "FUXICO_SERVICE_KEY",
+    "FUXICO_URL",
+    "FUXICO_WEBHOOK_SECRET",
+    "LUX_SERVICE_KEY",
+    "LUX_URL",
+    "LUX_WEBHOOK_SECRET",
+    "PHANTOMBUSTER_API_KEY",
+    "PUBLIC_SITE_URL",
+    "SINGU_SERVICE_KEY",
+    "SINGU_URL",
+    "SINGU_WEBHOOK_SECRET",
+    "SM_WEBHOOK_SECRET",
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "UNIPILE_API_KEY",
+    "UNIPILE_URL"
+   ],
+   "flags": [],
+   "papeis": [
+    "donor",
+    "presentation"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [
+     "agent_eval_cases",
+     "agent_eval_runs",
+     "audience_members",
+     "audiences",
+     "budget_reallocations",
+     "cadence_rules",
+     "campaign_sends",
+     "campaign_target_events",
+     "campaign_targets",
+     "campaign_variants",
+     "campaigns_orchestration",
+     "channel_budgets",
+     "channel_roi_stats",
+     "compliance_terms",
+     "compliance_violations_log",
+     "consent_ledger",
+     "contact_churn_scores",
+     "contact_touchpoints",
+     "email_deliverability_events",
+     "entity_map",
+     "journey_edges",
+     "journey_enrollments",
+     "journey_nodes",
+     "journeys",
+     "lead_form_submissions",
+     "lead_forms",
+     "marketing_campaigns",
+     "message_templates",
+     "sales_machine_events",
+     "template_preflight_history",
+     "v_contact_profiles"
+    ],
+    "rpcs": [
+     "fn_refresh_roi_stats"
+    ]
+   },
+   "importado_por_outros_modulos": [
+    "components",
+    "components/campaigns",
+    "components/dashboard",
+    "components/email",
+    "components/forms",
+    "components/journeys",
+    "components/ops",
+    "components/ui",
+    "routes",
+    "routes/_authenticated",
+    "routes/api"
+   ],
+   "depende_de_modulos": [
+    "integrations/external",
+    "integrations/social",
+    "integrations/supabase"
+   ],
+   "pacotes_externos": [
+    "@supabase/supabase-js",
+    "@tanstack/react-start",
+    "clsx",
+    "node:crypto",
+    "tailwind-merge",
+    "zod"
+   ]
+  },
+  {
+   "modulo": "routes",
+   "arquivos": 5,
+   "testes": 0,
+   "linhas": 589,
+   "itens_menu": [],
+   "telas": [
+    "/",
+    "/auth",
+    "/confirmar",
+    "/f/:slug"
+   ],
+   "rotas_http": [],
+   "componentes": 5,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [
+    "consent_ledger",
+    "entity_map",
+    "journey_enrollments",
+    "lead_form_submissions",
+    "lead_forms",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "PUBLIC_SITE_URL",
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [
+    "Orquestrador"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [],
+   "depende_de_modulos": [
+    "components/ui",
+    "integrations/lovable",
+    "integrations/supabase",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "@tanstack/react-query",
+    "@tanstack/react-router",
+    "@tanstack/react-start",
+    "sonner",
+    "zod"
+   ]
+  },
+  {
+   "modulo": "routes/_authenticated",
+   "arquivos": 22,
+   "testes": 0,
+   "linhas": 5246,
+   "itens_menu": [
+    "Audiências",
+    "Biblioteca",
+    "Campanhas",
+    "Formulários",
+    "Jornadas",
+    "Visão Geral",
+    "Avaliações de agente",
+    "Conformidade",
+    "Entregabilidade",
+    "Saúde do pipeline",
+    "Aprovações",
+    "Contatos & Contas",
+    "Prospecção"
+   ],
+   "telas": [
+    "/",
+    "/approvals",
+    "/audiences",
+    "/audiences/:id",
+    "/campaigns",
+    "/campaigns/:id",
+    "/companies",
+    "/companies/:id",
+    "/compliance",
+    "/contacts",
+    "/contacts/:id",
+    "/dashboard",
+    "/deliverability",
+    "/evals",
+    "/forms",
+    "/forms/:id",
+    "/journeys",
+    "/journeys/:id",
+    "/library",
+    "/ops",
+    "/ops",
+    "/prospecting"
+   ],
+   "rotas_http": [],
+   "componentes": 22,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "create-tracking",
+    "enrich-contacts",
+    "evolution-api",
+    "get-tracking-history",
+    "get-tracking-stats",
+    "incoming-webhook",
+    "next-best-action",
+    "oracle-enrich-contact",
+    "oracle-search-decisors",
+    "playbook-generator",
+    "public-api",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "tabelas": [
+    "agent_eval_cases",
+    "agent_eval_runs",
+    "audience_members",
+    "audiences",
+    "budget_reallocations",
+    "cadence_rules",
+    "campaign_sends",
+    "campaign_target_events",
+    "campaign_targets",
+    "campaign_variants",
+    "campaigns_orchestration",
+    "channel_budgets",
+    "channel_roi_stats",
+    "compliance_terms",
+    "compliance_violations_log",
+    "consent_ledger",
+    "contact_churn_scores",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "entity_map",
+    "journey_edges",
+    "journey_enrollments",
+    "journey_nodes",
+    "journeys",
+    "lead_form_submissions",
+    "lead_forms",
+    "marketing_campaigns",
+    "message_templates",
+    "sales_machine_events",
+    "template_preflight_history",
+    "v_contact_profiles"
+   ],
+   "rpcs": [
+    "fn_refresh_roi_stats"
+   ],
+   "buckets": [
+    "message-media"
+   ],
+   "canais_realtime": [],
+   "env": [
+    "FATORX_AGENT_ID_DEFAULT",
+    "FATORX_SERVICE_KEY",
+    "FATORX_URL",
+    "FATORX_WEBHOOK_SECRET",
+    "FUXICO_SERVICE_KEY",
+    "FUXICO_URL",
+    "FUXICO_WEBHOOK_SECRET",
+    "LUX_SERVICE_KEY",
+    "LUX_URL",
+    "LUX_WEBHOOK_SECRET",
+    "PHANTOMBUSTER_API_KEY",
+    "PUBLIC_SITE_URL",
+    "SINGU_SERVICE_KEY",
+    "SINGU_URL",
+    "SINGU_WEBHOOK_SECRET",
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "UNIPILE_API_KEY",
+    "UNIPILE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "flags": [],
+   "papeis": [
+    "alert",
+    "button",
+    "donor",
+    "presentation",
+    "status"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [],
+   "depende_de_modulos": [
+    "components",
+    "components/campaigns",
+    "components/dashboard",
+    "components/email",
+    "components/forms",
+    "components/journeys",
+    "components/ops",
+    "components/ui",
+    "integrations/supabase",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "@tanstack/react-query",
+    "@tanstack/react-router",
+    "@tanstack/react-start",
+    "date-fns",
+    "lucide-react",
+    "sonner",
+    "zod"
+   ]
+  },
+  {
+   "modulo": "routes/api",
+   "arquivos": 14,
+   "testes": 4,
+   "linhas": 2305,
+   "itens_menu": [],
+   "telas": [
+    "/api/public/agent-tools/send-message",
+    "/api/public/hooks/alert-sweep",
+    "/api/public/hooks/budget-reallocate",
+    "/api/public/hooks/tick-cadence",
+    "/api/public/hooks/tick-journeys",
+    "/api/public/hooks/tick-marketing",
+    "/api/public/track/click",
+    "/api/public/track/open.gif",
+    "/api/public/unsubscribe",
+    "/api/public/webhooks/fatorx",
+    "/api/public/webhooks/fuxico",
+    "/api/public/webhooks/lux",
+    "/api/public/webhooks/singu",
+    "/api/public/webhooks/singu-bounce"
+   ],
+   "rotas_http": [
+    "POST /api/public/agent-tools/send-message",
+    "POST /api/public/hooks/alert-sweep",
+    "POST /api/public/hooks/budget-reallocate",
+    "POST /api/public/hooks/tick-cadence",
+    "POST /api/public/hooks/tick-journeys",
+    "POST /api/public/hooks/tick-marketing",
+    "GET /api/public/track/click",
+    "GET /api/public/track/open.gif",
+    "GET /api/public/unsubscribe",
+    "POST /api/public/unsubscribe",
+    "POST /api/public/webhooks/fatorx",
+    "POST /api/public/webhooks/fuxico",
+    "POST /api/public/webhooks/lux",
+    "POST /api/public/webhooks/singu",
+    "POST /api/public/webhooks/singu-bounce"
+   ],
+   "componentes": 1,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "create-tracking",
+    "enrich-contacts",
+    "evolution-api",
+    "get-tracking-history",
+    "get-tracking-stats",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "tabelas": [
+    "budget_reallocations",
+    "cadence_rules",
+    "campaign_sends",
+    "campaign_targets",
+    "campaign_variants",
+    "campaigns_orchestration",
+    "channel_budgets",
+    "consent_ledger",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "entity_map",
+    "journey_edges",
+    "journey_enrollment_events",
+    "journey_enrollments",
+    "journey_nodes",
+    "journeys",
+    "marketing_campaigns",
+    "message_templates",
+    "ops_alert_notifications",
+    "sales_machine_events",
+    "sender_health",
+    "v_pipeline_health"
+   ],
+   "rpcs": [
+    "check_consent",
+    "compute_daily_cap",
+    "has_recent_account_touchpoint",
+    "refresh_pipeline_health"
+   ],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "AGENT_TOOL_TOKEN",
+    "FATORX_AGENT_ID_DEFAULT",
+    "FATORX_SERVICE_KEY",
+    "FATORX_URL",
+    "FATORX_WEBHOOK_SECRET",
+    "FUXICO_SERVICE_KEY",
+    "FUXICO_URL",
+    "FUXICO_WEBHOOK_SECRET",
+    "LUX_SERVICE_KEY",
+    "LUX_URL",
+    "LUX_WEBHOOK_SECRET",
+    "OPS_ALERT_WEBHOOK_SECRET",
+    "OPS_ALERT_WEBHOOK_URL",
+    "PHANTOMBUSTER_API_KEY",
+    "SINGU_SERVICE_KEY",
+    "SINGU_URL",
+    "SINGU_WEBHOOK_SECRET",
+    "SM_WEBHOOK_SECRET",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "UNIPILE_API_KEY",
+    "UNIPILE_URL"
+   ],
+   "flags": [],
+   "papeis": [
+    "donor",
+    "presentation"
+   ],
+   "diretos": {
+    "edges": [],
+    "tabelas": [
+     "cadence_rules",
+     "campaign_sends",
+     "campaign_targets",
+     "campaign_variants",
+     "campaigns_orchestration",
+     "consent_ledger",
+     "contact_touchpoints",
+     "email_deliverability_events",
+     "entity_map",
+     "journey_edges",
+     "journey_enrollment_events",
+     "journey_enrollments",
+     "journey_nodes",
+     "journeys",
+     "marketing_campaigns",
+     "ops_alert_notifications",
+     "sales_machine_events",
+     "sender_health",
+     "v_pipeline_health"
+    ],
+    "rpcs": [
+     "check_consent",
+     "compute_daily_cap",
+     "has_recent_account_touchpoint",
+     "refresh_pipeline_health"
+    ]
+   },
+   "importado_por_outros_modulos": [],
+   "depende_de_modulos": [
+    "integrations/external",
+    "integrations/social",
+    "integrations/supabase",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "@tanstack/react-router",
+    "zod"
+   ]
+  },
+  {
+   "modulo": "test",
+   "arquivos": 0,
+   "testes": 1,
+   "linhas": 0,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 0,
+   "hooks_locais": [],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [],
+   "depende_de_modulos": [],
+   "pacotes_externos": []
+  }
+ ]
+}

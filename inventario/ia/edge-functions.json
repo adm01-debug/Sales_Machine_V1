@@ -1,0 +1,28 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "pasta": null,
+ "total": 0,
+ "verify_jwt_false": [],
+ "shared": [],
+ "edges": [],
+ "chamadas_sem_pasta": [
+  "agent-workflow-runner",
+  "cerebro-query",
+  "create-tracking",
+  "enrich-contacts",
+  "evolution-api",
+  "get-tracking-history",
+  "get-tracking-stats",
+  "incoming-webhook",
+  "next-best-action",
+  "oracle-enrich-contact",
+  "oracle-search-decisors",
+  "playbook-generator",
+  "public-api",
+  "quick-agent-test",
+  "send-email",
+  "send-sms-campaign",
+  "sequence-processor"
+ ]
+}
