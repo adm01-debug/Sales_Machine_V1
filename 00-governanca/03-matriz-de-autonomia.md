@@ -9,7 +9,7 @@
 | Ler qualquer coisa (código, log, schema, migrations) | Investigação nunca precisa de permissão |
 | Nomes de arquivo/variável, estrutura interna | Seguindo convenções do CLAUDE.md |
 | Escrever código, criar arquivos de docs/contexto | Dentro do escopo da tarefa |
-| Commit atômico na `main` | **Fluxo Lovable autorizado** — manter a branch funcional; push sincroniza com o Lovable |
+| Commit atômico em branch própria criada nesta sessão | Nunca em `main` — ver `AGENTS.md` > Fluxo Git. O sync com o Lovable acontece quando a branch é mergeada em `main`, não antes |
 | Rodar testes, lint, builds, o gerador de dump | Sempre que relevante |
 | Escolha de lib já presente na stack aprovada | Registrar 1 linha de justificativa |
 | Assunção sobre requisito ambíguo e barata de reverter | Declarar a assunção no relatório |

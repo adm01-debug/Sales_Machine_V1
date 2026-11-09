@@ -29,7 +29,7 @@
 
 - **`supabase/functions/migrate-helper/` entrega o `service_role`.** `supabase/functions/migrate-helper/index.ts`
   (commit `338899a`, "Visual edit in Lovable", 2026-08-28) roda com `verify_jwt = false`
-  (`supabase/config.toml:3`), CORS `Access-Control-Allow-Origin: "*"`, uma chave de acesso hex
+  (`supabase/config.toml:4`), CORS `Access-Control-Allow-Origin: "*"`, uma chave de acesso hex
   **hardcoded no fonte** (L5) e a ação `?action=credentials`, que devolve `SUPABASE_SERVICE_ROLE_KEY` e
   `SUPABASE_DB_URL`. O próprio código diz "Após a migração, remova esta função" (L3). Se estiver
   publicada no projeto, é exfiltração de service_role por um GET. *Ação do dono: conferir se está

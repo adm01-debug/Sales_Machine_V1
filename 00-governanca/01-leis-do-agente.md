@@ -55,5 +55,5 @@
 - *Exemplo real:* descobrir que a baseline de lint tem 2.639 problemas não autoriza um `lint --fix` gigante no meio de outra tarefa.
 
 ## Lei 12 — Contexto é ativo gerenciado
-- Mudança estrutural (nova tabela, rota, dependência) ⇒ atualizar `dump-arquitetura.json` (`python3 scripts/gerar-dump-arquitetura.py`) e, se afetar operação, `CLAUDE.md` / `dicionario-dados.md` / `pendencias-conhecidas.md` **no mesmo ciclo**.
-- Descobriu uma armadilha nova? Adicione em `CLAUDE.md` > Armadilhas no mesmo commit. Conhecimento que fica só na conversa morre com a sessão.
+- Mudança estrutural (nova tabela, rota, dependência) ⇒ atualizar `dump-arquitetura.json` (`python3 scripts/gerar-dump-arquitetura.py`) e, se afetar operação, `AGENTS.md` / `dicionario-dados.md` / `pendencias-conhecidas.md` **no mesmo ciclo**.
+- Descobriu uma armadilha nova? Adicione em `AGENTS.md` > Armadilhas no mesmo commit (desde 2026-11-08, `CLAUDE.md` é só `@AGENTS.md` — a seção vive lá). Conhecimento que fica só na conversa morre com a sessão.

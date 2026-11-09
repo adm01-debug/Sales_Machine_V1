@@ -198,7 +198,8 @@ estática de `supabase/migrations/*.sql` + `src/routes` + `src/integrations`
 - **`supabase/functions/migrate-helper/`** com `verify_jwt = false`, CORS `*`, chave hardcoded e ação
   que devolve `SUPABASE_SERVICE_ROLE_KEY` — a doc antiga afirmava que `supabase/functions/` não
   existia mais.
-- **`.env` versionado** e fora do `.gitignore`; cobre 6 das 26 variáveis lidas em `src/`.
+- **`.env` versionado** e fora do `.gitignore`; tem 6 linhas, mas só 2 batem com as 25 variáveis
+  lidas via `process.env` em `src/` — as outras 4 são `VITE_*` (import.meta.env) ou não são lidas.
 - **`docs/SCHEMA_REFERENCE.md` desatualizado** (diz "009 migrations", documenta tabelas inexistentes).
   Fonte canônica: `dump-arquitetura.json` + `dicionario-dados.md`.
 - **Não há `README.md`** na raiz e o `package.json` tem nome genérico (`tanstack_start_ts`).
