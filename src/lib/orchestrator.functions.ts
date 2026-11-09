@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 /** List latest orchestration events (admin/operator only via RLS). */
 export const listRecentEvents = createServerFn({ method: "GET" })
@@ -381,6 +382,25 @@ export const decideApproval = createServerFn({ method: "POST" })
         .update({ status: "failed", error: "rejected by reviewer" })
         .eq("id", data.touchpoint_id);
       return { ok: true, decision: "rejected" };
+    }
+
+    const { data: allowed, error: consentErr } = await supabaseAdmin.rpc("check_consent", {
+      _entity_id: tp.entity_id,
+      _channel: tp.channel as never,
+    });
+    if (consentErr) {
+      await context.supabase
+        .from("contact_touchpoints")
+        .update({ status: "failed", error: `check_consent indisponível: ${consentErr.message}` })
+        .eq("id", tp.id);
+      return { ok: false, decision: "consent_check_failed" };
+    }
+    if (allowed === false) {
+      await context.supabase
+        .from("contact_touchpoints")
+        .update({ status: "failed", error: "opt-out registrado para o canal" })
+        .eq("id", tp.id);
+      return { ok: true, decision: "blocked_opt_out" };
     }
 
     const payload = (tp.payload ?? {}) as { message?: string };

@@ -78,16 +78,16 @@
 | `handle_new_user()` | Trigger em auth.users (1º=admin). EXECUTE revogado de authenticated/anon |
 | `tg_log_target_state_change` / `tg_sync_target_status` / `tg_touch_updated_at` | Triggers da máquina de estados e timestamps |
 
-## Regras críticas do banco (as 10 — fonte: SCHEMA_REFERENCE, validadas)
+## Regras críticas do banco (as 10 — enunciado; estado real verificado em 2026-11-08 no `AGENTS.md`)
 
-1. **SKIP LOCKED** no tick de cadência (`FOR UPDATE SKIP LOCKED LIMIT 100`)
+1. **Lock do tick de cadência** — o worker usa lock **otimista** (`locked_until` + `limit(10)`, `src/routes/api/public/hooks/tick-cadence.ts:42-49,72-80`). A versão `FOR UPDATE SKIP LOCKED` existe só em `fn_claim_cadence_batch`, numa migration base64 **não aplicada** e nunca chamada por `src/`.
 2. **`check_consent()` obrigatório** antes de qualquer envio
 3. **`UNIQUE(source, external_id)`** em `sales_machine_events` → `ON CONFLICT DO NOTHING`
 4. **`entity_map` upsert** — `ON CONFLICT (kind, lux_id) DO UPDATE`, nunca INSERT direto
 5. **Nunca** UPDATE em `campaign_targets.state` fora da máquina de estados
 6. **`locked_until`** — sempre setar ao pegar target; limpar ao terminar
-7. **`campaign_target_events` é append-only** (exceto cleanup >1 ano)
-8. **Disclosure de IA** na 1ª mensagem do agente
-9. **Stop words de opt-out** detectadas no webhook SINGU → `consent_ledger` imediato
+7. **`campaign_target_events` e `sales_machine_events` são append-only** (poda só pelo cron `sm-prune-target-events`, >90 dias)
+8. **Disclosure de IA** na 1ª mensagem do agente — regra **sem implementação**: `agent_identity_config` vive numa migration base64 não aplicada e não há nenhuma ocorrência de `disclosure`/`agent_identity` em `src/`
+9. **Stop words de opt-out** detectadas no webhook SINGU → `consent_ledger` imediato. A lista vigente é a do código (`src/lib/unsubscribe-token.server.ts:56`); `stop_word_lists` (banco) não está aplicada
 10. **LGPD** — apagamento só via função dedicada de apagamento de dados pessoais (admin)
 

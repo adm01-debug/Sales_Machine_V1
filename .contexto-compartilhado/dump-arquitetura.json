@@ -1,6 +1,6 @@
 {
-  "atualizado_em": "2026-08-30T10:50:37+00:00",
-  "commit": "34453a0",
+  "atualizado_em": "2026-11-08T22:46:45+00:00",
+  "commit": "15d6e11",
   "fonte": "migrations+src (analise estatica; nao introspeccao do banco ao vivo)",
   "migrations_aplicadas": 45,
   "banco": {
@@ -164,7 +164,11 @@
           "last_error": "TEXT",
           "created_at": "TIMESTAMPTZ not null",
           "updated_at": "TIMESTAMPTZ not null",
-          "state": "public.sm_target_state NOT NULL DEFAULT 'queued'"
+          "state": "public.sm_target_state NOT NULL DEFAULT 'queued'",
+          "attempts": "integer NOT NULL DEFAULT 0",
+          "max_attempts": "integer NOT NULL DEFAULT 5",
+          "locked_until": "timestamptz",
+          "last_transition_at": "timestamptz NOT NULL DEFAULT now()"
         },
         "rls": true,
         "indices": [
@@ -373,7 +377,11 @@
           "created_at": "TIMESTAMPTZ not null",
           "updated_at": "TIMESTAMPTZ not null",
           "attempts": "integer NOT NULL DEFAULT 0",
+          "max_attempts": "integer NOT NULL DEFAULT 5",
+          "next_retry_at": "timestamptz",
           "email_message_id": "text",
+          "email_in_reply_to": "text",
+          "email_references": "text[]",
           "fuxico_tracking_id": "text"
         },
         "rls": true,
