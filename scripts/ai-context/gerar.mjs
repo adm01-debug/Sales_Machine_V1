@@ -358,11 +358,12 @@ secao('rotas-fs', () => {
         const segs = id[1].split('/').filter(Boolean);
         const layouts = segs.filter((x) => x.startsWith('_'));
         const visiveis = segs.filter((x) => !x.startsWith('_')).map((x) => x.replace(/^\$$/, '*').replace(/^\$(\w+)/, ':$1'));
-        const caminho = visiveis.length ? '/' + visiveis.join('/') : '/';
-        const handlers = /handlers\s*:\s*\{([\s\S]*)/.exec(src);
+        const caminho = visiveis.length ? '/' + visiveis.join('/') : (id[1] === '/' ? '/' : id[1]);
+        const handlers = /handlers\s*:\s*\{([\s\S]*)/.exec(src.slice(id.index));
         const metodos = handlers ? uniq([...handlers[1].matchAll(/\b(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\b\s*[:(]/g)].map((x) => x[1])) : [];
         const d = FILE.get(f) || {};
-        const comp = /\b(?:function|const)\s+([A-Z]\w*)/.exec(src.slice(id.index));
+        const comp = /\bcomponent\s*:\s*([A-Z]\w*)/.exec(src.slice(id.index))
+                  || /\b(?:function|const)\s+([A-Z]\w*)/.exec(src.slice(id.index));
         rotas.push(mk({
           caminho,
           componente: metodos.length ? null : (comp ? comp[1] : null),

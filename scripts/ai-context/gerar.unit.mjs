@@ -358,3 +358,41 @@ supabase.rpc('dashboard_rpc'); supabase.functions.invoke('dashboard-edge');`);
   assert.deepEqual(orphan.chamada_pelo_front, []);
   assert.deepEqual(orphan.chamada_por_edges, []);
 });
+
+test('rotas TanStack Start: createFileRoute e createServerFileRoute extraidos com tipo correto', (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ctx-tsk-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  w(root, 'package.json', JSON.stringify({ name: 'tsk', version: '1.0.0', dependencies: { react: '19', '@tanstack/react-start': '^1.168.0', '@supabase/supabase-js': '2' } }));
+  w(root, 'tsconfig.json', JSON.stringify({ compilerOptions: { strict: true } }));
+  // layout sem URL visivel (/_authenticated nao aparece no caminho)
+  w(root, 'src/routes/_authenticated.tsx', `import { createFileRoute } from '@tanstack/react-router';\nexport const Route = createFileRoute('/_authenticated')({ component: AuthLayout });\nfunction AuthLayout() { return <div/>; }`);
+  // tela sob layout protegido; $param -> :param
+  w(root, 'src/routes/_authenticated/contacts.tsx', `import { createFileRoute } from '@tanstack/react-router';\nexport const Route = createFileRoute('/_authenticated/contacts')({ component: ContactsPage });\nfunction ContactsPage() { return <ul/>; }`);
+  w(root, 'src/routes/_authenticated/contacts.$id.tsx', `import { createFileRoute } from '@tanstack/react-router';\nexport const Route = createFileRoute('/_authenticated/contacts/$id')({ component: ContactDetail });\nfunction ContactDetail() { return <div/>; }`);
+  // rota de API com handlers (createServerFileRoute)
+  w(root, 'src/routes/api/health.ts', `import { createServerFileRoute } from '@tanstack/react-start/server';\nexport const Route = createServerFileRoute('/api/health')({ handlers: { GET: () => new Response('ok') } });`);
+  execFileSync('git', ['init', '-q'], { cwd: root });
+  execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', 'add', '-A'], { cwd: root });
+  execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'feat: tsk'], { cwd: root });
+  execFileSync(process.execPath, [GERADOR, '--quiet'], { cwd: root });
+  const rotas = JSON.parse(fs.readFileSync(path.join(root, 'inventario/ia', 'rotas.json'), 'utf8'));
+  // layout: rota_id = '/_authenticated', caminho = '/_authenticated' (nao '/')
+  const layout = rotas.urls.find((u) => u.rota_id === '/_authenticated');
+  assert.ok(layout, '/_authenticated deve estar presente');
+  assert.equal(layout.tipo, 'layout', '/_authenticated tem tipo layout');
+  assert.equal(layout.caminho, '/_authenticated', 'layout caminho usa rota_id, nao "/" (bug fix)');
+  assert.equal(layout.componente, 'AuthLayout', 'componente do layout extraido via component: AuthLayout (bug fix)');
+  // tela protegida com componente correto
+  const contacts = rotas.urls.find((u) => u.caminho === '/contacts');
+  assert.ok(contacts, '/contacts deve estar presente');
+  assert.equal(contacts.tipo, 'tela', '/contacts e tela');
+  assert.equal(contacts.protegida, true, '/contacts e protegida por _authenticated');
+  assert.equal(contacts.pai, '/', '/contacts tem pai /');
+  assert.equal(contacts.componente, 'ContactsPage', 'componente extraido via component: ContactsPage (bug fix)');
+  // rota parametrizada
+  assert.ok(rotas.urls.some((u) => u.caminho === '/contacts/:id' && u.tipo === 'tela' && u.pai === '/contacts'), '/contacts/:id tem $id -> :id e pai correto');
+  // rota de API com handlers
+  assert.ok(rotas.urls.some((u) => u.caminho === '/api/health' && u.tipo === 'api'), '/api/health e do tipo api');
+  assert.ok(rotas.rotas_http_backend.some((r) => r.metodo === 'GET' && r.caminho === '/api/health'), 'GET /api/health em rotas_http_backend');
+  assert.ok(rotas.urls.every((u) => u.definida_em === 'tanstack-router'), 'todas as rotas vem do extrator tanstack');
+});
