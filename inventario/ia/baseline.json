@@ -1,0 +1,635 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "git": {
+  "commit": "06887bf71cb2b9150581c610e33faff060462107",
+  "branch": "claude_04/wonderful-faraday-t1i01s",
+  "data_commit": "2026-11-09T00:38:34+00:00",
+  "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
+  "ultimos_commits": [
+   {
+    "sha": "06887bf",
+    "data": "2026-11-09",
+    "assunto": "fix(inventario): corrige ENOENT em edgesNoRepo quando supabase/functions/ ausente"
+   },
+   {
+    "sha": "99936f3",
+    "data": "2026-11-08",
+    "assunto": "security(functions): remove migrate-helper (vazava service_role e DB_URL sem auth real)"
+   },
+   {
+    "sha": "b5428f0",
+    "data": "2026-11-08",
+    "assunto": "feat(contexto): porta os scripts autônomos de contexto do Zapp_Web_V2"
+   },
+   {
+    "sha": "ae912a3",
+    "data": "2026-08-30",
+    "assunto": "docs(contexto): atualiza ref de commit no decisoes-recentes e regera dump pós-rebase"
+   },
+   {
+    "sha": "34453a0",
+    "data": "2026-08-30",
+    "assunto": "docs(contexto): corrige enums no dicionario de dados — sm_channel ganhou rcs/mms e sm_source ganhou fuxico via ALTER TYP"
+   },
+   {
+    "sha": "f2f9939",
+    "data": "2026-08-30",
+    "assunto": "docs(negocio+arquitetura): 01-contexto-negocio/ (visao, 32 RFs reais, RNFs, glossario LUX/SINGU/FATORX/FUXICO, personas "
+   },
+   {
+    "sha": "59425bf",
+    "data": "2026-08-30",
+    "assunto": "docs(governanca): 00-governanca/ — 12 leis do agente, definition of done (adaptado a baseline vermelha), matriz de auton"
+   },
+   {
+    "sha": "7372541",
+    "data": "2026-08-30",
+    "assunto": "docs(contexto): memoria operacional PromptOps — CLAUDE.md (formato 3.2, stack real, env vars reais), AGENTS.md (ponte Pr"
+   },
+   {
+    "sha": "5609fa4",
+    "data": "2026-08-30",
+    "assunto": "docs(contexto): decodifica CLAUDE.md e SCHEMA_REFERENCE.md de base64 para markdown"
+   },
+   {
+    "sha": "338899a",
+    "data": "2026-08-28",
+    "assunto": "Visual edit in Lovable"
+   },
+   {
+    "sha": "51f658f",
+    "data": "2026-08-18",
+    "assunto": "chore(hermes): adiciona .hermes.md (regras da casa Hermes)"
+   },
+   {
+    "sha": "388dc5f",
+    "data": "2026-08-02",
+    "assunto": "Adicionou suporte a emojis"
+   },
+   {
+    "sha": "1fcf792",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "7235600",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "84f8e41",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "7989f7a",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "a674645",
+    "data": "2026-08-02",
+    "assunto": "Classificou adiamento como neutro"
+   },
+   {
+    "sha": "442bcc7",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "b847e62",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "b910f6f",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "c5002f4",
+    "data": "2026-08-02",
+    "assunto": "Fast Visual Edit"
+   },
+   {
+    "sha": "d9fa0f8",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "05363be",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "fb2dc12",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "d463810",
+    "data": "2026-08-02",
+    "assunto": "Fast Visual Edit"
+   }
+  ],
+  "arquivos_mudados_7d": 38,
+  "pastas_mais_mudadas_30d": [
+   {
+    "pasta": "docs/contexto/regras",
+    "mudancas": 2
+   },
+   {
+    "pasta": "inventario/estado/edges.json",
+    "mudancas": 2
+   },
+   {
+    "pasta": "scripts/ci/inventario-banco.unit.mjs",
+    "mudancas": 2
+   },
+   {
+    "pasta": "scripts/ci/inventario-repo.unit.mjs",
+    "mudancas": 2
+   },
+   {
+    "pasta": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 2
+   },
+   {
+    "pasta": "scripts/inventario/gerar-repo.mjs",
+    "mudancas": 2
+   },
+   {
+    "pasta": ".github/workflows/contexto.yml",
+    "mudancas": 1
+   },
+   {
+    "pasta": ".github/workflows/inventario-estado-semanal.yml",
+    "mudancas": 1
+   },
+   {
+    "pasta": ".gitignore",
+    "mudancas": 1
+   },
+   {
+    "pasta": ".prettierignore",
+    "mudancas": 1
+   },
+   {
+    "pasta": "ai-context.config.json",
+    "mudancas": 1
+   },
+   {
+    "pasta": "inventario/estado/README.md",
+    "mudancas": 1
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 1
+   },
+   {
+    "pasta": "scripts/ai-context/README.md",
+    "mudancas": 1
+   },
+   {
+    "pasta": "scripts/ai-context/cenarios.mjs",
+    "mudancas": 1
+   }
+  ],
+  "arquivos_mais_mudados_90d": [
+   {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "inventario/estado/edges.json",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/ci/inventario-banco.unit.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/ci/inventario-repo.unit.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/inventario/gerar-repo.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "supabase/config.toml",
+    "mudancas": 2
+   },
+   {
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 1
+   },
+   {
+    "arquivo": ".github/workflows/inventario-estado-semanal.yml",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "00-governanca/01-leis-do-agente.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "00-governanca/02-definition-of-done.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "00-governanca/03-matriz-de-autonomia.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "00-governanca/04-changelog-prompts.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "01-contexto-negocio/01-visao-produto.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "01-contexto-negocio/02-requisitos-funcionais.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "01-contexto-negocio/03-requisitos-nao-funcionais.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "01-contexto-negocio/04-glossario-dominio.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "01-contexto-negocio/05-personas-e-jornadas.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "02-arquitetura-engenharia/01-stack-tecnologica.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "02-arquitetura-engenharia/02-arquitetura-software.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "02-arquitetura-engenharia/03-modelagem-dados.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "02-arquitetura-engenharia/04-seguranca-autenticacao.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "02-arquitetura-engenharia/05-contratos-api.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "02-arquitetura-engenharia/06-observabilidade.md",
+    "mudancas": 1
+   },
+   {
+    "arquivo": "02-arquitetura-engenharia/adr/ADR-0001-tanstack-start-unica-fonte-de-endpoints.md",
+    "mudancas": 1
+   }
+  ],
+  "autores_30d": [
+   {
+    "autor": "Claude",
+    "commits": 3
+   }
+  ]
+ },
+ "contagens": {
+  "arquivos_total": 361,
+  "arquivos_codigo": 246,
+  "linhas_codigo": 44372,
+  "rotas": 40,
+  "rotas_http_backend": 27,
+  "vistas_por_id": 0,
+  "itens_menu": 13,
+  "modulos": 18,
+  "componentes": 98,
+  "hooks": 4,
+  "edge_functions": 0,
+  "tabelas": 38,
+  "migrations": 45,
+  "cron_jobs": 4,
+  "testes": 44,
+  "workflows": 2,
+  "scripts": 11,
+  "docs_md": 35
+ },
+ "por_pasta": {
+  "eslint.config.js": {
+   "arquivos": 1,
+   "linhas": 41
+  },
+  "scripts/ai-context": {
+   "arquivos": 3,
+   "linhas": 1490
+  },
+  "scripts/ci": {
+   "arquivos": 8,
+   "linhas": 1283
+  },
+  "scripts/gerar-dump-arquitetura.py": {
+   "arquivos": 1,
+   "linhas": 170
+  },
+  "scripts/inventario": {
+   "arquivos": 3,
+   "linhas": 488
+  },
+  "scripts/regras_negocio": {
+   "arquivos": 3,
+   "linhas": 2539
+  },
+  "scripts/supabase_snapshot": {
+   "arquivos": 2,
+   "linhas": 2669
+  },
+  "src/components": {
+   "arquivos": 73,
+   "linhas": 8536
+  },
+  "src/hooks": {
+   "arquivos": 1,
+   "linhas": 20
+  },
+  "src/integrations": {
+   "arquivos": 12,
+   "linhas": 2814
+  },
+  "src/lib": {
+   "arquivos": 87,
+   "linhas": 13712
+  },
+  "src/routeTree.gen.ts": {
+   "arquivos": 1,
+   "linhas": 974
+  },
+  "src/router.tsx": {
+   "arquivos": 1,
+   "linhas": 17
+  },
+  "src/routes": {
+   "arquivos": 45,
+   "linhas": 9265
+  },
+  "src/server.ts": {
+   "arquivos": 1,
+   "linhas": 62
+  },
+  "src/start.ts": {
+   "arquivos": 1,
+   "linhas": 25
+  },
+  "src/test": {
+   "arquivos": 1,
+   "linhas": 232
+  },
+  "vite.config.ts": {
+   "arquivos": 1,
+   "linhas": 16
+  },
+  "vitest.config.ts": {
+   "arquivos": 1,
+   "linhas": 19
+  }
+ },
+ "maiores_arquivos": [
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linhas": 2138
+  },
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "linhas": 2112
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "linhas": 1791
+  },
+  {
+   "arquivo": "src/routeTree.gen.ts",
+   "linhas": 974
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linhas": 956
+  },
+  {
+   "arquivo": "src/routes/_authenticated/library.tsx",
+   "linhas": 766
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "linhas": 745
+  },
+  {
+   "arquivo": "src/routes/_authenticated/deliverability.tsx",
+   "linhas": 714
+  },
+  {
+   "arquivo": "src/routes/_authenticated/campaigns.$id.tsx",
+   "linhas": 557
+  },
+  {
+   "arquivo": "src/components/dashboard/campaign-drilldown.tsx",
+   "linhas": 523
+  },
+  {
+   "arquivo": "src/lib/orchestrator.functions.ts",
+   "linhas": 519
+  },
+  {
+   "arquivo": "src/lib/journey-engine.ts",
+   "linhas": 509
+  },
+  {
+   "arquivo": "src/routes/api/public/hooks/tick-journeys.ts",
+   "linhas": 491
+  },
+  {
+   "arquivo": "src/components/dashboard/analytics-charts.tsx",
+   "linhas": 486
+  },
+  {
+   "arquivo": "src/lib/marketing.functions.ts",
+   "linhas": 453
+  },
+  {
+   "arquivo": "src/routes/api/public/hooks/tick-cadence.ts",
+   "linhas": 453
+  },
+  {
+   "arquivo": "src/lib/campaign-diagnostics.ts",
+   "linhas": 440
+  },
+  {
+   "arquivo": "src/lib/deliverability.functions.ts",
+   "linhas": 439
+  },
+  {
+   "arquivo": "src/lib/ops.functions.ts",
+   "linhas": 376
+  },
+  {
+   "arquivo": "src/lib/email-preflight.ts",
+   "linhas": 351
+  },
+  {
+   "arquivo": "src/routes/api/public/hooks/tick-marketing.ts",
+   "linhas": 334
+  },
+  {
+   "arquivo": "src/routes/_authenticated/forms.$id.tsx",
+   "linhas": 333
+  },
+  {
+   "arquivo": "src/components/ui/chart.tsx",
+   "linhas": 332
+  },
+  {
+   "arquivo": "src/routes/_authenticated/journeys.$id.tsx",
+   "linhas": 314
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-banco.mjs",
+   "linhas": 310
+  }
+ ],
+ "qualidade": {
+  "any": 68,
+  "console_log": 9,
+  "ts_ignore": 0,
+  "eslint_disable": 1,
+  "todos": 3,
+  "arquivos_acima_500_linhas": 12
+ },
+ "todos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 188,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(line); if (m) todos.push({ linha: ln, tipo: m[1], text"
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 222,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linha": 570,
+   "tipo": "TODO",
+   "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
+  }
+ ],
+ "alertas": {
+  "rotas_sem_arquivo": [],
+  "componentes_ambiguos": [],
+  "menu_sem_destino": [],
+  "edges_orfas": [],
+  "edges_chamadas_sem_pasta": [
+   "agent-workflow-runner",
+   "cerebro-query",
+   "create-tracking",
+   "enrich-contacts",
+   "evolution-api",
+   "get-tracking-history",
+   "get-tracking-stats",
+   "incoming-webhook",
+   "next-best-action",
+   "oracle-enrich-contact",
+   "oracle-search-decisors",
+   "playbook-generator",
+   "public-api",
+   "quick-agent-test",
+   "send-email",
+   "send-sms-campaign",
+   "sequence-processor"
+  ],
+  "tabelas_sem_rls": [],
+  "tabelas_usadas_sem_definicao": [
+   "v_pipeline_health"
+  ],
+  "tabelas_com_drift_migration_vs_types": [],
+  "rpcs_sem_definicao": [],
+  "componentes_orfaos": [
+   "src/components/ui/accordion.tsx",
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/breadcrumb.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/carousel.tsx",
+   "src/components/ui/chart.tsx",
+   "src/components/ui/command.tsx",
+   "src/components/ui/context-menu.tsx",
+   "src/components/ui/drawer.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/form.tsx",
+   "src/components/ui/hover-card.tsx",
+   "src/components/ui/input-otp.tsx",
+   "src/components/ui/menubar.tsx",
+   "src/components/ui/navigation-menu.tsx",
+   "src/components/ui/pagination.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/radio-group.tsx",
+   "src/components/ui/resizable.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/sidebar.tsx",
+   "src/components/ui/slider.tsx",
+   "src/components/ui/sonner.tsx",
+   "src/components/ui/table.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/components/ui/toggle-group.tsx"
+  ],
+  "componentes_com_nome_duplicado": [
+   "Route"
+  ],
+  "scripts_orfaos": [],
+  "env_usadas_nao_declaradas": [
+   "AGENT_TOOL_TOKEN",
+   "FATORX_AGENT_ID_DEFAULT",
+   "FATORX_SERVICE_KEY",
+   "FATORX_URL",
+   "FATORX_WEBHOOK_SECRET",
+   "FUXICO_SERVICE_KEY",
+   "FUXICO_URL",
+   "FUXICO_WEBHOOK_SECRET",
+   "LUX_SERVICE_KEY",
+   "LUX_URL",
+   "LUX_WEBHOOK_SECRET",
+   "OPS_ALERT_WEBHOOK_SECRET",
+   "OPS_ALERT_WEBHOOK_URL",
+   "PHANTOMBUSTER_API_KEY",
+   "PUBLIC_SITE_URL",
+   "SINGU_SERVICE_KEY",
+   "SINGU_URL",
+   "SINGU_WEBHOOK_SECRET",
+   "SM_WEBHOOK_SECRET",
+   "SUPABASE_ANON_KEY",
+   "SUPABASE_PUBLISHABLE_KEY",
+   "SUPABASE_SERVICE_ROLE_KEY",
+   "SUPABASE_URL",
+   "UNIPILE_API_KEY",
+   "UNIPILE_URL",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL"
+  ],
+  "ciclos_de_import": 0,
+  "possiveis_segredos_no_codigo": [
+   "scripts/ai-context/cenarios.mjs:102",
+   "scripts/ci/inventario-banco.unit.mjs:138"
+  ]
+ },
+ "erros_do_gerador": []
+}

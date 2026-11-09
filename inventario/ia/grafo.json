@@ -1,0 +1,303 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "nos": 202,
+ "arestas": 560,
+ "hubs": [
+  {
+   "arquivo": "src/lib/utils.ts",
+   "importado_por": 63
+  },
+  {
+   "arquivo": "src/components/ui/button.tsx",
+   "importado_por": 36
+  },
+  {
+   "arquivo": "src/components/ui/card.tsx",
+   "importado_por": 33
+  },
+  {
+   "arquivo": "src/components/ui/badge.tsx",
+   "importado_por": 31
+  },
+  {
+   "arquivo": "src/components/ui/input.tsx",
+   "importado_por": 24
+  },
+  {
+   "arquivo": "src/components/ui/label.tsx",
+   "importado_por": 15
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.server.ts",
+   "importado_por": 15
+  },
+  {
+   "arquivo": "src/lib/audience-rules.ts",
+   "importado_por": 15
+  },
+  {
+   "arquivo": "src/integrations/supabase/auth-middleware.ts",
+   "importado_por": 13
+  },
+  {
+   "arquivo": "src/lib/template-vars.ts",
+   "importado_por": 12
+  },
+  {
+   "arquivo": "src/components/ui/textarea.tsx",
+   "importado_por": 11
+  },
+  {
+   "arquivo": "src/lib/compliance-terms.ts",
+   "importado_por": 11
+  },
+  {
+   "arquivo": "src/lib/cost-model.ts",
+   "importado_por": 9
+  },
+  {
+   "arquivo": "src/lib/hmac.server.ts",
+   "importado_por": 9
+  },
+  {
+   "arquivo": "src/lib/ops.functions.ts",
+   "importado_por": 9
+  },
+  {
+   "arquivo": "src/components/ui/select.tsx",
+   "importado_por": 8
+  },
+  {
+   "arquivo": "src/lib/email-blocks.ts",
+   "importado_por": 8
+  },
+  {
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 7
+  },
+  {
+   "arquivo": "src/integrations/external/singu.server.ts",
+   "importado_por": 7
+  },
+  {
+   "arquivo": "src/lib/email-preflight.ts",
+   "importado_por": 7
+  },
+  {
+   "arquivo": "src/lib/journey-graph.ts",
+   "importado_por": 7
+  },
+  {
+   "arquivo": "src/lib/lead-forms.ts",
+   "importado_por": 7
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.ts",
+   "importado_por": 6
+  },
+  {
+   "arquivo": "src/lib/budget.server.ts",
+   "importado_por": 6
+  },
+  {
+   "arquivo": "src/lib/campaign-validation.ts",
+   "importado_por": 6
+  },
+  {
+   "arquivo": "src/lib/journey-engine.ts",
+   "importado_por": 6
+  },
+  {
+   "arquivo": "src/lib/orchestrator.functions.ts",
+   "importado_por": 6
+  },
+  {
+   "arquivo": "src/lib/budget-guard.ts",
+   "importado_por": 5
+  },
+  {
+   "arquivo": "src/lib/ops-alerts.ts",
+   "importado_por": 5
+  },
+  {
+   "arquivo": "src/lib/sms-segments.ts",
+   "importado_por": 5
+  },
+  {
+   "arquivo": "src/components/ui/progress.tsx",
+   "importado_por": 4
+  },
+  {
+   "arquivo": "src/components/ui/switch.tsx",
+   "importado_por": 4
+  },
+  {
+   "arquivo": "src/integrations/external/config.server.ts",
+   "importado_por": 4
+  },
+  {
+   "arquivo": "src/integrations/social/types.ts",
+   "importado_por": 4
+  },
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "importado_por": 4
+  },
+  {
+   "arquivo": "src/lib/email-tracking.server.ts",
+   "importado_por": 4
+  },
+  {
+   "arquivo": "src/lib/lead-forms.functions.ts",
+   "importado_por": 4
+  },
+  {
+   "arquivo": "src/lib/marketing.functions.ts",
+   "importado_por": 4
+  },
+  {
+   "arquivo": "src/lib/message-preflight.ts",
+   "importado_por": 4
+  },
+  {
+   "arquivo": "src/components/ui/checkbox.tsx",
+   "importado_por": 3
+  }
+ ],
+ "ciclos": {
+  "total": 0,
+  "maiores": []
+ },
+ "orfaos": [
+  "src/components/ui/accordion.tsx",
+  "src/components/ui/alert-dialog.tsx",
+  "src/components/ui/aspect-ratio.tsx",
+  "src/components/ui/avatar.tsx",
+  "src/components/ui/breadcrumb.tsx",
+  "src/components/ui/calendar.tsx",
+  "src/components/ui/carousel.tsx",
+  "src/components/ui/chart.tsx",
+  "src/components/ui/collapsible.tsx",
+  "src/components/ui/command.tsx",
+  "src/components/ui/context-menu.tsx",
+  "src/components/ui/drawer.tsx",
+  "src/components/ui/dropdown-menu.tsx",
+  "src/components/ui/form.tsx",
+  "src/components/ui/hover-card.tsx",
+  "src/components/ui/input-otp.tsx",
+  "src/components/ui/menubar.tsx",
+  "src/components/ui/navigation-menu.tsx",
+  "src/components/ui/pagination.tsx",
+  "src/components/ui/popover.tsx",
+  "src/components/ui/radio-group.tsx",
+  "src/components/ui/resizable.tsx",
+  "src/components/ui/scroll-area.tsx",
+  "src/components/ui/sidebar.tsx",
+  "src/components/ui/slider.tsx",
+  "src/components/ui/sonner.tsx",
+  "src/components/ui/table.tsx",
+  "src/components/ui/tabs.tsx",
+  "src/components/ui/toggle-group.tsx",
+  "src/lib/journey-triggers.ts",
+  "src/lib/logger.server.ts",
+  "src/lib/ops-audit.server.ts",
+  "src/lib/ops-recovery.server.ts",
+  "src/lib/ops-spend.server.ts",
+  "src/router.tsx",
+  "src/start.ts"
+ ],
+ "modulos_mais_acoplados": [
+  {
+   "modulo": "lib",
+   "depende_de": 3,
+   "importado_por": 11
+  },
+  {
+   "modulo": "components/ui",
+   "depende_de": 2,
+   "importado_por": 9
+  },
+  {
+   "modulo": "routes/_authenticated",
+   "depende_de": 10,
+   "importado_por": 0
+  },
+  {
+   "modulo": "integrations/supabase",
+   "depende_de": 0,
+   "importado_por": 6
+  },
+  {
+   "modulo": "components",
+   "depende_de": 3,
+   "importado_por": 1
+  },
+  {
+   "modulo": "routes",
+   "depende_de": 4,
+   "importado_por": 0
+  },
+  {
+   "modulo": "routes/api",
+   "depende_de": 4,
+   "importado_por": 0
+  },
+  {
+   "modulo": "components/campaigns",
+   "depende_de": 2,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/dashboard",
+   "depende_de": 2,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/email",
+   "depende_de": 2,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/forms",
+   "depende_de": 2,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/journeys",
+   "depende_de": 2,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/ops",
+   "depende_de": 2,
+   "importado_por": 1
+  },
+  {
+   "modulo": "integrations/external",
+   "depende_de": 0,
+   "importado_por": 2
+  },
+  {
+   "modulo": "integrations/lovable",
+   "depende_de": 1,
+   "importado_por": 1
+  },
+  {
+   "modulo": "integrations/social",
+   "depende_de": 0,
+   "importado_por": 2
+  },
+  {
+   "modulo": "hooks",
+   "depende_de": 0,
+   "importado_por": 1
+  },
+  {
+   "modulo": "test",
+   "depende_de": 0,
+   "importado_por": 0
+  }
+ ],
+ "arestas_em": "inventario/ia/grafo-arestas.json"
+}

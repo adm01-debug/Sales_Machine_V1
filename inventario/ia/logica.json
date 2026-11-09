@@ -1,0 +1,2546 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 75,
+ "por_camada": {
+  "integrations": 12,
+  "lib": 59,
+  "python": 4
+ },
+ "arquivos": [
+  {
+   "arquivo": "scripts/gerar-dump-arquitetura.py",
+   "camada": "python",
+   "exports": [
+    "balanced_block",
+    "main",
+    "parse_columns",
+    "read_migrations"
+   ],
+   "linhas": 170,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "datetime",
+    "json",
+    "pathlib",
+    "re",
+    "subprocess"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "camada": "python",
+   "exports": [
+    "analyze_code_file",
+    "balanced",
+    "detect_stack",
+    "dir_tree",
+    "extract_html_constraints",
+    "extract_zod",
+    "files_cell",
+    "git",
+    "header",
+    "is_app_code",
+    "is_archived_sql",
+    "is_test_file",
+    "llm_synthesis",
+    "log",
+    "main",
+    "md_table",
+    "op_from_chain",
+    "read_text",
+    "redact",
+    "rel",
+    "render_access",
+    "render_architecture",
+    "render_changes",
+    "render_database",
+    "render_database_pointer",
+    "render_dataflow",
+    "render_features",
+    "render_glossary",
+    "render_index",
+    "render_integrations",
+    "render_modules",
+    "render_overview",
+    "render_rules",
+    "squash",
+    "stable_hash",
+    "strip_sql_comments",
+    "trunc",
+    "upsert_pointer",
+    "walk_repo"
+   ],
+   "linhas": 2138,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "AI_CONTEXT_INDEX",
+    "AI_CONTEXT_MODEL",
+    "AI_CONTEXT_PROFILE",
+    "AI_CONTEXT_SCHEMA_SNAPSHOT",
+    "ANTHROPIC_API_KEY"
+   ],
+   "externos": [
+    "__future__",
+    "argparse",
+    "collections",
+    "datetime",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "sys",
+    "urllib"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/regras_negocio/indice.py",
+   "camada": "python",
+   "exports": [
+    "entry_file",
+    "git",
+    "main",
+    "parse_dt",
+    "producer_health",
+    "read_manifest"
+   ],
+   "linhas": 237,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "__future__",
+    "argparse",
+    "datetime",
+    "json",
+    "pathlib",
+    "re",
+    "subprocess",
+    "sys"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "camada": "python",
+   "exports": [
+    "api",
+    "api_section",
+    "approx",
+    "banner",
+    "build_function_callers",
+    "callers_status_table",
+    "code",
+    "diff_fingerprints",
+    "dumps",
+    "env_int",
+    "excluded_sql",
+    "fingerprints",
+    "get_columns",
+    "get_constraints",
+    "get_cron",
+    "get_cron_runs",
+    "get_db_stats",
+    "get_extensions",
+    "get_foreign",
+    "get_functions",
+    "get_grants",
+    "get_index_stats",
+    "get_indexes",
+    "get_lints",
+    "get_migrations",
+    "get_policies",
+    "get_queues",
+    "get_realtime",
+    "get_roles",
+    "get_schemas",
+    "get_sequences",
+    "get_server",
+    "get_storage",
+    "get_table_stats",
+    "get_tables",
+    "get_triggers",
+    "get_types",
+    "get_vault",
+    "get_views",
+    "get_webhooks",
+    "group",
+    "has_ext",
+    "has_table",
+    "human_bytes",
+    "introspect_api",
+    "introspect_db",
+    "is_caller_source",
+    "jsonable",
+    "log",
+    "main",
+    "md_cell",
+    "md_table",
+    "prepare_output_directory",
+    "q",
+    "record_error",
+    "redact",
+    "render_readme",
+    "render_relationships",
+    "render_simple",
+    "render_stats",
+    "render_tables",
+    "run_gen_types",
+    "run_pg_dump",
+    "rx_name_keys",
+    "scan_code_files",
+    "scrub",
+    "scrub_value",
+    "section",
+    "sha",
+    "slug",
+    "sql_without_routine_declarations",
+    "update_changelog",
+    "uslug",
+    "valid_previous_snapshot",
+    "write"
+   ],
+   "linhas": 1791,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "CODE_SCAN_DIRS",
+    "GEN_TYPES",
+    "PGDUMP",
+    "PGDUMP_SCHEMAS",
+    "REPO_ROOT",
+    "SNAPSHOT_DIR",
+    "SNAPSHOT_EXCLUDE_SCHEMAS",
+    "SNAPSHOT_INCLUDE_SCHEMAS",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_DB_URL",
+    "SUPABASE_PROJECT_REF",
+    "SUPABASE_SNAPSHOT_PUBLICACAO"
+   ],
+   "externos": [
+    "__future__",
+    "datetime",
+    "decimal",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "psycopg",
+    "re",
+    "shutil",
+    "subprocess",
+    "sys",
+    "typing",
+    "urllib"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/integrations/external/config.server.ts",
+   "camada": "integrations",
+   "exports": [
+    "ExternalSystem",
+    "assertConfigured",
+    "getExternalConfig"
+   ],
+   "export_default": null,
+   "linhas": 46,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "FATORX_AGENT_ID_DEFAULT",
+    "FATORX_SERVICE_KEY",
+    "FATORX_URL",
+    "FATORX_WEBHOOK_SECRET",
+    "FUXICO_SERVICE_KEY",
+    "FUXICO_URL",
+    "FUXICO_WEBHOOK_SECRET",
+    "LUX_SERVICE_KEY",
+    "LUX_URL",
+    "LUX_WEBHOOK_SECRET",
+    "SINGU_SERVICE_KEY",
+    "SINGU_URL",
+    "SINGU_WEBHOOK_SECRET"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "integrations/external"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/external/fatorx.server.ts",
+   "camada": "integrations",
+   "exports": [
+    "fatorxClient"
+   ],
+   "export_default": null,
+   "linhas": 52,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "quick-agent-test"
+   ],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "lib",
+    "routes/api"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/external/fuxico.server.ts",
+   "camada": "integrations",
+   "exports": [
+    "FuxicoTracking",
+    "fuxicoClient"
+   ],
+   "export_default": null,
+   "linhas": 62,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "create-tracking",
+    "get-tracking-history",
+    "get-tracking-stats"
+   ],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/external/lux.server.ts",
+   "camada": "integrations",
+   "exports": [
+    "luxClient"
+   ],
+   "export_default": null,
+   "linhas": 47,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "oracle-enrich-contact",
+    "oracle-search-decisors",
+    "public-api"
+   ],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/external/singu.server.ts",
+   "camada": "integrations",
+   "exports": [
+    "SinguChannel",
+    "singuClient"
+   ],
+   "export_default": null,
+   "linhas": 108,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 7,
+   "usado_por_modulos": [
+    "lib",
+    "routes/api"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/lovable/index.ts",
+   "camada": "integrations",
+   "exports": [
+    "lovable"
+   ],
+   "export_default": null,
+   "linhas": 39,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@lovable.dev/cloud-auth-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "routes"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/social/types.ts",
+   "camada": "integrations",
+   "exports": [
+    "SocialChannel",
+    "SocialSendInput",
+    "SocialSendResult",
+    "SocialSender",
+    "getSocialSender"
+   ],
+   "export_default": null,
+   "linhas": 83,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "PHANTOMBUSTER_API_KEY",
+    "UNIPILE_API_KEY",
+    "UNIPILE_URL"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "lib",
+    "routes/api"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/auth-attacher.ts",
+   "camada": "integrations",
+   "exports": [
+    "attachSupabaseAuth"
+   ],
+   "export_default": null,
+   "linhas": 16,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/auth-middleware.ts",
+   "camada": "integrations",
+   "exports": [
+    "requireSupabaseAuth"
+   ],
+   "export_default": null,
+   "linhas": 110,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "externos": [
+    "@supabase/supabase-js",
+    "@tanstack/react-start"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 13,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.server.ts",
+   "camada": "integrations",
+   "exports": [
+    "supabaseAdmin"
+   ],
+   "export_default": null,
+   "linhas": 70,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 15,
+   "usado_por_modulos": [
+    "lib",
+    "routes/api"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.ts",
+   "camada": "integrations",
+   "exports": [
+    "supabase"
+   ],
+   "export_default": null,
+   "linhas": 69,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "components",
+    "integrations/lovable",
+    "integrations/supabase",
+    "routes",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "camada": "integrations",
+   "exports": [
+    "CompositeTypes",
+    "Constants",
+    "Database",
+    "Enums",
+    "Json",
+    "Tables",
+    "TablesInsert",
+    "TablesUpdate"
+   ],
+   "export_default": null,
+   "linhas": 2112,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "integrations/supabase",
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/alert-dispatch.ts",
+   "camada": "lib",
+   "exports": [
+    "AlertDispatchPlan",
+    "AlertNotificationPayload",
+    "REMINDER_COOLDOWN_MS",
+    "StoredAlert",
+    "buildNotificationPayload",
+    "planAlertDispatch"
+   ],
+   "export_default": null,
+   "linhas": 99,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "routes/api"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/analytics-aggregate.ts",
+   "camada": "lib",
+   "exports": [
+    "CampaignChannelPoint",
+    "ChannelPoint",
+    "DailyPoint",
+    "PeriodTotals",
+    "TouchpointRow",
+    "buildCampaignChannelBreakdown",
+    "buildCampaignStages",
+    "buildChannelBreakdown",
+    "buildDailySeries",
+    "buildFunnel",
+    "buildTotals",
+    "pctDelta"
+   ],
+   "export_default": null,
+   "linhas": 175,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/dashboard",
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/analytics.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "getAnalyticsCharts",
+    "getCampaignDrilldown"
+   ],
+   "export_default": null,
+   "linhas": 253,
+   "tabelas": [
+    "campaign_sends",
+    "campaign_variants",
+    "contact_touchpoints",
+    "marketing_campaigns"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/dashboard"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/audience-resolver.server.ts",
+   "camada": "lib",
+   "exports": [
+    "ResolvedContact",
+    "resolveAudience"
+   ],
+   "export_default": null,
+   "linhas": 71,
+   "tabelas": [
+    "v_contact_profiles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/audience-rules.ts",
+   "camada": "lib",
+   "exports": [
+    "AudienceRules",
+    "CHANNELS",
+    "Channel",
+    "audienceRulesSchema",
+    "defaultAudienceRules",
+    "parseRules"
+   ],
+   "export_default": null,
+   "linhas": 49,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 14,
+   "usado_por_modulos": [
+    "components",
+    "lib",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/audiences.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "archiveAudience",
+    "getAudience",
+    "listAudiences",
+    "previewAudience",
+    "refreshAudience",
+    "saveAudience"
+   ],
+   "export_default": null,
+   "linhas": 147,
+   "tabelas": [
+    "audience_members",
+    "audiences"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 4,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/budget-guard.ts",
+   "camada": "lib",
+   "exports": [
+    "BUDGET_DEFER_MS",
+    "BUDGET_WARNING_THRESHOLD",
+    "BudgetSnapshot",
+    "BudgetStatus",
+    "ChannelBudget",
+    "ChannelBudgetState",
+    "buildBudgetSnapshot",
+    "evaluateChannelBudget"
+   ],
+   "export_default": null,
+   "linhas": 172,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components/ops",
+    "lib"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/budget-reallocation-schedule.ts",
+   "camada": "lib",
+   "exports": [
+    "DEFAULT_SCHEDULE_POLICY",
+    "ScheduleDecision",
+    "ScheduleDecisionCode",
+    "ScheduleInput",
+    "SchedulePolicy",
+    "decideScheduledReallocation",
+    "policyFromEnv"
+   ],
+   "export_default": null,
+   "linhas": 148,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "routes/api"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/budget-reallocation.server.ts",
+   "camada": "lib",
+   "exports": [
+    "ReallocationHistoryEntry",
+    "ReallocationPreview",
+    "applyReallocation",
+    "listReallocationHistory",
+    "previewReallocation"
+   ],
+   "export_default": null,
+   "linhas": 109,
+   "tabelas": [
+    "budget_reallocations",
+    "channel_budgets"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "routes/api"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/budget-reallocation.ts",
+   "camada": "lib",
+   "exports": [
+    "DONOR_MAX_USAGE",
+    "DONOR_SAFETY_USAGE",
+    "MIN_TRANSFER_BRL",
+    "RECEIVER_TARGET_USAGE",
+    "ReallocationChange",
+    "ReallocationPlan",
+    "ReallocationTransfer",
+    "planReallocation"
+   ],
+   "export_default": null,
+   "linhas": 187,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [
+    "donor"
+   ],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/budget.server.ts",
+   "camada": "lib",
+   "exports": [
+    "BUDGET_MAX_ROWS",
+    "BUDGET_PAGE_SIZE",
+    "BudgetClient",
+    "BudgetReport",
+    "buildBudgetReport",
+    "loadBlockedChannels",
+    "periodBounds"
+   ],
+   "export_default": null,
+   "linhas": 161,
+   "tabelas": [
+    "channel_budgets",
+    "contact_touchpoints"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 5,
+   "usado_por_modulos": [
+    "lib",
+    "routes/api"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/cadence-engine.ts",
+   "camada": "lib",
+   "exports": [
+    "BACKOFF_MINUTES",
+    "BUDGET_DEFER_MS",
+    "COOLDOWN_DEFER_MS",
+    "CadenceDecision",
+    "CadenceFacts",
+    "CadenceStep",
+    "DEFAULT_STEPS",
+    "EMAIL_CAP_DEFER_MS",
+    "FailureOutcome",
+    "SOCIAL_CHANNELS",
+    "advancePlan",
+    "decideCadenceAction",
+    "decideFailureOutcome",
+    "isRcsFallbackError",
+    "isSocialChannel",
+    "nextRetryAt",
+    "resolveSteps"
+   ],
+   "export_default": null,
+   "linhas": 197,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "routes/api"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/campaign-cost.server.ts",
+   "camada": "lib",
+   "exports": [
+    "buildCampaignPreflight"
+   ],
+   "export_default": null,
+   "linhas": 72,
+   "tabelas": [
+    "audience_members",
+    "campaign_variants",
+    "marketing_campaigns"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/campaign-cost.ts",
+   "camada": "lib",
+   "exports": [
+    "BudgetStateForPreflight",
+    "CampaignCostEstimate",
+    "CostPreflight",
+    "PreflightVerdict",
+    "SEGMENTED_CHANNELS",
+    "VariantCostLine",
+    "VariantForEstimate",
+    "allocateRecipients",
+    "estimateCampaignCost",
+    "evaluateCostPreflight"
+   ],
+   "export_default": null,
+   "linhas": 218,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/campaign-diagnostics.ts",
+   "camada": "lib",
+   "exports": [
+    "CampaignDiagnosis",
+    "diagnoseCampaign"
+   ],
+   "export_default": null,
+   "linhas": 440,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/campaign-validation.ts",
+   "camada": "lib",
+   "exports": [
+    "CHANNEL_BODY_LIMIT",
+    "CampaignForValidation",
+    "ValidationIssue",
+    "VariantForValidation",
+    "hasBlockingIssues",
+    "validateCampaign"
+   ],
+   "export_default": null,
+   "linhas": 243,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 5,
+   "usado_por_modulos": [
+    "components",
+    "lib",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/churn.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "getChurnMetrics",
+    "getChurnRiskOverview"
+   ],
+   "export_default": null,
+   "linhas": 50,
+   "tabelas": [
+    "contact_churn_scores"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/dashboard"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/compliance-terms.ts",
+   "camada": "lib",
+   "exports": [
+    "ComplianceAuditInput",
+    "ComplianceNiche",
+    "ComplianceReport",
+    "ComplianceRule",
+    "ComplianceSeverity",
+    "ComplianceViolation",
+    "NICHE_LABELS",
+    "NICHE_RULES",
+    "auditCompliance",
+    "normalizeForCompliance"
+   ],
+   "export_default": null,
+   "linhas": 294,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 10,
+   "usado_por_modulos": [
+    "components",
+    "components/ops",
+    "lib",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/compliance.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "ComplianceTermRow",
+    "deleteComplianceTerm",
+    "listComplianceTerms",
+    "upsertComplianceTerm"
+   ],
+   "export_default": null,
+   "linhas": 95,
+   "tabelas": [
+    "compliance_terms"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/compliance.server.ts",
+   "camada": "lib",
+   "exports": [
+    "ComplianceContext",
+    "loadComplianceContext",
+    "logComplianceViolations"
+   ],
+   "export_default": null,
+   "linhas": 75,
+   "tabelas": [
+    "compliance_terms",
+    "compliance_violations_log"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/cost-model.ts",
+   "camada": "lib",
+   "exports": [
+    "BILLABLE_STATUSES",
+    "ChannelSpend",
+    "CostChannel",
+    "DEFAULT_UNIT_COST_BRL",
+    "SpendRow",
+    "SpendSummary",
+    "WASTED_STATUSES",
+    "formatBRL",
+    "summarizeSpend",
+    "unitCostFor"
+   ],
+   "export_default": null,
+   "linhas": 161,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 8,
+   "usado_por_modulos": [
+    "components/ops",
+    "lib"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/csv-export.ts",
+   "camada": "lib",
+   "exports": [
+    "CsvColumn",
+    "csvFilename",
+    "downloadCsv",
+    "escapeCsvValue",
+    "toCsv"
+   ],
+   "export_default": null,
+   "linhas": 63,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/ops"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/deliverability.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "CampaignDeliverabilityRow",
+    "checkEmailDns",
+    "getCampaignDeliverabilityReport",
+    "getFuxicoConfig",
+    "getFuxicoStatus",
+    "getTrackingIntegrityReport",
+    "runFuxicoEmailTest",
+    "sendTestFuxicoWebhook",
+    "testFuxicoConnection"
+   ],
+   "export_default": null,
+   "linhas": 439,
+   "tabelas": [
+    "campaigns_orchestration",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "marketing_campaigns"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "FUXICO_SERVICE_KEY",
+    "FUXICO_URL",
+    "FUXICO_WEBHOOK_SECRET"
+   ],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/email-blocks.ts",
+   "camada": "lib",
+   "exports": [
+    "Align",
+    "BlockIssue",
+    "DEFAULT_EMAIL_THEME",
+    "EMAIL_BLOCK_TYPES",
+    "EmailBlock",
+    "EmailTheme",
+    "escapeHtml",
+    "moveBlock",
+    "newBlock",
+    "parseBlocks",
+    "renderEmailHtml",
+    "renderEmailText",
+    "safeUrl",
+    "validateBlocks"
+   ],
+   "export_default": null,
+   "linhas": 237,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "components/email",
+    "lib",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/email-preflight.ts",
+   "camada": "lib",
+   "exports": [
+    "GMAIL_CLIP_BYTES",
+    "PreflightFinding",
+    "PreflightReport",
+    "PreflightSeverity",
+    "SPAM_TRIGGERS",
+    "blockingFindings",
+    "findSpamTriggers",
+    "preflightEmail",
+    "preflightEmailContent",
+    "scoreLabel"
+   ],
+   "export_default": null,
+   "linhas": 351,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "components",
+    "components/email",
+    "lib",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/email-tracking.server.ts",
+   "camada": "lib",
+   "exports": [
+    "TrackedBody",
+    "withFuxicoTracking"
+   ],
+   "export_default": null,
+   "linhas": 63,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "lib",
+    "routes/api"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/error-capture.ts",
+   "camada": "lib",
+   "exports": [
+    "consumeLastCapturedError"
+   ],
+   "export_default": null,
+   "linhas": 28,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/error-page.ts",
+   "camada": "lib",
+   "exports": [
+    "renderErrorPage"
+   ],
+   "export_default": null,
+   "linhas": 31,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/hmac.server.ts",
+   "camada": "lib",
+   "exports": [
+    "safeEqualString",
+    "signPayload",
+    "verifyHmac"
+   ],
+   "export_default": null,
+   "linhas": 38,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "node:crypto"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 8,
+   "usado_por_modulos": [
+    "lib",
+    "routes/api"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/journey-dispatch.server.ts",
+   "camada": "lib",
+   "exports": [
+    "DispatchResult",
+    "JourneyContact",
+    "JourneyMessage",
+    "dispatchJourneyMessage",
+    "isSocialJourneyChannel",
+    "resolveJourneyMessage"
+   ],
+   "export_default": null,
+   "linhas": 152,
+   "tabelas": [
+    "message_templates"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "routes/api"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/journey-engine.ts",
+   "camada": "lib",
+   "exports": [
+    "BUDGET_DEFER_MS",
+    "ConditionOp",
+    "DEFAULT_BRANCH",
+    "FALSE_BRANCH",
+    "JourneyCondition",
+    "JourneyDecision",
+    "JourneyEdge",
+    "JourneyFacts",
+    "JourneyIssue",
+    "JourneyNode",
+    "JourneyNodeKind",
+    "MAX_WAIT_MS",
+    "TRUE_BRANCH",
+    "clampToSendWindow",
+    "decideJourneyAction",
+    "evaluateCondition",
+    "evaluateConditionGroup",
+    "findEdge",
+    "findWaitlessCycle",
+    "parseConditions",
+    "parseSplitBranches",
+    "pickSplitBranch",
+    "readField",
+    "validateJourney",
+    "waitDurationMs"
+   ],
+   "export_default": null,
+   "linhas": 509,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 5,
+   "usado_por_modulos": [
+    "lib",
+    "routes/_authenticated",
+    "routes/api"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/journey-graph.ts",
+   "camada": "lib",
+   "exports": [
+    "JOURNEY_NODE_KINDS",
+    "JOURNEY_STATUSES",
+    "JourneyEdgeInput",
+    "JourneyGraphInput",
+    "JourneyNodeInput",
+    "JourneySettings",
+    "JourneyStatus",
+    "NODE_KIND_LABEL",
+    "STATUS_LABEL",
+    "branchesForKind",
+    "defaultNodeConfig",
+    "isTempId",
+    "journeyEdgeSchema",
+    "journeyGraphSchema",
+    "journeyNodeSchema",
+    "journeySettingsSchema",
+    "toEngineEdges",
+    "toEngineNodes",
+    "validateGraphInput"
+   ],
+   "export_default": null,
+   "linhas": 176,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 4,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "components/journeys",
+    "lib",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/journey-triggers.ts",
+   "camada": "lib",
+   "exports": [
+    "DEFAULT_TRIGGER_CONFIG",
+    "EnrollmentBlockCode",
+    "EnrollmentDecision",
+    "EnrollmentFacts",
+    "JourneyTriggerConfig",
+    "TRIGGER_SOURCES",
+    "TriggerEvent",
+    "TriggerSource",
+    "decideEnrollment",
+    "matchesTrigger",
+    "parseTriggerConfig"
+   ],
+   "export_default": null,
+   "linhas": 179,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 1,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/journeys.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "createJourney",
+    "getJourney",
+    "listJourneys",
+    "saveJourney",
+    "setJourneyStatus"
+   ],
+   "export_default": null,
+   "linhas": 186,
+   "tabelas": [
+    "journey_edges",
+    "journey_enrollments",
+    "journey_nodes",
+    "journeys"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/journeys.server.ts",
+   "camada": "lib",
+   "exports": [
+    "SaveGraphResult",
+    "saveJourneyGraph",
+    "validateGraphInput"
+   ],
+   "export_default": null,
+   "linhas": 106,
+   "tabelas": [
+    "journey_edges",
+    "journey_nodes",
+    "journeys"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/lead-forms-delivery.server.ts",
+   "camada": "lib",
+   "exports": [
+    "buildConfirmUrl",
+    "deliverConfirmation"
+   ],
+   "export_default": null,
+   "linhas": 45,
+   "tabelas": [
+    "lead_form_submissions",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "PUBLIC_SITE_URL"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/lead-forms.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "confirmLeadForm",
+    "getLeadForm",
+    "getPublicLeadForm",
+    "listLeadForms",
+    "saveLeadForm",
+    "submitLeadForm"
+   ],
+   "export_default": null,
+   "linhas": 110,
+   "tabelas": [
+    "lead_form_submissions",
+    "lead_forms"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 4,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "routes",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/lead-forms.server.ts",
+   "camada": "lib",
+   "exports": [
+    "SubmitOutcome",
+    "activateSubmission",
+    "confirmByToken",
+    "handleSubmission",
+    "hashToken",
+    "newConfirmToken",
+    "parseFields",
+    "safeEqualHex"
+   ],
+   "export_default": null,
+   "linhas": 235,
+   "tabelas": [
+    "consent_ledger",
+    "entity_map",
+    "journey_enrollments",
+    "lead_form_submissions",
+    "lead_forms"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "node:crypto"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/lead-forms.ts",
+   "camada": "lib",
+   "exports": [
+    "DEFAULT_FIELDS",
+    "FIELD_TYPE_LABEL",
+    "HONEYPOT_KEY",
+    "LEAD_FIELD_TYPES",
+    "LEAD_FORM_STATUSES",
+    "LEAD_FORM_STATUS_LABEL",
+    "LeadField",
+    "LeadFieldType",
+    "LeadFormInput",
+    "LeadFormStatus",
+    "SubmissionResult",
+    "leadFieldSchema",
+    "leadFormSchema",
+    "normalizeEmail",
+    "normalizePhone",
+    "parseFieldsSafe",
+    "slugify",
+    "validateSubmission"
+   ],
+   "export_default": null,
+   "linhas": 196,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "components/forms",
+    "lib",
+    "routes",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/logger.server.ts",
+   "camada": "lib",
+   "exports": [
+    "createLogger"
+   ],
+   "export_default": null,
+   "linhas": 28,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/lovable-error-reporting.ts",
+   "camada": "lib",
+   "exports": [
+    "reportLovableError"
+   ],
+   "export_default": null,
+   "linhas": 58,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "routes"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/marketing.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "getCampaignCostPreflight",
+    "getMarketingCampaign",
+    "getMarketingOverview",
+    "getVariableCoverage",
+    "launchMarketingCampaign",
+    "listAudienceSample",
+    "listMarketingCampaigns",
+    "saveMarketingCampaign",
+    "setCampaignStatus"
+   ],
+   "export_default": null,
+   "linhas": 453,
+   "tabelas": [
+    "audience_members",
+    "audiences",
+    "campaign_sends",
+    "campaign_variants",
+    "contact_touchpoints",
+    "entity_map",
+    "marketing_campaigns"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 5,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/campaigns",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/message-preflight.ts",
+   "camada": "lib",
+   "exports": [
+    "MessageFinding",
+    "MessagePreflightReport",
+    "MessageSeverity",
+    "SHORT_MESSAGE_CHANNELS",
+    "blockingMessageFindings",
+    "preflightMessage"
+   ],
+   "export_default": null,
+   "linhas": 222,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components",
+    "lib",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/ops-alerts.ts",
+   "camada": "lib",
+   "exports": [
+    "AlertLevel",
+    "CONSENT_BLOCK_CRITICAL_RATE",
+    "CONSENT_BLOCK_WARN_RATE",
+    "OpsAlert",
+    "OpsBudgetChannelInput",
+    "OpsComplianceInput",
+    "OpsDeliverabilityInput",
+    "OpsHealthInput",
+    "OpsTrackingInput",
+    "TRACKING_COVERAGE_FLOOR",
+    "buildOpsAlerts"
+   ],
+   "export_default": null,
+   "linhas": 255,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "lib",
+    "routes/_authenticated",
+    "routes/api"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/ops-audit.server.ts",
+   "camada": "lib",
+   "exports": [
+    "AUDIT_DEFAULT_LIMIT",
+    "AUDIT_EXPORT_MAX_ROWS",
+    "AUDIT_EXPORT_PAGE_SIZE",
+    "AUDIT_MAX_LIMIT",
+    "AUDIT_PERIODS",
+    "AuditClient",
+    "AuditExportResult",
+    "AuditFilters",
+    "AuditPeriod",
+    "ManualInterventionRow",
+    "clampLimit",
+    "collectManualInterventions",
+    "listManualInterventions",
+    "normalizeTargetFilter"
+   ],
+   "export_default": null,
+   "linhas": 152,
+   "tabelas": [
+    "campaign_target_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 1,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/ops-recovery.server.ts",
+   "camada": "lib",
+   "exports": [
+    "DEAD_LETTER_REQUEUE_LIMIT",
+    "RequeueClient",
+    "requeueDeadLetter"
+   ],
+   "export_default": null,
+   "linhas": 72,
+   "tabelas": [
+    "campaign_target_events",
+    "campaign_targets"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 1,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/ops-spend.server.ts",
+   "camada": "lib",
+   "exports": [
+    "SPEND_DEFAULT_DAYS",
+    "SPEND_MAX_ROWS",
+    "SPEND_PAGE_SIZE",
+    "SpendClient",
+    "SpendReport",
+    "buildSpendReport",
+    "clampDays"
+   ],
+   "export_default": null,
+   "linhas": 101,
+   "tabelas": [
+    "contact_touchpoints"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 1,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/ops.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "applyBudgetReallocation",
+    "exportManualInterventions",
+    "getAlertNotifications",
+    "getBudgetReallocationHistory",
+    "getBudgetReallocationPlan",
+    "getBudgetReport",
+    "getChannelROI",
+    "getComplianceStats",
+    "getDeliverabilityStats",
+    "getManualInterventions",
+    "getPipelineHealth",
+    "getSpendBreakdown",
+    "listComplianceViolations",
+    "requeueDeadLetterTargets",
+    "updateChannelBudget"
+   ],
+   "export_default": null,
+   "linhas": 376,
+   "tabelas": [
+    "budget_reallocations",
+    "campaign_sends",
+    "campaign_target_events",
+    "channel_budgets",
+    "channel_roi_stats",
+    "compliance_violations_log",
+    "consent_ledger",
+    "contact_touchpoints"
+   ],
+   "rpcs": [
+    "fn_refresh_roi_stats"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 5,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 9,
+   "usado_por_modulos": [
+    "components/ops",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/orchestrator.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "createCampaign",
+    "createEvalCase",
+    "decideApproval",
+    "dispatchAgentTurn",
+    "enqueueBatchProspection",
+    "getCompanyDossier",
+    "importFromLux",
+    "listCadenceRules",
+    "listCampaigns",
+    "listCampaignsForPicker",
+    "listEvalCases",
+    "listIcpCompanies",
+    "listPendingApprovals",
+    "listRecentEvents",
+    "runEvalCase"
+   ],
+   "export_default": null,
+   "linhas": 519,
+   "tabelas": [
+    "agent_eval_cases",
+    "agent_eval_runs",
+    "cadence_rules",
+    "campaign_targets",
+    "campaigns_orchestration",
+    "contact_touchpoints",
+    "entity_map",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 4,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/preflight-history.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "getTemplatePreflightHistory",
+    "recordTemplatePreflight"
+   ],
+   "export_default": null,
+   "linhas": 43,
+   "tabelas": [
+    "template_preflight_history"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/profile360.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "getContactProfile",
+    "listContactProfiles"
+   ],
+   "export_default": null,
+   "linhas": 132,
+   "tabelas": [
+    "audience_members",
+    "campaign_sends",
+    "consent_ledger",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "v_contact_profiles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/sentiment.ts",
+   "camada": "lib",
+   "exports": [
+    "LeadSentimentSummary",
+    "PRIORITY_ORDER",
+    "ReplyPriority",
+    "Sentiment",
+    "classifySentiment",
+    "computeReplyPriority",
+    "summarizeLeadSentiment"
+   ],
+   "export_default": null,
+   "linhas": 78,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "lib",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/sms-segments.ts",
+   "camada": "lib",
+   "exports": [
+    "SegmentInfo",
+    "analyzeSms",
+    "isGsm7"
+   ],
+   "export_default": null,
+   "linhas": 55,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components",
+    "lib",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/supabase-public.server.ts",
+   "camada": "lib",
+   "exports": [
+    "publicDb"
+   ],
+   "export_default": null,
+   "linhas": 23,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/template-vars.ts",
+   "camada": "lib",
+   "exports": [
+    "ContactVarSource",
+    "ParsedVar",
+    "RenderResult",
+    "TEMPLATE_VARS",
+    "TemplateVarDef",
+    "buildVarValues",
+    "canonicalVar",
+    "extractVariables",
+    "parseVariables",
+    "renderForContact",
+    "renderTemplate",
+    "sampleVarValues",
+    "unknownVariables"
+   ],
+   "export_default": null,
+   "linhas": 150,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 11,
+   "usado_por_modulos": [
+    "components",
+    "lib",
+    "routes/_authenticated",
+    "routes/api"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/templates.functions.ts",
+   "camada": "lib",
+   "exports": [
+    "archiveTemplate",
+    "duplicateTemplate",
+    "getMediaSignedUrl",
+    "listTemplates",
+    "sendTestMessage",
+    "upsertTemplate"
+   ],
+   "export_default": null,
+   "linhas": 213,
+   "tabelas": [
+    "contact_touchpoints",
+    "entity_map",
+    "message_templates"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-start",
+    "zod"
+   ],
+   "zod_schemas": 5,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/tracking-integrity.ts",
+   "camada": "lib",
+   "exports": [
+    "IntegrityCheck",
+    "REDELIVERY_WINDOW_MS",
+    "RawDeliveryEvent",
+    "RawTouchpoint",
+    "TrackingIntegrityReport",
+    "buildTrackingIntegrityReport"
+   ],
+   "export_default": null,
+   "linhas": 144,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "lib",
+    "routes/api"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/unsubscribe-token.server.ts",
+   "camada": "lib",
+   "exports": [
+    "detectStopWord",
+    "signUnsubscribeToken",
+    "verifyUnsubscribeToken"
+   ],
+   "export_default": null,
+   "linhas": 63,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "AGENT_TOOL_TOKEN",
+    "SM_WEBHOOK_SECRET"
+   ],
+   "externos": [
+    "node:crypto"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "routes/api"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/utils.ts",
+   "camada": "lib",
+   "exports": [
+    "cn"
+   ],
+   "export_default": null,
+   "linhas": 7,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "clsx",
+    "tailwind-merge"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 63,
+   "usado_por_modulos": [
+    "components",
+    "components/campaigns",
+    "components/dashboard",
+    "components/email",
+    "components/ops",
+    "components/ui",
+    "routes/_authenticated"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  }
+ ]
+}

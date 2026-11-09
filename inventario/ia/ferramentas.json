@@ -1,0 +1,513 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "stack": {
+  "linguagens": [
+   "TypeScript (225)",
+   "SQL (46)",
+   "Markdown (35)",
+   "JSON (24)",
+   "JavaScript (15)",
+   "Python (6)",
+   "TOML (2)",
+   "YAML (2)"
+  ],
+  "linguagem_principal": "TypeScript",
+  "framework": "React",
+  "backend_http": [],
+  "bundler": "Vite",
+  "roteador": "tanstack-router",
+  "banco": "Supabase",
+  "testes": [
+   "vitest"
+  ],
+  "ui": [
+   "tailwind",
+   "radix/shadcn"
+  ],
+  "estado": [
+   "react-query"
+  ],
+  "gerenciador_pacotes": "bun",
+  "node": null,
+  "python": null,
+  "deploy": [],
+  "monorepo": null,
+  "pastas_fonte": [
+   "src"
+  ]
+ },
+ "workspaces": [],
+ "package": {
+  "nome": "tanstack_start_ts",
+  "versao": null,
+  "scripts": {
+   "build": "vite build",
+   "build:dev": "vite build --mode development",
+   "contexto:ia": "node scripts/ai-context/gerar.mjs --out docs/contexto/codigo",
+   "contexto:ia:test": "node --test scripts/ai-context/gerar.unit.mjs",
+   "contexto:indice": "python3 scripts/regras_negocio/indice.py --repo . --out docs/contexto/00-INDEX.md --fonte \"banco real=docs/contexto/supabase\" --fonte \"código=docs/contexto/codigo\" --fonte \"regras de negócio=docs/contexto/regras\"",
+   "contexto:regras": "python3 scripts/regras_negocio/generate.py --repo . --out docs/contexto/regras --profile regras --schema-snapshot docs/contexto/supabase --index-path docs/contexto/00-INDEX.md --no-pointer",
+   "dev": "vite dev",
+   "format": "prettier --write .",
+   "guards": "node --test \"scripts/ci/*.unit.mjs\"",
+   "inventario:banco": "node scripts/inventario/gerar-banco.mjs",
+   "inventario:repo": "node scripts/inventario/gerar-repo.mjs",
+   "lint": "eslint .",
+   "preview": "vite preview",
+   "test": "vitest run"
+  },
+  "dependencias": 54,
+  "dev_dependencias": 18,
+  "principais": {
+   "@supabase/supabase-js": "^2.110.7",
+   "@tanstack/react-query": "^5.101.1",
+   "@tanstack/react-router": "^1.170.16",
+   "@tanstack/react-start": "^1.168.26",
+   "@tanstack/router-plugin": "^1.168.18",
+   "date-fns": "^4.1.0",
+   "react": "^19.2.0",
+   "react-day-picker": "^9.14.0",
+   "react-dom": "^19.2.0",
+   "react-hook-form": "^7.71.2",
+   "react-resizable-panels": "^4.6.5",
+   "recharts": "^2.15.4",
+   "tailwindcss": "^4.2.1",
+   "vite-tsconfig-paths": "^6.0.2",
+   "zod": "^3.24.2"
+  },
+  "engines": null,
+  "packageManager": null
+ },
+ "python": {
+  "dependencias": [
+   "psycopg"
+  ]
+ },
+ "configs": [
+  ".prettierrc",
+  "ai-context.config.json",
+  "components.json",
+  "eslint.config.js",
+  "package.json",
+  "supabase/config.toml",
+  "tsconfig.json",
+  "vite.config.ts",
+  "vitest.config.ts"
+ ],
+ "workflows": [
+  {
+   "arquivo": ".github/workflows/contexto.yml",
+   "nome": "Contexto para agentes de IA (horário)",
+   "gatilhos": [
+    "push",
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "7 * * * *"
+   ],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "gate",
+    "codigo",
+    "banco",
+    "regras",
+    "publicar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/ai-context/gerar.mjs",
+    "scripts/regras_negocio/generate.py",
+    "scripts/regras_negocio/indice.py",
+    "scripts/regras_negocio/test_generate.py",
+    "scripts/supabase_snapshot/snapshot.py",
+    "scripts/supabase_snapshot/test_snapshot.py"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_DB_URL"
+   ],
+   "actions": [
+    "actions/cache",
+    "actions/checkout",
+    "actions/download-artifact",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/inventario-estado-semanal.yml",
+   "nome": "Inventário do estado real (semanal)",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 10 * * 1"
+   ],
+   "branches": [],
+   "jobs": [
+    "gerar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/inventario/gerar-banco.mjs",
+    "scripts/inventario/gerar-repo.mjs",
+    "scripts/inventario/mudou-conteudo.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact",
+    "peter-evans/create-pull-request"
+   ]
+  }
+ ],
+ "hooks_git": [],
+ "docs_raiz": [
+  {
+   "arquivo": "AGENTS.md",
+   "titulo": "AGENTS.md — Sales_Machine_V1",
+   "linhas": 33
+  },
+  {
+   "arquivo": "CLAUDE.md",
+   "titulo": "Instruções para Agentes — Sales_Machine_V1",
+   "linhas": 96
+  },
+  {
+   "arquivo": "docs/SCHEMA_REFERENCE.md",
+   "titulo": "SALES MACHINE — Schema Reference",
+   "linhas": 350
+  },
+  {
+   "arquivo": "docs/benchmark-sales-machine.md",
+   "titulo": "Benchmark SALES MACHINE vs. OSS de referência",
+   "linhas": 132
+  },
+  {
+   "arquivo": "docs/qa-report-2026-07-22.md",
+   "titulo": "QA Exhaustive Audit — 2026-07-22",
+   "linhas": 97
+  }
+ ],
+ "docs_em_subpastas": [
+  {
+   "pasta": "docs/contexto",
+   "arquivos_md": 7
+  }
+ ],
+ "changelog_topo": null,
+ "env": {
+  "declaradas_no_env_example": [],
+  "usadas_no_front": [
+   "AGENT_TOOL_TOKEN",
+   "FATORX_AGENT_ID_DEFAULT",
+   "FATORX_SERVICE_KEY",
+   "FATORX_URL",
+   "FATORX_WEBHOOK_SECRET",
+   "FUXICO_SERVICE_KEY",
+   "FUXICO_URL",
+   "FUXICO_WEBHOOK_SECRET",
+   "LUX_SERVICE_KEY",
+   "LUX_URL",
+   "LUX_WEBHOOK_SECRET",
+   "OPS_ALERT_WEBHOOK_SECRET",
+   "OPS_ALERT_WEBHOOK_URL",
+   "PHANTOMBUSTER_API_KEY",
+   "PUBLIC_SITE_URL",
+   "SINGU_SERVICE_KEY",
+   "SINGU_URL",
+   "SINGU_WEBHOOK_SECRET",
+   "SM_WEBHOOK_SECRET",
+   "SUPABASE_ANON_KEY",
+   "SUPABASE_PUBLISHABLE_KEY",
+   "SUPABASE_SERVICE_ROLE_KEY",
+   "SUPABASE_URL",
+   "UNIPILE_API_KEY",
+   "UNIPILE_URL",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL"
+  ],
+  "usadas_nas_edges": [],
+  "usadas_no_python": [
+   "AI_CONTEXT_INDEX",
+   "AI_CONTEXT_MODEL",
+   "AI_CONTEXT_PROFILE",
+   "AI_CONTEXT_SCHEMA_SNAPSHOT",
+   "ANTHROPIC_API_KEY",
+   "CODE_SCAN_DIRS",
+   "GEN_TYPES",
+   "PGDUMP",
+   "PGDUMP_SCHEMAS",
+   "REPO_ROOT",
+   "SNAPSHOT_DIR",
+   "SNAPSHOT_EXCLUDE_SCHEMAS",
+   "SNAPSHOT_INCLUDE_SCHEMAS",
+   "SUPABASE_ACCESS_TOKEN",
+   "SUPABASE_DB_URL",
+   "SUPABASE_PROJECT_REF",
+   "SUPABASE_SNAPSHOT_PUBLICACAO"
+  ],
+  "usadas_mas_nao_declaradas": [
+   "AGENT_TOOL_TOKEN",
+   "FATORX_AGENT_ID_DEFAULT",
+   "FATORX_SERVICE_KEY",
+   "FATORX_URL",
+   "FATORX_WEBHOOK_SECRET",
+   "FUXICO_SERVICE_KEY",
+   "FUXICO_URL",
+   "FUXICO_WEBHOOK_SECRET",
+   "LUX_SERVICE_KEY",
+   "LUX_URL",
+   "LUX_WEBHOOK_SECRET",
+   "OPS_ALERT_WEBHOOK_SECRET",
+   "OPS_ALERT_WEBHOOK_URL",
+   "PHANTOMBUSTER_API_KEY",
+   "PUBLIC_SITE_URL",
+   "SINGU_SERVICE_KEY",
+   "SINGU_URL",
+   "SINGU_WEBHOOK_SECRET",
+   "SM_WEBHOOK_SECRET",
+   "SUPABASE_ANON_KEY",
+   "SUPABASE_PUBLISHABLE_KEY",
+   "SUPABASE_SERVICE_ROLE_KEY",
+   "SUPABASE_URL",
+   "UNIPILE_API_KEY",
+   "UNIPILE_URL",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL"
+  ],
+  "secrets_em_workflows": [
+   "SUPABASE_ACCESS_TOKEN",
+   "SUPABASE_DB_URL"
+  ]
+ },
+ "deploy": {
+  "alvos": [],
+  "dockerfiles": [],
+  "compose": [],
+  "vercel": null
+ },
+ "integracoes": {
+  "sdks": [
+   {
+    "pacote": "@tanstack/react-query",
+    "servico": "react-query",
+    "versao": "^5.101.1"
+   },
+   {
+    "pacote": "@supabase/supabase-js",
+    "servico": "Supabase",
+    "versao": "^2.110.7"
+   },
+   {
+    "pacote": "zod",
+    "servico": "zod",
+    "versao": "^3.24.2"
+   }
+  ],
+  "hosts_externos": [
+   {
+    "host": "a.com",
+    "arquivos": 2
+   },
+   {
+    "host": "acme.com.br",
+    "arquivos": 2
+   },
+   {
+    "host": "bit.ly",
+    "arquivos": 2
+   },
+   {
+    "host": "x.supabase.co",
+    "arquivos": 2
+   },
+   {
+    "host": "api.resend.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.supabase.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.x.com",
+    "arquivos": 1
+   },
+   {
+    "host": "cdn.acme.com",
+    "arquivos": 1
+   },
+   {
+    "host": "cloudflare-dns.com",
+    "arquivos": 1
+   },
+   {
+    "host": "ex.com",
+    "arquivos": 1
+   },
+   {
+    "host": "hooks.example",
+    "arquivos": 1
+   },
+   {
+    "host": "open-receipt-ace.lovable.app",
+    "arquivos": 1
+   },
+   {
+    "host": "pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev",
+    "arquivos": 1
+   }
+  ],
+  "env_de_integracao": [
+   "AGENT_TOOL_TOKEN",
+   "FATORX_WEBHOOK_SECRET",
+   "FUXICO_WEBHOOK_SECRET",
+   "LUX_WEBHOOK_SECRET",
+   "OPS_ALERT_WEBHOOK_SECRET",
+   "OPS_ALERT_WEBHOOK_URL",
+   "PHANTOMBUSTER_API_KEY",
+   "SINGU_WEBHOOK_SECRET",
+   "SM_WEBHOOK_SECRET",
+   "UNIPILE_API_KEY"
+  ],
+  "webhooks_recebidos": [
+   "POST /api/public/hooks/alert-sweep",
+   "POST /api/public/hooks/budget-reallocate",
+   "POST /api/public/hooks/tick-cadence",
+   "POST /api/public/hooks/tick-journeys",
+   "POST /api/public/hooks/tick-marketing",
+   "POST /api/public/webhooks/fatorx",
+   "POST /api/public/webhooks/fuxico",
+   "POST /api/public/webhooks/lux",
+   "POST /api/public/webhooks/singu",
+   "POST /api/public/webhooks/singu-bounce"
+  ],
+  "realtime": []
+ },
+ "permissoes": {
+  "papeis_no_codigo": [
+   {
+    "papel": "admin",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "donor",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "presentation",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "Orquestrador",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "agent",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "alert",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "button",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "group",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "link",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "navigation",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "region",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "separator",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "status",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "sup",
+    "ocorrencias": 1
+   }
+  ],
+  "enums_de_papel": [
+   {
+    "enum": "app_role",
+    "valores": [
+     "admin",
+     "operator",
+     "viewer"
+    ]
+   }
+  ],
+  "rpcs_de_autorizacao": [
+   "has_recent_account_touchpoint"
+  ],
+  "guards": [
+   "src/components/ops/budget-guardrails.tsx"
+  ],
+  "rotas_protegidas": 22,
+  "rotas_publicas": [
+   "/",
+   "/auth",
+   "/confirmar",
+   "/f/:slug"
+  ],
+  "menu_com_papeis": [],
+  "tabelas_sem_rls": []
+ },
+ "feature_flags": {
+  "total": 3,
+  "flags": [
+   {
+    "flag": "FEATURE_X",
+    "arquivos": 1
+   },
+   {
+    "flag": "nova-tela",
+    "arquivos": 1
+   },
+   {
+    "flag": "novo-inbox",
+    "arquivos": 1
+   }
+  ],
+  "tabelas_de_flag": []
+ },
+ "providers": {
+  "entrada": null,
+  "providers": []
+ },
+ "i18n": {
+  "arquivos": 0,
+  "idiomas": [],
+  "lib": []
+ }
+}
