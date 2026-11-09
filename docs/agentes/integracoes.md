@@ -22,7 +22,7 @@ instanciado no primeiro acesso.
 
 ## Variáveis de ambiente
 
-26 nomes lidos via `process.env` em `src/`:
+25 nomes lidos via `process.env` em `src/`:
 
 ```
 AGENT_TOOL_TOKEN · FATORX_AGENT_ID_DEFAULT · FATORX_SERVICE_KEY · FATORX_URL ·
@@ -37,8 +37,11 @@ No browser: `import.meta.env.VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY
 (`src/integrations/supabase/client.ts:33-34`) — tudo com prefixo `VITE_` **vai para o bundle e é
 público**; nunca ponha segredo atrás de `VITE_`.
 
-**O `.env` do repo cobre 6 das 26** e só com dados públicos do Supabase: `SUPABASE_URL`,
-`SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_PROJECT_ID` e os três equivalentes `VITE_*`. Ele está
+**O `.env` do repo tem 6 linhas**, todas com dados públicos do Supabase — mas só 2 batem com a
+lista de 25 acima (`SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`); as outras 4 são os três `VITE_*`
+(lidos por `import.meta.env`, mecanismo diferente — `client.ts:33-34`) e `SUPABASE_PROJECT_ID`,
+que **não é referenciada em `src/` por nenhum dos dois mecanismos** (`grep -rn SUPABASE_PROJECT_ID src/`
+= vazio). Ele está
 **versionado no git** (`git ls-files .env` devolve `.env`) e **não** está no `.gitignore` — hoje sem
 segredo dentro, mas é uma armadilha: qualquer chave de servidor escrita ali vai para o repositório.
 Nunca adicione `SUPABASE_SERVICE_ROLE_KEY`, `*_SERVICE_KEY`, `*_WEBHOOK_SECRET`, `SM_WEBHOOK_SECRET` ou
