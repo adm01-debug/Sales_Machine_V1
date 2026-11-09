@@ -1,0 +1,2173 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "resumo": {
+  "urls": 40,
+  "rotas_http_backend": 27,
+  "vistas_por_id": 0,
+  "itens_menu": 13,
+  "lazy": 0
+ },
+ "urls": [
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": null,
+   "indice": false,
+   "lazy": false,
+   "tipo": "layout",
+   "caminho": "/",
+   "componente": null,
+   "arquivo": "src/routes/_authenticated/route.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated",
+   "hooks": [
+    "useNavigate",
+    "useQueryClient",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 6
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": null,
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/",
+   "componente": "PILLARS",
+   "arquivo": "src/routes/index.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "Orquestrador"
+   ],
+   "arquivos_puxados": 3
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/agent-tools",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/agent-tools/send-message",
+   "componente": null,
+   "arquivo": "src/routes/api/public/agent-tools/send-message.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/agent-tools/send-message",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "contact_touchpoints",
+    "entity_map"
+   ],
+   "rpcs": [],
+   "edges": [
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 5
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/hooks",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/hooks/alert-sweep",
+   "componente": null,
+   "arquivo": "src/routes/api/public/hooks/alert-sweep.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/hooks/alert-sweep",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "campaign_sends",
+    "campaign_targets",
+    "channel_budgets",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "ops_alert_notifications",
+    "v_pipeline_health"
+   ],
+   "rpcs": [
+    "refresh_pipeline_health"
+   ],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 9
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/hooks",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/hooks/budget-reallocate",
+   "componente": null,
+   "arquivo": "src/routes/api/public/hooks/budget-reallocate.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/hooks/budget-reallocate",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "budget_reallocations",
+    "channel_budgets",
+    "contact_touchpoints"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "donor"
+   ],
+   "arquivos_puxados": 8
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/hooks",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/hooks/tick-cadence",
+   "componente": null,
+   "arquivo": "src/routes/api/public/hooks/tick-cadence.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/hooks/tick-cadence",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "cadence_rules",
+    "campaign_targets",
+    "campaigns_orchestration",
+    "channel_budgets",
+    "contact_touchpoints",
+    "entity_map",
+    "sender_health"
+   ],
+   "rpcs": [
+    "check_consent",
+    "compute_daily_cap",
+    "has_recent_account_touchpoint"
+   ],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "create-tracking",
+    "enrich-contacts",
+    "evolution-api",
+    "get-tracking-history",
+    "get-tracking-stats",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 13
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/hooks",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/hooks/tick-journeys",
+   "componente": null,
+   "arquivo": "src/routes/api/public/hooks/tick-journeys.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/hooks/tick-journeys",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "channel_budgets",
+    "contact_touchpoints",
+    "entity_map",
+    "journey_edges",
+    "journey_enrollment_events",
+    "journey_enrollments",
+    "journey_nodes",
+    "journeys",
+    "message_templates"
+   ],
+   "rpcs": [
+    "check_consent"
+   ],
+   "edges": [
+    "create-tracking",
+    "enrich-contacts",
+    "evolution-api",
+    "get-tracking-history",
+    "get-tracking-stats",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "arquivos_puxados": 15
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/hooks",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/hooks/tick-marketing",
+   "componente": null,
+   "arquivo": "src/routes/api/public/hooks/tick-marketing.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/hooks/tick-marketing",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "campaign_sends",
+    "campaign_variants",
+    "contact_touchpoints",
+    "entity_map",
+    "marketing_campaigns"
+   ],
+   "rpcs": [
+    "check_consent"
+   ],
+   "edges": [
+    "create-tracking",
+    "enrich-contacts",
+    "evolution-api",
+    "get-tracking-history",
+    "get-tracking-stats",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 8
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/track",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/track/click",
+   "componente": null,
+   "arquivo": "src/routes/api/public/track/click.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/track/click",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 2
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/track",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/track/open.gif",
+   "componente": null,
+   "arquivo": "src/routes/api/public/track/open[.]gif.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/track/open.gif",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 2
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/unsubscribe",
+   "componente": null,
+   "arquivo": "src/routes/api/public/unsubscribe.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/unsubscribe",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "consent_ledger"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 3
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/webhooks",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/webhooks/fatorx",
+   "componente": null,
+   "arquivo": "src/routes/api/public/webhooks/fatorx.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/webhooks/fatorx",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 3
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/webhooks",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/webhooks/fuxico",
+   "componente": null,
+   "arquivo": "src/routes/api/public/webhooks/fuxico.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/webhooks/fuxico",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "consent_ledger",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "entity_map",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 3
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/webhooks",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/webhooks/lux",
+   "componente": null,
+   "arquivo": "src/routes/api/public/webhooks/lux.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/webhooks/lux",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 3
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/webhooks",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/webhooks/singu",
+   "componente": null,
+   "arquivo": "src/routes/api/public/webhooks/singu.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/webhooks/singu",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "consent_ledger",
+    "entity_map",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 4
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/api/public/webhooks",
+   "indice": false,
+   "lazy": false,
+   "tipo": "api",
+   "caminho": "/api/public/webhooks/singu-bounce",
+   "componente": null,
+   "arquivo": "src/routes/api/public/webhooks/singu-bounce.ts",
+   "definida_em": "tanstack-router",
+   "rota_id": "/api/public/webhooks/singu-bounce",
+   "hooks": [],
+   "hooks_locais": [],
+   "tabelas": [
+    "consent_ledger",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "entity_map"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 3
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/approvals",
+   "componente": "ApprovalsPage",
+   "arquivo": "src/routes/_authenticated/approvals.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/approvals",
+   "hooks": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "agent_eval_cases",
+    "agent_eval_runs",
+    "cadence_rules",
+    "campaign_targets",
+    "campaigns_orchestration",
+    "contact_touchpoints",
+    "entity_map",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "oracle-enrich-contact",
+    "oracle-search-decisors",
+    "playbook-generator",
+    "public-api",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 13
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/audiences",
+   "componente": "AudiencesPage",
+   "arquivo": "src/routes/_authenticated/audiences.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/audiences",
+   "hooks": [
+    "useMutation",
+    "useNavigate",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "audience_members",
+    "audiences",
+    "v_contact_profiles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 10
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/audiences",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/audiences/:id",
+   "componente": "AudienceDetailPage",
+   "arquivo": "src/routes/_authenticated/audiences.$id.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/audiences/$id",
+   "hooks": [
+    "useEffect",
+    "useMutation",
+    "useParams",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "audience_members",
+    "audiences",
+    "v_contact_profiles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "button"
+   ],
+   "arquivos_puxados": 12
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/auth",
+   "componente": "AuthPage",
+   "arquivo": "src/routes/auth.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/auth",
+   "hooks": [
+    "useEffect",
+    "useNavigate",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 8
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/campaigns",
+   "componente": "STATUS_VARIANT",
+   "arquivo": "src/routes/_authenticated/campaigns.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/campaigns",
+   "hooks": [
+    "useMutation",
+    "useNavigate",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "audience_members",
+    "audiences",
+    "campaign_sends",
+    "campaign_variants",
+    "channel_budgets",
+    "compliance_terms",
+    "compliance_violations_log",
+    "contact_touchpoints",
+    "entity_map",
+    "marketing_campaigns"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "arquivos_puxados": 22
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/campaigns",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/campaigns/:id",
+   "componente": "OBJECTIVES",
+   "arquivo": "src/routes/_authenticated/campaigns.$id.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/campaigns/$id",
+   "hooks": [
+    "useEffect",
+    "useMemo",
+    "useMutation",
+    "useParams",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "audience_members",
+    "audiences",
+    "campaign_sends",
+    "campaign_variants",
+    "channel_budgets",
+    "compliance_terms",
+    "compliance_violations_log",
+    "contact_touchpoints",
+    "entity_map",
+    "marketing_campaigns",
+    "message_templates",
+    "v_contact_profiles"
+   ],
+   "rpcs": [],
+   "edges": [
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "arquivos_puxados": 35
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/companies",
+   "componente": "CompaniesPage",
+   "arquivo": "src/routes/_authenticated/companies.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/companies",
+   "hooks": [
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "agent_eval_cases",
+    "agent_eval_runs",
+    "cadence_rules",
+    "campaign_targets",
+    "campaigns_orchestration",
+    "contact_touchpoints",
+    "entity_map",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "oracle-enrich-contact",
+    "oracle-search-decisors",
+    "playbook-generator",
+    "public-api",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 15
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/companies",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/companies/:id",
+   "componente": "DossierPage",
+   "arquivo": "src/routes/_authenticated/companies.$id.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/companies/$id",
+   "hooks": [
+    "useParams",
+    "useQuery",
+    "useSearch",
+    "useServerFn"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "agent_eval_cases",
+    "agent_eval_runs",
+    "cadence_rules",
+    "campaign_targets",
+    "campaigns_orchestration",
+    "contact_touchpoints",
+    "entity_map",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "oracle-enrich-contact",
+    "oracle-search-decisors",
+    "playbook-generator",
+    "public-api",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 12
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/compliance",
+   "componente": "CompliancePage",
+   "arquivo": "src/routes/_authenticated/compliance.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/compliance",
+   "hooks": [
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "compliance_terms"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 15
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/confirmar",
+   "componente": "ConfirmPage",
+   "arquivo": "src/routes/confirmar.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/confirmar",
+   "hooks": [
+    "useQuery",
+    "useSearch",
+    "useServerFn"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "consent_ledger",
+    "entity_map",
+    "journey_enrollments",
+    "lead_form_submissions",
+    "lead_forms",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 10
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/contacts",
+   "componente": "ContactsPage",
+   "arquivo": "src/routes/_authenticated/contacts.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/contacts",
+   "hooks": [
+    "useMemo",
+    "useQuery",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "audience_members",
+    "campaign_sends",
+    "consent_ledger",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "v_contact_profiles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 9
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/contacts",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/contacts/:id",
+   "componente": "ContactDetailPage",
+   "arquivo": "src/routes/_authenticated/contacts.$id.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/contacts/$id",
+   "hooks": [
+    "useParams",
+    "useQuery",
+    "useServerFn"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "audience_members",
+    "campaign_sends",
+    "consent_ledger",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "v_contact_profiles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 8
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/dashboard",
+   "componente": "OverviewPage",
+   "arquivo": "src/routes/_authenticated/dashboard.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/dashboard",
+   "hooks": [
+    "useMemo",
+    "useQuery",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "agent_eval_cases",
+    "agent_eval_runs",
+    "audience_members",
+    "audiences",
+    "cadence_rules",
+    "campaign_sends",
+    "campaign_targets",
+    "campaign_variants",
+    "campaigns_orchestration",
+    "channel_budgets",
+    "compliance_terms",
+    "compliance_violations_log",
+    "contact_touchpoints",
+    "entity_map",
+    "marketing_campaigns",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "oracle-enrich-contact",
+    "oracle-search-decisors",
+    "playbook-generator",
+    "public-api",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "arquivos_puxados": 35
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/deliverability",
+   "componente": "Row",
+   "arquivo": "src/routes/_authenticated/deliverability.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/deliverability",
+   "hooks": [
+    "useMutation",
+    "useQuery",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "campaigns_orchestration",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "marketing_campaigns"
+   ],
+   "rpcs": [],
+   "edges": [
+    "create-tracking",
+    "enrich-contacts",
+    "evolution-api",
+    "get-tracking-history",
+    "get-tracking-stats",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 12
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/evals",
+   "componente": "EvalsPage",
+   "arquivo": "src/routes/_authenticated/evals.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/evals",
+   "hooks": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "agent_eval_cases",
+    "agent_eval_runs",
+    "cadence_rules",
+    "campaign_targets",
+    "campaigns_orchestration",
+    "contact_touchpoints",
+    "entity_map",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "oracle-enrich-contact",
+    "oracle-search-decisors",
+    "playbook-generator",
+    "public-api",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 14
+  },
+  {
+   "protegida": false,
+   "wrappers": [],
+   "pai": "/f",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/f/:slug",
+   "componente": "PublicMessage",
+   "arquivo": "src/routes/f.$slug.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/f/$slug",
+   "hooks": [
+    "useLoaderData",
+    "useMutation",
+    "useParams",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "consent_ledger",
+    "entity_map",
+    "journey_enrollments",
+    "lead_form_submissions",
+    "lead_forms",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 15
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/forms",
+   "componente": "FormsPage",
+   "arquivo": "src/routes/_authenticated/forms.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/forms",
+   "hooks": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "consent_ledger",
+    "entity_map",
+    "journey_enrollments",
+    "lead_form_submissions",
+    "lead_forms",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 15
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/forms",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/forms/:id",
+   "componente": "FormEditorPage",
+   "arquivo": "src/routes/_authenticated/forms.$id.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/forms/$id",
+   "hooks": [
+    "useMemo",
+    "useMutation",
+    "useParams",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "consent_ledger",
+    "entity_map",
+    "journey_edges",
+    "journey_enrollments",
+    "journey_nodes",
+    "journeys",
+    "lead_form_submissions",
+    "lead_forms",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "arquivos_puxados": 25
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/journeys",
+   "componente": "JourneysPage",
+   "arquivo": "src/routes/_authenticated/journeys.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/journeys",
+   "hooks": [
+    "useMutation",
+    "useNavigate",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "journey_edges",
+    "journey_enrollments",
+    "journey_nodes",
+    "journeys"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "arquivos_puxados": 15
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/journeys",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/journeys/:id",
+   "componente": "JourneyEditorPage",
+   "arquivo": "src/routes/_authenticated/journeys.$id.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/journeys/$id",
+   "hooks": [
+    "useEffect",
+    "useMemo",
+    "useMutation",
+    "useParams",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "journey_edges",
+    "journey_enrollments",
+    "journey_nodes",
+    "journeys"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "arquivos_puxados": 20
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/library",
+   "componente": "ComposerPage",
+   "arquivo": "src/routes/_authenticated/library.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/library",
+   "hooks": [
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "compliance_terms",
+    "contact_touchpoints",
+    "entity_map",
+    "message_templates",
+    "template_preflight_history"
+   ],
+   "rpcs": [],
+   "edges": [
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "presentation"
+   ],
+   "arquivos_puxados": 31
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/ops",
+   "componente": "Stat",
+   "arquivo": "src/routes/_authenticated/ops.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/ops",
+   "hooks": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState",
+    "useSuspenseQuery"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "budget_reallocations",
+    "campaign_sends",
+    "campaign_target_events",
+    "campaigns_orchestration",
+    "channel_budgets",
+    "channel_roi_stats",
+    "compliance_violations_log",
+    "consent_ledger",
+    "contact_churn_scores",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "marketing_campaigns"
+   ],
+   "rpcs": [
+    "fn_refresh_roi_stats"
+   ],
+   "edges": [
+    "create-tracking",
+    "enrich-contacts",
+    "evolution-api",
+    "get-tracking-history",
+    "get-tracking-stats",
+    "incoming-webhook",
+    "next-best-action",
+    "playbook-generator",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "alert",
+    "donor",
+    "status"
+   ],
+   "arquivos_puxados": 32
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": true,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/ops",
+   "componente": "OpsDashboard",
+   "arquivo": "src/routes/_authenticated/ops/index.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/ops/",
+   "hooks": [
+    "useServerFn",
+    "useSuspenseQuery"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "budget_reallocations",
+    "campaign_sends",
+    "campaign_target_events",
+    "channel_budgets",
+    "channel_roi_stats",
+    "compliance_violations_log",
+    "consent_ledger",
+    "contact_touchpoints"
+   ],
+   "rpcs": [
+    "fn_refresh_roi_stats"
+   ],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 8
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "_authenticated"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": false,
+   "tipo": "tela",
+   "caminho": "/prospecting",
+   "componente": "CampaignsPage",
+   "arquivo": "src/routes/_authenticated/prospecting.tsx",
+   "definida_em": "tanstack-router",
+   "rota_id": "/_authenticated/prospecting",
+   "hooks": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useServerFn",
+    "useState"
+   ],
+   "hooks_locais": [],
+   "tabelas": [
+    "agent_eval_cases",
+    "agent_eval_runs",
+    "cadence_rules",
+    "campaign_targets",
+    "campaigns_orchestration",
+    "contact_touchpoints",
+    "entity_map",
+    "sales_machine_events"
+   ],
+   "rpcs": [],
+   "edges": [
+    "agent-workflow-runner",
+    "cerebro-query",
+    "enrich-contacts",
+    "evolution-api",
+    "incoming-webhook",
+    "next-best-action",
+    "oracle-enrich-contact",
+    "oracle-search-decisors",
+    "playbook-generator",
+    "public-api",
+    "quick-agent-test",
+    "send-email",
+    "send-sms-campaign",
+    "sequence-processor"
+   ],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [],
+   "arquivos_puxados": 17
+  }
+ ],
+ "rotas_http_backend": [
+  {
+   "metodo": "GET",
+   "caminho": "/{t}",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  },
+  {
+   "metodo": "GET",
+   "caminho": "/a",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  },
+  {
+   "metodo": "GET",
+   "caminho": "/a",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/agent-tools/send-message",
+   "arquivo": "src/routes/api/public/agent-tools/send-message.ts",
+   "tabelas": [
+    "contact_touchpoints",
+    "entity_map"
+   ],
+   "env": [
+    "AGENT_TOOL_TOKEN"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/hooks/alert-sweep",
+   "arquivo": "src/routes/api/public/hooks/alert-sweep.ts",
+   "tabelas": [
+    "campaign_sends",
+    "campaign_targets",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "ops_alert_notifications",
+    "v_pipeline_health"
+   ],
+   "env": [
+    "OPS_ALERT_WEBHOOK_SECRET",
+    "OPS_ALERT_WEBHOOK_URL",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_PUBLISHABLE_KEY"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/hooks/budget-reallocate",
+   "arquivo": "src/routes/api/public/hooks/budget-reallocate.ts",
+   "tabelas": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_PUBLISHABLE_KEY"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/hooks/tick-cadence",
+   "arquivo": "src/routes/api/public/hooks/tick-cadence.ts",
+   "tabelas": [
+    "cadence_rules",
+    "campaign_targets",
+    "campaigns_orchestration",
+    "contact_touchpoints",
+    "entity_map",
+    "sender_health"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_PUBLISHABLE_KEY"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/hooks/tick-journeys",
+   "arquivo": "src/routes/api/public/hooks/tick-journeys.ts",
+   "tabelas": [
+    "contact_touchpoints",
+    "entity_map",
+    "journey_edges",
+    "journey_enrollment_events",
+    "journey_enrollments",
+    "journey_nodes",
+    "journeys"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_PUBLISHABLE_KEY"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/hooks/tick-marketing",
+   "arquivo": "src/routes/api/public/hooks/tick-marketing.ts",
+   "tabelas": [
+    "campaign_sends",
+    "campaign_variants",
+    "contact_touchpoints",
+    "entity_map",
+    "marketing_campaigns"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_PUBLISHABLE_KEY"
+   ]
+  },
+  {
+   "metodo": "GET",
+   "caminho": "/api/public/track/click",
+   "arquivo": "src/routes/api/public/track/click.ts",
+   "tabelas": [
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "sales_machine_events"
+   ],
+   "env": []
+  },
+  {
+   "metodo": "GET",
+   "caminho": "/api/public/track/open.gif",
+   "arquivo": "src/routes/api/public/track/open[.]gif.ts",
+   "tabelas": [
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "sales_machine_events"
+   ],
+   "env": []
+  },
+  {
+   "metodo": "GET",
+   "caminho": "/api/public/unsubscribe",
+   "arquivo": "src/routes/api/public/unsubscribe.tsx",
+   "tabelas": [
+    "consent_ledger"
+   ],
+   "env": []
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/unsubscribe",
+   "arquivo": "src/routes/api/public/unsubscribe.tsx",
+   "tabelas": [
+    "consent_ledger"
+   ],
+   "env": []
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/webhooks/fatorx",
+   "arquivo": "src/routes/api/public/webhooks/fatorx.ts",
+   "tabelas": [
+    "sales_machine_events"
+   ],
+   "env": [
+    "FATORX_WEBHOOK_SECRET"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/webhooks/fuxico",
+   "arquivo": "src/routes/api/public/webhooks/fuxico.ts",
+   "tabelas": [
+    "consent_ledger",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "entity_map",
+    "sales_machine_events"
+   ],
+   "env": [
+    "FUXICO_WEBHOOK_SECRET"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/webhooks/lux",
+   "arquivo": "src/routes/api/public/webhooks/lux.ts",
+   "tabelas": [
+    "sales_machine_events"
+   ],
+   "env": [
+    "LUX_WEBHOOK_SECRET"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/webhooks/singu",
+   "arquivo": "src/routes/api/public/webhooks/singu.ts",
+   "tabelas": [
+    "consent_ledger",
+    "entity_map",
+    "sales_machine_events"
+   ],
+   "env": [
+    "SINGU_WEBHOOK_SECRET"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/api/public/webhooks/singu-bounce",
+   "arquivo": "src/routes/api/public/webhooks/singu-bounce.ts",
+   "tabelas": [
+    "consent_ledger",
+    "contact_touchpoints",
+    "email_deliverability_events",
+    "entity_map"
+   ],
+   "env": [
+    "SINGU_WEBHOOK_SECRET"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/b",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/b",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  },
+  {
+   "metodo": "DELETE",
+   "caminho": "/c",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  },
+  {
+   "metodo": "PUT",
+   "caminho": "/d",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  },
+  {
+   "metodo": "GET",
+   "caminho": "/items",
+   "arquivo": "scripts/ai-context/gerar.unit.mjs",
+   "tabelas": [
+    "contacts",
+    "dashboard_table",
+    "emails",
+    "fixture_table",
+    "ghost_table",
+    "payments",
+    "runtime_table",
+    "tools_runtime"
+   ],
+   "env": [
+    "DB_URL",
+    "RESEND_API_KEY",
+    "VITE_ANON",
+    "VITE_SUPABASE_URL"
+   ]
+  },
+  {
+   "metodo": "GET",
+   "caminho": "/u",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  },
+  {
+   "metodo": "GET",
+   "caminho": "/users",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  },
+  {
+   "metodo": "POST",
+   "caminho": "/users/:id",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  },
+  {
+   "metodo": "GET",
+   "caminho": "/x",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ]
+  }
+ ],
+ "vistas": [],
+ "menu": [
+  {
+   "rotulo": "Audiências",
+   "destino": "/audiences",
+   "grupo": "Marketing",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/audiences.tsx"
+  },
+  {
+   "rotulo": "Biblioteca",
+   "destino": "/library",
+   "grupo": "Marketing",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/library.tsx"
+  },
+  {
+   "rotulo": "Campanhas",
+   "destino": "/campaigns",
+   "grupo": "Marketing",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/campaigns.tsx"
+  },
+  {
+   "rotulo": "Formulários",
+   "destino": "/forms",
+   "grupo": "Marketing",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/forms.tsx"
+  },
+  {
+   "rotulo": "Jornadas",
+   "destino": "/journeys",
+   "grupo": "Marketing",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/journeys.tsx"
+  },
+  {
+   "rotulo": "Visão Geral",
+   "destino": "/dashboard",
+   "grupo": "Marketing",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/dashboard.tsx"
+  },
+  {
+   "rotulo": "Avaliações de agente",
+   "destino": "/evals",
+   "grupo": "Operações",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/evals.tsx"
+  },
+  {
+   "rotulo": "Conformidade",
+   "destino": "/compliance",
+   "grupo": "Operações",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/compliance.tsx"
+  },
+  {
+   "rotulo": "Entregabilidade",
+   "destino": "/deliverability",
+   "grupo": "Operações",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/deliverability.tsx"
+  },
+  {
+   "rotulo": "Saúde do pipeline",
+   "destino": "/ops",
+   "grupo": "Operações",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/ops.tsx"
+  },
+  {
+   "rotulo": "Aprovações",
+   "destino": "/approvals",
+   "grupo": "Relacionamento",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/approvals.tsx"
+  },
+  {
+   "rotulo": "Contatos & Contas",
+   "destino": "/contacts",
+   "grupo": "Relacionamento",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/contacts.tsx"
+  },
+  {
+   "rotulo": "Prospecção",
+   "destino": "/prospecting",
+   "grupo": "Relacionamento",
+   "papeis": [],
+   "papeis_nao_resolvidos": null,
+   "definido_em": "src/components/nav-config.tsx",
+   "resolve_para": "src/routes/_authenticated/prospecting.tsx"
+  }
+ ],
+ "lazy": {}
+}

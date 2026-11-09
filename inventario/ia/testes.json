@@ -1,0 +1,494 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "frameworks": [
+  "vitest"
+ ],
+ "total": 44,
+ "por_tipo": {
+  "pytest": 2,
+  "unit": 42
+ },
+ "onde_ficam": [
+  {
+   "padrao": "co-localizado (*.test)",
+   "arquivos": 32
+  },
+  {
+   "padrao": "outro",
+   "arquivos": 12
+  }
+ ],
+ "arquivos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.unit.mjs",
+   "tipo": "unit",
+   "linhas": 361,
+   "testa": [],
+   "casos": 18
+  },
+  {
+   "arquivo": "scripts/ci/ai-context-generator.unit.mjs",
+   "tipo": "unit",
+   "linhas": 3,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/ci/contexto-indice.unit.mjs",
+   "tipo": "unit",
+   "linhas": 135,
+   "testa": [],
+   "casos": 18
+  },
+  {
+   "arquivo": "scripts/ci/contexto-publicacao.unit.mjs",
+   "tipo": "unit",
+   "linhas": 421,
+   "testa": [],
+   "casos": 16
+  },
+  {
+   "arquivo": "scripts/ci/inventario-banco.unit.mjs",
+   "tipo": "unit",
+   "linhas": 198,
+   "testa": [
+    "scripts/inventario/gerar-banco.mjs"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "scripts/ci/inventario-mudou.unit.mjs",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "scripts/inventario/mudou-conteudo.mjs"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "scripts/ci/inventario-repo.unit.mjs",
+   "tipo": "unit",
+   "linhas": 111,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "scripts/ci/regras-negocio.unit.mjs",
+   "tipo": "unit",
+   "linhas": 288,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "scripts/ci/supabase-snapshot.unit.mjs",
+   "tipo": "unit",
+   "linhas": 19,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "scripts/regras_negocio/test_generate.py",
+   "tipo": "pytest",
+   "linhas": 164,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
+   "tipo": "pytest",
+   "linhas": 878,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/lib/alert-dispatch.test.ts",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "src/lib/alert-dispatch.ts",
+    "src/lib/ops-alerts.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/lib/audience-resolver.test.ts",
+   "tipo": "unit",
+   "linhas": 152,
+   "testa": [
+    "src/lib/audience-resolver.server.ts",
+    "src/lib/audience-rules.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/lib/budget-guard.test.ts",
+   "tipo": "unit",
+   "linhas": 115,
+   "testa": [
+    "src/lib/budget-guard.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/lib/budget-reallocation-schedule.test.ts",
+   "tipo": "unit",
+   "linhas": 102,
+   "testa": [
+    "src/lib/budget-reallocation-schedule.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/lib/budget-reallocation.server.test.ts",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/lib/budget-reallocation.server.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/lib/budget-reallocation.test.ts",
+   "tipo": "unit",
+   "linhas": 142,
+   "testa": [
+    "src/lib/budget-guard.ts",
+    "src/lib/budget-reallocation.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/lib/budget.test.ts",
+   "tipo": "unit",
+   "linhas": 102,
+   "testa": [
+    "src/lib/budget.server.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/lib/cadence-engine.test.ts",
+   "tipo": "unit",
+   "linhas": 198,
+   "testa": [
+    "src/lib/cadence-engine.ts"
+   ],
+   "casos": 26
+  },
+  {
+   "arquivo": "src/lib/campaign-cost.test.ts",
+   "tipo": "unit",
+   "linhas": 149,
+   "testa": [
+    "src/lib/campaign-cost.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/lib/campaign-validation.test.ts",
+   "tipo": "unit",
+   "linhas": 224,
+   "testa": [
+    "src/lib/campaign-validation.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/lib/compliance-terms.test.ts",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/lib/compliance-terms.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/lib/cost-model.test.ts",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/lib/cost-model.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/lib/csv-export.test.ts",
+   "tipo": "unit",
+   "linhas": 61,
+   "testa": [
+    "src/lib/csv-export.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/lib/email-blocks.test.ts",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "src/lib/email-blocks.ts"
+   ],
+   "casos": 20
+  },
+  {
+   "arquivo": "src/lib/email-preflight.test.ts",
+   "tipo": "unit",
+   "linhas": 194,
+   "testa": [
+    "src/lib/email-blocks.ts",
+    "src/lib/email-preflight.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/lib/journey-engine.test.ts",
+   "tipo": "unit",
+   "linhas": 476,
+   "testa": [
+    "src/lib/journey-engine.ts"
+   ],
+   "casos": 55
+  },
+  {
+   "arquivo": "src/lib/journey-triggers.test.ts",
+   "tipo": "unit",
+   "linhas": 176,
+   "testa": [
+    "src/lib/journey-triggers.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/lib/journeys.server.test.ts",
+   "tipo": "unit",
+   "linhas": 151,
+   "testa": [
+    "src/lib/journey-graph.ts",
+    "src/lib/journeys.server.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/lib/lead-forms.test.ts",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [
+    "src/lib/lead-forms.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/lib/message-preflight.test.ts",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/lib/message-preflight.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/lib/ops-alerts.test.ts",
+   "tipo": "unit",
+   "linhas": 209,
+   "testa": [
+    "src/lib/ops-alerts.ts"
+   ],
+   "casos": 25
+  },
+  {
+   "arquivo": "src/lib/ops-audit.test.ts",
+   "tipo": "unit",
+   "linhas": 201,
+   "testa": [
+    "src/lib/ops-audit.server.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/lib/ops-recovery.test.ts",
+   "tipo": "unit",
+   "linhas": 123,
+   "testa": [
+    "src/lib/ops-recovery.server.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/lib/ops-spend.test.ts",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "src/lib/ops-spend.server.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/lib/security-tokens.test.ts",
+   "tipo": "unit",
+   "linhas": 151,
+   "testa": [
+    "src/lib/hmac.server.ts",
+    "src/lib/unsubscribe-token.server.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/lib/sms-segments.test.ts",
+   "tipo": "unit",
+   "linhas": 73,
+   "testa": [
+    "src/lib/sms-segments.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/lib/template-vars.test.ts",
+   "tipo": "unit",
+   "linhas": 113,
+   "testa": [
+    "src/lib/template-vars.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/lib/tracking-integrity.test.ts",
+   "tipo": "unit",
+   "linhas": 134,
+   "testa": [
+    "src/lib/tracking-integrity.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/routes/api/public/hooks/alert-sweep.test.ts",
+   "tipo": "unit",
+   "linhas": 236,
+   "testa": [
+    "src/routes/api/public/hooks/alert-sweep.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/routes/api/public/hooks/tick-cadence.test.ts",
+   "tipo": "unit",
+   "linhas": 290,
+   "testa": [
+    "src/routes/api/public/hooks/tick-cadence.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/routes/api/public/hooks/tick-journeys.test.ts",
+   "tipo": "unit",
+   "linhas": 317,
+   "testa": [
+    "src/routes/api/public/hooks/tick-journeys.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/routes/api/public/hooks/tick-marketing.test.ts",
+   "tipo": "unit",
+   "linhas": 282,
+   "testa": [
+    "src/routes/api/public/hooks/tick-marketing.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/test/fake-supabase.ts",
+   "tipo": "unit",
+   "linhas": 232,
+   "testa": [],
+   "casos": 2
+  }
+ ],
+ "sql": [],
+ "cobertura_por_arquivo": {
+  "scripts/inventario/gerar-banco.mjs": 1,
+  "scripts/inventario/mudou-conteudo.mjs": 1,
+  "src/lib/alert-dispatch.ts": 1,
+  "src/lib/audience-resolver.server.ts": 1,
+  "src/lib/audience-rules.ts": 1,
+  "src/lib/budget-guard.ts": 2,
+  "src/lib/budget-reallocation-schedule.ts": 1,
+  "src/lib/budget-reallocation.server.ts": 1,
+  "src/lib/budget-reallocation.ts": 1,
+  "src/lib/budget.server.ts": 1,
+  "src/lib/cadence-engine.ts": 1,
+  "src/lib/campaign-cost.ts": 1,
+  "src/lib/campaign-validation.ts": 1,
+  "src/lib/compliance-terms.ts": 1,
+  "src/lib/cost-model.ts": 1,
+  "src/lib/csv-export.ts": 1,
+  "src/lib/email-blocks.ts": 2,
+  "src/lib/email-preflight.ts": 1,
+  "src/lib/hmac.server.ts": 1,
+  "src/lib/journey-engine.ts": 1,
+  "src/lib/journey-graph.ts": 1,
+  "src/lib/journey-triggers.ts": 1,
+  "src/lib/journeys.server.ts": 1,
+  "src/lib/lead-forms.ts": 1,
+  "src/lib/message-preflight.ts": 1,
+  "src/lib/ops-alerts.ts": 2,
+  "src/lib/ops-audit.server.ts": 1,
+  "src/lib/ops-recovery.server.ts": 1,
+  "src/lib/ops-spend.server.ts": 1,
+  "src/lib/sms-segments.ts": 1,
+  "src/lib/template-vars.ts": 1,
+  "src/lib/tracking-integrity.ts": 1,
+  "src/lib/unsubscribe-token.server.ts": 1,
+  "src/routes/api/public/hooks/alert-sweep.ts": 1,
+  "src/routes/api/public/hooks/tick-cadence.ts": 1,
+  "src/routes/api/public/hooks/tick-journeys.ts": 1,
+  "src/routes/api/public/hooks/tick-marketing.ts": 1
+ },
+ "sem_teste": {
+  "telas": [
+   "src/routes/_authenticated/approvals.tsx",
+   "src/routes/_authenticated/audiences.$id.tsx",
+   "src/routes/_authenticated/audiences.tsx",
+   "src/routes/_authenticated/campaigns.$id.tsx",
+   "src/routes/_authenticated/campaigns.tsx",
+   "src/routes/_authenticated/companies.$id.tsx",
+   "src/routes/_authenticated/companies.tsx",
+   "src/routes/_authenticated/compliance.tsx",
+   "src/routes/_authenticated/contacts.$id.tsx",
+   "src/routes/_authenticated/contacts.tsx",
+   "src/routes/_authenticated/dashboard.tsx",
+   "src/routes/_authenticated/deliverability.tsx",
+   "src/routes/_authenticated/evals.tsx",
+   "src/routes/_authenticated/forms.$id.tsx",
+   "src/routes/_authenticated/forms.tsx",
+   "src/routes/_authenticated/journeys.$id.tsx",
+   "src/routes/_authenticated/journeys.tsx",
+   "src/routes/_authenticated/library.tsx",
+   "src/routes/_authenticated/ops.tsx",
+   "src/routes/_authenticated/ops/index.tsx",
+   "src/routes/_authenticated/prospecting.tsx",
+   "src/routes/_authenticated/route.tsx",
+   "src/routes/api/public/agent-tools/send-message.ts",
+   "src/routes/api/public/hooks/budget-reallocate.ts",
+   "src/routes/api/public/track/click.ts",
+   "src/routes/api/public/track/open[.]gif.ts",
+   "src/routes/api/public/unsubscribe.tsx",
+   "src/routes/api/public/webhooks/fatorx.ts",
+   "src/routes/api/public/webhooks/fuxico.ts",
+   "src/routes/api/public/webhooks/lux.ts",
+   "src/routes/api/public/webhooks/singu-bounce.ts",
+   "src/routes/api/public/webhooks/singu.ts",
+   "src/routes/auth.tsx",
+   "src/routes/confirmar.tsx",
+   "src/routes/f.$slug.tsx",
+   "src/routes/index.tsx"
+  ],
+  "hooks": [
+   "scripts/ai-context/cenarios.mjs",
+   "src/components/ui/form.tsx",
+   "src/components/ui/sidebar.tsx",
+   "src/hooks/use-mobile.tsx"
+  ],
+  "edges": [],
+  "servicos": []
+ }
+}

@@ -1,0 +1,4972 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "nota": "Reconstruído de migrations/schemas/types do repo — visão do CÓDIGO, não do banco vivo. `drift` compara colunas (migrations) com colunas_types (types.ts).",
+ "fonte": [
+  "drizzle",
+  "src/integrations/supabase/types.ts",
+  "supabase/migrations",
+  "typeorm"
+ ],
+ "migrations": 45,
+ "seeds": [],
+ "avisos": [],
+ "extensoes": [],
+ "enums": {
+  "app_role": [
+   "admin",
+   "operator",
+   "viewer"
+  ],
+  "sm_cadence_preset": [
+   "aggressive",
+   "standard",
+   "enterprise",
+   "custom"
+  ],
+  "sm_campaign_status": [
+   "draft",
+   "active",
+   "paused",
+   "archived"
+  ],
+  "sm_channel": [
+   "linkedin",
+   "whatsapp",
+   "email",
+   "sms",
+   "instagram",
+   "rcs",
+   "mms"
+  ],
+  "sm_compliance_niche": [
+   "geral",
+   "saude",
+   "financeiro",
+   "juridico",
+   "apostas",
+   "suplementos",
+   "custom"
+  ],
+  "sm_compliance_severity": [
+   "error",
+   "warning",
+   "info"
+  ],
+  "sm_direction": [
+   "outbound",
+   "inbound"
+  ],
+  "sm_enrollment_state": [
+   "active",
+   "waiting",
+   "completed",
+   "exited",
+   "goal_reached",
+   "failed"
+  ],
+  "sm_event_status": [
+   "received",
+   "processing",
+   "processed",
+   "error",
+   "ignored"
+  ],
+  "sm_journey_node_kind": [
+   "trigger",
+   "send",
+   "wait",
+   "condition",
+   "split",
+   "goal",
+   "exit"
+  ],
+  "sm_journey_status": [
+   "draft",
+   "active",
+   "paused",
+   "archived"
+  ],
+  "sm_source": [
+   "lux",
+   "singu",
+   "fatorx",
+   "manual",
+   "fuxico"
+  ],
+  "sm_target_state": [
+   "queued",
+   "running",
+   "paused",
+   "replied",
+   "stopped",
+   "lost",
+   "completed",
+   "dead_letter"
+  ],
+  "sm_touchpoint_status": [
+   "queued",
+   "sent",
+   "delivered",
+   "read",
+   "replied",
+   "failed",
+   "opted_out",
+   "pending_provider",
+   "dead_letter",
+   "pending_approval"
+  ]
+ },
+ "views": [
+  "IF",
+  "v_contact_profiles"
+ ],
+ "funcoes": [
+  "check_consent",
+  "compute_daily_cap",
+  "fn_calculate_churn_risk",
+  "fn_refresh_roi_stats",
+  "handle_new_user",
+  "has_recent_account_touchpoint",
+  "has_role",
+  "refresh_pipeline_health",
+  "signal_score",
+  "tg_log_target_state_change",
+  "tg_sync_target_status",
+  "tg_touch_updated_at"
+ ],
+ "triggers": [
+  {
+   "nome": "trg_audiences_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "audiences",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "on_auth_user_created",
+   "quando": "after",
+   "evento": "insert",
+   "tabela": "auth.users",
+   "funcao": "handle_new_user"
+  },
+  {
+   "nome": "trg_cadence_rules_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "cadence_rules",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_campaign_sends_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "campaign_sends",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "tg_campaign_targets_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "campaign_targets",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_campaign_targets_state_log",
+   "quando": "after",
+   "evento": "insert or update of state",
+   "tabela": "campaign_targets",
+   "funcao": "tg_log_target_state_change"
+  },
+  {
+   "nome": "trg_campaign_targets_status_sync",
+   "quando": "before",
+   "evento": "insert or update of state",
+   "tabela": "campaign_targets",
+   "funcao": "tg_sync_target_status"
+  },
+  {
+   "nome": "trg_touch_campaign_targets",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "campaign_targets",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_campaign_variants_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "campaign_variants",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_campaigns_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "campaigns_orchestration",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "tg_channel_budgets_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "channel_budgets",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_quotas_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "channel_quotas",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_compliance_terms_updated_at",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "compliance_terms",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_touchpoints_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "contact_touchpoints",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_entity_map_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "entity_map",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "journey_enrollments_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "journey_enrollments",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "journey_nodes_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "journey_nodes",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "journeys_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "journeys",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_lead_form_submissions_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "lead_form_submissions",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_lead_forms_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "lead_forms",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_mkt_campaigns_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "marketing_campaigns",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_message_templates_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "message_templates",
+   "funcao": "tg_touch_updated_at"
+  },
+  {
+   "nome": "trg_ops_alert_notifications_touch",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "ops_alert_notifications",
+   "funcao": "tg_touch_updated_at"
+  }
+ ],
+ "cron_jobs": [
+  {
+   "nome": "sm-alert-sweep",
+   "agenda": "*/15 * * * *",
+   "migration": "20260726170010_e45b5b84-b961-4a56-ba55-c7a6065a1c74.sql"
+  },
+  {
+   "nome": "sm-prune-target-events",
+   "agenda": "20 3 * * 0",
+   "migration": "20260726170010_e45b5b84-b961-4a56-ba55-c7a6065a1c74.sql"
+  },
+  {
+   "nome": "sm-tick-journeys",
+   "agenda": "* * * * *",
+   "migration": "20260726184515_4bf8c992-fb49-4971-8a81-708b6f0fa051.sql"
+  },
+  {
+   "nome": "sm-tick-marketing",
+   "agenda": "*/5 * * * *",
+   "migration": "20260726145822_0809391e-18de-4ad8-abb1-3020b2670db8.sql"
+  }
+ ],
+ "buckets": [
+  {
+   "nome": "contatos",
+   "criado_em_sql": false,
+   "usado_em": 1
+  },
+  {
+   "nome": "message-media",
+   "criado_em_sql": false,
+   "usado_em": 1
+  }
+ ],
+ "tabelas": {
+  "agent_eval_cases": {
+   "colunas": {
+    "agent_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "expected_channel": {
+     "tipo": "public",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "expected_intent": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "notes": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "signal_json": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "eval cases readable by roles",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "eval cases writable by admins",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20260720182029_f17d6bf5-d788-40ec-aa16-5aa5be861de6.sql",
+   "colunas_types": {
+    "agent_id": "string | null",
+    "created_at": "string",
+    "expected_channel": "Database[\"public\"][\"Enums\"][\"sm_channel\"] | null",
+    "expected_intent": "string",
+    "id": "string",
+    "name": "string",
+    "notes": "string | null",
+    "signal_json": "Json",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "agent_eval_runs": {
+   "colunas": {
+    "actual_output": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "case_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "agent_eval_cases"
+    },
+    "error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "latency_ms": {
+     "tipo": "integer",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "passed": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "ran_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "ran_by": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "auth"
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "eval runs readable by roles",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "eval runs writable by admins",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [
+    "case_id->agent_eval_cases",
+    "ran_by->auth"
+   ],
+   "criada_em": "20260720182029_f17d6bf5-d788-40ec-aa16-5aa5be861de6.sql",
+   "colunas_types": {
+    "actual_output": "Json",
+    "case_id": "string",
+    "error": "string | null",
+    "id": "string",
+    "latency_ms": "number | null",
+    "passed": "boolean",
+    "ran_at": "string",
+    "ran_by": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "audience_members": {
+   "colunas": {
+    "audience_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "audiences"
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "entity_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "entity_map"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "snapshot": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "audience_members_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators manage audience_members",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_audience_members_audience",
+     "colunas": "audience_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_audience_members_entity",
+     "colunas": "entity_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "audience_id->audiences",
+    "entity_id->entity_map"
+   ],
+   "criada_em": "20260726144821_9bc55f77-0452-4276-9831-18179fda02a7.sql",
+   "colunas_types": {
+    "audience_id": "string",
+    "created_at": "string",
+    "entity_id": "string",
+    "id": "string",
+    "snapshot": "Json"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 4,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "audiences": {
+   "colunas": {
+    "archived": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "created_by": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "description": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "last_refreshed_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "member_count": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "rules": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "audiences_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators manage audiences",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20260726144821_9bc55f77-0452-4276-9831-18179fda02a7.sql",
+   "colunas_types": {
+    "archived": "boolean",
+    "created_at": "string",
+    "created_by": "string | null",
+    "description": "string | null",
+    "id": "string",
+    "last_refreshed_at": "string | null",
+    "member_count": "number",
+    "name": "string",
+    "rules": "Json",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 2,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_audiences_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "budget_reallocations": {
+   "colunas": {
+    "actor_user_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "applied_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "changes": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'[]'::jsonb",
+     "ref": null
+    },
+    "channels_changed": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "moved_total_brl": {
+     "tipo": "numeric(12,2)",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "total_after_brl": {
+     "tipo": "numeric(12,2)",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "total_before_brl": {
+     "tipo": "numeric(12,2)",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "transfers": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'[]'::jsonb",
+     "ref": null
+    },
+    "unmet": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'[]'::jsonb",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "budget_reallocations_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "budget_reallocations_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "budget_reallocations_applied_at_idx",
+     "colunas": "applied_at DESC",
+     "unico": false
+    }
+   ],
+   "fks": [],
+   "criada_em": "20260726180549_54a43d43-fb92-4efb-a982-ac22f3bdbdf5.sql",
+   "colunas_types": {
+    "actor_user_id": "string | null",
+    "applied_at": "string",
+    "changes": "Json",
+    "channels_changed": "number",
+    "id": "string",
+    "moved_total_brl": "number",
+    "total_after_brl": "number",
+    "total_before_brl": "number",
+    "transfers": "Json",
+    "unmet": "Json"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 2,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "cadence_rules": {
+   "colunas": {
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "description": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "is_active": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "true",
+     "ref": null
+    },
+    "name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "owner_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "auth"
+    },
+    "preset": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'custom'",
+     "ref": null
+    },
+    "steps": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'[]'::jsonb",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "auth read cadence",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "cadence presets readable by all authed",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators manage cadence",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [
+    "owner_id->auth"
+   ],
+   "criada_em": "20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql",
+   "colunas_types": {
+    "created_at": "string",
+    "description": "string | null",
+    "id": "string",
+    "is_active": "boolean",
+    "name": "string",
+    "owner_id": "string | null",
+    "preset": "Database[\"public\"][\"Enums\"][\"sm_cadence_preset\"]",
+    "steps": "Json",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 2,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_cadence_rules_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "campaign_sends": {
+   "colunas": {
+    "attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "campaign_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "marketing_campaigns"
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "entity_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "entity_map"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "last_error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "locked_until": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "max_attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "3",
+     "ref": null
+    },
+    "next_run_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "sent_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "state": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'queued'",
+     "ref": null
+    },
+    "touchpoint_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "contact_touchpoints"
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "variant_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "campaign_variants"
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "campaign_sends_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators manage campaign_sends",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_campaign_sends_campaign",
+     "colunas": "campaign_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_campaign_sends_due",
+     "colunas": "state, next_run_at",
+     "unico": false
+    },
+    {
+     "nome": "idx_campaign_sends_entity",
+     "colunas": "entity_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_campaign_sends_skipped",
+     "colunas": "state",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "campaign_id->marketing_campaigns",
+    "entity_id->entity_map",
+    "touchpoint_id->contact_touchpoints",
+    "variant_id->campaign_variants"
+   ],
+   "criada_em": "20260726144821_9bc55f77-0452-4276-9831-18179fda02a7.sql",
+   "colunas_types": {
+    "attempts": "number",
+    "campaign_id": "string",
+    "created_at": "string",
+    "entity_id": "string",
+    "id": "string",
+    "last_error": "string | null",
+    "locked_until": "string | null",
+    "max_attempts": "number",
+    "next_run_at": "string",
+    "sent_at": "string | null",
+    "state": "string",
+    "touchpoint_id": "string | null",
+    "updated_at": "string",
+    "variant_id": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 6,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_campaign_sends_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "campaign_target_events": {
+   "colunas": {
+    "actor": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'system'",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "from_state": {
+     "tipo": "public",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "payload": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "reason": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "target_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "campaign_targets"
+    },
+    "to_state": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "operators log their own manual interventions",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "target events readable by roles",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_campaign_target_events_operator",
+     "colunas": "created_at DESC",
+     "unico": false
+    },
+    {
+     "nome": "idx_campaign_target_events_target",
+     "colunas": "target_id, created_at DESC",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "target_id->campaign_targets"
+   ],
+   "criada_em": "20260720181807_3bda158c-9273-4892-aa48-c833f37fac9d.sql",
+   "colunas_types": {
+    "actor": "string",
+    "created_at": "string",
+    "from_state": "Database[\"public\"][\"Enums\"][\"sm_target_state\"] | null",
+    "id": "string",
+    "payload": "Json",
+    "reason": "string | null",
+    "target_id": "string",
+    "to_state": "Database[\"public\"][\"Enums\"][\"sm_target_state\"]"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 3,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "campaign_targets": {
+   "colunas": {
+    "attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "campaign_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "campaigns_orchestration"
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "current_step": {
+     "tipo": "int",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "entity_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "entity_map"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "last_error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "last_transition_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "locked_until": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "max_attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "5",
+     "ref": null
+    },
+    "next_run_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "state": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'queued'",
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'queued'",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "sm operators can read targets",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "sm operators can write targets",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "campaign_targets_campaign_idx",
+     "colunas": "campaign_id",
+     "unico": false
+    },
+    {
+     "nome": "campaign_targets_entity_idx",
+     "colunas": "entity_id",
+     "unico": false
+    },
+    {
+     "nome": "campaign_targets_next_run_idx",
+     "colunas": "next_run_at",
+     "unico": false
+    },
+    {
+     "nome": "idx_campaign_targets_consent_blocked",
+     "colunas": "state",
+     "unico": false
+    },
+    {
+     "nome": "idx_campaign_targets_dead_letter_recovery",
+     "colunas": "last_transition_at ASC",
+     "unico": false
+    },
+    {
+     "nome": "idx_campaign_targets_state_run",
+     "colunas": "state, next_run_at",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "campaign_id->campaigns_orchestration",
+    "entity_id->entity_map"
+   ],
+   "criada_em": "20260720150001_6bbccb50-d5f3-47b2-815d-18d970877ab8.sql",
+   "colunas_types": {
+    "attempts": "number",
+    "campaign_id": "string",
+    "created_at": "string",
+    "current_step": "number",
+    "entity_id": "string",
+    "id": "string",
+    "last_error": "string | null",
+    "last_transition_at": "string",
+    "locked_until": "string | null",
+    "max_attempts": "number",
+    "next_run_at": "string",
+    "state": "Database[\"public\"][\"Enums\"][\"sm_target_state\"]",
+    "status": "string",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 4,
+   "usada_em_edges": [],
+   "triggers": [
+    "tg_campaign_targets_touch",
+    "trg_campaign_targets_state_log",
+    "trg_campaign_targets_status_sync",
+    "trg_touch_campaign_targets"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "campaign_variants": {
+   "colunas": {
+    "body": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "campaign_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "marketing_campaigns"
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "label": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'A'",
+     "ref": null
+    },
+    "media_url": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "rcs_payload": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "split_percent": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "100",
+     "ref": null
+    },
+    "subject": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "campaign_variants_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators manage campaign_variants",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_campaign_variants_campaign",
+     "colunas": "campaign_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "campaign_id->marketing_campaigns"
+   ],
+   "criada_em": "20260726144821_9bc55f77-0452-4276-9831-18179fda02a7.sql",
+   "colunas_types": {
+    "body": "string",
+    "campaign_id": "string",
+    "created_at": "string",
+    "id": "string",
+    "label": "string",
+    "media_url": "string | null",
+    "rcs_payload": "Json | null",
+    "split_percent": "number",
+    "subject": "string | null",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 4,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_campaign_variants_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "campaigns_orchestration": {
+   "colunas": {
+    "account_cooldown_hours": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "48",
+     "ref": null
+    },
+    "cadence_preset": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'standard'",
+     "ref": null
+    },
+    "cadence_rule_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "cadence_rules"
+    },
+    "channels": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "description": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "fatorx_agent_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "icp_filter": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "owner_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "auth"
+    },
+    "requires_human_approval": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "true",
+     "ref": null
+    },
+    "status": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'draft'",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "auth read campaigns",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators manage campaigns",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_campaigns_status",
+     "colunas": "status",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "cadence_rule_id->cadence_rules",
+    "owner_id->auth"
+   ],
+   "criada_em": "20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql",
+   "colunas_types": {
+    "account_cooldown_hours": "number",
+    "cadence_preset": "Database[\"public\"][\"Enums\"][\"sm_cadence_preset\"]",
+    "cadence_rule_id": "string | null",
+    "channels": "Database[\"public\"][\"Enums\"][\"sm_channel\"][]",
+    "created_at": "string",
+    "description": "string | null",
+    "fatorx_agent_id": "string | null",
+    "icp_filter": "Json",
+    "id": "string",
+    "name": "string",
+    "owner_id": "string | null",
+    "requires_human_approval": "boolean",
+    "status": "Database[\"public\"][\"Enums\"][\"sm_campaign_status\"]",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 3,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_campaigns_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "channel_budgets": {
+   "colunas": {
+    "channel": {
+     "tipo": "text",
+     "nn": false,
+     "pk": true,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "daily_limit_brl": {
+     "tipo": "numeric(12,2)",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "enabled": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "TRUE",
+     "ref": null
+    },
+    "monthly_limit_brl": {
+     "tipo": "numeric(12,2)",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "note": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "channel_budgets_admin_write",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "channel_budgets_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "channel_budgets_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20260726174932_6d46bce8-9104-4fce-9c19-bfa9bc2457ba.sql",
+   "colunas_types": {
+    "channel": "string",
+    "created_at": "string",
+    "daily_limit_brl": "number",
+    "enabled": "boolean",
+    "monthly_limit_brl": "number",
+    "note": "string | null",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 3,
+   "usada_em_edges": [],
+   "triggers": [
+    "tg_channel_budgets_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "channel_quotas": {
+   "colunas": {
+    "channel": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "current_count": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "daily_cap": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "50",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "reset_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "(date_trunc('day', now()) + interval '1 day')",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "user_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "auth"
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "users insert own quotas",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "users read own quotas",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "users update own quotas",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [
+    "user_id->auth"
+   ],
+   "criada_em": "20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql",
+   "colunas_types": {
+    "channel": "Database[\"public\"][\"Enums\"][\"sm_channel\"]",
+    "current_count": "number",
+    "daily_cap": "number",
+    "id": "string",
+    "reset_at": "string",
+    "updated_at": "string",
+    "user_id": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_quotas_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "channel_roi_stats": {
+   "colunas": {
+    "cac_brl": {
+     "tipo": "decimal(12, 4)",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "channel": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "conversion_rate": {
+     "tipo": "decimal(5, 2)",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "date": {
+     "tipo": "date",
+     "nn": true,
+     "pk": false,
+     "default": "CURRENT_DATE",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "total_conversions": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "total_messages_sent": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "total_spent_brl": {
+     "tipo": "decimal(12, 4)",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Authenticated users can select ROI stats",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20260802124518_be42ee28-381a-41c1-8b90-19d41d7bba5e.sql",
+   "colunas_types": {
+    "cac_brl": "number | null",
+    "channel": "Database[\"public\"][\"Enums\"][\"sm_channel\"]",
+    "conversion_rate": "number | null",
+    "created_at": "string | null",
+    "date": "string",
+    "id": "string",
+    "total_conversions": "number",
+    "total_messages_sent": "number",
+    "total_spent_brl": "number",
+    "updated_at": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "compliance_terms": {
+   "colunas": {
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "created_by": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": "auth.uid()",
+     "ref": "auth"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "is_active": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "true",
+     "ref": null
+    },
+    "niche": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'custom'",
+     "ref": null
+    },
+    "reason": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "severity": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'warning'",
+     "ref": null
+    },
+    "suggestion": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "term": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Admins can view all compliance terms",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Owners manage their compliance terms",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_compliance_terms_active",
+     "colunas": "is_active",
+     "unico": false
+    },
+    {
+     "nome": "idx_compliance_terms_created_by",
+     "colunas": "created_by",
+     "unico": false
+    },
+    {
+     "nome": "uq_compliance_terms_owner_niche_term",
+     "colunas": "created_by, niche, lower(btrim(term",
+     "unico": true
+    }
+   ],
+   "fks": [
+    "created_by->auth"
+   ],
+   "criada_em": "20260802121142_9906b653-8ded-491a-9115-8a2659487779.sql",
+   "colunas_types": {
+    "created_at": "string",
+    "created_by": "string",
+    "id": "string",
+    "is_active": "boolean",
+    "niche": "Database[\"public\"][\"Enums\"][\"sm_compliance_niche\"]",
+    "reason": "string",
+    "severity": "Database[\"public\"][\"Enums\"][\"sm_compliance_severity\"]",
+    "suggestion": "string | null",
+    "term": "string",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 2,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_compliance_terms_updated_at"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "compliance_violations_log": {
+   "colunas": {
+    "action": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "campaign_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "marketing_campaigns"
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "niche": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "reason": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "severity": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "term": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "text_snapshot": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "user_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "auth"
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Users can insert their own compliance logs",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Users can view their own compliance logs",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_compliance_violations_campaign_id",
+     "colunas": "campaign_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_compliance_violations_user_id",
+     "colunas": "user_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "campaign_id->marketing_campaigns",
+    "user_id->auth"
+   ],
+   "criada_em": "20260802123233_26c8cfdc-0f1b-4f9f-9798-02dfa4777ef9.sql",
+   "colunas_types": {
+    "action": "string",
+    "campaign_id": "string | null",
+    "created_at": "string | null",
+    "id": "string",
+    "niche": "string",
+    "reason": "string",
+    "severity": "string",
+    "term": "string",
+    "text_snapshot": "string",
+    "user_id": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 2,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "consent_ledger": {
+   "colunas": {
+    "channel": {
+     "tipo": "sm_channel",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "entity_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "entity_map"
+    },
+    "evidence": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "reason": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "source": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "authenticated can read ledger",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators can insert ledger",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_consent_ledger_entity_channel",
+     "colunas": "entity_id, channel, created_at DESC",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "entity_id->entity_map"
+   ],
+   "criada_em": "20260722200408_810b0704-8917-45fe-872f-34ad95c20b06.sql",
+   "colunas_types": {
+    "channel": "Database[\"public\"][\"Enums\"][\"sm_channel\"]",
+    "created_at": "string",
+    "entity_id": "string",
+    "evidence": "Json",
+    "id": "string",
+    "reason": "string | null",
+    "source": "string",
+    "status": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 7,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "contact_churn_scores": {
+   "colunas": {
+    "calculated_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "contact_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "campaign_targets"
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "metadata": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "reasoning": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "risk_level": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "risk_score": {
+     "tipo": "decimal(5, 2)",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Authenticated users can select churn scores",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_churn_contact_id",
+     "colunas": "contact_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_churn_risk_level",
+     "colunas": "risk_level",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "contact_id->campaign_targets"
+   ],
+   "criada_em": "20260802125202_8d7bc5b1-c4b2-4f75-9151-ddf9ed5d31b0.sql",
+   "colunas_types": {
+    "calculated_at": "string | null",
+    "contact_id": "string",
+    "created_at": "string | null",
+    "id": "string",
+    "metadata": "Json | null",
+    "reasoning": "string | null",
+    "risk_level": "string",
+    "risk_score": "number"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "contact_touchpoints": {
+   "colunas": {
+    "attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "campaign_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "campaigns_orchestration"
+    },
+    "channel": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "direction": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "email_in_reply_to": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "email_message_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "email_references": {
+     "tipo": "text[]",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "entity_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "entity_map"
+    },
+    "error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "fatorx_thread_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "fuxico_tracking_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "max_attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "5",
+     "ref": null
+    },
+    "next_retry_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "payload": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "singu_interaction_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'queued'",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "auth read touchpoints",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators update touchpoints",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators write touchpoints",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "contact_touchpoints_fuxico_tracking_id_key",
+     "colunas": "fuxico_tracking_id",
+     "unico": true
+    },
+    {
+     "nome": "idx_contact_touchpoints_outbound_day",
+     "colunas": "created_at DESC, channel",
+     "unico": false
+    },
+    {
+     "nome": "idx_contact_touchpoints_retry",
+     "colunas": "next_retry_at",
+     "unico": false
+    },
+    {
+     "nome": "idx_touchpoints_campaign",
+     "colunas": "campaign_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_touchpoints_email_message_id",
+     "colunas": "email_message_id",
+     "unico": false
+    },
+    {
+     "nome": "idx_touchpoints_entity",
+     "colunas": "entity_id, created_at DESC",
+     "unico": false
+    },
+    {
+     "nome": "idx_touchpoints_status",
+     "colunas": "status",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "campaign_id->campaigns_orchestration",
+    "entity_id->entity_map"
+   ],
+   "criada_em": "20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql",
+   "colunas_types": {
+    "attempts": "number",
+    "campaign_id": "string | null",
+    "channel": "Database[\"public\"][\"Enums\"][\"sm_channel\"]",
+    "created_at": "string",
+    "direction": "Database[\"public\"][\"Enums\"][\"sm_direction\"]",
+    "email_in_reply_to": "string | null",
+    "email_message_id": "string | null",
+    "email_references": "string[] | null",
+    "entity_id": "string",
+    "error": "string | null",
+    "fatorx_thread_id": "string | null",
+    "fuxico_tracking_id": "string | null",
+    "id": "string",
+    "max_attempts": "number",
+    "next_retry_at": "string | null",
+    "payload": "Json",
+    "singu_interaction_id": "string | null",
+    "status": "Database[\"public\"][\"Enums\"][\"sm_touchpoint_status\"]",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 18,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_touchpoints_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "email_deliverability_events": {
+   "colunas": {
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "entity_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "entity_map"
+    },
+    "event_type": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "external_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "provider": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "raw": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "touchpoint_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "contact_touchpoints"
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "authenticated can read email events",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_email_deliv_audit",
+     "colunas": "touchpoint_id, event_type, created_at DESC",
+     "unico": false
+    },
+    {
+     "nome": "idx_email_deliv_entity",
+     "colunas": "entity_id, event_type",
+     "unico": false
+    },
+    {
+     "nome": "idx_email_deliv_touchpoint",
+     "colunas": "touchpoint_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "entity_id->entity_map",
+    "touchpoint_id->contact_touchpoints"
+   ],
+   "criada_em": "20260722200557_1817b23e-199b-4699-8a47-19a41d432710.sql",
+   "colunas_types": {
+    "created_at": "string",
+    "entity_id": "string | null",
+    "event_type": "string",
+    "external_id": "string | null",
+    "id": "string",
+    "provider": "string",
+    "raw": "Json",
+    "touchpoint_id": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 7,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "entity_map": {
+   "colunas": {
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "display_name": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "fatorx_thread_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "fuxico_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "kind": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "lux_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "metadata": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "singu_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "authenticated read entity_map",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators update entity_map",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators write entity_map",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "entity_map_fuxico_id_key",
+     "colunas": "fuxico_id",
+     "unico": true
+    },
+    {
+     "nome": "uq_entity_map_lux",
+     "colunas": "kind, lux_id",
+     "unico": true
+    },
+    {
+     "nome": "uq_entity_map_singu",
+     "colunas": "kind, singu_id",
+     "unico": true
+    },
+    {
+     "nome": "uq_entity_map_thread",
+     "colunas": "fatorx_thread_id",
+     "unico": true
+    }
+   ],
+   "fks": [],
+   "criada_em": "20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql",
+   "colunas_types": {
+    "created_at": "string",
+    "display_name": "string | null",
+    "fatorx_thread_id": "string | null",
+    "fuxico_id": "string | null",
+    "id": "string",
+    "kind": "string",
+    "lux_id": "string | null",
+    "metadata": "Json",
+    "singu_id": "string | null",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 11,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_entity_map_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "journey_edges": {
+   "colunas": {
+    "branch": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'default'",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "from_node_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "journey_nodes"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "journey_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "journeys"
+    },
+    "ordinal": {
+     "tipo": "smallint",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "to_node_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "journey_nodes"
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "journey_edges_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "journey_edges_write",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "journey_edges_from_idx",
+     "colunas": "from_node_id",
+     "unico": false
+    },
+    {
+     "nome": "journey_edges_journey_idx",
+     "colunas": "journey_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "from_node_id->journey_nodes",
+    "journey_id->journeys",
+    "to_node_id->journey_nodes"
+   ],
+   "criada_em": "20260726182455_7e8f6c52-22a0-4ed1-8a61-d5426b4a6a8b.sql",
+   "colunas_types": {
+    "branch": "string",
+    "created_at": "string",
+    "from_node_id": "string",
+    "id": "string",
+    "journey_id": "string",
+    "ordinal": "number",
+    "to_node_id": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 3,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "journey_enrollment_events": {
+   "colunas": {
+    "action": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "detail": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "enrollment_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "journey_enrollments"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "node_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "journey_nodes"
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "journey_enrollment_events_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "journey_enrollment_events_enrollment_idx",
+     "colunas": "enrollment_id, created_at DESC",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "enrollment_id->journey_enrollments",
+    "node_id->journey_nodes"
+   ],
+   "criada_em": "20260726182455_7e8f6c52-22a0-4ed1-8a61-d5426b4a6a8b.sql",
+   "colunas_types": {
+    "action": "string",
+    "created_at": "string",
+    "detail": "Json",
+    "enrollment_id": "string",
+    "id": "string",
+    "node_id": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "journey_enrollments": {
+   "colunas": {
+    "attempts": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "context": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "current_node_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "journey_nodes"
+    },
+    "entered_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "entity_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "entity_map"
+    },
+    "finished_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "journey_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "journeys"
+    },
+    "last_error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "locked_until": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "next_run_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "state": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'active'",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "journey_enrollments_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "journey_enrollments_write",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "journey_enrollments_active_uniq",
+     "colunas": "journey_id, entity_id",
+     "unico": true
+    },
+    {
+     "nome": "journey_enrollments_due_idx",
+     "colunas": "next_run_at",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "current_node_id->journey_nodes",
+    "entity_id->entity_map",
+    "journey_id->journeys"
+   ],
+   "criada_em": "20260726182455_7e8f6c52-22a0-4ed1-8a61-d5426b4a6a8b.sql",
+   "colunas_types": {
+    "attempts": "number",
+    "context": "Json",
+    "created_at": "string",
+    "current_node_id": "string | null",
+    "entered_at": "string",
+    "entity_id": "string",
+    "finished_at": "string | null",
+    "id": "string",
+    "journey_id": "string",
+    "last_error": "string | null",
+    "locked_until": "string | null",
+    "next_run_at": "string",
+    "state": "Database[\"public\"][\"Enums\"][\"sm_enrollment_state\"]",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 3,
+   "usada_em_edges": [],
+   "triggers": [
+    "journey_enrollments_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "journey_nodes": {
+   "colunas": {
+    "config": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "journey_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "journeys"
+    },
+    "kind": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "label": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "''",
+     "ref": null
+    },
+    "position_x": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "position_y": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "journey_nodes_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "journey_nodes_write",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "journey_nodes_journey_idx",
+     "colunas": "journey_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "journey_id->journeys"
+   ],
+   "criada_em": "20260726182455_7e8f6c52-22a0-4ed1-8a61-d5426b4a6a8b.sql",
+   "colunas_types": {
+    "config": "Json",
+    "created_at": "string",
+    "id": "string",
+    "journey_id": "string",
+    "kind": "Database[\"public\"][\"Enums\"][\"sm_journey_node_kind\"]",
+    "label": "string",
+    "position_x": "number",
+    "position_y": "number",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 3,
+   "usada_em_edges": [],
+   "triggers": [
+    "journey_nodes_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "journeys": {
+   "colunas": {
+    "allow_reentry": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "created_by": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "description": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "entry_daily_cap": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "200",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "metadata": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "requires_human_approval": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "send_window_end": {
+     "tipo": "smallint",
+     "nn": true,
+     "pk": false,
+     "default": "19",
+     "ref": null
+    },
+    "send_window_start": {
+     "tipo": "smallint",
+     "nn": true,
+     "pk": false,
+     "default": "9",
+     "ref": null
+    },
+    "status": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'draft'",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "journeys_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "journeys_write",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20260726182455_7e8f6c52-22a0-4ed1-8a61-d5426b4a6a8b.sql",
+   "colunas_types": {
+    "allow_reentry": "boolean",
+    "created_at": "string",
+    "created_by": "string | null",
+    "description": "string | null",
+    "entry_daily_cap": "number",
+    "id": "string",
+    "metadata": "Json",
+    "name": "string",
+    "requires_human_approval": "boolean",
+    "send_window_end": "number",
+    "send_window_start": "number",
+    "status": "Database[\"public\"][\"Enums\"][\"sm_journey_status\"]",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 3,
+   "usada_em_edges": [],
+   "triggers": [
+    "journeys_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "lead_form_submissions": {
+   "colunas": {
+    "company_name": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "confirm_expires_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "confirm_token_hash": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "confirmed_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "email": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "entity_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "entity_map"
+    },
+    "form_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "lead_forms"
+    },
+    "full_name": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "ip_hash": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "payload": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "phone": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'pending'",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "user_agent": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "lead_form_submissions_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "lead_form_submissions_write",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_lead_form_submissions_email",
+     "colunas": "lower(email",
+     "unico": false
+    },
+    {
+     "nome": "idx_lead_form_submissions_form",
+     "colunas": "form_id, created_at DESC",
+     "unico": false
+    },
+    {
+     "nome": "idx_lead_form_submissions_status",
+     "colunas": "status, confirm_expires_at",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "entity_id->entity_map",
+    "form_id->lead_forms"
+   ],
+   "criada_em": "20260726185354_bc78dd3f-6ea5-4be2-86d1-a40f8bf81283.sql",
+   "colunas_types": {
+    "company_name": "string | null",
+    "confirm_expires_at": "string | null",
+    "confirm_token_hash": "string | null",
+    "confirmed_at": "string | null",
+    "created_at": "string",
+    "email": "string | null",
+    "entity_id": "string | null",
+    "form_id": "string",
+    "full_name": "string | null",
+    "id": "string",
+    "ip_hash": "string | null",
+    "payload": "Json",
+    "phone": "string | null",
+    "status": "string",
+    "updated_at": "string",
+    "user_agent": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 3,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_lead_form_submissions_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "lead_forms": {
+   "colunas": {
+    "channel": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'email'",
+     "ref": null
+    },
+    "confirm_ttl_hours": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "48",
+     "ref": null
+    },
+    "consent_text": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'Autorizo o contato comercial e o tratamento dos meus dados.'",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "created_by": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "description": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "double_opt_in": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "true",
+     "ref": null
+    },
+    "fields": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'[]'::jsonb",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "journey_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "journeys"
+    },
+    "name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "slug": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'draft'",
+     "ref": null
+    },
+    "submission_count": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "submit_label": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'Enviar'",
+     "ref": null
+    },
+    "success_message": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'Recebemos seus dados. Obrigado!'",
+     "ref": null
+    },
+    "tags": {
+     "tipo": "text[]",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'",
+     "ref": null
+    },
+    "title": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "''",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "lead_forms_public_read",
+     "comando": "select",
+     "para": "anon",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "lead_forms_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "lead_forms_write",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_lead_forms_status",
+     "colunas": "status",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "journey_id->journeys"
+   ],
+   "criada_em": "20260726185354_bc78dd3f-6ea5-4be2-86d1-a40f8bf81283.sql",
+   "colunas_types": {
+    "channel": "Database[\"public\"][\"Enums\"][\"sm_channel\"]",
+    "confirm_ttl_hours": "number",
+    "consent_text": "string",
+    "created_at": "string",
+    "created_by": "string | null",
+    "description": "string | null",
+    "double_opt_in": "boolean",
+    "fields": "Json",
+    "id": "string",
+    "journey_id": "string | null",
+    "name": "string",
+    "slug": "string",
+    "status": "string",
+    "submission_count": "number",
+    "submit_label": "string",
+    "success_message": "string",
+    "tags": "string[]",
+    "title": "string",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 2,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_lead_forms_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "marketing_campaigns": {
+   "colunas": {
+    "audience_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "audiences"
+    },
+    "channel": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "completed_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "created_by": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "daily_cap": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "500",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "metadata": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "objective": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'awareness'",
+     "ref": null
+    },
+    "requires_human_approval": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "scheduled_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "send_window_end": {
+     "tipo": "time",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "send_window_start": {
+     "tipo": "time",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "started_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'draft'",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "mkt_campaigns_read",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "operators manage marketing_campaigns",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_mkt_campaigns_status",
+     "colunas": "status, scheduled_at",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "audience_id->audiences"
+   ],
+   "criada_em": "20260726144821_9bc55f77-0452-4276-9831-18179fda02a7.sql",
+   "colunas_types": {
+    "audience_id": "string | null",
+    "channel": "Database[\"public\"][\"Enums\"][\"sm_channel\"]",
+    "completed_at": "string | null",
+    "created_at": "string",
+    "created_by": "string | null",
+    "daily_cap": "number",
+    "id": "string",
+    "metadata": "Json",
+    "name": "string",
+    "objective": "string",
+    "requires_human_approval": "boolean",
+    "scheduled_at": "string | null",
+    "send_window_end": "string | null",
+    "send_window_start": "string | null",
+    "started_at": "string | null",
+    "status": "string",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 5,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_mkt_campaigns_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "message_templates": {
+   "colunas": {
+    "archived": {
+     "tipo": "boolean",
+     "nn": true,
+     "pk": false,
+     "default": "false",
+     "ref": null
+    },
+    "body": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "channel": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "created_by": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "auth"
+    },
+    "email_blocks": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "media_url": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "rcs_payload": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "subject": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "variables": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'[]'::jsonb",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "users delete own templates",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "users insert own templates",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "users read own templates",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "users update own templates",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_message_templates_channel",
+     "colunas": "channel",
+     "unico": false
+    },
+    {
+     "nome": "idx_message_templates_created_by",
+     "colunas": "created_by",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "created_by->auth"
+   ],
+   "criada_em": "20260722193244_78152eba-58c5-41f9-a9e4-3da82471f470.sql",
+   "colunas_types": {
+    "archived": "boolean",
+    "body": "string",
+    "channel": "Database[\"public\"][\"Enums\"][\"sm_channel\"]",
+    "created_at": "string",
+    "created_by": "string | null",
+    "email_blocks": "Json | null",
+    "id": "string",
+    "media_url": "string | null",
+    "name": "string",
+    "rcs_payload": "Json | null",
+    "subject": "string | null",
+    "updated_at": "string",
+    "variables": "Json"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 2,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_message_templates_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "ops_alert_notifications": {
+   "colunas": {
+    "alert_id": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "detail": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "first_notified_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "last_notified_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "level": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "occurrences": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "1",
+     "ref": null
+    },
+    "resolved_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "title": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Autenticados leem alertas",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "ops_alert_notifications_active_uidx",
+     "colunas": "alert_id",
+     "unico": true
+    },
+    {
+     "nome": "ops_alert_notifications_recent_idx",
+     "colunas": "last_notified_at DESC",
+     "unico": false
+    }
+   ],
+   "fks": [],
+   "criada_em": "20260726162911_843efbb2-71b5-474d-bcc0-e99ec1e2478b.sql",
+   "colunas_types": {
+    "alert_id": "string",
+    "created_at": "string",
+    "detail": "string",
+    "first_notified_at": "string",
+    "id": "string",
+    "last_notified_at": "string",
+    "level": "string",
+    "occurrences": "number",
+    "resolved_at": "string | null",
+    "title": "string",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_ops_alert_notifications_touch"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "sales_machine_events": {
+   "colunas": {
+    "error": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "event_type": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "external_id": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "payload": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "processed_at": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "received_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "source": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": "'received'",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "admins read events",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_sm_events_source_type",
+     "colunas": "source, event_type, received_at DESC",
+     "unico": false
+    },
+    {
+     "nome": "idx_sm_events_status",
+     "colunas": "status",
+     "unico": false
+    }
+   ],
+   "fks": [],
+   "criada_em": "20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql",
+   "colunas_types": {
+    "error": "string | null",
+    "event_type": "string",
+    "external_id": "string | null",
+    "id": "string",
+    "payload": "Json",
+    "processed_at": "string | null",
+    "received_at": "string",
+    "source": "Database[\"public\"][\"Enums\"][\"sm_source\"]",
+    "status": "Database[\"public\"][\"Enums\"][\"sm_event_status\"]"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 8,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "sender_health": {
+   "colunas": {
+    "bounced": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "daily_cap": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "50",
+     "ref": null
+    },
+    "day": {
+     "tipo": "date",
+     "nn": true,
+     "pk": false,
+     "default": "CURRENT_DATE",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "replied": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "sender_id": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "sent": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "spam_reports": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "sender_health readable by roles",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "sender_health writable by admins",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20260720182029_f17d6bf5-d788-40ec-aa16-5aa5be861de6.sql",
+   "colunas_types": {
+    "bounced": "number",
+    "created_at": "string",
+    "daily_cap": "number",
+    "day": "string",
+    "id": "string",
+    "replied": "number",
+    "sender_id": "string",
+    "sent": "number",
+    "spam_reports": "number",
+    "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "signal_weights": {
+   "colunas": {
+    "event_type": {
+     "tipo": "text",
+     "nn": false,
+     "pk": true,
+     "default": null,
+     "ref": null
+    },
+    "half_life_hours": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "72",
+     "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "weight": {
+     "tipo": "numeric",
+     "nn": true,
+     "pk": false,
+     "default": "10",
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "signal_weights readable",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "signal_weights writable by admins",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [],
+   "criada_em": "20260720182029_f17d6bf5-d788-40ec-aa16-5aa5be861de6.sql",
+   "colunas_types": {
+    "event_type": "string",
+    "half_life_hours": "number",
+    "updated_at": "string",
+    "weight": "number"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "storage.objects": {
+   "colunas": {},
+   "rls": false,
+   "policies": [
+    {
+     "nome": "authenticated read message-media",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "authenticated upload message-media",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "owners delete message-media",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [],
+   "criada_em": null,
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "template_preflight_history": {
+   "colunas": {
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "created_by": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": "auth"
+    },
+    "findings": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": "'[]'::jsonb",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "score": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "template_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "message_templates"
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "Users can insert history for their own templates",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Users can view history of their own templates",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_template_preflight_history_created_at",
+     "colunas": "created_at",
+     "unico": false
+    },
+    {
+     "nome": "idx_template_preflight_history_template_id",
+     "colunas": "template_id",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "created_by->auth",
+    "template_id->message_templates"
+   ],
+   "criada_em": "20260802111602_2a558c0f-0e67-4457-bccd-c5cdbf474034.sql",
+   "colunas_types": {
+    "created_at": "string",
+    "created_by": "string | null",
+    "findings": "Json",
+    "id": "string",
+    "score": "number",
+    "template_id": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "user_roles": {
+   "colunas": {
+    "created_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "role": {
+     "tipo": "public",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "user_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "auth"
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "users read their own roles",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [
+    "user_id->auth"
+   ],
+   "criada_em": "20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql",
+   "colunas_types": {
+    "created_at": "string",
+    "id": "string",
+    "role": "Database[\"public\"][\"Enums\"][\"app_role\"]",
+    "user_id": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "users": {
+   "colunas": {
+    "id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "name": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": false,
+   "policies": [],
+   "indices": [],
+   "fks": [],
+   "criada_em": "scripts/ai-context/cenarios.mjs",
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  }
+ },
+ "tabelas_usadas_no_codigo_sem_definicao": [
+  "v_pipeline_health"
+ ],
+ "rpcs_usadas_no_codigo": [
+  {
+   "nome": "check_consent",
+   "definida": true,
+   "usada_em": 3
+  },
+  {
+   "nome": "compute_daily_cap",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "fn_refresh_roi_stats",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "has_recent_account_touchpoint",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "refresh_pipeline_health",
+   "definida": true,
+   "usada_em": 1
+  }
+ ]
+}
