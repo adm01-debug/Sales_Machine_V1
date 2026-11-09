@@ -3,6 +3,34 @@
 > Histórico versionado de mudanças nos artefatos de contexto e governança (não confundir com CHANGELOG de produto).
 > Formato: versão · data · o que mudou · por quê.
 
+## v2.3 — 2026-11-09 — Fecha o último gate de consentimento + remove migrate-helper do repo
+
+**Contexto:** execução dos 3 itens aprovados pelo dono após a auditoria de 5 agentes.
+
+**Corrigido:**
+- `src/lib/orchestrator.functions.ts:decideApproval` (L386) — único caminho de envio aprovado pelo
+  revisor humano que não tinha `check_consent()`. Adicionado gate fail-closed logo após o early-return
+  de "reject": se `check_consent` retorna `false`, marca o touchpoint como `failed` e retorna 409; se
+  o RPC está indisponível (`consentErr`), marca como `failed` e retorna 503. Importado `supabaseAdmin`
+  (service_role, como nos outros 4 caminhos já corrigidos). Regra crítica 2 no AGENTS.md atualizada
+  para 5 caminhos.
+
+**Removido:**
+- `supabase/functions/migrate-helper/index.ts` — edge function com `verify_jwt=false`, CORS `*`,
+  chave hex hardcoded e `?action=credentials` que devolve `service_role`+`db_url`. Removida do repo.
+- `supabase/config.toml` — entrada `[functions.migrate-helper]` removida.
+
+**Docs atualizados:** AGENTS.md (Regra 2, Armadilhas, Stack), `docs/agentes/banco.md` (seção 8),
+`.contexto-compartilhado/pendencias-conhecidas.md`.
+
+**Workflow aprovado:** `.github/workflows/agents-md-guard.yml` retroativamente aprovado pelo dono.
+
+**Verificado:** `node scripts/ci/check-agents-md-integrity.mjs` → `AGENTS.md OK: 8 secoes presentes
+(78078 bytes)`; `tsc --noEmit` — 2 erros pré-existentes (L138/146, fora do diff), zero novos.
+
+**Ação ainda pendente do dono (não executável via MCP):** deletar `migrate-helper` no Supabase
+Dashboard → Edge Functions; rotacionar `SUPABASE_SERVICE_ROLE_KEY` → atualizar na Vercel.
+
 ## v2.2 — 2026-11-08 — Fecha os dois furos de check_consent() do menu de próximos passos
 
 **Contexto:** execução dos itens 2 e 3 do menu "Próximos passos" da v2.1 (item 1, rotação de service_role, fica aberto — regra 8 do Fluxo Git).

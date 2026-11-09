@@ -117,17 +117,17 @@ O seed da migration 012 falhou silenciosamente (insert sem `user_id`, que é NOT
 porque o worker usa `compute_daily_cap` + `sender_health`; quando quotas por usuário forem ligadas,
 o seed precisa ser corrigido.
 
-### 8. Edge function residual com exfiltração de credenciais
+### 8. Edge function residual com exfiltração de credenciais — REMOVIDA DO CÓDIGO (2026-11-09)
 
-`supabase/functions/migrate-helper/index.ts` existe (1.673 B), com `verify_jwt = false`
-(`supabase/config.toml:4`), `Access-Control-Allow-Origin: "*"`, uma **chave de acesso hex hardcoded no
-fonte** e a ação `?action=credentials`, que devolve `SUPABASE_SERVICE_ROLE_KEY` e `SUPABASE_DB_URL` a
-quem apresentar essa chave — que está em claro no repositório. O próprio código diz "Após a migração,
-remova esta função" (L3). Veio do commit `338899a` ("Visual edit in Lovable", 2026-08-28).
+`supabase/functions/migrate-helper/index.ts` e a entrada `[functions.migrate-helper]` em
+`supabase/config.toml` foram removidos do repositório. A função entregava `SUPABASE_SERVICE_ROLE_KEY`
+e `SUPABASE_DB_URL` a quem soubesse a chave hex hardcoded no fonte (commit `338899a`, 2026-08-28).
 
-**Se estiver publicada no projeto, é exfiltração de service_role por um GET.** Verificar e remover é
-decisão do dono (remoção + rotação de chave): `.contexto-compartilhado/pendencias-conhecidas.md`
-registra isso. Está publicada? **NÃO VERIFICADO** — nenhum MCP desta sessão alcança o projeto.
+**Ação pendente do dono (não pode ser feita via MCP):**
+1. Supabase Dashboard → Edge Functions → deletar `migrate-helper` se ainda publicada.
+2. Project Settings → API → Reset `service_role` key → atualizar `SUPABASE_SERVICE_ROLE_KEY` na Vercel
+   (e em qualquer outro serviço que use a chave).
+Estava publicada? **NÃO VERIFICADO** — nenhum MCP desta sessão alcança `twkajyybcwvideusutsb`.
 
 ## Convenções de migration
 

@@ -19,7 +19,7 @@
 
 ## 🟡 Código & dados
 
-- **Edge functions Deno** (F9 do QA 2026-07-22) — as duplicatas dos workers foram removidas e a fonte da verdade é TSS (ADR-0001), **mas a pasta não está vazia**: `supabase/functions/migrate-helper/index.ts` existe. A afirmação anterior ("`supabase/functions/` não existe mais", 2026-08-29) estava **errada** — corrigido em 2026-11-08. Ver o item 🔴 de segurança abaixo.
+- **Edge functions Deno** (F9 do QA 2026-07-22) — as duplicatas dos workers foram removidas e a fonte da verdade é TSS (ADR-0001). `supabase/functions/migrate-helper/index.ts` **foi removida do repo em 2026-11-09** (ver item 🔴 de segurança); a pasta ainda pode existir se houver funções futuras adicionadas. Reintroduzir edge function Deno exige ADR.
 - **`channel_quotas` vazia** (F11 do QA): seed da migration 012 falhou silenciosamente (insert sem `user_id` NOT NULL). Sem efeito hoje (worker usa `compute_daily_cap` + `sender_health`); quando quotas por usuário forem ativadas, exigirá seed corrigido.
 - **UNIPILE/social senders são stubs** — canais LinkedIn/Instagram sem envio real (por design); aguardando adapter `SocialSender` (benchmark item 7). Chaves UNIPILE não configuradas.
 - **`agent_eval_cases` não roda em CI** — harness do FATOR X existe (10 cases semeados). Desde 2026-11-08 existe `.github/workflows/agents-md-guard.yml`, mas ele só vigia a integridade das instruções de agente: evals, testes, lint e typecheck continuam sem CI.
@@ -27,14 +27,13 @@
 
 ## 🔴 Segurança e integridade do schema (achados verificados em 2026-11-08)
 
-- **`supabase/functions/migrate-helper/` entrega o `service_role`.** `supabase/functions/migrate-helper/index.ts`
-  (commit `338899a`, "Visual edit in Lovable", 2026-08-28) roda com `verify_jwt = false`
-  (`supabase/config.toml:4`), CORS `Access-Control-Allow-Origin: "*"`, uma chave de acesso hex
-  **hardcoded no fonte** (L5) e a ação `?action=credentials`, que devolve `SUPABASE_SERVICE_ROLE_KEY` e
-  `SUPABASE_DB_URL`. O próprio código diz "Após a migração, remova esta função" (L3). Se estiver
-  publicada no projeto, é exfiltração de service_role por um GET. *Ação do dono: conferir se está
-  publicada, remover a função e rotacionar a service_role. Está publicada? **NÃO VERIFICADO** — nenhum
-  MCP desta sessão alcança `twkajyybcwvideusutsb`.*
+- ~~**`supabase/functions/migrate-helper/` entrega o `service_role`.**~~ **CORRIGIDO (código) em 2026-11-09**:
+  `supabase/functions/migrate-helper/index.ts` e entrada `[functions.migrate-helper]` em `supabase/config.toml`
+  removidos do repositório. **Ação pendente do dono (dashboard)**:
+  (a) Supabase Dashboard → Edge Functions → deletar `migrate-helper` se ainda publicada;
+  (b) Project Settings → API → Reset `service_role` key e atualizar a variável em todos os ambientes
+  (Vercel env `SUPABASE_SERVICE_ROLE_KEY`). Função estava publicada? **NÃO VERIFICADO** — nenhum MCP
+  desta sessão alcança `twkajyybcwvideusutsb`.
 - **Três migrations gravadas em base64, nunca aplicadas.**
   `20260720230000_009_consent_identity_templates_bugfixes.sql`,
   `20260721090000_010_tick_support_functions.sql` e `20260721230000_012_hardening_fmea_fixes.sql` são
