@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "project": "Sales_Machine_V1",
+  "environment": ".tools/graphify/.venv",
+  "pin": "0.9.97",
+  "pythonVersion": "3.11",
+  "state": ".tools/graphify/local-state",
+  "output": "graphify-out",
+  "adapter": "generic",
+  "scope": [
+    "."
+  ],
+  "partial": false,
+  "timeoutMs": 1200000,
+  "minAvailableMb": 6144,
+  "metadata": [
+    ".gitignore",
+    ".graphifyignore",
+    ".graphifyrc",
+    "package.json",
+    "tsconfig.json"
+  ]
+}
