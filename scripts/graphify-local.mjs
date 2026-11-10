@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
-import { createReadStream } from "node:fs";
+import { createReadStream, constants } from "node:fs";
 import { createHash, randomUUID } from "node:crypto";
 import {
   readFile,
@@ -13,6 +13,7 @@ import {
   copyFile,
   chmod,
   readdir,
+  open,
 } from "node:fs/promises";
 import path from "node:path";
 import { homedir, loadavg, availableParallelism } from "node:os";
@@ -451,39 +452,60 @@ async function runtime(ctx) {
   return { version: value.version, python, binary, prefix: value.prefix };
 }
 export async function validateGraph(file, partial = false) {
-  const info = await lstat(file);
-  if (!info.isFile() || info.isSymbolicLink() || info.size > 512 * 1024 * 1024)
-    fail("Artefato do grafo não é arquivo regular ou excede512MB");
-  const bytes = await readFile(file),
-    graph = JSON.parse(bytes.toString("utf8"));
-  if (!Array.isArray(graph.nodes) || !graph.nodes.length) fail("Grafo vazio ou inválido");
-  const ids = new Set(graph.nodes.map((n) => String(n.id)));
-  if (
-    ids.size !== graph.nodes.length ||
-    graph.nodes.some(
-      (n) =>
-        !["string", "number"].includes(typeof n.id) ||
-        String(n.id).length === 0 ||
-        (typeof n.id === "number" && !Number.isFinite(n.id)),
-    )
-  )
-    fail("IDs do grafo inválidos ou duplicados");
-  const edges = graph.links || graph.edges;
-  if (!Array.isArray(edges)) fail("Relações do grafo inválidas");
-  let unresolvedImports = 0;
-  for (const edge of edges) {
-    if (ids.has(String(edge.source)) && ids.has(String(edge.target))) continue;
+  const descriptor = await open(
+    file,
+    constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+  );
+  try {
+    const info = await descriptor.stat({ bigint: true });
+    if (!info.isFile() || info.size > 512n * 1024n * 1024n)
+      fail("Artefato do grafo não é arquivo regular ou excede512MB");
+    const bytes = await descriptor.readFile(),
+      after = await descriptor.stat({ bigint: true });
     if (
-      partial &&
-      ids.has(String(edge.source)) &&
-      ["imports", "imports_from", "dynamic_import", "re_exports"].includes(edge.relation)
-    ) {
-      unresolvedImports++;
-      continue;
+      BigInt(bytes.length) !== info.size ||
+      after.size !== info.size ||
+      after.mtimeNs !== info.mtimeNs ||
+      after.ctimeNs !== info.ctimeNs
+    )
+      fail("Artefato do grafo mudou durante a leitura");
+    const graph = JSON.parse(bytes.toString("utf8"));
+    if (!Array.isArray(graph.nodes) || !graph.nodes.length) fail("Grafo vazio ou inválido");
+    const ids = new Set(graph.nodes.map((n) => String(n.id)));
+    if (
+      ids.size !== graph.nodes.length ||
+      graph.nodes.some(
+        (n) =>
+          !["string", "number"].includes(typeof n.id) ||
+          String(n.id).length === 0 ||
+          (typeof n.id === "number" && !Number.isFinite(n.id)),
+      )
+    )
+      fail("IDs do grafo inválidos ou duplicados");
+    const edges = graph.links || graph.edges;
+    if (!Array.isArray(edges)) fail("Relações do grafo inválidas");
+    let unresolvedImports = 0;
+    for (const edge of edges) {
+      if (ids.has(String(edge.source)) && ids.has(String(edge.target))) continue;
+      if (
+        partial &&
+        ids.has(String(edge.source)) &&
+        ["imports", "imports_from", "dynamic_import", "re_exports"].includes(edge.relation)
+      ) {
+        unresolvedImports++;
+        continue;
+      }
+      fail("Grafo contém relações sem origem/destino");
     }
-    fail("Grafo contém relações sem origem/destino");
+    return {
+      nodes: graph.nodes.length,
+      edges: edges.length,
+      unresolvedImports,
+      sha256: hash(bytes),
+    };
+  } finally {
+    await descriptor.close();
   }
-  return { nodes: graph.nodes.length, edges: edges.length, unresolvedImports, sha256: hash(bytes) };
 }
 async function status(ctx, currentFingerprint) {
   const runtimeInfo = await runtime(ctx);
@@ -538,12 +560,29 @@ async function offline(ctx) {
   if (isolated === host || !isolated.startsWith("net:[")) fail("Namespace offline indisponível");
   return prefix;
 }
-async function resources(ctx) {
-  const bytes = await readFile("/proc/meminfo", "utf8"),
-    availableMb = Number(/MemAvailable:\s+(\d+)/.exec(bytes)?.[1] || 0) / 1024;
-  if (availableMb < ctx.config.minAvailableMb || loadavg()[0] > availableParallelism())
+export function assertResources(sample, minAvailableMb) {
+  const { availableMb, load, parallelism } = sample;
+  if (
+    ![availableMb, load, parallelism].every(Number.isFinite) ||
+    availableMb < minAvailableMb ||
+    load < 0 ||
+    parallelism < 1 ||
+    load > parallelism
+  )
     fail("Geração adiada por memória/carga", "resources");
 }
+async function resourceProbe() {
+  const bytes = await readFile("/proc/meminfo", "utf8");
+  return {
+    availableMb: Number(/MemAvailable:\s+(\d+)/.exec(bytes)?.[1] || 0) / 1024,
+    load: loadavg()[0],
+    parallelism: availableParallelism(),
+  };
+}
+async function resources(ctx) {
+  assertResources(await (ctx.resourceProbe || resourceProbe)(), ctx.config.minAvailableMb);
+}
+
 async function generate(ctx, fp, expectedGraph) {
   await resources(ctx);
   const prefix = await offline(ctx);
@@ -795,6 +834,7 @@ export async function main(args = process.argv.slice(2), options = {}) {
       outputRoot: await confined(root, config.output, { ignored: true }),
       interrupted: () => interrupted,
       fixtureOfflinePrefix: options.fixtureOfflinePrefix,
+      resourceProbe: options.resourceProbe,
     };
     ctx.python = path.join(ctx.envRoot, "bin/python");
     ctx.binary = path.join(ctx.envRoot, "bin/graphify");

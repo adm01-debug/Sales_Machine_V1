@@ -1,6 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, writeFile, readFile, rm, readdir, symlink } from "node:fs/promises";
+import {
+  mkdtemp,
+  mkdir,
+  writeFile,
+  readFile,
+  rm,
+  readdir,
+  symlink,
+  open,
+  lstat,
+  rename,
+  truncate,
+} from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -12,6 +25,7 @@ import {
   validateGraph,
   run,
   adoptInitial,
+  assertResources,
 } from "./graphify-local.mjs";
 
 function git(root, ...args) {
@@ -69,7 +83,11 @@ if(a[0]==='extract'){
   git(root, "config", "user.email", "fixture@example.invalid");
   git(root, "add", ".");
   git(root, "commit", "-m", "base");
-  const options = { globalLock: path.join(dir, "fleet.lock"), fixtureOfflinePrefix: [] };
+  const options = {
+    globalLock: path.join(dir, "fleet.lock"),
+    fixtureOfflinePrefix: [],
+    resourceProbe: async () => ({ availableMb: 32768, load: 0, parallelism: 2 }),
+  };
   const args = (action, ...terms) => [action, ...terms, "--config", configFile, "--root", root];
   const call = (action, ...terms) => main(args(action, ...terms), options);
   const graph = path.join(root, "graphify-out/graph.json");
@@ -360,4 +378,85 @@ test("config relativo resolve em root mesmo com cwd diferente", async (t) => {
   await writeFile(path.join(f.root, "graphify.local.json"), JSON.stringify(f.config));
   const r = await main(["--root", f.root, "--config", "graphify.local.json", "mark"], f.options);
   assert.equal(r.exitCode, 0);
+});
+
+for (const mode of ["symlink", "regular", "write"])
+  test(`descritor do grafo bloqueia troca concorrente: ${mode}`, async (t) => {
+    const f = await fixture(t);
+    await mkdir(path.dirname(f.graph), { recursive: true });
+    const original = JSON.stringify({ nodes: [{ id: "original" }], links: [] });
+    const replacement = JSON.stringify({
+      nodes: [{ id: "substituto" }, { id: "outro" }],
+      links: [],
+    });
+    await writeFile(f.graph, original);
+    const target = path.join(f.dir, "replacement.json");
+    await writeFile(target, replacement);
+    const originalStats = await lstat(f.graph, { bigint: true });
+    const probe = await open(f.graph, "r"),
+      prototype = Object.getPrototypeOf(probe);
+    await probe.close();
+    const stat = prototype.stat;
+    let swapped = false;
+    t.mock.method(prototype, "stat", async function (...args) {
+      const info = await Reflect.apply(stat, this, args);
+      if (!swapped && info.ino === originalStats.ino && info.dev === originalStats.dev) {
+        swapped = true;
+        if (mode === "write") await writeFile(f.graph, replacement);
+        else {
+          await rename(f.graph, path.join(f.dir, "original.json"));
+          if (mode === "symlink") await symlink(target, f.graph);
+          else await rename(target, f.graph);
+        }
+      }
+      return info;
+    });
+    try {
+      const info = await validateGraph(f.graph);
+      assert.equal(info.nodes, 1);
+      assert.equal(info.sha256, createHash("sha256").update(original).digest("hex"));
+    } catch (error) {
+      assert.match(error.message, /mudou durante a leitura/);
+    }
+    assert.equal(swapped, true);
+    t.mock.restoreAll();
+    if (mode === "symlink") await assert.rejects(validateGraph(f.graph), (e) => e.code === "ELOOP");
+  });
+
+test("grafo recusa diretório, FIFO e arquivo maior que512MB sem seguir caminhos", async (t) => {
+  const f = await fixture(t);
+  await assert.rejects(validateGraph(f.dir), /regular/);
+  const fifo = path.join(f.dir, "graph.fifo");
+  assert.equal(spawnSync("mkfifo", [fifo]).status, 0);
+  await assert.rejects(validateGraph(fifo), /regular/);
+  const large = path.join(f.dir, "large.json");
+  await writeFile(large, "");
+  await truncate(large, 512 * 1024 * 1024 + 1);
+  await assert.rejects(validateGraph(large), /512MB/);
+});
+
+test("política de recursos usa amostra determinística e bloqueia memória/carga insuficientes", async (t) => {
+  assert.doesNotThrow(() => assertResources({ availableMb: 6144, load: 2, parallelism: 2 }, 6144));
+  for (const sample of [
+    { availableMb: 6143, load: 0, parallelism: 2 },
+    { availableMb: 8192, load: 2.01, parallelism: 2 },
+    { availableMb: NaN, load: 0, parallelism: 2 },
+  ])
+    assert.throws(
+      () => assertResources(sample, 6144),
+      (e) => e.status === "resources",
+    );
+  const f = await fixture(t);
+  const denied = await main(f.args("ensure"), {
+    ...f.options,
+    resourceProbe: async () => ({ availableMb: 0, load: 0, parallelism: 2 }),
+  });
+  assert.equal(denied.exitCode, 75);
+  assert.equal(denied.report.status, "resources");
+  await assert.rejects(readFile(f.graph), /ENOENT/);
+  assert.equal((await f.call("ensure")).exitCode, 0);
+  for (const key of ["resourceProbe", "fixtureOfflinePrefix"]) {
+    await writeFile(f.configFile, JSON.stringify({ ...f.config, [key]: { availableMb: 1e9 } }));
+    assert.equal((await f.call("ensure")).exitCode, 1);
+  }
 });

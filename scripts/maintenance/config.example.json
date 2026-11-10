@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "manager": "npm",
+  "tsconfigs": ["tsconfig.app.json", "tsconfig.node.json"],
+  "gates": [
+    { "name": "lint", "command": ["node", "node_modules/eslint/bin/eslint.js", "src"] },
+    {
+      "name": "types",
+      "command": [
+        "node",
+        "scripts/maintenance/typecheck.mjs",
+        "tsconfig.app.json",
+        "tsconfig.node.json"
+      ]
+    },
+    { "name": "test", "command": ["node", "node_modules/vitest/vitest.mjs", "run"] },
+    {
+      "name": "build",
+      "command": ["node", "node_modules/vite/bin/vite.js", "build"],
+      "env": {
+        "VITE_SUPABASE_URL": "https://maintenance.invalid",
+        "VITE_SUPABASE_PROJECT_ID": "maintenance_test",
+        "VITE_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_maintenance_test"
+      }
+    }
+  ],
+  "fix": { "roots": ["src"], "exclude": ["src/generated"], "eslintRules": [], "prettier": true },
+  "timeoutMs": 120000,
+  "maxFiles": 20,
+  "maxChangedLines": 400
+}
