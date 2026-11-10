@@ -32,7 +32,7 @@ jobs:
       - name: Node 24
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: '24'
+          node-version: "24"
       - name: Valida perfis, aliases e encadeamentos
         run: node scripts/automation.mjs doctor --static
       - name: Executa suites registradas de automação
