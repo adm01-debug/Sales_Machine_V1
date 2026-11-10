@@ -36,17 +36,17 @@ O checkout de edição pode estar sujo: suas alterações de código não são c
 
 Por padrão, relatórios, logs privados e patches ficam em `${XDG_STATE_HOME:-~/.local/state}/repo-maintenance/<hash-do-git-common-dir>/runs/`. Diretórios têm modo 0700; arquivos de relatório/log/patch têm modo 0600. O JSON em stdout contém somente resumo e primeiras mensagens de erro com redação de padrões conhecidos de credenciais. Não há garantia de reconhecer segredos arbitrários que um aplicativo imprima; os logs continuam privados. Nenhum valor de ambiente é registrado pela rotina.
 
-| Estado | Exit | Significado |
-|---|---:|---|
-| `healthy` | 0 | Doctor encontrou dependências e cobertura de fonte |
-| `checked` | 0 | Quatro gates passaram no commit isolado |
-| `no_changes` | 0 | Gates passaram; nenhum patch dentro do orçamento |
-| `validated_patch` | 0 | Patch e commit local passaram os quatro gates |
-| `missing_dependencies` | 2 | Ferramenta/instalação ausente ou manifesto/locks divergentes |
-| `blocked_baseline` | 3 | Código original falhou em gate antes da correção |
-| `pending_patch` | 4 | Existe patch local ainda não integrado |
-| `blocked_network_sandbox` | 5 | Isolamento real de rede indisponível |
-| `skipped_busy` | 75 | Outra execução ou trava recente ocupa o projeto/frota |
-| `failed` | 1 | Configuração, correção, gate pós patch ou limpeza falhou |
+| Estado                    | Exit | Significado                                                  |
+| ------------------------- | ---: | ------------------------------------------------------------ |
+| `healthy`                 |    0 | Doctor encontrou dependências e cobertura de fonte           |
+| `checked`                 |    0 | Quatro gates passaram no commit isolado                      |
+| `no_changes`              |    0 | Gates passaram; nenhum patch dentro do orçamento             |
+| `validated_patch`         |    0 | Patch e commit local passaram os quatro gates                |
+| `missing_dependencies`    |    2 | Ferramenta/instalação ausente ou manifesto/locks divergentes |
+| `blocked_baseline`        |    3 | Código original falhou em gate antes da correção             |
+| `pending_patch`           |    4 | Existe patch local ainda não integrado                       |
+| `blocked_network_sandbox` |    5 | Isolamento real de rede indisponível                         |
+| `skipped_busy`            |   75 | Outra execução ou trava recente ocupa o projeto/frota        |
+| `failed`                  |    1 | Configuração, correção, gate pós patch ou limpeza falhou     |
 
 As regras ESLint permitidas são `semi`, `quotes`, `indent`, `comma-dangle`, `eol-last`, `no-trailing-spaces`, `space-infix-ops`, `keyword-spacing`, `object-curly-spacing` e `array-bracket-spacing`. A lista vazia aplica somente Prettier. As dependências de parser para TS são exigidas apenas se correções ESLint forem habilitadas. Preserve as convenções do projeto ao selecionar regras para evitar conflito com Prettier.
