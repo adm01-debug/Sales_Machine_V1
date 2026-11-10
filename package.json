@@ -4,9 +4,9 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "maintenance:doctor": "node scripts/maintenance/run.mjs doctor --root .",
-    "maintenance:check": "node scripts/maintenance/run.mjs check --root . --ref origin/main",
-    "maintenance:heal": "node scripts/maintenance/run.mjs heal --root . --ref origin/main",
+    "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+    "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+    "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
     "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
     "dev": "vite dev",
     "build": "vite build",
