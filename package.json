@@ -4,6 +4,10 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
+    "maintenance:doctor": "node scripts/maintenance/run.mjs doctor --root .",
+    "maintenance:check": "node scripts/maintenance/run.mjs check --root . --ref origin/main",
+    "maintenance:heal": "node scripts/maintenance/run.mjs heal --root . --ref origin/main",
+    "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
     "dev": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
