@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "manager": "npm",
+  "tsconfigs": [
+    "tsconfig.json"
+  ],
+  "gates": [
+    {
+      "name": "lint",
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ]
+    },
+    {
+      "name": "types",
+      "command": [
+        "node",
+        "scripts/maintenance/typecheck.mjs",
+        "tsconfig.json"
+      ]
+    },
+    {
+      "name": "test",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--maxWorkers=1"
+      ]
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ]
+    }
+  ],
+  "fix": {
+    "roots": [
+      "src"
+    ],
+    "eslintRules": [],
+    "prettier": true
+  },
+  "timeoutMs": 300000,
+  "maxFiles": 20,
+  "maxChangedLines": 400
+}
