@@ -23,7 +23,8 @@
   "fix": {
     "roots": ["src"],
     "eslintRules": [],
-    "prettier": true
+    "prettier": true,
+    "exclude": ["src/integrations/supabase/types.ts"]
   },
   "timeoutMs": 300000,
   "maxFiles": 20,

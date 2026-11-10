@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "name": "Sales_Machine_V1",
+  "entrypoint": "scripts/automation.mjs",
+  "testSuites": [
+    "scripts/automation.unit.mjs",
+    "scripts/maintenance/maintenance.unit.mjs",
+    "scripts/graphify-local.unit.mjs"
+  ],
+  "motor": ["sh", "scripts/maintenance/run.sh"],
+  "motorConfig": "scripts/maintenance/config.json",
+  "motorSource": "scripts/maintenance/run.sh",
+  "graph": ["node", "scripts/graphify-local.mjs"],
+  "graphConfig": "graphify.local.json",
+  "aliases": {
+    "automation:doctor": "node scripts/automation.mjs doctor",
+    "automation:test": "node scripts/automation.mjs test",
+    "automation:check": "node scripts/automation.mjs check --ref HEAD",
+    "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+    "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+    "automation:graph": "node scripts/automation.mjs graph",
+    "automation:status": "node scripts/automation.mjs graph status",
+    "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+    "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks"
+  },
+  "registrations": [
+    {
+      "id": "core",
+      "kind": "tool",
+      "files": ["scripts/automation.mjs"],
+      "manual": ["node", "scripts/automation.mjs", "doctor"],
+      "triggers": ["manual", "precommit", "prepush", "PR", "pushmain", "nightly"]
+    },
+    {
+      "id": "automation-suites",
+      "kind": "test",
+      "files": [
+        "scripts/automation.unit.mjs",
+        "scripts/maintenance/maintenance.unit.mjs",
+        "scripts/graphify-local.unit.mjs"
+      ],
+      "manual": ["node", "scripts/automation.mjs", "test"],
+      "triggers": ["manual", "precommit", "prepush", "PR", "pushmain"]
+    },
+    {
+      "id": "motor-isolado",
+      "kind": "motor",
+      "files": [
+        "scripts/maintenance/run.sh",
+        "scripts/maintenance/run.mjs",
+        "scripts/maintenance/lib.mjs",
+        "scripts/maintenance/typecheck.mjs"
+      ],
+      "manual": ["node", "scripts/automation.mjs", "heal", "--ref", "origin/main"],
+      "triggers": ["manual", "nightly"]
+    },
+    {
+      "id": "graph-local",
+      "kind": "graph",
+      "files": ["scripts/graphify-local.mjs"],
+      "manual": ["node", "scripts/automation.mjs", "graph", "status"],
+      "triggers": ["manual", "precommit", "postcommit", "postmerge", "postcheckout", "nightly"]
+    },
+    {
+      "id": "legacy-624270bf9763110b",
+      "kind": "legacy",
+      "files": ["scripts/gerar-dump-arquitetura.py"],
+      "manual": ["python3", "scripts/gerar-dump-arquitetura.py"],
+      "triggers": ["manual"],
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+    }
+  ],
+  "ci": [
+    {
+      "file": ".github/workflows/automation-local.yml",
+      "events": ["PR", "pushmain"],
+      "command": "node scripts/automation.mjs test"
+    }
+  ],
+  "nightly": {
+    "command": ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"]
+  },
+  "timeoutMs": 900000,
+  "toolingPatterns": [
+    "scripts/**",
+    ".github/**",
+    ".husky/**",
+    "package.json",
+    "*lock*",
+    "graphify.local.json"
+  ],
+  "sourcePatterns": ["src/**", "tests/**", "e2e/**", "api/**", "shared/**", "supabase/functions/**"]
+}
