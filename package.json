@@ -4,9 +4,9 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "maintenance:doctor": "node scripts/maintenance/run.mjs doctor --root .",
-    "maintenance:check": "node scripts/maintenance/run.mjs check --root . --ref origin/main",
-    "maintenance:heal": "node scripts/maintenance/run.mjs heal --root . --ref origin/main",
+    "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+    "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+    "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
     "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
     "dev": "vite dev",
     "build": "vite build",
@@ -21,7 +21,16 @@
     "contexto:regras": "python3 scripts/regras_negocio/generate.py --repo . --out docs/contexto/regras --profile regras --schema-snapshot docs/contexto/supabase --index-path docs/contexto/00-INDEX.md --no-pointer",
     "contexto:indice": "python3 scripts/regras_negocio/indice.py --repo . --out docs/contexto/00-INDEX.md --fonte \"banco real=docs/contexto/supabase\" --fonte \"código=docs/contexto/codigo\" --fonte \"regras de negócio=docs/contexto/regras\"",
     "inventario:repo": "node scripts/inventario/gerar-repo.mjs",
-    "inventario:banco": "node scripts/inventario/gerar-banco.mjs"
+    "inventario:banco": "node scripts/inventario/gerar-banco.mjs",
+    "automation:doctor": "node scripts/automation.mjs doctor",
+    "automation:test": "node scripts/automation.mjs test",
+    "automation:check": "node scripts/automation.mjs check --ref HEAD",
+    "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+    "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+    "automation:graph": "node scripts/automation.mjs graph",
+    "automation:status": "node scripts/automation.mjs graph status",
+    "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+    "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks" (chore(automacao): conecta testes grafo e manutenção aos gatilhos)
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
