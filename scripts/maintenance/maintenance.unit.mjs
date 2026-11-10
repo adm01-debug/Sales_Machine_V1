@@ -6,7 +6,7 @@ import path from 'node:path';
 import { main, parseArgs, networkPrefix } from './run.mjs';
 import { git, run, acquire, validateConfig } from './lib.mjs';
 
-async function fixture(t, { content = 'bad', failure = '', emptyTypes = false, trackedEnv = false, formatterEscapes = false } = {}) {
+async function fixture(t, { content = 'bad', failure = '', emptyTypes = false, trackedEnv = false, formatterEscapes = false, nativeTypes = false } = {}) {
   const dir = await mkdtemp(path.join(os.tmpdir(), 'maintenance-test-')); t.after(() => rm(dir, { recursive: true, force: true }));
   const root = path.join(dir, 'repo'), state = path.join(dir, 'state'); await mkdir(root); await mkdir(path.join(root, 'src')); await mkdir(path.join(root, 'scripts'));
   await git(root, ['init', '-q', '-b', 'main']);
@@ -19,8 +19,8 @@ async function fixture(t, { content = 'bad', failure = '', emptyTypes = false, t
   await writeFile(path.join(root, 'scripts/gate.mjs'), gates);
   const tsDir = path.join(root, 'node_modules/typescript'); await mkdir(tsDir, { recursive: true });
   await writeFile(path.join(tsDir, 'package.json'), JSON.stringify({ name: 'typescript', main: 'index.cjs' }));
-  await mkdir(path.join(tsDir, 'bin')); await writeFile(path.join(tsDir, 'bin/tsc'), 'process.exit(0);');
-  await writeFile(path.join(tsDir, 'index.cjs'), `const fs=require('fs'),path=require('path');module.exports={sys:{readFile:f=>fs.readFileSync(f,'utf8')},readConfigFile:(f,read)=>({config:JSON.parse(read(f))}),parseJsonConfigFileContent:(c,sys,base)=>({errors:[],fileNames:(c.files||[]).map(f=>path.resolve(base,f))})};`);
+  await mkdir(path.join(tsDir, 'bin')); await writeFile(path.join(tsDir, 'bin/tsc'), nativeTypes ? `const fs=require('fs'),path=require('path');if(process.argv.includes('--listFilesOnly')){const cfg=process.argv[process.argv.indexOf('--project')+1];console.log(JSON.parse(fs.readFileSync(cfg,'utf8')).files.map(f=>path.resolve(f)).join('\\n'));}` : 'process.exit(0);');
+  await writeFile(path.join(tsDir, 'index.cjs'), nativeTypes ? 'module.exports={version:"7.0.2",versionMajorMinor:"7.0"};' : `const fs=require('fs'),path=require('path');module.exports={sys:{readFile:f=>fs.readFileSync(f,'utf8')},readConfigFile:(f,read)=>({config:JSON.parse(read(f))}),parseJsonConfigFileContent:(c,sys,base)=>({errors:[],fileNames:(c.files||[]).map(f=>path.resolve(base,f))})};`);
   for (const name of ['eslint', 'prettier']) {
     const d = path.join(root, 'node_modules', name); await mkdir(d, { recursive: true });
     await writeFile(path.join(d, 'package.json'), JSON.stringify({ name, type: 'module', bin: { [name]: 'bin.mjs' } }));
@@ -120,4 +120,14 @@ test('patch integrado por squash é reconhecido e não bloqueia manutenção', i
   await git(f.root, ['cherry-pick', '--no-commit', first.report.commit]);
   await git(f.root, ['-c', 'user.name=Fixture', '-c', 'user.email=fixture@localhost', 'commit', '-qm', 'squash integration']);
   const second = await main(f.args()); assert.equal(second.report.status, 'no_changes', JSON.stringify(second.report));
+});
+
+test('TypeScript 7 sem API usa CLI isolada e valida o patch', isolated, async (t) => {
+  const f = await fixture(t, { nativeTypes: true }); const result = await main(f.args());
+  assert.equal(result.report.status, 'validated_patch', JSON.stringify(result.report));
+  assert.equal(result.report.doctor.coverage[0].method, 'cli'); assert.equal(result.report.doctor.coverage[0].sourceFiles, 1);
+});
+test('TypeScript 7 com CLI sem arquivos bloqueia doctor', isolated, async (t) => {
+  const f = await fixture(t, { nativeTypes: true, emptyTypes: true }); const result = await main(f.args('doctor'));
+  assert.equal(result.report.status, 'failed'); assert.match(result.report.message, /vazio ou inválido/);
 });

@@ -1,8 +1,9 @@
 import { spawn } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, readFile, writeFile, stat, realpath, rm, symlink } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, writeFile, stat, realpath, rm, symlink } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import { tmpdir } from 'node:os';
 
 export class MaintenanceError extends Error {
   constructor(code, message) { super(message); this.code = code; }
@@ -85,13 +86,27 @@ export async function inspect(root, config) {
   const { req } = tool(root, 'typescript');
   tool(root, 'eslint'); if (config.fix.prettier) tool(root, 'prettier');
   const ts = req('typescript'), coverage = [];
+  const hasApi = typeof ts.readConfigFile === 'function' && typeof ts.parseJsonConfigFileContent === 'function' && typeof ts.sys?.readFile === 'function';
   for (const cfg of config.tsconfigs) {
-    const filename = path.resolve(root, cfg), parsed = ts.readConfigFile(filename, ts.sys.readFile);
-    if (parsed.error) fail(`Não foi possível ler tsconfig ${cfg}`);
-    const result = ts.parseJsonConfigFileContent(parsed.config, ts.sys, path.dirname(filename));
-    if (result.errors.length) fail(`tsconfig inválido: ${cfg}`);
-    const source = result.fileNames.filter((f) => path.relative(root, f).replaceAll('\\', '/').startsWith('src/'));
-    coverage.push({ config: cfg, files: result.fileNames.length, sourceFiles: source.length });
+    const filename = path.resolve(root, cfg); let fileNames;
+    if (hasApi) {
+      const parsed = ts.readConfigFile(filename, ts.sys.readFile);
+      if (parsed.error) fail(`Não foi possível ler tsconfig ${cfg}`);
+      const result = ts.parseJsonConfigFileContent(parsed.config, ts.sys, path.dirname(filename));
+      if (result.errors.length) fail(`tsconfig inválido: ${cfg}`);
+      fileNames = result.fileNames;
+    } else {
+      const temporary = await mkdtemp(path.join(tmpdir(), 'maintenance-ts-list-'));
+      try {
+        const bin = path.join(tool(root, 'typescript').dir, 'bin/tsc');
+        const result = await run(['unshare', '--user', '--map-root-user', '--net', '--', process.execPath, bin, '--noEmit', '--project', cfg, '--tsBuildInfoFile', path.join(temporary, 'list.tsbuildinfo'), '--listFilesOnly'], root, config.timeoutMs);
+        if (result.code !== 0 || result.timedOut || result.overflow) fail(`TypeScript CLI não conseguiu listar arquivos de ${cfg} (exit=${result.code}, timeout=${result.timedOut})`);
+        fileNames = result.output.split('\n').map((f) => f.trim()).filter((f) => path.isAbsolute(f) && /\.[cm]?[jt]sx?$/.test(f));
+        if (!fileNames.length) fail(`Projeto TypeScript vazio ou inválido: ${cfg}`);
+      } finally { await rm(temporary, { recursive: true, force: true }); }
+    }
+    const source = fileNames.filter((f) => path.relative(root, f).replaceAll('\\', '/').startsWith('src/'));
+    coverage.push({ config: cfg, files: fileNames.length, sourceFiles: source.length, method: hasApi ? 'api' : 'cli' });
   }
   if (!coverage.some((c) => c.sourceFiles > 0)) fail('tsconfigs não incluem nenhum arquivo src');
   return { coverage, dependencies: await dependencyFingerprint(root) };

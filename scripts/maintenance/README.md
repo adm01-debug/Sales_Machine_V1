@@ -15,7 +15,7 @@ node --test scripts/maintenance/maintenance.unit.mjs
 
 `--ref` é obrigatória em `check` e `heal`: pode ser branch local, referência remota já buscada ou SHA. O programa não faz fetch. `--config /caminho/perfil.json` e `--state /diretorio/externo` permitem destinos explícitos. Opções e campos desconhecidos falham.
 
-`doctor` lê o checkout indicado, resolve TypeScript/ESLint/Prettier no `node_modules` desse projeto e comprova ao menos um arquivo de `src` nos tsconfigs usando a API do TypeScript. Isso comprova cobertura da configuração, não ausência de erros de tipos. Não executa gates nem corrige arquivos.
+`doctor` lê o checkout indicado, resolve TypeScript/ESLint/Prettier no `node_modules` desse projeto e comprova ao menos um arquivo de `src` nos tsconfigs usando a API do TypeScript ou, nas distribuições nativas sem API (TypeScript 7), a CLI real com `--listFilesOnly` dentro de namespace de rede isolado. Isso comprova cobertura da configuração, não ausência de erros de tipos. Não executa gates nem corrige arquivos.
 
 `check` e `heal` criam uma worktree descartável do commit resolvido e executam os gates com rede isolada por `unshare --user --map-root-user --net`. A detecção confirma namespace diferente do processo original. Se o sistema não permitir esse isolamento, a rotina bloqueia. Dependências e testes que precisarem de rede devem ser preparados explicitamente fora da rotina; a manutenção não faz fallback para rede real.
 
