@@ -46,7 +46,6 @@
       "id": "motor-isolado",
       "kind": "motor",
       "files": [
-        "scripts/automation-nightly.sh",
         "scripts/maintenance/run.sh",
         "scripts/maintenance/run.mjs",
         "scripts/maintenance/lib.mjs",
@@ -79,8 +78,7 @@
     }
   ],
   "nightly": {
-    "command": ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"],
-    "file": "scripts/automation-nightly.sh"
+    "command": ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"]
   },
   "timeoutMs": 900000,
   "toolingPatterns": [
