@@ -27,7 +27,13 @@ import { cn } from "@/lib/utils";
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
 import { CampaignDrilldown } from "@/components/dashboard/campaign-drilldown";
 
-const SERIES = ["var(--neon-cyan)", "var(--neon-purple)", "var(--neon-lime)", "var(--neon-pink)", "var(--neon-amber)"];
+const SERIES = [
+  "var(--neon-cyan)",
+  "var(--neon-purple)",
+  "var(--neon-lime)",
+  "var(--neon-pink)",
+  "var(--neon-amber)",
+];
 
 const CHANNEL_LABEL: Record<string, string> = {
   whatsapp: "WhatsApp",
@@ -173,9 +179,7 @@ function TrendCard({
               <span className="text-2xl font-bold tabular-nums">{fmt(value)}</span>
               <DeltaBadge delta={delta} invert={invert} />
             </div>
-            <p className="text-xs text-muted-foreground">
-              Período anterior: {fmt(previous)}
-            </p>
+            <p className="text-xs text-muted-foreground">Período anterior: {fmt(previous)}</p>
           </>
         )}
       </CardContent>
@@ -370,8 +374,12 @@ export function AnalyticsCharts() {
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center pb-10">
-              <span className="text-2xl font-bold tabular-nums">{donutTotal.toLocaleString("pt-BR")}</span>
-              <span className="text-xxs uppercase tracking-widest text-muted-foreground">Envios</span>
+              <span className="text-2xl font-bold tabular-nums">
+                {donutTotal.toLocaleString("pt-BR")}
+              </span>
+              <span className="text-xxs uppercase tracking-widest text-muted-foreground">
+                Envios
+              </span>
             </div>
           </div>
         </ChartFrame>
@@ -416,7 +424,12 @@ export function AnalyticsCharts() {
               <YAxis {...axisProps} width={44} unit="%" />
               <ChartTooltip />
               <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Bar dataKey="anterior" name="Anterior" fill="var(--muted-foreground)" radius={[6, 6, 0, 0]} />
+              <Bar
+                dataKey="anterior"
+                name="Anterior"
+                fill="var(--muted-foreground)"
+                radius={[6, 6, 0, 0]}
+              />
               <Bar dataKey="rate" name="Atual" fill="var(--neon-purple)" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -431,7 +444,14 @@ export function AnalyticsCharts() {
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={campaigns} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-              <XAxis dataKey="name" {...axisProps} interval={0} angle={-15} textAnchor="end" height={48} />
+              <XAxis
+                dataKey="name"
+                {...axisProps}
+                interval={0}
+                angle={-15}
+                textAnchor="end"
+                height={48}
+              />
               <YAxis {...axisProps} width={44} />
               <ChartTooltip />
               <Bar

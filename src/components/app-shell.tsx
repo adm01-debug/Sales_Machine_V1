@@ -42,7 +42,9 @@ export function AppShell({ children }: AppShellProps) {
           <div className="mb-6 hidden lg:block">
             <div className="flex items-center gap-2">
               <span className="size-2.5 rounded-full bg-primary shadow-glow" aria-hidden />
-              <p className="text-lg font-bold tracking-tight text-gradient-primary">Sales Machine</p>
+              <p className="text-lg font-bold tracking-tight text-gradient-primary">
+                Sales Machine
+              </p>
             </div>
             <p className="mt-1 text-xxs font-medium uppercase tracking-[0.14em] text-muted-foreground">
               Marketing · LUX · SINGU · FATOR X
@@ -70,7 +72,12 @@ export function AppShell({ children }: AppShellProps) {
             ))}
           </nav>
           <div className="mt-5 border-t border-border pt-3">
-            <Button variant="ghost" size="sm" className="w-full justify-start" onClick={handleSignOut}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start"
+              onClick={handleSignOut}
+            >
               Sair
             </Button>
           </div>

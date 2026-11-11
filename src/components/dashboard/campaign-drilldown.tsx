@@ -28,7 +28,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ExternalLink, AlertTriangle, AlertCircle, Info, CheckCircle2, ShieldAlert, TrendingUp, TrendingDown } from "lucide-react";
+import {
+  ExternalLink,
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  CheckCircle2,
+  ShieldAlert,
+  TrendingUp,
+  TrendingDown,
+} from "lucide-react";
 
 const SENTIMENT_COLORS = {
   positive: "var(--neon-lime)",
@@ -90,7 +99,10 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
   const fetchDrilldown = useServerFn(getCampaignDrilldown);
   const query = useQuery({
     queryKey: ["analytics", "campaign-drilldown", campaignId, days, sentiment],
-    queryFn: () => fetchDrilldown({ data: { campaignId: campaignId as string, days, sentimentFilter: sentiment } }),
+    queryFn: () =>
+      fetchDrilldown({
+        data: { campaignId: campaignId as string, days, sentimentFilter: sentiment },
+      }),
     enabled: Boolean(campaignId),
   });
 
@@ -132,14 +144,16 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                 </Button>
               ))}
             </div>
-            
+
             <div className="flex gap-1 rounded-lg border border-border bg-card p-1 w-fit">
-              {([
-                { id: "all", label: "Todos" },
-                { id: "positive", label: "Positivos" },
-                { id: "neutral", label: "Neutros" },
-                { id: "negative", label: "Negativos" }
-              ] as const).map((s) => (
+              {(
+                [
+                  { id: "all", label: "Todos" },
+                  { id: "positive", label: "Positivos" },
+                  { id: "neutral", label: "Neutros" },
+                  { id: "negative", label: "Negativos" },
+                ] as const
+              ).map((s) => (
                 <Button
                   key={s.id}
                   size="sm"
@@ -155,11 +169,7 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
           {campaignId && (
             <div className="mt-4 border-t border-border pt-4">
               <Button asChild variant="outline" size="sm" className="w-full sm:w-auto gap-2">
-                <Link 
-                  to="/campaigns/wizard" 
-                  search={{ campaignId }}
-                  className="flex items-center"
-                >
+                <Link to="/campaigns/wizard" search={{ campaignId }} className="flex items-center">
                   <ExternalLink className="h-4 w-4" />
                   Ajustar e Revisar Campanha no Wizard
                 </Link>
@@ -182,7 +192,15 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                     <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                       Diagnóstico Automático
                     </h3>
-                    <Badge variant={data.diagnosis.score > 80 ? "lime" : data.diagnosis.score > 50 ? "amber" : "destructive"}>
+                    <Badge
+                      variant={
+                        data.diagnosis.score > 80
+                          ? "lime"
+                          : data.diagnosis.score > 50
+                            ? "amber"
+                            : "destructive"
+                      }
+                    >
                       Health Score: {data.diagnosis.score}/100
                     </Badge>
                   </div>
@@ -196,13 +214,17 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
 
                 <div className="grid gap-3">
                   {data.diagnosis.recommendations.map((rec, i) => (
-                    <div 
+                    <div
                       key={i}
                       className="flex gap-3 p-3 rounded-lg bg-background/50 border border-border/50 text-sm"
                     >
                       <div className="mt-0.5">
-                        {rec.type === "error" && <AlertCircle className="h-4 w-4 text-destructive" />}
-                        {rec.type === "warning" && <AlertTriangle className="h-4 w-4 text-warning" />}
+                        {rec.type === "error" && (
+                          <AlertCircle className="h-4 w-4 text-destructive" />
+                        )}
+                        {rec.type === "warning" && (
+                          <AlertTriangle className="h-4 w-4 text-warning" />
+                        )}
                         {rec.type === "info" && <Info className="h-4 w-4 text-neon-cyan" />}
                       </div>
                       <div className="space-y-1 flex-1">
@@ -238,35 +260,52 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                         Análise de Sentimento (FATOR X)
                       </h4>
                       <div className="flex gap-2">
-                        <Badge variant="outline" className="text-[10px] text-neon-lime border-neon-lime/30 bg-neon-lime/5">
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] text-neon-lime border-neon-lime/30 bg-neon-lime/5"
+                        >
                           {data.diagnosis.sentiment.positive} Positivas
                         </Badge>
-                        <Badge variant="outline" className="text-[10px] text-destructive border-destructive/30 bg-destructive/5">
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] text-destructive border-destructive/30 bg-destructive/5"
+                        >
                           {data.diagnosis.sentiment.negative} Negativas
                         </Badge>
                       </div>
                     </div>
-                    
+
                     <div className="grid gap-2">
-                      <div className={`text-xs p-2.5 rounded-lg border italic leading-relaxed ${
-                        data.diagnosis.sentiment.threshold_alert 
-                          ? "bg-destructive/15 border-destructive/40 text-destructive-foreground font-semibold shadow-[0_0_15px_-5px_rgba(239,68,68,0.5)]" 
-                          : "bg-accent/30 border-border/50 text-foreground"
-                      }`}>
+                      <div
+                        className={`text-xs p-2.5 rounded-lg border italic leading-relaxed ${
+                          data.diagnosis.sentiment.threshold_alert
+                            ? "bg-destructive/15 border-destructive/40 text-destructive-foreground font-semibold shadow-[0_0_15px_-5px_rgba(239,68,68,0.5)]"
+                            : "bg-accent/30 border-border/50 text-foreground"
+                        }`}
+                      >
                         {data.diagnosis.sentiment.threshold_alert && (
                           <div className="flex items-center justify-between mb-2 not-italic">
                             <div className="flex items-center gap-2">
                               <ShieldAlert className="h-4 w-4 text-destructive animate-pulse" />
-                              <span className="text-[10px] font-black uppercase tracking-tighter">GATILHO DE SEGURANÇA ATIVO</span>
+                              <span className="text-[10px] font-black uppercase tracking-tighter">
+                                GATILHO DE SEGURANÇA ATIVO
+                              </span>
                             </div>
-                            <Badge variant="destructive" className="h-4 text-[9px] px-1 animate-bounce">AÇÃO REQUERIDA</Badge>
+                            <Badge
+                              variant="destructive"
+                              className="h-4 text-[9px] px-1 animate-bounce"
+                            >
+                              AÇÃO REQUERIDA
+                            </Badge>
                           </div>
                         )}
                         "{data.diagnosis.sentiment.summary}"
                       </div>
                       <div className="flex items-start gap-2 text-xs text-muted-foreground">
                         <Info className="h-3.5 w-3.5 mt-0.5 text-neon-purple" />
-                        <span><strong>Insight:</strong> {data.diagnosis.sentiment.top_insight}</span>
+                        <span>
+                          <strong>Insight:</strong> {data.diagnosis.sentiment.top_insight}
+                        </span>
                       </div>
                     </div>
 
@@ -277,13 +316,13 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                         </div>
                         <div className="flex flex-wrap gap-1.5 p-2 rounded-lg bg-neon-lime/5 border border-neon-lime/20">
                           {data.diagnosis.sentiment.positive_terms.map((t, i) => (
-                            <Badge 
-                              key={i} 
-                              variant="outline" 
+                            <Badge
+                              key={i}
+                              variant="outline"
                               className="bg-background/50 border-neon-lime/30 text-neon-lime text-[10px] py-0 px-2"
-                              style={{ 
+                              style={{
                                 fontSize: `${Math.min(14, 10 + t.count)}px`,
-                                opacity: Math.max(0.6, Math.min(1, t.count / 5)) 
+                                opacity: Math.max(0.6, Math.min(1, t.count / 5)),
                               }}
                             >
                               {t.term}
@@ -310,8 +349,7 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                                 opacity: Math.max(0.65, Math.min(1, p.count / 4)),
                               }}
                             >
-                              “{p.phrase}”
-                              <span className="ml-1 opacity-50">({p.count})</span>
+                              “{p.phrase}”<span className="ml-1 opacity-50">({p.count})</span>
                             </Badge>
                           ))}
                         </div>
@@ -322,7 +360,8 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
               </section>
             )}
 
-            {(data?.sentiment_timeline?.length ?? 0) > 0 || (data?.sentiment_by_channel?.length ?? 0) > 0 ? (
+            {(data?.sentiment_timeline?.length ?? 0) > 0 ||
+            (data?.sentiment_by_channel?.length ?? 0) > 0 ? (
               <section className="space-y-4 rounded-xl border border-border/60 bg-card/40 p-3 backdrop-blur">
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="text-sm font-semibold">Tendências de sentimento</h3>
@@ -330,16 +369,26 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                     const tl = data?.sentiment_timeline ?? [];
                     if (tl.length < 2) return null;
                     const half = Math.floor(tl.length / 2);
-                    const avg = (arr: typeof tl) => arr.reduce((s, d) => s + d.net_score, 0) / (arr.length || 1);
+                    const avg = (arr: typeof tl) =>
+                      arr.reduce((s, d) => s + d.net_score, 0) / (arr.length || 1);
                     const delta = avg(tl.slice(half)) - avg(tl.slice(0, half));
                     const up = delta >= 0;
                     return (
                       <Badge
                         variant="outline"
-                        className={up ? "border-neon-lime/40 text-neon-lime" : "border-neon-pink/40 text-neon-pink"}
+                        className={
+                          up
+                            ? "border-neon-lime/40 text-neon-lime"
+                            : "border-neon-pink/40 text-neon-pink"
+                        }
                       >
-                        {up ? <TrendingUp className="mr-1 h-3 w-3" /> : <TrendingDown className="mr-1 h-3 w-3" />}
-                        {up ? "+" : ""}{delta.toFixed(1)} pts de humor
+                        {up ? (
+                          <TrendingUp className="mr-1 h-3 w-3" />
+                        ) : (
+                          <TrendingDown className="mr-1 h-3 w-3" />
+                        )}
+                        {up ? "+" : ""}
+                        {delta.toFixed(1)} pts de humor
                       </Badge>
                     );
                   })()}
@@ -351,16 +400,54 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                     </p>
                     <div className="h-[220px] w-full">
                       <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={data?.sentiment_timeline ?? []} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                        <AreaChart
+                          data={data?.sentiment_timeline ?? []}
+                          margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+                        >
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="var(--border)"
+                            vertical={false}
+                          />
                           <XAxis dataKey="date" tickFormatter={shortDate} {...axisProps} />
                           <YAxis {...axisProps} />
                           <Tooltip {...tooltipProps} labelFormatter={(v) => shortDate(String(v))} />
                           <Legend wrapperStyle={{ fontSize: 11 }} />
-                          <Area type="monotone" dataKey="positive" name="Positivo" stackId="s" stroke={SENTIMENT_COLORS.positive} fill={SENTIMENT_COLORS.positive} fillOpacity={0.25} />
-                          <Area type="monotone" dataKey="neutral" name="Neutro" stackId="s" stroke={SENTIMENT_COLORS.neutral} fill={SENTIMENT_COLORS.neutral} fillOpacity={0.18} />
-                          <Area type="monotone" dataKey="negative" name="Negativo" stackId="s" stroke={SENTIMENT_COLORS.negative} fill={SENTIMENT_COLORS.negative} fillOpacity={0.25} />
-                          <Line type="monotone" dataKey="net_score" name="Net score" stroke="var(--neon-purple)" strokeWidth={2} dot={false} />
+                          <Area
+                            type="monotone"
+                            dataKey="positive"
+                            name="Positivo"
+                            stackId="s"
+                            stroke={SENTIMENT_COLORS.positive}
+                            fill={SENTIMENT_COLORS.positive}
+                            fillOpacity={0.25}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="neutral"
+                            name="Neutro"
+                            stackId="s"
+                            stroke={SENTIMENT_COLORS.neutral}
+                            fill={SENTIMENT_COLORS.neutral}
+                            fillOpacity={0.18}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="negative"
+                            name="Negativo"
+                            stackId="s"
+                            stroke={SENTIMENT_COLORS.negative}
+                            fill={SENTIMENT_COLORS.negative}
+                            fillOpacity={0.25}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="net_score"
+                            name="Net score"
+                            stroke="var(--neon-purple)"
+                            strokeWidth={2}
+                            dot={false}
+                          />
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>
@@ -380,14 +467,34 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                           }))}
                           margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
                         >
-                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="var(--border)"
+                            vertical={false}
+                          />
                           <XAxis dataKey="name" {...axisProps} />
                           <YAxis {...axisProps} />
                           <Tooltip {...tooltipProps} />
                           <Legend wrapperStyle={{ fontSize: 11 }} />
-                          <Bar dataKey="positive" name="Positivo" stackId="c" fill={SENTIMENT_COLORS.positive} />
-                          <Bar dataKey="neutral" name="Neutro" stackId="c" fill={SENTIMENT_COLORS.neutral} />
-                          <Bar dataKey="negative" name="Negativo" stackId="c" fill={SENTIMENT_COLORS.negative} radius={[4, 4, 0, 0]} />
+                          <Bar
+                            dataKey="positive"
+                            name="Positivo"
+                            stackId="c"
+                            fill={SENTIMENT_COLORS.positive}
+                          />
+                          <Bar
+                            dataKey="neutral"
+                            name="Neutro"
+                            stackId="c"
+                            fill={SENTIMENT_COLORS.neutral}
+                          />
+                          <Bar
+                            dataKey="negative"
+                            name="Negativo"
+                            stackId="c"
+                            fill={SENTIMENT_COLORS.negative}
+                            radius={[4, 4, 0, 0]}
+                          />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -402,7 +509,8 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                               : "border-neon-pink/30 text-neon-pink text-[10px]"
                           }
                         >
-                          {CHANNEL_LABEL[c.channel] ?? c.channel}: {c.net_score > 0 ? "+" : ""}{c.net_score}
+                          {CHANNEL_LABEL[c.channel] ?? c.channel}: {c.net_score > 0 ? "+" : ""}
+                          {c.net_score}
                           <span className="ml-1 opacity-60">({c.total} resp.)</span>
                         </Badge>
                       ))}
@@ -424,7 +532,11 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                       layout="vertical"
                       margin={{ top: 8, right: 24, left: 24, bottom: 0 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--border)"
+                        horizontal={false}
+                      />
                       <XAxis type="number" {...axisProps} />
                       <YAxis type="category" dataKey="stage" width={110} {...axisProps} />
                       <Tooltip {...tooltipProps} />
@@ -450,15 +562,39 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
                   <div className="h-[220px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={channels} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="var(--border)"
+                          vertical={false}
+                        />
                         <XAxis dataKey="name" {...axisProps} />
                         <YAxis {...axisProps} width={44} />
                         <Tooltip {...tooltipProps} />
                         <Legend wrapperStyle={{ fontSize: 12 }} />
-                        <Bar dataKey="sent" name="Enviadas" fill="var(--neon-cyan)" radius={[6, 6, 0, 0]} />
-                        <Bar dataKey="delivered" name="Entregues" fill="var(--neon-purple)" radius={[6, 6, 0, 0]} />
-                        <Bar dataKey="replied" name="Respostas" fill="var(--neon-lime)" radius={[6, 6, 0, 0]} />
-                        <Bar dataKey="failed" name="Falhas" fill="var(--neon-pink)" radius={[6, 6, 0, 0]} />
+                        <Bar
+                          dataKey="sent"
+                          name="Enviadas"
+                          fill="var(--neon-cyan)"
+                          radius={[6, 6, 0, 0]}
+                        />
+                        <Bar
+                          dataKey="delivered"
+                          name="Entregues"
+                          fill="var(--neon-purple)"
+                          radius={[6, 6, 0, 0]}
+                        />
+                        <Bar
+                          dataKey="replied"
+                          name="Respostas"
+                          fill="var(--neon-lime)"
+                          radius={[6, 6, 0, 0]}
+                        />
+                        <Bar
+                          dataKey="failed"
+                          name="Falhas"
+                          fill="var(--neon-pink)"
+                          radius={[6, 6, 0, 0]}
+                        />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
