@@ -141,7 +141,8 @@ export function buildOpsAlerts(input: {
           id: "bounce_rate",
           level: "critical",
           title: `Hard bounce em ${fmt(bounceRate)}`,
-          detail: "Acima de 5% ameaça a reputação do domínio. Higienize a lista antes de novos envios.",
+          detail:
+            "Acima de 5% ameaça a reputação do domínio. Higienize a lista antes de novos envios.",
         });
       }
       const complaintRate = pct(d.complaint, emailEvents);
@@ -150,7 +151,8 @@ export function buildOpsAlerts(input: {
           id: "complaint_rate",
           level: "critical",
           title: `Reclamações de spam em ${fmt(complaintRate)}`,
-          detail: "O limite tolerado pelos provedores é 0,3%. Pause a campanha e revise o consentimento.",
+          detail:
+            "O limite tolerado pelos provedores é 0,3%. Pause a campanha e revise o consentimento.",
         });
       }
     }
@@ -223,7 +225,9 @@ export function buildOpsAlerts(input: {
         );
       }
       if (disabled.length > 0) {
-        parts.push(`desativado pelo operador: ${disabled.map((s) => channelLabel(s.channel)).join(", ")}`);
+        parts.push(
+          `desativado pelo operador: ${disabled.map((s) => channelLabel(s.channel)).join(", ")}`,
+        );
       }
       alerts.push({
         id: "budget_exhausted",

@@ -86,8 +86,7 @@ function classify(states: ChannelBudgetState[]): {
     if (s.status === "disabled") continue; // invariante 3
     if (limit <= 0) continue; // invariante 4
 
-    const monthlyBlocked =
-      s.monthlyLimit > 0 && s.spentMonth >= s.monthlyLimit; // invariante 5
+    const monthlyBlocked = s.monthlyLimit > 0 && s.spentMonth >= s.monthlyLimit; // invariante 5
     const needsMore = s.status === "exhausted" || (s.usageRate ?? 0) >= 80;
 
     if (needsMore) {
@@ -133,9 +132,7 @@ export function planReallocation(states: ChannelBudgetState[]): ReallocationPlan
 
   const transfers: ReallocationTransfer[] = [];
   const deltas = new Map<string, number>();
-  const limits = new Map<string, number>(
-    list.map((s) => [s.channel, Number(s.dailyLimit) || 0]),
-  );
+  const limits = new Map<string, number>(list.map((s) => [s.channel, Number(s.dailyLimit) || 0]));
   const roles = new Map<string, "donor" | "receiver">();
 
   for (const receiver of receivers) {
@@ -178,9 +175,7 @@ export function planReallocation(states: ChannelBudgetState[]): ReallocationPlan
     .sort((a, b) => b.delta - a.delta || a.channel.localeCompare(b.channel));
 
   const movedTotal = round2(transfers.reduce((acc, t) => acc + t.amount, 0));
-  const totalAfter = round2(
-    totalBefore + changes.reduce((acc, c) => acc + c.delta, 0),
-  );
+  const totalAfter = round2(totalBefore + changes.reduce((acc, c) => acc + c.delta, 0));
 
   return { transfers, changes, movedTotal, unmet, totalBefore, totalAfter };
 }

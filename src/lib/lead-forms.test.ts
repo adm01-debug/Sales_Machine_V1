@@ -77,8 +77,12 @@ describe("validateSubmission", () => {
   });
 
   it("aceita checkbox marcado em qualquer formato", () => {
-    expect(validateSubmission(fields, { ...base, newsletter: "on" }, true).values.newsletter).toBe(true);
-    expect(validateSubmission(fields, { ...base, newsletter: true }, true).values.newsletter).toBe(true);
+    expect(validateSubmission(fields, { ...base, newsletter: "on" }, true).values.newsletter).toBe(
+      true,
+    );
+    expect(validateSubmission(fields, { ...base, newsletter: true }, true).values.newsletter).toBe(
+      true,
+    );
     expect(validateSubmission(fields, base, true).values.newsletter).toBe(false);
   });
 

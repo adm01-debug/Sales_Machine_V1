@@ -38,7 +38,12 @@ export async function deliverConfirmation(
     source: "manual",
     event_type: "lead_form.confirmation_pending",
     external_id: `lead_form_confirm:${submissionId}`,
-    payload: { submission_id: submissionId, form_id: sub.form_id, email: sub.email, confirm_url: url },
+    payload: {
+      submission_id: submissionId,
+      form_id: sub.form_id,
+      email: sub.email,
+      confirm_url: url,
+    },
   });
 
   return { delivered: true, url };

@@ -93,7 +93,11 @@ function AudienceDetailPage() {
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{name || "Audiência"}</h1>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
+          <Button
+            variant="outline"
+            onClick={() => saveMutation.mutate()}
+            disabled={saveMutation.isPending}
+          >
             Salvar
           </Button>
           <Button onClick={() => refreshMutation.mutate()} disabled={refreshMutation.isPending}>
@@ -107,7 +111,8 @@ function AudienceDetailPage() {
           <CardHeader>
             <CardTitle className="text-base">Filtros do segmento</CardTitle>
             <CardDescription>
-              As regras são avaliadas no servidor sobre a base unificada — nenhum dado sai da plataforma.
+              As regras são avaliadas no servidor sobre a base unificada — nenhum dado sai da
+              plataforma.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">

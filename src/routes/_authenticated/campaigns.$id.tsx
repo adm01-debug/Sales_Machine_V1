@@ -46,7 +46,13 @@ export const Route = createFileRoute("/_authenticated/campaigns/$id")({
   component: CampaignDetailPage,
 });
 
-const OBJECTIVES = ["awareness", "engagement", "conversion", "reactivation", "announcement"] as const;
+const OBJECTIVES = [
+  "awareness",
+  "engagement",
+  "conversion",
+  "reactivation",
+  "announcement",
+] as const;
 
 interface VariantDraft {
   label: string;
@@ -162,7 +168,8 @@ function CampaignDetailPage() {
   const variantTexts = variants.flatMap((v) => [v.body, v.subject ?? ""]).filter(Boolean);
   const coverage = useQuery({
     queryKey: ["mkt", "coverage", audienceId, variantTexts.join("|")],
-    queryFn: () => fetchCoverage({ data: { audience_id: audienceId, texts: variantTexts.slice(0, 10) } }),
+    queryFn: () =>
+      fetchCoverage({ data: { audience_id: audienceId, texts: variantTexts.slice(0, 10) } }),
     enabled: !!audienceId && variantTexts.length > 0,
   });
 
@@ -239,10 +246,16 @@ function CampaignDetailPage() {
             ← Campanhas
           </Link>
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{name || "Campanha"}</h1>
-          <Badge variant="secondary" className="mt-1">{status}</Badge>
+          <Badge variant="secondary" className="mt-1">
+            {status}
+          </Badge>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
+          <Button
+            variant="outline"
+            onClick={() => saveMutation.mutate()}
+            disabled={saveMutation.isPending}
+          >
             Salvar
           </Button>
           {status === "running" ? (
@@ -459,87 +472,87 @@ function CampaignDetailPage() {
         </div>
 
         <div className="space-y-4 lg:sticky lg:top-6 lg:h-fit">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Prévia</CardTitle>
-            <CardDescription>Como o contato recebe a mensagem.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="grid gap-2 sm:grid-cols-2">
-              <Select
-                value={String(previewVariant)}
-                onValueChange={(v) => setPreviewVariant(Number(v))}
-              >
-                <SelectTrigger aria-label="Variante da prévia">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {variants.map((v, i) => (
-                    <SelectItem key={v.label} value={String(i)}>
-                      Variante {v.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={previewContactId} onValueChange={setPreviewContactId}>
-                <SelectTrigger aria-label="Contato da prévia">
-                  <SelectValue placeholder="Dados de exemplo" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(sample.data ?? []).map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.display_name || c.id.slice(0, 8)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {activeVariant ? (
-              <MessagePreview
-                channel={channel as never}
-                subject={activeVariant.subject}
-                body={activeVariant.body}
-                mediaUrl={activeVariant.media_url}
-                values={previewContact?.values}
-                contactName={previewContact?.display_name || undefined}
-              />
-            ) : null}
-
-            {coverage.data && coverage.data.coverage.length > 0 ? (
-              <div className="space-y-1 border-t border-border pt-3">
-                <p className="text-xs font-medium">
-                  Cobertura das variáveis ({coverage.data.sample} contatos)
-                </p>
-                {coverage.data.coverage.map((c) => (
-                  <div key={c.key} className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">{`{{${c.key}}}`}</span>
-                    <span className={c.pct < 80 ? "text-destructive" : ""}>{c.pct}%</span>
-                  </div>
-                ))}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Prévia</CardTitle>
+              <CardDescription>Como o contato recebe a mensagem.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Select
+                  value={String(previewVariant)}
+                  onValueChange={(v) => setPreviewVariant(Number(v))}
+                >
+                  <SelectTrigger aria-label="Variante da prévia">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {variants.map((v, i) => (
+                      <SelectItem key={v.label} value={String(i)}>
+                        Variante {v.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={previewContactId} onValueChange={setPreviewContactId}>
+                  <SelectTrigger aria-label="Contato da prévia">
+                    <SelectValue placeholder="Dados de exemplo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(sample.data ?? []).map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.display_name || c.id.slice(0, 8)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            ) : null}
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Desempenho</CardTitle>
-            <CardDescription>Envios materializados desta campanha.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <p className="text-3xl font-bold tabular-nums">{campaign.data?.stats.total ?? 0}</p>
-            <p className="text-xs text-muted-foreground">envios no total</p>
-            <ul className="space-y-1 border-t border-border pt-3">
-              {Object.entries(campaign.data?.stats.by_state ?? {}).map(([state, count]) => (
-                <li key={state} className="flex items-center justify-between">
-                  <span className="capitalize text-muted-foreground">{state}</span>
-                  <span className="tabular-nums">{count}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+              {activeVariant ? (
+                <MessagePreview
+                  channel={channel as never}
+                  subject={activeVariant.subject}
+                  body={activeVariant.body}
+                  mediaUrl={activeVariant.media_url}
+                  values={previewContact?.values}
+                  contactName={previewContact?.display_name || undefined}
+                />
+              ) : null}
+
+              {coverage.data && coverage.data.coverage.length > 0 ? (
+                <div className="space-y-1 border-t border-border pt-3">
+                  <p className="text-xs font-medium">
+                    Cobertura das variáveis ({coverage.data.sample} contatos)
+                  </p>
+                  {coverage.data.coverage.map((c) => (
+                    <div key={c.key} className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">{`{{${c.key}}}`}</span>
+                      <span className={c.pct < 80 ? "text-destructive" : ""}>{c.pct}%</span>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Desempenho</CardTitle>
+              <CardDescription>Envios materializados desta campanha.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              <p className="text-3xl font-bold tabular-nums">{campaign.data?.stats.total ?? 0}</p>
+              <p className="text-xs text-muted-foreground">envios no total</p>
+              <ul className="space-y-1 border-t border-border pt-3">
+                {Object.entries(campaign.data?.stats.by_state ?? {}).map(([state, count]) => (
+                  <li key={state} className="flex items-center justify-between">
+                    <span className="capitalize text-muted-foreground">{state}</span>
+                    <span className="tabular-nums">{count}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
         </div>
       </div>
 

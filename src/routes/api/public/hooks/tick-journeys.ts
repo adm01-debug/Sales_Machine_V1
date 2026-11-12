@@ -3,7 +3,9 @@ import {
   decideJourneyAction,
   type JourneyEdge,
   type JourneyNode,
+  type JourneyNodeKind,
 } from "@/lib/journey-engine";
+import type { TableClient } from "@/lib/table-client";
 
 /**
  * Worker de jornadas (Automação 360) — chamado por pg_cron a cada minuto.
@@ -17,6 +19,20 @@ import {
  * Regra inviolável: `check_consent` é avaliado ANTES de qualquer despacho e
  * falha do RPC adia (nunca envia às cegas).
  */
+
+interface JourneyNodeRow {
+  id: string;
+  kind: JourneyNodeKind;
+  label: string | null;
+  config: Record<string, unknown> | null;
+}
+
+interface JourneyEdgeRow {
+  from_node_id: string;
+  to_node_id: string;
+  branch: string;
+  ordinal: number | null;
+}
 
 const BATCH_SIZE = 25;
 /** Nós atravessados por tick numa mesma inscrição (protege contra grafo patológico). */
@@ -36,8 +52,11 @@ export const Route = createFileRoute("/api/public/hooks/tick-journeys")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const db = supabaseAdmin as never as {
-          from: (t: string) => any;
-          rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>;
+          from: TableClient["from"];
+          rpc: (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => Promise<{ data: unknown; error: { message: string } | null }>;
         };
         const nowIso = new Date().toISOString();
 
@@ -93,9 +112,7 @@ export const Route = createFileRoute("/api/public/hooks/tick-journeys")({
 
           const { data: journey } = await db
             .from("journeys")
-            .select(
-              "id, name, status, requires_human_approval, send_window_start, send_window_end",
-            )
+            .select("id, name, status, requires_human_approval, send_window_start, send_window_end")
             .eq("id", enrollment.journey_id)
             .maybeSingle();
 
@@ -121,13 +138,13 @@ export const Route = createFileRoute("/api/public/hooks/tick-journeys")({
               .eq("journey_id", journey.id),
           ]);
 
-          const nodes: JourneyNode[] = (nodeRows ?? []).map((n: any) => ({
+          const nodes: JourneyNode[] = (nodeRows ?? []).map((n: JourneyNodeRow) => ({
             id: n.id,
             kind: n.kind,
             label: n.label ?? undefined,
             config: (n.config ?? {}) as Record<string, unknown>,
           }));
-          const edges: JourneyEdge[] = (edgeRows ?? []).map((e: any) => ({
+          const edges: JourneyEdge[] = (edgeRows ?? []).map((e: JourneyEdgeRow) => ({
             from_node_id: e.from_node_id,
             to_node_id: e.to_node_id,
             branch: e.branch,
@@ -326,9 +343,8 @@ export const Route = createFileRoute("/api/public/hooks/tick-journeys")({
             }
 
             // --- envio / gate humano ---------------------------------------
-            const { resolveJourneyMessage, dispatchJourneyMessage } = await import(
-              "@/lib/journey-dispatch.server"
-            );
+            const { resolveJourneyMessage, dispatchJourneyMessage } =
+              await import("@/lib/journey-dispatch.server");
             const contact = {
               id: entity.id,
               display_name: entity.display_name ?? null,

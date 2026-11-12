@@ -35,9 +35,15 @@ function DossierPage() {
         <header className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">{name ?? id}</h1>
-            <p className="text-sm text-muted-foreground">Dossiê unificado — LUX · SINGU · FATOR X</p>
+            <p className="text-sm text-muted-foreground">
+              Dossiê unificado — LUX · SINGU · FATOR X
+            </p>
           </div>
-          <Link to="/companies"><Button variant="outline" size="sm">Voltar</Button></Link>
+          <Link to="/companies">
+            <Button variant="outline" size="sm">
+              Voltar
+            </Button>
+          </Link>
         </header>
 
         {q.isLoading ? (
@@ -52,9 +58,18 @@ function DossierPage() {
                 <CardDescription>Mapeamento cross-system</CardDescription>
               </CardHeader>
               <CardContent className="space-y-1 text-sm">
-                <p><span className="text-muted-foreground">Entity ID:</span> <code className="text-xs">{q.data.entity?.id}</code></p>
-                <p><span className="text-muted-foreground">SINGU contact:</span> {q.data.entity?.singu_id ?? <Badge variant="outline">não vinculado</Badge>}</p>
-                <p><span className="text-muted-foreground">FATOR X thread:</span> {q.data.entity?.fatorx_thread_id ?? <Badge variant="outline">sem thread</Badge>}</p>
+                <p>
+                  <span className="text-muted-foreground">Entity ID:</span>{" "}
+                  <code className="text-xs">{q.data.entity?.id}</code>
+                </p>
+                <p>
+                  <span className="text-muted-foreground">SINGU contact:</span>{" "}
+                  {q.data.entity?.singu_id ?? <Badge variant="outline">não vinculado</Badge>}
+                </p>
+                <p>
+                  <span className="text-muted-foreground">FATOR X thread:</span>{" "}
+                  {q.data.entity?.fatorx_thread_id ?? <Badge variant="outline">sem thread</Badge>}
+                </p>
               </CardContent>
             </Card>
 
@@ -105,7 +120,10 @@ function DossierPage() {
                 ) : (
                   <ul className="space-y-1 text-sm">
                     {q.data.recent_touchpoints.map((t) => (
-                      <li key={t.id} className="flex items-center justify-between border-b py-1 last:border-0">
+                      <li
+                        key={t.id}
+                        className="flex items-center justify-between border-b py-1 last:border-0"
+                      >
                         <span className="flex items-center gap-2">
                           <Badge variant="outline">{t.channel}</Badge>
                           <span className="text-xs text-muted-foreground">{t.direction}</span>

@@ -27,9 +27,9 @@ export function PreflightHistoryChart({ templateId }: PreflightHistoryChartProps
     enabled: !!templateId,
   });
 
-  if (isLoading || (history as any[]).length < 2) return null;
+  if (isLoading || history.length < 2) return null;
 
-  const chartData = (history as any[]).map((h: any) => ({
+  const chartData = history.map((h) => ({
     date: new Date(h.created_at).getTime(),
     score: h.score,
     formattedDate: format(new Date(h.created_at), "dd/MM HH:mm", { locale: ptBR }),

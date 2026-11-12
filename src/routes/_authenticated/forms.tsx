@@ -5,7 +5,12 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ExternalLink, Plus } from "lucide-react";
 import { listLeadForms, saveLeadForm } from "@/lib/lead-forms.functions";
-import { DEFAULT_FIELDS, LEAD_FORM_STATUS_LABEL, slugify, type LeadFormStatus } from "@/lib/lead-forms";
+import {
+  DEFAULT_FIELDS,
+  LEAD_FORM_STATUS_LABEL,
+  slugify,
+  type LeadFormStatus,
+} from "@/lib/lead-forms";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

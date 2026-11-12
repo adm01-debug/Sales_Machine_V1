@@ -9,7 +9,9 @@ import { createFakeSupabase, resetFakeIds, type Row, type Tables } from "@/test/
 
 const sent: Array<{ kind: string; message: string }> = [];
 const singuClient = {
-  sendWhatsapp: vi.fn(async (i: { message: string }) => sent.push({ kind: "whatsapp", message: i.message })),
+  sendWhatsapp: vi.fn(async (i: { message: string }) =>
+    sent.push({ kind: "whatsapp", message: i.message }),
+  ),
   sendSms: vi.fn(async (i: { message: string }) => sent.push({ kind: "sms", message: i.message })),
   sendMms: vi.fn(async (i: { message: string }) => sent.push({ kind: "mms", message: i.message })),
   sendRcs: vi.fn(async (i: { message: string }) => sent.push({ kind: "rcs", message: i.message })),
@@ -32,7 +34,9 @@ vi.mock("@/lib/email-tracking.server", () => ({
 
 const APIKEY = "test-anon-key";
 
-function baseTables(over: { campaign?: Row; send?: Row; variant?: Row; entity?: Row } = {}): Tables {
+function baseTables(
+  over: { campaign?: Row; send?: Row; variant?: Row; entity?: Row } = {},
+): Tables {
   return {
     marketing_campaigns: [
       {
@@ -71,7 +75,13 @@ function baseTables(over: { campaign?: Row; send?: Row; variant?: Row; entity?: 
       },
     ],
     entity_map: [
-      { id: "e1", display_name: "Ana", singu_id: "sg1", metadata: { email: "ana@x.com" }, ...over.entity },
+      {
+        id: "e1",
+        display_name: "Ana",
+        singu_id: "sg1",
+        metadata: { email: "ana@x.com" },
+        ...over.entity,
+      },
     ],
     contact_touchpoints: [],
   };
@@ -125,7 +135,10 @@ describe("tick-marketing (integração)", () => {
     expect(out).toMatchObject({ ok: true, processed: 1, failed: 0, skipped_consent: 0 });
     expect(sent).toEqual([{ kind: "whatsapp", message: "Olá Ana, temos novidades." }]);
     expect(fake.tables.campaign_sends[0]).toMatchObject({ state: "sent", last_error: null });
-    expect(fake.tables.contact_touchpoints[0]).toMatchObject({ status: "sent", channel: "whatsapp" });
+    expect(fake.tables.contact_touchpoints[0]).toMatchObject({
+      status: "sent",
+      channel: "whatsapp",
+    });
   });
 
   it("bloqueia o envio quando há opt-out registrado (LGPD)", async () => {
@@ -152,12 +165,16 @@ describe("tick-marketing (integração)", () => {
     const out = await tick();
     expect(out).toMatchObject({ processed: 0, capped: 1 });
     expect(sent).toHaveLength(0);
-    expect(fake.tables.campaign_sends.find((s) => s.id === "s1")).toMatchObject({ state: "queued" });
+    expect(fake.tables.campaign_sends.find((s) => s.id === "s1")).toMatchObject({
+      state: "queued",
+    });
   });
 
   it("ativa campanhas agendadas cuja janela já abriu", async () => {
     fake = createFakeSupabase({
-      tables: baseTables({ campaign: { status: "scheduled", scheduled_at: "2000-01-01T00:00:00.000Z" } }),
+      tables: baseTables({
+        campaign: { status: "scheduled", scheduled_at: "2000-01-01T00:00:00.000Z" },
+      }),
       ...allow,
     });
     const out = await tick();
@@ -252,7 +269,10 @@ describe("tick-marketing (integração)", () => {
   });
 
   it("usa o adapter social em campanhas de LinkedIn", async () => {
-    fake = createFakeSupabase({ tables: baseTables({ campaign: { channel: "linkedin" } }), ...allow });
+    fake = createFakeSupabase({
+      tables: baseTables({ campaign: { channel: "linkedin" } }),
+      ...allow,
+    });
     const out = await tick();
     expect(out).toMatchObject({ processed: 1 });
     expect(socialSend).toHaveBeenCalledTimes(1);
@@ -263,7 +283,8 @@ describe("tick-marketing (integração)", () => {
     fake = createFakeSupabase({
       tables: baseTables(),
       ...allow,
-      onUpdate: (table, patch) => (table === "campaign_sends" && patch.state === "sending" ? false : undefined),
+      onUpdate: (table, patch) =>
+        table === "campaign_sends" && patch.state === "sending" ? false : undefined,
     });
     const out = await tick();
     expect(out).toMatchObject({ processed: 0 });

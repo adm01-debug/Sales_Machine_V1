@@ -7,7 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Route = createFileRoute("/confirmar")({
   validateSearch: (search: Record<string, unknown>) => ({
-    token: z.string().catch("").parse(search.token ?? ""),
+    token: z
+      .string()
+      .catch("")
+      .parse(search.token ?? ""),
   }),
   head: () => ({
     meta: [

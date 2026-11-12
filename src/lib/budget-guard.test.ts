@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  buildBudgetSnapshot,
-  evaluateChannelBudget,
-  type ChannelBudget,
-} from "./budget-guard";
+import { buildBudgetSnapshot, evaluateChannelBudget, type ChannelBudget } from "./budget-guard";
 
 const budget = (over: Partial<ChannelBudget> = {}): ChannelBudget => ({
   channel: "sms",
@@ -100,7 +96,10 @@ describe("buildBudgetSnapshot", () => {
 
   it("ordena do maior consumo relativo para o menor", () => {
     const snap = buildBudgetSnapshot(
-      [budget({ channel: "a", daily_limit_brl: 100 }), budget({ channel: "b", daily_limit_brl: 100 })],
+      [
+        budget({ channel: "a", daily_limit_brl: 100 }),
+        budget({ channel: "b", daily_limit_brl: 100 }),
+      ],
       { a: { spentToday: 10 }, b: { spentToday: 90 } },
     );
     expect(snap.states[0].channel).toBe("b");

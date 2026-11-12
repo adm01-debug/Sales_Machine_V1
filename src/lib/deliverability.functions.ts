@@ -18,16 +18,24 @@ export const checkEmailDns = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ domain: z.string().min(3).max(253) }).parse(d))
   .handler(async ({ data }) => {
-    const domain = data.domain.toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+    const domain = data.domain
+      .toLowerCase()
+      .replace(/^https?:\/\//, "")
+      .replace(/\/.*$/, "");
     const [spfAns, dmarcAns, dkimAns] = await Promise.all([
       dohQuery(domain, "TXT"),
       dohQuery(`_dmarc.${domain}`, "TXT"),
       dohQuery(`default._domainkey.${domain}`, "TXT"),
     ]);
 
-    const spfRecord = spfAns.map((a) => a.data.replace(/"/g, "")).find((v) => v.startsWith("v=spf1"));
-    const dmarcRecord = dmarcAns.map((a) => a.data.replace(/"/g, "")).find((v) => v.startsWith("v=DMARC1"));
-    const dkimRecord = dkimAns.map((a) => a.data.replace(/"/g, "")).find((v) => v.includes("v=DKIM1")) ?? null;
+    const spfRecord = spfAns
+      .map((a) => a.data.replace(/"/g, ""))
+      .find((v) => v.startsWith("v=spf1"));
+    const dmarcRecord = dmarcAns
+      .map((a) => a.data.replace(/"/g, ""))
+      .find((v) => v.startsWith("v=DMARC1"));
+    const dkimRecord =
+      dkimAns.map((a) => a.data.replace(/"/g, "")).find((v) => v.includes("v=DKIM1")) ?? null;
 
     return {
       domain,
@@ -223,7 +231,8 @@ export const sendTestFuxicoWebhook = createServerFn({ method: "POST" })
       return {
         ok: false as const,
         step: "config" as const,
-        message: "FUXICO_WEBHOOK_SECRET não configurado — não é possível assinar o evento de teste.",
+        message:
+          "FUXICO_WEBHOOK_SECRET não configurado — não é possível assinar o evento de teste.",
         status: null as number | null,
         persisted: false,
         externalId: null as string | null,
@@ -328,7 +337,10 @@ export const getCampaignDeliverabilityReport = createServerFn({ method: "GET" })
     const sendsByCampaign = new Map<string | null, number>();
     for (const tp of touchpoints ?? []) {
       campaignByTouchpoint.set(tp.id, tp.campaign_id ?? null);
-      sendsByCampaign.set(tp.campaign_id ?? null, (sendsByCampaign.get(tp.campaign_id ?? null) ?? 0) + 1);
+      sendsByCampaign.set(
+        tp.campaign_id ?? null,
+        (sendsByCampaign.get(tp.campaign_id ?? null) ?? 0) + 1,
+      );
     }
 
     // 2) Eventos de entregabilidade no período.
@@ -339,12 +351,26 @@ export const getCampaignDeliverabilityReport = createServerFn({ method: "GET" })
       .limit(50000);
     if (evErr) throw new Error(evErr.message);
 
-    type Counts = { opened: number; clicked: number; hard_bounce: number; complaint: number; unsubscribe: number };
-    const empty = (): Counts => ({ opened: 0, clicked: 0, hard_bounce: 0, complaint: 0, unsubscribe: 0 });
+    type Counts = {
+      opened: number;
+      clicked: number;
+      hard_bounce: number;
+      complaint: number;
+      unsubscribe: number;
+    };
+    const empty = (): Counts => ({
+      opened: 0,
+      clicked: 0,
+      hard_bounce: 0,
+      complaint: 0,
+      unsubscribe: 0,
+    });
     const byCampaign = new Map<string | null, Counts>();
 
     for (const ev of events ?? []) {
-      const campaignId = ev.touchpoint_id ? (campaignByTouchpoint.get(ev.touchpoint_id) ?? null) : null;
+      const campaignId = ev.touchpoint_id
+        ? (campaignByTouchpoint.get(ev.touchpoint_id) ?? null)
+        : null;
       const bucket = byCampaign.get(campaignId) ?? empty();
       if (ev.event_type in bucket) bucket[ev.event_type as keyof Counts] += 1;
       byCampaign.set(campaignId, bucket);
@@ -370,7 +396,9 @@ export const getCampaignDeliverabilityReport = createServerFn({ method: "GET" })
       const sends = sendsByCampaign.get(campaignId) ?? 0;
       return {
         campaignId,
-        campaignName: campaignId ? (names.get(campaignId) ?? "Campanha removida") : "Sem campanha (avulso)",
+        campaignName: campaignId
+          ? (names.get(campaignId) ?? "Campanha removida")
+          : "Sem campanha (avulso)",
         sends,
         opened: c.opened,
         clicked: c.clicked,

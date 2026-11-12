@@ -48,10 +48,14 @@ function OverviewPage() {
         </div>
         <div className="flex gap-2">
           <Link to="/audiences">
-            <Button variant="outline" size="sm">Audiências</Button>
+            <Button variant="outline" size="sm">
+              Audiências
+            </Button>
           </Link>
           <Link to="/campaigns">
-            <Button variant="premium" size="sm">Campanhas</Button>
+            <Button variant="premium" size="sm">
+              Campanhas
+            </Button>
           </Link>
         </div>
       </header>

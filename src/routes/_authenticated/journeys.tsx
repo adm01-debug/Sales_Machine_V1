@@ -24,7 +24,8 @@ export const Route = createFileRoute("/_authenticated/journeys")({
       { property: "og:title", content: "Jornadas automatizadas · Sales Machine" },
       {
         property: "og:description",
-        content: "Automação 360: gatilhos, condições, testes A/B e envio multicanal com guardrails.",
+        content:
+          "Automação 360: gatilhos, condições, testes A/B e envio multicanal com guardrails.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

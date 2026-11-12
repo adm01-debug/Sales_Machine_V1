@@ -10,15 +10,14 @@
  */
 
 import { summarizeSpend, type SpendRow, type SpendSummary } from "./cost-model";
+import type { TableClient } from "./table-client";
 
 export const SPEND_PAGE_SIZE = 1_000;
 /** Teto de linhas varridas: protege memória/tempo do worker. */
 export const SPEND_MAX_ROWS = 50_000;
 export const SPEND_DEFAULT_DAYS = 30;
 
-export interface SpendClient {
-  from: (table: string) => any;
-}
+export type SpendClient = TableClient;
 
 interface TouchpointRow {
   id: string;

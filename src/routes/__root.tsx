@@ -78,17 +78,37 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Sales Machine · Prospecção orquestrada com IA" },
-      { name: "description", content: "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS." },
+      {
+        name: "description",
+        content:
+          "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS.",
+      },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "Sales Machine · Prospecção orquestrada com IA" },
-      { property: "og:description", content: "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS." },
+      {
+        property: "og:description",
+        content:
+          "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Sales Machine · Prospecção orquestrada com IA" },
-      { name: "twitter:description", content: "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1cf748bc-5a31-4455-b8cc-43e10ce23642/id-preview-fec237a4--c4a241c3-45be-40f8-862c-f2e559cf55fe.lovable.app-1784624440109.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1cf748bc-5a31-4455-b8cc-43e10ce23642/id-preview-fec237a4--c4a241c3-45be-40f8-862c-f2e559cf55fe.lovable.app-1784624440109.png" },
+      {
+        name: "twitter:description",
+        content:
+          "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1cf748bc-5a31-4455-b8cc-43e10ce23642/id-preview-fec237a4--c4a241c3-45be-40f8-862c-f2e559cf55fe.lovable.app-1784624440109.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1cf748bc-5a31-4455-b8cc-43e10ce23642/id-preview-fec237a4--c4a241c3-45be-40f8-862c-f2e559cf55fe.lovable.app-1784624440109.png",
+      },
     ],
     links: [
       {
@@ -112,7 +132,8 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body className="antialiased">
         <div className="sr-only">
-          Inclua filtros no drill-down para eu segmentar resultados por Positivo/Neutro/Negativo e comparar métricas por canal e etapa.
+          Inclua filtros no drill-down para eu segmentar resultados por Positivo/Neutro/Negativo e
+          comparar métricas por canal e etapa.
         </div>
 
         {children}

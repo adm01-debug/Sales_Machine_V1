@@ -127,7 +127,15 @@ describe("token de descadastro", () => {
 
 describe("detectStopWord", () => {
   it("detecta palavras de parada isoladas ou em frases", () => {
-    for (const t of ["PARE", "pare", "  parar ", "Stop", "quero cancelar", "SAIR!", "Unsubscribe"]) {
+    for (const t of [
+      "PARE",
+      "pare",
+      "  parar ",
+      "Stop",
+      "quero cancelar",
+      "SAIR!",
+      "Unsubscribe",
+    ]) {
       expect(detectStopWord(t)).toBe(true);
     }
   });
