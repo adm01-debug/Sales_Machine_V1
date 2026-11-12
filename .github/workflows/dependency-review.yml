@@ -1,0 +1,33 @@
+name: Dependency Review
+
+# Barra, no próprio PR, dependência NOVA com vulnerabilidade de severidade alta ou crítica.
+# Só analisa o que o PR muda (não a árvore inteira) — dívida antiga não trava PR.
+# Licenças não bloqueiam aqui (evita barrar dependência legítima com licença fora de uma lista fixa).
+# Mesmo padrão do gate 0.6 do Promo_Gifts_V4 (ações fixadas por SHA).
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    # Dependabot e forks: o token restrito não chama a API de comparação de dependências.
+    if: github.actor != 'dependabot[bot]' && !github.event.pull_request.head.repo.fork
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Falha em dependência nova com CVE de severidade alta ou crítica
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
