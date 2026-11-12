@@ -11,7 +11,9 @@ export const getPublicLeadForm = createServerFn({ method: "GET" })
     const { publicDb } = await import("@/lib/supabase-public.server");
     const { data: form } = await publicDb()
       .from("lead_forms")
-      .select("slug, title, description, fields, submit_label, success_message, consent_text, double_opt_in")
+      .select(
+        "slug, title, description, fields, submit_label, success_message, consent_text, double_opt_in",
+      )
       .eq("slug", data.slug)
       .eq("status", "published")
       .maybeSingle();
@@ -60,7 +62,9 @@ export const listLeadForms = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("lead_forms")
-      .select("id, slug, name, status, channel, double_opt_in, journey_id, submission_count, updated_at")
+      .select(
+        "id, slug, name, status, channel, double_opt_in, journey_id, submission_count, updated_at",
+      )
       .neq("status", "archived")
       .order("updated_at", { ascending: false })
       .limit(100);
@@ -96,7 +100,10 @@ export const saveLeadForm = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const row = { ...data.form, created_by: context.userId };
     if (data.id) {
-      const { error } = await context.supabase.from("lead_forms").update(data.form).eq("id", data.id);
+      const { error } = await context.supabase
+        .from("lead_forms")
+        .update(data.form)
+        .eq("id", data.id);
       if (error) throw new Error(error.message);
       return { id: data.id };
     }

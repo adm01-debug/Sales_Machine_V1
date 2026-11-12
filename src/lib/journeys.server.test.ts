@@ -11,11 +11,16 @@ const graph = (over: Partial<JourneyGraphInput> = {}): JourneyGraphInput =>
     settings: { name: "Boas-vindas", description: null },
     nodes: [
       { id: "n-trigger", kind: "trigger", label: "Entrada", config: {} },
-      { id: "tmp-send", kind: "send", label: "Oi", config: {
-        channel: "email",
-        subject: "Bem-vindo à {{empresa|sua empresa}}",
-        body: "Olá {{primeiro_nome|tudo bem}}, obrigado por se cadastrar. Preparei um material com três formas de reduzir seu custo de aquisição em até 40%. Se preferir não receber mais, clique para descadastrar.",
-      } },
+      {
+        id: "tmp-send",
+        kind: "send",
+        label: "Oi",
+        config: {
+          channel: "email",
+          subject: "Bem-vindo à {{empresa|sua empresa}}",
+          body: "Olá {{primeiro_nome|tudo bem}}, obrigado por se cadastrar. Preparei um material com três formas de reduzir seu custo de aquisição em até 40%. Se preferir não receber mais, clique para descadastrar.",
+        },
+      },
       { id: "n-exit", kind: "exit", label: "Fim", config: {} },
     ],
     edges: [
@@ -127,14 +132,28 @@ describe("saveJourneyGraph", () => {
 
   it("salva rascunho inválido, mas devolve os problemas encontrados", async () => {
     const db = makeDb();
-    const g = graph({ nodes: [{ id: "n-trigger", kind: "trigger", label: "Só o gatilho", config: {}, position_x: 0, position_y: 0 }], edges: [] });
+    const g = graph({
+      nodes: [
+        {
+          id: "n-trigger",
+          kind: "trigger",
+          label: "Só o gatilho",
+          config: {},
+          position_x: 0,
+          position_y: 0,
+        },
+      ],
+      edges: [],
+    });
     const res = await saveJourneyGraph(db as never, g);
     expect(res.issues.some((i) => i.level === "error")).toBe(true);
     expect(db.tables.journey_nodes).toHaveLength(1);
   });
 
   it("propaga erro do banco em vez de fingir sucesso", async () => {
-    const db = createFakeSupabase({ tables: { journeys: [], journey_nodes: [], journey_edges: [] } });
+    const db = createFakeSupabase({
+      tables: { journeys: [], journey_nodes: [], journey_edges: [] },
+    });
     const original = db.from;
     db.from = ((table: string) => {
       const b = original(table);

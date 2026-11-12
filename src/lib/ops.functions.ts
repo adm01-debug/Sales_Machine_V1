@@ -2,18 +2,18 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { summarizeSpend, type SpendRow } from "@/lib/cost-model";
+import type { Tables } from "@/integrations/supabase/types";
+import type { ReallocationPlan, ReallocationTransfer } from "@/lib/budget-reallocation";
 
-/** 
+/**
  * Saúde do pipeline: estados agregados de envios e métricas de 24h/7d.
  */
 export const getPipelineHealth = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     // Busca agregada de estados reais da tabela campaign_sends.
-    const { data: states, error } = await context.supabase
-      .from("campaign_sends")
-      .select("state");
-    
+    const { data: states, error } = await context.supabase.from("campaign_sends").select("state");
+
     if (error) throw new Error(error.message);
 
     const counts = (states ?? []).reduce((acc: Record<string, number>, s) => {
@@ -25,9 +25,21 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
     const since7d = new Date(Date.now() - 7 * 86400_000).toISOString();
 
     const [sent24, replies24, optOuts7] = await Promise.all([
-      context.supabase.from("contact_touchpoints").select("id", { count: "exact", head: true }).eq("direction", "outbound").gte("created_at", since24h),
-      context.supabase.from("contact_touchpoints").select("id", { count: "exact", head: true }).eq("direction", "inbound").gte("created_at", since24h),
-      context.supabase.from("consent_ledger").select("id", { count: "exact", head: true }).eq("status", "opted_out").gte("created_at", since7d)
+      context.supabase
+        .from("contact_touchpoints")
+        .select("id", { count: "exact", head: true })
+        .eq("direction", "outbound")
+        .gte("created_at", since24h),
+      context.supabase
+        .from("contact_touchpoints")
+        .select("id", { count: "exact", head: true })
+        .eq("direction", "inbound")
+        .gte("created_at", since24h),
+      context.supabase
+        .from("consent_ledger")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "opted_out")
+        .gte("created_at", since7d),
     ]);
 
     return {
@@ -42,7 +54,7 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
       sent_24h: sent24.count ?? 0,
       replies_24h: replies24.count ?? 0,
       opt_outs_7d: optOuts7.count ?? 0,
-      refreshed_at: new Date().toISOString()
+      refreshed_at: new Date().toISOString(),
     };
   });
 
@@ -63,7 +75,7 @@ export const getDeliverabilityStats = createServerFn({ method: "GET" })
 
     const stats = { opened: 0, clicked: 0, hard_bounce: 0, complaint: 0 };
     for (const row of data ?? []) {
-      const payload = row.payload as any;
+      const payload = row.payload as { opened?: unknown; clicked?: unknown } | null;
       if (payload?.opened) stats.opened++;
       if (payload?.clicked) stats.clicked++;
       // Usar comparação de string direta já que o enum TS é mais restrito que os dados reais possíveis.
@@ -80,7 +92,7 @@ export const getDeliverabilityStats = createServerFn({ method: "GET" })
 export const getAlertNotifications = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async () => {
-    return [] as any[];
+    return [] as Tables<"ops_alert_notifications">[];
   });
 
 /**
@@ -91,14 +103,30 @@ export const getComplianceStats = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const since7d = new Date(Date.now() - 7 * 86400_000).toISOString();
     const [blocked, optIns, optOuts, channelStats] = await Promise.all([
-      context.supabase.from("compliance_violations_log").select("id", { count: "exact", head: true }).eq("severity", "error").gte("created_at", since7d),
-      context.supabase.from("consent_ledger").select("id", { count: "exact", head: true }).eq("status", "opted_in").gte("created_at", since7d),
-      context.supabase.from("consent_ledger").select("id", { count: "exact", head: true }).eq("status", "opted_out").gte("created_at", since7d),
-      context.supabase.from("consent_ledger").select("channel").eq("status", "opted_out").gte("created_at", since7d)
+      context.supabase
+        .from("compliance_violations_log")
+        .select("id", { count: "exact", head: true })
+        .eq("severity", "error")
+        .gte("created_at", since7d),
+      context.supabase
+        .from("consent_ledger")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "opted_in")
+        .gte("created_at", since7d),
+      context.supabase
+        .from("consent_ledger")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "opted_out")
+        .gte("created_at", since7d),
+      context.supabase
+        .from("consent_ledger")
+        .select("channel")
+        .eq("status", "opted_out")
+        .gte("created_at", since7d),
     ]);
 
     const optOutsByChannel: Record<string, number> = {};
-    for (const row of (channelStats.data ?? [])) {
+    for (const row of channelStats.data ?? []) {
       optOutsByChannel[row.channel] = (optOutsByChannel[row.channel] ?? 0) + 1;
     }
 
@@ -106,7 +134,7 @@ export const getComplianceStats = createServerFn({ method: "GET" })
       blockedByConsent: blocked.count ?? 0,
       optIns7d: optIns.count ?? 0,
       optOuts7d: optOuts.count ?? 0,
-      optOutsByChannel
+      optOutsByChannel,
     };
   });
 
@@ -128,7 +156,10 @@ export const requeueDeadLetterTargets = createServerFn({ method: "POST" })
     const { error: updErr } = await context.supabase
       .from("campaign_sends")
       .update({ state: "queued", next_run_at: new Date().toISOString(), attempts: 0 })
-      .in("entity_id", targets.map(t => t.entity_id));
+      .in(
+        "entity_id",
+        targets.map((t) => t.entity_id),
+      );
 
     if (updErr) throw new Error(updErr.message);
     return { requeued: targets.length };
@@ -144,12 +175,12 @@ export const getBudgetReport = createServerFn({ method: "GET" })
       .from("channel_budgets")
       .select("*")
       .order("channel");
-    
+
     if (error) throw new Error(error.message);
 
-    const states = (data ?? []).map(b => ({
+    const states = (data ?? []).map((b) => ({
       channel: b.channel,
-      status: b.enabled ? "ok" : ("disabled" as const),
+      status: b.enabled ? ("ok" as const) : ("disabled" as const),
       dailyLimit: b.daily_limit_brl,
       monthlyLimit: b.monthly_limit_brl,
       spentToday: 0,
@@ -157,7 +188,7 @@ export const getBudgetReport = createServerFn({ method: "GET" })
       usageRate: 0,
       remainingToday: b.daily_limit_brl,
       blocked: !b.enabled,
-      reason: b.note
+      reason: b.note,
     }));
 
     return {
@@ -165,7 +196,7 @@ export const getBudgetReport = createServerFn({ method: "GET" })
       totalDailyLimit: states.reduce((acc, s) => acc + s.dailyLimit, 0),
       scannedRows: 0,
       truncated: false,
-      states: states as any[]
+      states,
     };
   });
 
@@ -184,10 +215,10 @@ export const getSpendBreakdown = createServerFn({ method: "POST" })
 
     if (error) throw new Error(error.message);
 
-    const spendRows: SpendRow[] = (data ?? []).map(r => ({
+    const spendRows: SpendRow[] = (data ?? []).map((r) => ({
       channel: r.channel,
       status: r.status,
-      count: 1
+      count: 1,
     }));
 
     const summary = summarizeSpend(spendRows);
@@ -195,7 +226,7 @@ export const getSpendBreakdown = createServerFn({ method: "POST" })
       ...summary,
       scannedRows: spendRows.length,
       days,
-      truncated: false
+      truncated: false,
     };
   });
 
@@ -204,24 +235,27 @@ export const getSpendBreakdown = createServerFn({ method: "POST" })
  */
 export const updateChannelBudget = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => 
-    z.object({ 
-      channel: z.string(), 
-      dailyLimit: z.number(), 
-      monthlyLimit: z.number(), 
-      enabled: z.boolean() 
-    }).parse(input)
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        channel: z.string(),
+        dailyLimit: z.number(),
+        monthlyLimit: z.number(),
+        enabled: z.boolean(),
+      })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
-      .from("channel_budgets")
-      .upsert({
+    const { error } = await context.supabase.from("channel_budgets").upsert(
+      {
         channel: data.channel,
         daily_limit_brl: data.dailyLimit,
         monthly_limit_brl: data.monthlyLimit,
         enabled: data.enabled,
-        updated_at: new Date().toISOString()
-      }, { onConflict: "channel" });
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "channel" },
+    );
 
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -247,15 +281,17 @@ export const getBudgetReallocationHistory = createServerFn({ method: "GET" })
       .select("*")
       .order("applied_at", { ascending: false })
       .limit(10);
-    
+
     if (error) throw new Error(error.message);
 
-    return (data ?? []).map(r => ({
+    return (data ?? []).map((r) => ({
       id: r.id,
       appliedAt: r.applied_at,
       movedTotal: r.moved_total_brl,
       channelsChanged: r.channels_changed,
-      transfers: r.transfers as any[]
+      transfers: (Array.isArray(r.transfers)
+        ? r.transfers
+        : []) as unknown as ReallocationTransfer[],
     }));
   });
 
@@ -264,13 +300,14 @@ export const getBudgetReallocationHistory = createServerFn({ method: "GET" })
  */
 export const getBudgetReallocationPlan = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async () => {
-    return { 
-      transfers: [], 
-      totalBefore: 0, 
-      totalAfter: 0, 
-      changes: [], 
-      unmet: [] 
+  .handler(async (): Promise<ReallocationPlan> => {
+    return {
+      transfers: [],
+      totalBefore: 0,
+      totalAfter: 0,
+      movedTotal: 0,
+      changes: [],
+      unmet: [],
     };
   });
 
@@ -279,11 +316,13 @@ export const getBudgetReallocationPlan = createServerFn({ method: "GET" })
  */
 export const getManualInterventions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => 
-    z.object({ 
-      days: z.number().nullable(), 
-      targetId: z.string().nullable() 
-    }).parse(input)
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        days: z.number().nullable(),
+        targetId: z.string().nullable(),
+      })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     let query = context.supabase
@@ -310,11 +349,13 @@ export const getManualInterventions = createServerFn({ method: "POST" })
  */
 export const exportManualInterventions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => 
-    z.object({ 
-      days: z.number().nullable(), 
-      targetId: z.string().nullable() 
-    }).parse(input)
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        days: z.number().nullable(),
+        targetId: z.string().nullable(),
+      })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     let query = context.supabase
@@ -341,10 +382,12 @@ export const listComplianceViolations = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("compliance_violations_log")
-      .select(`
+      .select(
+        `
         *,
         marketing_campaigns(name)
-      `)
+      `,
+      )
       .order("created_at", { ascending: false })
       .limit(100);
 
@@ -362,8 +405,8 @@ export const getChannelROI = createServerFn({ method: "GET" })
     // Tenta atualizar as estatísticas primeiro
     await context.supabase.rpc("fn_refresh_roi_stats", { _days: days });
 
-    const since = new Date(Date.now() - days * 86400_000).toISOString().split('T')[0];
-    
+    const since = new Date(Date.now() - days * 86400_000).toISOString().split("T")[0];
+
     const { data, error } = await context.supabase
       .from("channel_roi_stats")
       .select("*")

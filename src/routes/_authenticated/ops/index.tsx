@@ -24,7 +24,9 @@ function OpsDashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gradient-primary">Painel de Operações</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gradient-primary">
+            Painel de Operações
+          </h1>
           <p className="text-muted-foreground">Monitoramento técnico e auditoria do ecossistema.</p>
         </div>
       </div>
@@ -47,7 +49,9 @@ function OpsDashboard() {
             <ShieldAlert className="size-5 text-primary" />
             <div>
               <CardTitle>Trilha de Auditoria: Conformidade</CardTitle>
-              <CardDescription>Tentativas de envio ou salvamento com termos restritos/proibidos.</CardDescription>
+              <CardDescription>
+                Tentativas de envio ou salvamento com termos restritos/proibidos.
+              </CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -72,26 +76,42 @@ function OpsDashboard() {
                     </td>
                   </tr>
                 ) : (
-                  violations.map((v: any) => (
+                  violations.map((v) => (
                     <tr key={v.id} className="transition-colors hover:bg-muted/30">
                       <td className="whitespace-nowrap px-4 py-3 font-medium">
-                        {format(new Date(v.created_at), "dd/MM HH:mm", { locale: ptBR })}
+                        {v.created_at
+                          ? format(new Date(v.created_at), "dd/MM HH:mm", { locale: ptBR })
+                          : "—"}
                       </td>
                       <td className="px-4 py-3">
-                        {v.marketing_campaigns?.name || <span className="text-muted-foreground italic">N/A</span>}
+                        {v.marketing_campaigns?.name || (
+                          <span className="text-muted-foreground italic">N/A</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
-                        <Badge variant="outline" className="text-xxs font-medium uppercase tracking-tighter">
+                        <Badge
+                          variant="outline"
+                          className="text-xxs font-medium uppercase tracking-tighter"
+                        >
                           {NICHE_LABELS[v.niche as keyof typeof NICHE_LABELS] || v.niche}
                         </Badge>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={v.severity === "error" ? "font-bold text-destructive" : "font-medium text-warning"}>
+                        <span
+                          className={
+                            v.severity === "error"
+                              ? "font-bold text-destructive"
+                              : "font-medium text-warning"
+                          }
+                        >
                           {v.term}
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge variant={v.action === "launch" ? "destructive" : "secondary"} className="text-[10px]">
+                        <Badge
+                          variant={v.action === "launch" ? "destructive" : "secondary"}
+                          className="text-[10px]"
+                        >
                           {v.action === "launch" ? "LANÇAR" : "SALVAR"}
                         </Badge>
                       </td>

@@ -42,10 +42,7 @@ describe("buildSpendReport", () => {
   it("destaca desperdício de opt-out", async () => {
     const client = createFakeSupabase({
       tables: {
-        contact_touchpoints: [
-          tp("1", "sms", "delivered"),
-          tp("2", "sms", "opted_out"),
-        ],
+        contact_touchpoints: [tp("1", "sms", "delivered"), tp("2", "sms", "opted_out")],
       },
     });
     const report = await buildSpendReport(client as never, {});

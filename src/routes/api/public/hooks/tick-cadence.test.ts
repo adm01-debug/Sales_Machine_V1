@@ -9,7 +9,9 @@ import { createFakeSupabase, resetFakeIds, type Row, type Tables } from "@/test/
 
 const sent: Array<{ kind: string; message: string }> = [];
 const singuClient = {
-  sendWhatsapp: vi.fn(async (i: { message: string }) => sent.push({ kind: "whatsapp", message: i.message })),
+  sendWhatsapp: vi.fn(async (i: { message: string }) =>
+    sent.push({ kind: "whatsapp", message: i.message }),
+  ),
   sendSms: vi.fn(async (i: { message: string }) => sent.push({ kind: "sms", message: i.message })),
   sendMms: vi.fn(async (i: { message: string }) => sent.push({ kind: "mms", message: i.message })),
   sendRcs: vi.fn(async (i: { message: string }) => sent.push({ kind: "rcs", message: i.message })),
@@ -72,7 +74,13 @@ function baseTables(over: { steps?: unknown; campaign?: Row; target?: Row } = {}
       },
     ],
     entity_map: [
-      { id: "e1", display_name: "Ana", fatorx_thread_id: null, singu_id: "sg1", metadata: { email: "ana@x.com" } },
+      {
+        id: "e1",
+        display_name: "Ana",
+        fatorx_thread_id: null,
+        singu_id: "sg1",
+        metadata: { email: "ana@x.com" },
+      },
     ],
     contact_touchpoints: [],
     sender_health: [],
@@ -129,7 +137,10 @@ describe("tick-cadence (integração)", () => {
     expect(sent).toEqual([{ kind: "whatsapp", message: "Olá Ana, podemos conversar?" }]);
     const target = fake.tables.campaign_targets[0];
     expect(target).toMatchObject({ current_step: 1, state: "queued", attempts: 0 });
-    expect(fake.tables.contact_touchpoints[0]).toMatchObject({ status: "sent", channel: "whatsapp" });
+    expect(fake.tables.contact_touchpoints[0]).toMatchObject({
+      status: "sent",
+      channel: "whatsapp",
+    });
   });
 
   it("preserva variáveis desconhecidas literais em vez de apagá-las", async () => {
@@ -219,10 +230,16 @@ describe("tick-cadence (integração)", () => {
 
   it("respeita o cap diário de e-mail sem consumir o passo", async () => {
     const tables = baseTables({ steps: [{ channel: "email", delay_days: 0 }] });
-    tables.sender_health = [{ sender_id: "default", day: new Date().toISOString().slice(0, 10), sent: 50 }];
+    tables.sender_health = [
+      { sender_id: "default", day: new Date().toISOString().slice(0, 10), sent: 50 },
+    ];
     fake = createFakeSupabase({
       tables,
-      rpc: { check_consent: () => true, has_recent_account_touchpoint: () => false, compute_daily_cap: () => 50 },
+      rpc: {
+        check_consent: () => true,
+        has_recent_account_touchpoint: () => false,
+        compute_daily_cap: () => 50,
+      },
     });
     const out = await tick();
     expect(sent).toHaveLength(0);
@@ -233,7 +250,11 @@ describe("tick-cadence (integração)", () => {
   it("envia e-mail rastreado e incrementa sender_health quando há folga", async () => {
     fake = createFakeSupabase({
       tables: baseTables({ steps: [{ channel: "email", delay_days: 0 }] }),
-      rpc: { check_consent: () => true, has_recent_account_touchpoint: () => false, compute_daily_cap: () => 50 },
+      rpc: {
+        check_consent: () => true,
+        has_recent_account_touchpoint: () => false,
+        compute_daily_cap: () => 50,
+      },
     });
     const out = await tick();
     expect(out).toMatchObject({ processed: 1 });
@@ -247,7 +268,11 @@ describe("tick-cadence (integração)", () => {
     tables.entity_map[0].metadata = { email: "ana@x.com", hard_bounce: true };
     fake = createFakeSupabase({
       tables,
-      rpc: { check_consent: () => true, has_recent_account_touchpoint: () => false, compute_daily_cap: () => 50 },
+      rpc: {
+        check_consent: () => true,
+        has_recent_account_touchpoint: () => false,
+        compute_daily_cap: () => 50,
+      },
     });
     await tick();
     expect(sent).toHaveLength(0);
@@ -270,7 +295,8 @@ describe("tick-cadence (integração)", () => {
     fake = createFakeSupabase({
       tables: baseTables(),
       rpc: { check_consent: () => true, has_recent_account_touchpoint: () => false },
-      onUpdate: (table, patch) => (table === "campaign_targets" && patch.locked_until ? false : undefined),
+      onUpdate: (table, patch) =>
+        table === "campaign_targets" && patch.locked_until ? false : undefined,
     });
     const out = await tick();
     expect(out).toMatchObject({ processed: 0 });

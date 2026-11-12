@@ -100,7 +100,10 @@ export function TemplatePickerDialog({
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="font-medium">{t.name}</p>
-                <Badge variant={t.channel === channel ? "default" : "outline"} className="uppercase">
+                <Badge
+                  variant={t.channel === channel ? "default" : "outline"}
+                  className="uppercase"
+                >
                   {t.channel}
                 </Badge>
               </div>

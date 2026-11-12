@@ -79,9 +79,7 @@ function ContactDetailPage() {
                         {new Date(t.created_at).toLocaleString("pt-BR")}
                       </span>
                     </div>
-                    {t.error ? (
-                      <p className="mt-1 text-xs text-destructive">{t.error}</p>
-                    ) : null}
+                    {t.error ? <p className="mt-1 text-xs text-destructive">{t.error}</p> : null}
                   </li>
                 ))}
               </ul>
@@ -107,7 +105,9 @@ function ContactDetailPage() {
                       <Badge variant="outline">{c.channel}</Badge>
                       <span
                         className={
-                          c.status === "opt_in" ? "text-xs text-muted-foreground" : "text-xs text-destructive"
+                          c.status === "opt_in"
+                            ? "text-xs text-muted-foreground"
+                            : "text-xs text-destructive"
                         }
                       >
                         {c.status} · {new Date(c.created_at).toLocaleDateString("pt-BR")}

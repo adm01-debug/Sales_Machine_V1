@@ -12,17 +12,20 @@
  */
 
 import { summarizeSpend, type SpendRow } from "./cost-model";
-import {
-  buildBudgetSnapshot,
-  type BudgetSnapshot,
-  type ChannelBudget,
-} from "./budget-guard";
+import { buildBudgetSnapshot, type BudgetSnapshot, type ChannelBudget } from "./budget-guard";
+import type { TableClient } from "./table-client";
 
 export const BUDGET_PAGE_SIZE = 1_000;
 export const BUDGET_MAX_ROWS = 100_000;
 
-export interface BudgetClient {
-  from: (table: string) => any;
+export type BudgetClient = TableClient;
+
+interface BudgetRow {
+  channel: string;
+  daily_limit_brl: number | string | null;
+  monthly_limit_brl: number | string | null;
+  enabled: boolean | null;
+  note: string | null;
 }
 
 interface TouchpointRow {
@@ -64,7 +67,7 @@ export async function buildBudgetReport(
     .select("channel, daily_limit_brl, monthly_limit_brl, enabled, note");
   if (budgetErr) throw new Error(budgetErr.message);
 
-  const budgets: ChannelBudget[] = (budgetRows ?? []).map((b: any) => ({
+  const budgets: ChannelBudget[] = (budgetRows ?? []).map((b: BudgetRow) => ({
     channel: String(b.channel),
     daily_limit_brl: Number(b.daily_limit_brl) || 0,
     monthly_limit_brl: Number(b.monthly_limit_brl) || 0,

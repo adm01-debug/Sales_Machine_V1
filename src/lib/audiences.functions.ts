@@ -39,9 +39,7 @@ export const getAudience = createServerFn({ method: "POST" })
 
 export const previewAudience = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
-    z.object({ rules: audienceRulesSchema }).parse(input),
-  )
+  .inputValidator((input: unknown) => z.object({ rules: audienceRulesSchema }).parse(input))
   .handler(async ({ data, context }) => {
     const { resolveAudience } = await import("@/lib/audience-resolver.server");
     const rows = await resolveAudience(context.supabase, data.rules);

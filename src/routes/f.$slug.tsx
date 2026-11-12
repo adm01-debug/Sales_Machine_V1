@@ -73,7 +73,12 @@ function PublicFormPage() {
   });
 
   if (!form) return <PublicMessage title="Formulário não encontrado." />;
-  if (done) return <PublicMessage title="Tudo certo!">{<p className="text-sm text-muted-foreground">{done}</p>}</PublicMessage>;
+  if (done)
+    return (
+      <PublicMessage title="Tudo certo!">
+        {<p className="text-sm text-muted-foreground">{done}</p>}
+      </PublicMessage>
+    );
 
   const fields = parseFieldsSafe(form.fields);
 
@@ -132,7 +137,9 @@ function PublicFormPage() {
                 ) : (
                   <Input
                     id={field.key}
-                    type={field.type === "email" ? "email" : field.type === "phone" ? "tel" : "text"}
+                    type={
+                      field.type === "email" ? "email" : field.type === "phone" ? "tel" : "text"
+                    }
                     placeholder={field.placeholder}
                     onChange={(e) => setValues((v) => ({ ...v, [field.key]: e.target.value }))}
                   />
@@ -163,7 +170,9 @@ function PublicFormPage() {
                 {form.consent_text}
               </Label>
             </div>
-            {errors.__consent ? <p className="text-xs text-destructive">{errors.__consent}</p> : null}
+            {errors.__consent ? (
+              <p className="text-xs text-destructive">{errors.__consent}</p>
+            ) : null}
             {mutation.isError ? (
               <p className="text-xs text-destructive">{(mutation.error as Error).message}</p>
             ) : null}

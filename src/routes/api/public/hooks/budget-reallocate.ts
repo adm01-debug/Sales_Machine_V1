@@ -1,8 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  decideScheduledReallocation,
-  policyFromEnv,
-} from "@/lib/budget-reallocation-schedule";
+import { decideScheduledReallocation, policyFromEnv } from "@/lib/budget-reallocation-schedule";
 
 /**
  * Realocação automática de teto entre canais — chamada por pg_cron

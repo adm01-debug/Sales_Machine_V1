@@ -55,7 +55,12 @@ describe("requeueDeadLetter", () => {
     expect(await requeueDeadLetter(db, 2)).toEqual({ requeued: 2 });
 
     // t4 (01-01) e t3 (01-02) são os mais antigos.
-    expect(rows.filter((r) => r.state === "queued").map((r) => r.id).sort()).toEqual(["t3", "t4"]);
+    expect(
+      rows
+        .filter((r) => r.state === "queued")
+        .map((r) => r.id)
+        .sort(),
+    ).toEqual(["t3", "t4"]);
   });
 
   it("usa lote de 100 por padrão", async () => {
@@ -81,7 +86,9 @@ describe("requeueDeadLetter", () => {
       target("d1", "dead_letter", "2026-01-01T00:00:00.000Z"),
       target("d2", "dead_letter", "2026-01-02T00:00:00.000Z"),
     ];
-    const db = createFakeSupabase({ tables: { campaign_targets: rows, campaign_target_events: [] } });
+    const db = createFakeSupabase({
+      tables: { campaign_targets: rows, campaign_target_events: [] },
+    });
 
     await requeueDeadLetter(db, 10, "operator:u-1");
 
@@ -99,7 +106,10 @@ describe("requeueDeadLetter", () => {
 
   it("não grava auditoria quando nada foi reenfileirado", async () => {
     const db = createFakeSupabase({
-      tables: { campaign_targets: [target("a", "queued", "2026-01-01T00:00:00.000Z")], campaign_target_events: [] },
+      tables: {
+        campaign_targets: [target("a", "queued", "2026-01-01T00:00:00.000Z")],
+        campaign_target_events: [],
+      },
     });
     await requeueDeadLetter(db);
     expect(db.tables.campaign_target_events).toHaveLength(0);

@@ -146,7 +146,11 @@ export function ComplianceTermsManager() {
               <div className="flex shrink-0 items-center gap-2">
                 <Badge variant="outline">{NICHE_LABELS[t.niche]}</Badge>
                 <Badge variant={t.severity === "error" ? "destructive" : "secondary"}>
-                  {t.severity === "error" ? "bloqueia" : t.severity === "warning" ? "alerta" : "info"}
+                  {t.severity === "error"
+                    ? "bloqueia"
+                    : t.severity === "warning"
+                      ? "alerta"
+                      : "info"}
                 </Badge>
                 <Button
                   variant="ghost"

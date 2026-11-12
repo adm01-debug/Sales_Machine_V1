@@ -187,7 +187,10 @@ export function ManualInterventions() {
         ) : (
           <ul className="divide-y rounded-lg border bg-card">
             {events.map((e) => (
-              <li key={e.id} className="flex flex-col gap-1 p-3 md:flex-row md:items-center md:justify-between">
+              <li
+                key={e.id}
+                className="flex flex-col gap-1 p-3 md:flex-row md:items-center md:justify-between"
+              >
                 <div className="min-w-0">
                   <p className="truncate text-sm text-foreground">
                     <span className="font-medium">{e.from_state ?? "—"}</span>

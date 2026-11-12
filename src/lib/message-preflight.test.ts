@@ -20,9 +20,9 @@ describe("preflightMessage", () => {
   });
 
   it("cobra opt-out em SMS e WhatsApp, mas não no LinkedIn", () => {
-    expect(codes(preflightMessage({ channel: "sms", body: "Oi {{nome|olá}}, tudo certo?" }))).toContain(
-      "no_optout",
-    );
+    expect(
+      codes(preflightMessage({ channel: "sms", body: "Oi {{nome|olá}}, tudo certo?" })),
+    ).toContain("no_optout");
     expect(
       codes(preflightMessage({ channel: "linkedin", body: "Oi {{nome|olá}}, tudo certo?" })),
     ).not.toContain("no_optout");

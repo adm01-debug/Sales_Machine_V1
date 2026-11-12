@@ -116,7 +116,9 @@ export function EmailBlockEditor({ blocks, onChange }: EmailBlockEditorProps) {
                     <Input
                       id={`lbl-${block.id}`}
                       value={block.text}
-                      onChange={(e) => patch(index, { text: e.target.value } as Partial<EmailBlock>)}
+                      onChange={(e) =>
+                        patch(index, { text: e.target.value } as Partial<EmailBlock>)
+                      }
                     />
                   </div>
                   <div className="space-y-1">
@@ -155,7 +157,9 @@ export function EmailBlockEditor({ blocks, onChange }: EmailBlockEditorProps) {
                     <Input
                       id={`href-${block.id}`}
                       value={block.href ?? ""}
-                      onChange={(e) => patch(index, { href: e.target.value } as Partial<EmailBlock>)}
+                      onChange={(e) =>
+                        patch(index, { href: e.target.value } as Partial<EmailBlock>)
+                      }
                       placeholder="https://"
                     />
                   </div>

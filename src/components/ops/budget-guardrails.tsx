@@ -14,7 +14,10 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 
-const STATUS_META: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const STATUS_META: Record<
+  string,
+  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+> = {
   ok: { label: "Dentro do teto", variant: "secondary" },
   warning: { label: "Acima de 80%", variant: "outline" },
   exhausted: { label: "Bloqueado", variant: "destructive" },
@@ -40,8 +43,12 @@ export function BudgetGuardrails() {
   });
 
   const mutation = useMutation({
-    mutationFn: (vars: { channel: string; dailyLimit: number; monthlyLimit: number; enabled: boolean }) =>
-      saveBudget({ data: vars }),
+    mutationFn: (vars: {
+      channel: string;
+      dailyLimit: number;
+      monthlyLimit: number;
+      enabled: boolean;
+    }) => saveBudget({ data: vars }),
     onSuccess: (_res, vars) => {
       setDrafts((prev) => {
         const next = { ...prev };
@@ -66,8 +73,8 @@ export function BudgetGuardrails() {
               Guardrail de orçamento
             </CardTitle>
             <CardDescription>
-              Tetos por canal. Ao atingir o limite, o worker de cadência adia os disparos
-              daquele canal em vez de encerrar os contatos.
+              Tetos por canal. Ao atingir o limite, o worker de cadência adia os disparos daquele
+              canal em vez de encerrar os contatos.
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">

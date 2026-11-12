@@ -10,11 +10,7 @@
  * `cadence-engine.ts` e `journey-engine.ts`.
  */
 
-import {
-  evaluateConditionGroup,
-  parseConditions,
-  type JourneyCondition,
-} from "./journey-engine";
+import { evaluateConditionGroup, parseConditions, type JourneyCondition } from "./journey-engine";
 
 /** Origens de evento aceitas como gatilho. */
 export const TRIGGER_SOURCES = ["lux", "singu", "fatorx", "fuxico", "promo", "manual"] as const;
@@ -46,7 +42,11 @@ export const DEFAULT_TRIGGER_CONFIG: JourneyTriggerConfig = {
 const asList = (raw: unknown): string[] => {
   const items = Array.isArray(raw) ? raw : typeof raw === "string" ? raw.split(",") : [];
   return items
-    .map((v) => String(v ?? "").trim().toLowerCase())
+    .map((v) =>
+      String(v ?? "")
+        .trim()
+        .toLowerCase(),
+    )
     .filter((v) => v.length > 0);
 };
 
@@ -81,8 +81,12 @@ export interface TriggerEvent {
 
 /** O evento casa com o gatilho? Config vazia casa com tudo (por desenho). */
 export function matchesTrigger(config: JourneyTriggerConfig, event: TriggerEvent): boolean {
-  const type = String(event.eventType ?? "").trim().toLowerCase();
-  const source = String(event.source ?? "").trim().toLowerCase();
+  const type = String(event.eventType ?? "")
+    .trim()
+    .toLowerCase();
+  const source = String(event.source ?? "")
+    .trim()
+    .toLowerCase();
 
   if (config.eventTypes.length > 0 && !config.eventTypes.includes(type)) return false;
   if (config.sources.length > 0 && !config.sources.includes(source)) return false;

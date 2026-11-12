@@ -10,9 +10,9 @@
 export const DEAD_LETTER_REQUEUE_LIMIT = 100;
 
 /** Subset estrutural do client PostgREST usado por esta rotina. */
-export interface RequeueClient {
-  from: (table: string) => any;
-}
+import type { TableClient } from "./table-client";
+
+export type RequeueClient = TableClient;
 
 /**
  * Recoloca alvos em `dead_letter` de volta na fila, dos mais antigos para os

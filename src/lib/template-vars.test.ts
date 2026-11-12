@@ -107,7 +107,10 @@ describe("buildVarValues / renderForContact", () => {
 describe("sampleVarValues", () => {
   it("preenche todas as variáveis do catálogo", () => {
     const sample = sampleVarValues();
-    const rendered = renderTemplate("{{nome}} {{empresa}} {{cargo}} {{cidade}} {{site}} {{email}}", sample);
+    const rendered = renderTemplate(
+      "{{nome}} {{empresa}} {{cargo}} {{cidade}} {{site}} {{email}}",
+      sample,
+    );
     expect(rendered.missing).toEqual([]);
   });
 });

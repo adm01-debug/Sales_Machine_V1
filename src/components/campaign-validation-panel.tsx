@@ -37,7 +37,10 @@ export function CampaignValidationPanel({ issues, className }: CampaignValidatio
             {issue.level === "error" ? (
               <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden />
             ) : (
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+              <AlertTriangle
+                className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"
+                aria-hidden
+              />
             )}
             <span>
               <span className="font-medium">{issue.scope}:</span>{" "}

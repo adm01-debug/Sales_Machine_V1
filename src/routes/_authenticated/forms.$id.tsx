@@ -142,7 +142,11 @@ function FormEditorPage() {
         <CardContent className="space-y-3">
           <div className="space-y-1.5">
             <Label htmlFor="title">Título</Label>
-            <Input id="title" value={draft.title} onChange={(e) => patch({ title: e.target.value })} />
+            <Input
+              id="title"
+              value={draft.title}
+              onChange={(e) => patch({ title: e.target.value })}
+            />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="description">Descrição</Label>

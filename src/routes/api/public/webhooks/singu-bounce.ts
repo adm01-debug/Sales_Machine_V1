@@ -29,12 +29,18 @@ export const Route = createFileRoute("/api/public/webhooks/singu-bounce")({
         let entityId: string | null = null;
         if (parsed.data.touchpoint_id) {
           const { data: tp } = await supabaseAdmin
-            .from("contact_touchpoints").select("entity_id").eq("id", parsed.data.touchpoint_id).maybeSingle();
+            .from("contact_touchpoints")
+            .select("entity_id")
+            .eq("id", parsed.data.touchpoint_id)
+            .maybeSingle();
           entityId = tp?.entity_id ?? null;
         }
         if (!entityId && parsed.data.contact_id) {
           const { data: em } = await supabaseAdmin
-            .from("entity_map").select("id").eq("singu_id", parsed.data.contact_id).maybeSingle();
+            .from("entity_map")
+            .select("id")
+            .eq("singu_id", parsed.data.contact_id)
+            .maybeSingle();
           entityId = em?.id ?? null;
         }
 
@@ -48,12 +54,29 @@ export const Route = createFileRoute("/api/public/webhooks/singu-bounce")({
         });
 
         // Hard bounce or complaint → mark entity + write opt_out to ledger
-        if (entityId && (parsed.data.event_type === "hard_bounce" || parsed.data.event_type === "complaint" || parsed.data.event_type === "unsubscribe")) {
-          const { data: em } = await supabaseAdmin.from("entity_map").select("metadata").eq("id", entityId).maybeSingle();
+        if (
+          entityId &&
+          (parsed.data.event_type === "hard_bounce" ||
+            parsed.data.event_type === "complaint" ||
+            parsed.data.event_type === "unsubscribe")
+        ) {
+          const { data: em } = await supabaseAdmin
+            .from("entity_map")
+            .select("metadata")
+            .eq("id", entityId)
+            .maybeSingle();
           const meta = (em?.metadata as Record<string, unknown>) ?? {};
-          await supabaseAdmin.from("entity_map").update({
-            metadata: { ...meta, hard_bounce: true, hard_bounce_at: new Date().toISOString(), hard_bounce_reason: parsed.data.event_type } as never,
-          }).eq("id", entityId);
+          await supabaseAdmin
+            .from("entity_map")
+            .update({
+              metadata: {
+                ...meta,
+                hard_bounce: true,
+                hard_bounce_at: new Date().toISOString(),
+                hard_bounce_reason: parsed.data.event_type,
+              } as never,
+            })
+            .eq("id", entityId);
 
           await supabaseAdmin.from("consent_ledger").insert({
             entity_id: entityId,

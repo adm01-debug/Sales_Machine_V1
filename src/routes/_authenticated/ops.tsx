@@ -126,8 +126,16 @@ function DeadLetterRecovery({ count }: { count: number }) {
 function OpsPage() {
   const fetchHealth = useServerFn(getPipelineHealth);
   const fetchDeliv = useServerFn(getDeliverabilityStats);
-  const health = useQuery({ queryKey: ["ops", "health"], queryFn: () => fetchHealth(), refetchInterval: 30_000 });
-  const deliv = useQuery({ queryKey: ["ops", "deliv"], queryFn: () => fetchDeliv(), refetchInterval: 60_000 });
+  const health = useQuery({
+    queryKey: ["ops", "health"],
+    queryFn: () => fetchHealth(),
+    refetchInterval: 30_000,
+  });
+  const deliv = useQuery({
+    queryKey: ["ops", "deliv"],
+    queryFn: () => fetchDeliv(),
+    refetchInterval: 60_000,
+  });
   const fetchTracking = useServerFn(getTrackingIntegrityReport);
   const fetchCompliance = useServerFn(getComplianceStats);
   const compliance = useQuery({
@@ -182,7 +190,9 @@ function OpsPage() {
           <h1 className="text-2xl font-semibold text-foreground">Painel de Operações</h1>
           <p className="text-sm text-muted-foreground">Saúde do pipeline em tempo real.</p>
         </div>
-        <Link to="/dashboard" className="text-sm text-primary hover:underline">← Dashboard</Link>
+        <Link to="/dashboard" className="text-sm text-primary hover:underline">
+          ← Dashboard
+        </Link>
       </header>
 
       <section>
@@ -213,7 +223,6 @@ function OpsPage() {
 
       <ManualInterventions />
 
-
       {health.isLoading ? (
         <div className="text-muted-foreground">Carregando...</div>
       ) : health.data ? (
@@ -242,7 +251,9 @@ function OpsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-sm font-medium text-muted-foreground">Deliverability de e-mail (7d)</h2>
+            <h2 className="mb-3 text-sm font-medium text-muted-foreground">
+              Deliverability de e-mail (7d)
+            </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <Stat label="Aberturas" value={deliv.data?.opened ?? 0} />
               <Stat label="Cliques" value={deliv.data?.clicked ?? 0} />

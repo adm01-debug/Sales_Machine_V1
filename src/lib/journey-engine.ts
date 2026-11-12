@@ -298,7 +298,11 @@ export function decideJourneyAction(facts: JourneyFacts): JourneyDecision {
         facts.sendWindowStart,
         facts.sendWindowEnd,
       );
-      return { action: "wait", toNodeId: edge.to_node_id, resumeAt: new Date(resumeAt).toISOString() };
+      return {
+        action: "wait",
+        toNodeId: edge.to_node_id,
+        resumeAt: new Date(resumeAt).toISOString(),
+      };
     }
 
     case "condition": {
@@ -322,7 +326,10 @@ export function decideJourneyAction(facts: JourneyFacts): JourneyDecision {
     }
 
     case "goal":
-      return { action: "goal_reached", reason: String(config.label ?? node.label ?? "meta atingida") };
+      return {
+        action: "goal_reached",
+        reason: String(config.label ?? node.label ?? "meta atingida"),
+      };
 
     case "exit":
       return { action: "exit", reason: String(config.reason ?? node.label ?? "saída do fluxo") };
@@ -385,7 +392,8 @@ export function validateJourney(nodes: JourneyNode[], edges: JourneyEdge[]): Jou
   const issues: JourneyIssue[] = [];
   const triggers = nodes.filter((n) => n.kind === "trigger");
 
-  if (triggers.length === 0) issues.push({ level: "error", message: "A jornada precisa de um gatilho." });
+  if (triggers.length === 0)
+    issues.push({ level: "error", message: "A jornada precisa de um gatilho." });
   if (triggers.length > 1)
     issues.push({ level: "error", message: "A jornada só pode ter um gatilho de entrada." });
 
@@ -410,7 +418,11 @@ export function validateJourney(nodes: JourneyNode[], edges: JourneyEdge[]): Jou
       });
     }
     if (node.kind === "send" && !String(node.config?.channel ?? "").trim()) {
-      issues.push({ level: "error", nodeId: node.id, message: "Etapa de envio sem canal definido." });
+      issues.push({
+        level: "error",
+        nodeId: node.id,
+        message: "Etapa de envio sem canal definido.",
+      });
     }
     if (node.kind === "send") {
       const cfg = node.config ?? {};
@@ -462,7 +474,10 @@ export function validateJourney(nodes: JourneyNode[], edges: JourneyEdge[]): Jou
 
   for (const edge of edges) {
     if (!byId.has(edge.from_node_id) || !byId.has(edge.to_node_id)) {
-      issues.push({ level: "error", message: "Existe uma ligação apontando para etapa inexistente." });
+      issues.push({
+        level: "error",
+        message: "Existe uma ligação apontando para etapa inexistente.",
+      });
     }
   }
 

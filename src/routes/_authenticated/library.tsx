@@ -65,7 +65,6 @@ export const Route = createFileRoute("/_authenticated/library")({
   component: ComposerPage,
 });
 
-
 interface Suggestion {
   type: "reply" | "openUrl" | "dial";
   text: string;
@@ -151,7 +150,7 @@ function ComposerPage() {
     setEmailBlocks([]);
   };
 
-  const loadTemplate = (t: (typeof templatesQ.data extends (infer U)[] | undefined ? U : never)) => {
+  const loadTemplate = (t: typeof templatesQ.data extends (infer U)[] | undefined ? U : never) => {
     setId(t.id);
     setName(t.name);
     setChannel(t.channel as Channel);
@@ -160,9 +159,7 @@ function ComposerPage() {
     setMediaUrl(t.media_url ?? null);
     setMediaPath(null);
     const p = (t.rcs_payload ?? null) as RcsPayload | null;
-    setRcs(
-      p ?? { type: "rich_card", title: "", description: "", image_url: "", suggestions: [] },
-    );
+    setRcs(p ?? { type: "rich_card", title: "", description: "", image_url: "", suggestions: [] });
     setEmailBlocks(parseBlocks((t as { email_blocks?: unknown }).email_blocks));
   };
 
@@ -210,14 +207,18 @@ function ComposerPage() {
         variables: extractTemplateVars(`${subject}\n${finalBody}`),
       };
       const res = await upsert({ data: payload });
-      
+
       // Gravar histórico de pré-voo após sucesso
       if (channel === "email") {
         const report = preflightEmailContent({ subject, blocks: emailBlocks, body: finalBody });
-        await recordHistory({ data: { templateId: res.id, score: report.score, findings: report.findings } });
+        await recordHistory({
+          data: { templateId: res.id, score: report.score, findings: report.findings },
+        });
       } else {
         const msgReport = preflightMessage({ channel, body: finalBody, mediaUrl });
-        await recordHistory({ data: { templateId: res.id, score: msgReport.score, findings: msgReport.findings } });
+        await recordHistory({
+          data: { templateId: res.id, score: msgReport.score, findings: msgReport.findings },
+        });
       }
 
       return res;
@@ -369,19 +370,19 @@ function ComposerPage() {
                       {body.length}/{CHANNEL_BODY_LIMIT[channel]} caracteres
                     </span>
                     {(channel === "sms" || channel === "mms") && (
-                    <>
-                    <Badge variant="secondary">{segments.encoding}</Badge>
-                    <span>
-                      {segments.chars} chars · {segments.segments} segmento
-                      {segments.segments > 1 ? "s" : ""} ({segments.perSegment}/seg)
-                    </span>
-                    <span>· {segments.remaining} até próximo segmento</span>
-                    {segments.segments > 1 && (
-                      <span className="text-muted-foreground">
-                        · custo x{segments.segments}
-                      </span>
-                    )}
-                    </>
+                      <>
+                        <Badge variant="secondary">{segments.encoding}</Badge>
+                        <span>
+                          {segments.chars} chars · {segments.segments} segmento
+                          {segments.segments > 1 ? "s" : ""} ({segments.perSegment}/seg)
+                        </span>
+                        <span>· {segments.remaining} até próximo segmento</span>
+                        {segments.segments > 1 && (
+                          <span className="text-muted-foreground">
+                            · custo x{segments.segments}
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -399,9 +400,7 @@ function ComposerPage() {
                         if (f) void handleUpload(f);
                       }}
                     />
-                    {uploading && (
-                      <p className="text-xs text-muted-foreground">Enviando…</p>
-                    )}
+                    {uploading && <p className="text-xs text-muted-foreground">Enviando…</p>}
                     {mediaUrl && (
                       <p className="break-all text-xs text-muted-foreground">
                         {mediaPath ?? mediaUrl}
@@ -410,9 +409,7 @@ function ComposerPage() {
                   </div>
                 )}
 
-                {channel === "rcs" && (
-                  <RcsBuilder value={rcs} onChange={setRcs} />
-                )}
+                {channel === "rcs" && <RcsBuilder value={rcs} onChange={setRcs} />}
 
                 <div className="flex flex-wrap gap-2 pt-2">
                   <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
@@ -472,7 +469,10 @@ function ComposerPage() {
                         className="h-[460px] w-full rounded-md border bg-background"
                       />
                       {emailIssues.map((issue) => (
-                        <p key={`${issue.blockId}-${issue.message}`} className="text-xs text-destructive">
+                        <p
+                          key={`${issue.blockId}-${issue.message}`}
+                          className="text-xs text-destructive"
+                        >
                           {issue.message}
                         </p>
                       ))}
@@ -509,14 +509,10 @@ function ComposerPage() {
           <Card>
             <CardHeader>
               <CardTitle>Templates salvos</CardTitle>
-              <CardDescription>
-                {templatesQ.data?.length ?? 0} no total
-              </CardDescription>
+              <CardDescription>{templatesQ.data?.length ?? 0} no total</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              {templatesQ.isLoading && (
-                <p className="text-sm text-muted-foreground">Carregando…</p>
-              )}
+              {templatesQ.isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
               {templatesQ.data?.map((t) => (
                 <div
                   key={t.id}
@@ -605,9 +601,7 @@ function PhonePreview({
       <CardContent>
         <div className="mx-auto max-w-[280px] rounded-[36px] border-4 border-foreground/20 bg-muted/40 p-3">
           <div className="rounded-3xl bg-background p-3 shadow-inner">
-            <div className="mb-2 text-center text-xs text-muted-foreground">
-              Mensagens · agora
-            </div>
+            <div className="mb-2 text-center text-xs text-muted-foreground">Mensagens · agora</div>
             {channel === "sms" && (
               <div className="whitespace-pre-wrap rounded-2xl bg-primary/10 p-3 text-sm">
                 {rendered || "…"}
@@ -659,13 +653,7 @@ function PhonePreview({
   );
 }
 
-function RcsBuilder({
-  value,
-  onChange,
-}: {
-  value: RcsPayload;
-  onChange: (v: RcsPayload) => void;
-}) {
+function RcsBuilder({ value, onChange }: { value: RcsPayload; onChange: (v: RcsPayload) => void }) {
   const update = (patch: Partial<RcsPayload>) => onChange({ ...value, ...patch });
   const addSuggestion = () => {
     if (value.suggestions.length >= 4) return;

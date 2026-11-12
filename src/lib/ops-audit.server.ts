@@ -30,9 +30,9 @@ export interface AuditFilters {
   limit?: number;
 }
 
-export interface AuditClient {
-  from: (table: string) => any;
-}
+import type { TableClient } from "./table-client";
+
+export type AuditClient = TableClient;
 
 export interface ManualInterventionRow {
   id: string;

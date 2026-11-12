@@ -16,9 +16,7 @@ import { diagnoseCampaign } from "./campaign-diagnostics";
 export const getAnalyticsCharts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z
-      .object({ days: z.number().int().min(7).max(90).default(30) })
-      .parse(input ?? {}),
+    z.object({ days: z.number().int().min(7).max(90).default(30) }).parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
     const days = data.days;
@@ -76,11 +74,16 @@ export const getAnalyticsCharts = createServerFn({ method: "POST" })
 export const getCampaignDrilldown = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ 
-      campaignId: z.string().uuid(),
-      days: z.number().int().min(1).max(365).optional().default(30),
-      sentimentFilter: z.enum(["all", "positive", "neutral", "negative"]).optional().default("all")
-    }).parse(input ?? {}),
+    z
+      .object({
+        campaignId: z.string().uuid(),
+        days: z.number().int().min(1).max(365).optional().default(30),
+        sentimentFilter: z
+          .enum(["all", "positive", "neutral", "negative"])
+          .optional()
+          .default("all"),
+      })
+      .parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
     const { campaignId, days, sentimentFilter } = data;
@@ -140,13 +143,14 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
         .in("id", chunk);
       if (res.data) {
         for (const tp of res.data) {
-          const content = (tp.payload as any)?.content || (tp.payload as any)?.body || "";
+          const payload = tp.payload as { content?: string; body?: string } | null;
+          const content = payload?.content || payload?.body || "";
           let sentiment = "neutral";
           if (tp.direction === "inbound") {
             if (positiveWords.test(content)) sentiment = "positive";
             else if (negativeWords.test(content)) sentiment = "negative";
           }
-          
+
           touchpoints.push({
             channel: tp.channel,
             status: tp.status,
@@ -164,12 +168,12 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
     if (sentimentFilter !== "all") {
       // Quando filtramos por sentimento, queremos ver os touchpoints que levaram ou são a resposta desse sentimento
       // Para fins de métricas de funil, filtramos os inbound e mantemos a estrutura
-      filteredTouchpoints = touchpoints.filter(t => t.direction === "outbound" || t.sentiment === sentimentFilter);
+      filteredTouchpoints = touchpoints.filter(
+        (t) => t.direction === "outbound" || t.sentiment === sentimentFilter,
+      );
     }
 
-    const variantLabels = new Map(
-      (variantsRes.data ?? []).map((v) => [v.id, v.label] as const),
-    );
+    const variantLabels = new Map((variantsRes.data ?? []).map((v) => [v.id, v.label] as const));
 
     const errors: Record<string, number> = {};
     for (const s of sends) {
@@ -234,12 +238,14 @@ export const getCampaignDrilldown = createServerFn({ method: "POST" })
       channels: buildCampaignChannelBreakdown(filteredTouchpoints),
       sentiment_timeline,
       sentiment_by_channel,
-      diagnosis: campaignRes.data ? diagnoseCampaign(
-        campaignRes.data, 
-        topErrors, 
-        stages, 
-        inbound.map(t => ({ content: t.content || "" }))
-      ) : null,
+      diagnosis: campaignRes.data
+        ? diagnoseCampaign(
+            campaignRes.data,
+            topErrors,
+            stages,
+            inbound.map((t) => ({ content: t.content || "" })),
+          )
+        : null,
       variants: Object.entries(byVariant)
         .map(([id, v]) => ({
           id,
