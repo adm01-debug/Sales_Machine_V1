@@ -27,8 +27,11 @@ function ApprovalsPage() {
   const [edits, setEdits] = useState<Record<string, string>>({});
 
   const mut = useMutation({
-    mutationFn: (v: { touchpoint_id: string; decision: "approve" | "reject"; edited_message?: string }) =>
-      decide({ data: v }),
+    mutationFn: (v: {
+      touchpoint_id: string;
+      decision: "approve" | "reject";
+      edited_message?: string;
+    }) => decide({ data: v }),
     onSuccess: (_r, v) => {
       toast.success(v.decision === "approve" ? "Aprovado e enviado" : "Rejeitado");
       qc.invalidateQueries({ queryKey: ["sm", "approvals"] });
@@ -76,7 +79,11 @@ function ApprovalsPage() {
                     <Button
                       size="sm"
                       onClick={() =>
-                        mut.mutate({ touchpoint_id: tp.id, decision: "approve", edited_message: value })
+                        mut.mutate({
+                          touchpoint_id: tp.id,
+                          decision: "approve",
+                          edited_message: value,
+                        })
                       }
                     >
                       Aprovar e enviar

@@ -53,10 +53,16 @@ describe("evaluateCondition", () => {
   const profile = { stage: "Proposta", score: "42", email: "a@b.com", tags: null };
 
   it("compara texto de forma insensível a caixa e espaços", () => {
-    expect(evaluateCondition({ field: "stage", op: "eq", value: " proposta " }, profile)).toBe(true);
+    expect(evaluateCondition({ field: "stage", op: "eq", value: " proposta " }, profile)).toBe(
+      true,
+    );
     expect(evaluateCondition({ field: "stage", op: "neq", value: "perdido" }, profile)).toBe(true);
-    expect(evaluateCondition({ field: "stage", op: "contains", value: "prop" }, profile)).toBe(true);
-    expect(evaluateCondition({ field: "stage", op: "not_contains", value: "xyz" }, profile)).toBe(true);
+    expect(evaluateCondition({ field: "stage", op: "contains", value: "prop" }, profile)).toBe(
+      true,
+    );
+    expect(evaluateCondition({ field: "stage", op: "not_contains", value: "xyz" }, profile)).toBe(
+      true,
+    );
   });
 
   it("compara números vindos como string", () => {
@@ -77,7 +83,9 @@ describe("evaluateCondition", () => {
   });
 
   it("suporta in com lista", () => {
-    expect(evaluateCondition({ field: "stage", op: "in", value: ["Ganho", "Proposta"] }, profile)).toBe(true);
+    expect(
+      evaluateCondition({ field: "stage", op: "in", value: ["Ganho", "Proposta"] }, profile),
+    ).toBe(true);
     expect(evaluateCondition({ field: "stage", op: "in", value: "Proposta" }, profile)).toBe(false);
   });
 
@@ -94,7 +102,10 @@ describe("evaluateConditionGroup", () => {
   it("all exige todas", () => {
     expect(
       evaluateConditionGroup(
-        [{ field: "a", op: "eq", value: 1 }, { field: "b", op: "eq", value: 9 }],
+        [
+          { field: "a", op: "eq", value: 1 },
+          { field: "b", op: "eq", value: 9 },
+        ],
         "all",
         profile,
       ),
@@ -103,7 +114,10 @@ describe("evaluateConditionGroup", () => {
   it("any exige uma", () => {
     expect(
       evaluateConditionGroup(
-        [{ field: "a", op: "eq", value: 1 }, { field: "b", op: "eq", value: 9 }],
+        [
+          { field: "a", op: "eq", value: 1 },
+          { field: "b", op: "eq", value: 9 },
+        ],
         "any",
         profile,
       ),
@@ -113,9 +127,9 @@ describe("evaluateConditionGroup", () => {
 
 describe("parseConditions", () => {
   it("descarta itens malformados sem derrubar o fluxo", () => {
-    expect(parseConditions([null, 3, { op: "eq" }, { field: " stage ", op: " eq ", value: "x" }])).toEqual([
-      { field: "stage", op: "eq", value: "x" },
-    ]);
+    expect(
+      parseConditions([null, 3, { op: "eq" }, { field: " stage ", op: " eq ", value: "x" }]),
+    ).toEqual([{ field: "stage", op: "eq", value: "x" }]);
   });
   it("não é array → vazio", () => {
     expect(parseConditions("nada")).toEqual([]);
@@ -146,7 +160,9 @@ describe("clampToSendWindow", () => {
   });
   it("antes da abertura adia para o início do mesmo dia", () => {
     const early = Date.parse("2026-07-26T06:00:00.000Z");
-    expect(new Date(clampToSendWindow(early, 9, 19)).toISOString()).toBe("2026-07-26T09:00:00.000Z");
+    expect(new Date(clampToSendWindow(early, 9, 19)).toISOString()).toBe(
+      "2026-07-26T09:00:00.000Z",
+    );
   });
   it("depois do fechamento adia para o dia seguinte", () => {
     const late = Date.parse("2026-07-26T21:30:00.000Z");
@@ -172,7 +188,10 @@ describe("pickSplitBranch", () => {
     expect(a).toBeLessThan(1200);
   });
   it("peso 100/0 sempre cai no ramo com peso", () => {
-    const only = [{ branch: "A", weight: 100 }, { branch: "B", weight: 0 }];
+    const only = [
+      { branch: "A", weight: 100 },
+      { branch: "B", weight: 0 },
+    ];
     for (let i = 0; i < 50; i++) expect(pickSplitBranch(only, `s${i}`)).toBe("A");
   });
   it("sem pesos válidos devolve o primeiro ramo ou null", () => {
@@ -278,7 +297,12 @@ describe("decideJourneyAction", () => {
           node: node({
             id: "sp",
             kind: "split",
-            config: { branches: [{ branch: "A", weight: 100 }, { branch: "B", weight: 0 }] },
+            config: {
+              branches: [
+                { branch: "A", weight: 100 },
+                { branch: "B", weight: 0 },
+              ],
+            },
           }),
           edges: [
             { from_node_id: "sp", to_node_id: "na", branch: "A" },
@@ -291,25 +315,35 @@ describe("decideJourneyAction", () => {
   });
 
   it("meta e saída são terminais", () => {
-    expect(decideJourneyAction(facts({ node: node({ id: "g", kind: "goal" }) })).action).toBe("goal_reached");
-    expect(decideJourneyAction(facts({ node: node({ id: "e", kind: "exit" }) })).action).toBe("exit");
+    expect(decideJourneyAction(facts({ node: node({ id: "g", kind: "goal" }) })).action).toBe(
+      "goal_reached",
+    );
+    expect(decideJourneyAction(facts({ node: node({ id: "e", kind: "exit" }) })).action).toBe(
+      "exit",
+    );
   });
 
   const sendNode = node({ id: "s", kind: "send", config: { channel: "Email", template_id: "t1" } });
   const sendEdges: JourneyEdge[] = [{ from_node_id: "s", to_node_id: "g", branch: "default" }];
 
   it("envio sem canal falha", () => {
-    const d = decideJourneyAction(facts({ node: node({ id: "s", kind: "send" }), edges: sendEdges }));
+    const d = decideJourneyAction(
+      facts({ node: node({ id: "s", kind: "send" }), edges: sendEdges }),
+    );
     expect(d.action).toBe("fail");
   });
 
   it("opt-out encerra a jornada (LGPD)", () => {
-    const d = decideJourneyAction(facts({ node: sendNode, edges: sendEdges, consentAllowed: false }));
+    const d = decideJourneyAction(
+      facts({ node: sendNode, edges: sendEdges, consentAllowed: false }),
+    );
     expect(d).toMatchObject({ action: "exit" });
   });
 
   it("consentimento indeterminado permite o envio (fail-open igual ao check_consent)", () => {
-    const d = decideJourneyAction(facts({ node: sendNode, edges: sendEdges, consentAllowed: null }));
+    const d = decideJourneyAction(
+      facts({ node: sendNode, edges: sendEdges, consentAllowed: null }),
+    );
     expect(d).toMatchObject({ action: "send", channel: "email", nextNodeId: "g" });
   });
 
@@ -345,7 +379,12 @@ describe("decideJourneyAction", () => {
 
   it("opt-out vence o gate humano", () => {
     const d = decideJourneyAction(
-      facts({ node: sendNode, edges: sendEdges, requiresHumanApproval: true, consentAllowed: false }),
+      facts({
+        node: sendNode,
+        edges: sendEdges,
+        requiresHumanApproval: true,
+        consentAllowed: false,
+      }),
     );
     expect(d.action).toBe("exit");
   });
@@ -412,11 +451,10 @@ describe("validateJourney", () => {
   });
 
   it("aponta etapa sem saída e etapa de envio sem canal", () => {
-    const nodes = [
-      node({ id: "t", kind: "trigger" }),
-      node({ id: "s", kind: "send" }),
-    ];
-    const issues = validateJourney(nodes, [{ from_node_id: "t", to_node_id: "s", branch: "default" }]);
+    const nodes = [node({ id: "t", kind: "trigger" }), node({ id: "s", kind: "send" })];
+    const issues = validateJourney(nodes, [
+      { from_node_id: "t", to_node_id: "s", branch: "default" },
+    ]);
     expect(issues.some((i) => i.message.includes("não tem saída"))).toBe(true);
     expect(issues.some((i) => i.message.includes("sem canal"))).toBe(true);
   });
@@ -424,7 +462,10 @@ describe("validateJourney", () => {
   it("avisa sobre etapa desconectada e espera de duração zero", () => {
     const { nodes, edges } = valid();
     const withOrphan = [...nodes, node({ id: "w", kind: "wait", label: "Pausa" })];
-    const withEdge = [...edges, { from_node_id: "w", to_node_id: "g", branch: "default" } as JourneyEdge];
+    const withEdge = [
+      ...edges,
+      { from_node_id: "w", to_node_id: "g", branch: "default" } as JourneyEdge,
+    ];
     const issues = validateJourney(withOrphan, withEdge);
     expect(issues.some((i) => i.message.includes("desconectada"))).toBe(true);
     expect(issues.some((i) => i.message.includes("duração zero"))).toBe(true);
@@ -457,7 +498,10 @@ describe("validateJourney", () => {
 
   it("aponta ligação para etapa inexistente", () => {
     const { nodes, edges } = valid();
-    const issues = validateJourney(nodes, [...edges, { from_node_id: "s", to_node_id: "zzz", branch: "x" }]);
+    const issues = validateJourney(nodes, [
+      ...edges,
+      { from_node_id: "s", to_node_id: "zzz", branch: "x" },
+    ]);
     expect(issues.some((i) => i.message.includes("inexistente"))).toBe(true);
   });
 
@@ -470,6 +514,8 @@ describe("validateJourney", () => {
       { from_node_id: "t", to_node_id: "s", branch: "default" },
       { from_node_id: "s", to_node_id: "t", branch: "default" },
     ];
-    expect(validateJourney(nodes, edges).some((i) => i.message.includes("laço infinito"))).toBe(true);
+    expect(validateJourney(nodes, edges).some((i) => i.message.includes("laço infinito"))).toBe(
+      true,
+    );
   });
 });

@@ -34,14 +34,22 @@ describe("allocateRecipients", () => {
 
 describe("estimateCampaignCost", () => {
   it("estima e-mail com custo unitário baixo", () => {
-    const e = estimateCampaignCost({ channel: "email", audienceSize: 1000, variants: [variant("A", 100)] });
+    const e = estimateCampaignCost({
+      channel: "email",
+      audienceSize: 1000,
+      variants: [variant("A", 100)],
+    });
     expect(e.totalSegments).toBe(1000);
     expect(e.totalCost).toBe(0.8);
   });
 
   it("cobra SMS por segmento quando o texto é longo", () => {
     const longo = "a".repeat(200);
-    const e = estimateCampaignCost({ channel: "sms", audienceSize: 10, variants: [variant("A", 100, longo)] });
+    const e = estimateCampaignCost({
+      channel: "sms",
+      audienceSize: 10,
+      variants: [variant("A", 100, longo)],
+    });
     expect(e.variants[0].segmentsPerMessage).toBe(2);
     expect(e.totalSegments).toBe(20);
     expect(e.totalCost).toBeCloseTo(2.4, 2);
@@ -49,7 +57,11 @@ describe("estimateCampaignCost", () => {
 
   it("emoji encarece o SMS via UCS-2", () => {
     const comEmoji = "🚀".repeat(50);
-    const e = estimateCampaignCost({ channel: "sms", audienceSize: 1, variants: [variant("A", 100, comEmoji)] });
+    const e = estimateCampaignCost({
+      channel: "sms",
+      audienceSize: 1,
+      variants: [variant("A", 100, comEmoji)],
+    });
     expect(e.variants[0].segmentsPerMessage).toBeGreaterThan(1);
   });
 
@@ -73,13 +85,21 @@ describe("estimateCampaignCost", () => {
   });
 
   it("audiência vazia gera custo zero sem quebrar", () => {
-    const e = estimateCampaignCost({ channel: "sms", audienceSize: 0, variants: [variant("A", 100)] });
+    const e = estimateCampaignCost({
+      channel: "sms",
+      audienceSize: 0,
+      variants: [variant("A", 100)],
+    });
     expect(e.totalCost).toBe(0);
     expect(e.costPerContact).toBe(0);
   });
 
   it("canal desconhecido custa zero em vez de NaN", () => {
-    const e = estimateCampaignCost({ channel: "pombo-correio", audienceSize: 10, variants: [variant("A", 100)] });
+    const e = estimateCampaignCost({
+      channel: "pombo-correio",
+      audienceSize: 10,
+      variants: [variant("A", 100)],
+    });
     expect(e.unitCost).toBe(0);
     expect(e.totalCost).toBe(0);
   });
@@ -119,7 +139,10 @@ describe("evaluateCostPreflight", () => {
   });
 
   it("bloqueia quando estoura o saldo mensal", () => {
-    const r = evaluateCostPreflight(est(90), budget({ dailyLimit: 0, monthlyLimit: 100, spentMonth: 50 }));
+    const r = evaluateCostPreflight(
+      est(90),
+      budget({ dailyLimit: 0, monthlyLimit: 100, spentMonth: 50 }),
+    );
     expect(r.verdict).toBe("blocked");
     expect(r.reasons.join()).toContain("mensal");
   });
@@ -130,7 +153,11 @@ describe("evaluateCostPreflight", () => {
   });
 
   it("bloqueia audiência vazia", () => {
-    const vazio = estimateCampaignCost({ channel: "sms", audienceSize: 0, variants: [variant("A", 100)] });
+    const vazio = estimateCampaignCost({
+      channel: "sms",
+      audienceSize: 0,
+      variants: [variant("A", 100)],
+    });
     expect(evaluateCostPreflight(vazio, budget()).verdict).toBe("blocked");
   });
 

@@ -193,5 +193,9 @@ export function advancePlan(
   const next = steps[nextIdx];
   if (!next) return { done: true };
   const delayDays = Number.isFinite(next.delay_days) ? next.delay_days : 1;
-  return { done: false, nextStep: nextIdx, nextRunAt: new Date(now + delayDays * 86_400_000).toISOString() };
+  return {
+    done: false,
+    nextStep: nextIdx,
+    nextRunAt: new Date(now + delayDays * 86_400_000).toISOString(),
+  };
 }

@@ -59,8 +59,7 @@ export const Route = createFileRoute("/api/public/hooks/alert-sweep")({
           (touchpoints ?? []) as unknown as RawTouchpoint[],
           (events ?? []) as unknown as RawDeliveryEvent[],
         );
-        const checkCount = (id: string) =>
-          tracking.checks.find((c) => c.id === id)?.count ?? 0;
+        const checkCount = (id: string) => tracking.checks.find((c) => c.id === id)?.count ?? 0;
 
         // 3b. Compliance: bloqueios do gate de consentimento no período.
         const { count: blockedTargets } = await supabaseAdmin

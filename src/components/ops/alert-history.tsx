@@ -32,7 +32,7 @@ export function AlertHistory() {
         </p>
       ) : (
         <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
-          {rows.map((row: any) => (
+          {rows.map((row) => (
             <li key={row.id} className="flex items-start gap-3 p-3">
               <span
                 className={cn(

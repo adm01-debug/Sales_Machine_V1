@@ -138,9 +138,9 @@ describe("decideEnrollment", () => {
   });
 
   it("bloqueia reentrada quando a jornada não permite", () => {
-    expect(
-      decideEnrollment({ ...base, lastFinishedAt: "2026-07-01T00:00:00.000Z" }).code,
-    ).toBe("reentry_blocked");
+    expect(decideEnrollment({ ...base, lastFinishedAt: "2026-07-01T00:00:00.000Z" }).code).toBe(
+      "reentry_blocked",
+    );
   });
 
   it("respeita o cooldown de reentrada", () => {
@@ -169,8 +169,8 @@ describe("decideEnrollment", () => {
 
   it("respeita o teto diário de entradas", () => {
     expect(decideEnrollment({ ...base, entriesToday: 100 }).code).toBe("entry_cap");
-    expect(
-      decideEnrollment({ ...base, entriesToday: 100, entryDailyCap: 0 }).shouldEnroll,
-    ).toBe(true);
+    expect(decideEnrollment({ ...base, entriesToday: 100, entryDailyCap: 0 }).shouldEnroll).toBe(
+      true,
+    );
   });
 });

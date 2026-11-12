@@ -20,17 +20,20 @@ const APIKEY = "test-anon-key";
 /** Cenário saudável por padrão: nenhuma regra de alerta deve disparar. */
 function baseTables(over: { health?: Row | null; notifications?: Row[] } = {}): Tables {
   return {
-    v_pipeline_health: over.health === null ? [] : [
-      {
-        dead_letter: 0,
-        queued: 0,
-        running: 2,
-        sent_24h: 5,
-        replies_24h: 1,
-        opt_outs_7d: 0,
-        ...over.health,
-      },
-    ],
+    v_pipeline_health:
+      over.health === null
+        ? []
+        : [
+            {
+              dead_letter: 0,
+              queued: 0,
+              running: 2,
+              sent_24h: 5,
+              replies_24h: 1,
+              opt_outs_7d: 0,
+              ...over.health,
+            },
+          ],
     email_deliverability_events: [],
     contact_touchpoints: [],
     campaign_targets: [],
@@ -219,7 +222,10 @@ describe("alert-sweep (integração)", () => {
 
   it("persiste o estado mesmo quando o webhook falha", async () => {
     process.env.OPS_ALERT_WEBHOOK_URL = "https://hooks.example/ops";
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("nope", { status: 500 })));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("nope", { status: 500 })),
+    );
     fake = createFakeSupabase({ tables: baseTables({ health: { dead_letter: 1 } }) });
     const out = await sweep();
     expect(out).toMatchObject({ notified: false });

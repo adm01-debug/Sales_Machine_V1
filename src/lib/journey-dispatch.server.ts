@@ -6,6 +6,7 @@
  */
 
 import { renderForContact } from "@/lib/template-vars";
+import type { TableClient } from "./table-client";
 
 export interface JourneyContact {
   id: string;
@@ -21,9 +22,7 @@ export interface JourneyMessage {
   rcs_payload: Record<string, unknown> | null;
 }
 
-type AnyClient = {
-  from: (table: string) => any;
-};
+type AnyClient = TableClient;
 
 const SOCIAL = new Set(["linkedin", "instagram"]);
 export const isSocialJourneyChannel = (channel: string): boolean => SOCIAL.has(channel);
@@ -65,7 +64,7 @@ export async function resolveJourneyMessage(
         }
       }
       mediaUrl = mediaUrl ?? (tpl.media_url as string | null);
-      rcsPayload = rcsPayload ?? ((tpl.rcs_payload as Record<string, unknown> | null) ?? null);
+      rcsPayload = rcsPayload ?? (tpl.rcs_payload as Record<string, unknown> | null) ?? null;
     }
   }
 
@@ -103,7 +102,11 @@ export async function dispatchJourneyMessage(input: {
       entity_id: contact.id,
       message: message.body,
     });
-    return { status: res.status === "sent" ? "sent" : "failed", error: res.error ?? null, provider: res.provider };
+    return {
+      status: res.status === "sent" ? "sent" : "failed",
+      error: res.error ?? null,
+      provider: res.provider,
+    };
   }
 
   if (!contact.singu_id) {

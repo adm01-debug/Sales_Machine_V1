@@ -1,10 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 // 1x1 transparent GIF
-const PIXEL = Buffer.from(
-  "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
-  "base64",
-);
+const PIXEL = Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64");
 
 async function logOpen(request: Request) {
   const url = new URL(request.url);
@@ -13,7 +10,10 @@ async function logOpen(request: Request) {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: touchpoint } = await supabaseAdmin
-      .from("contact_touchpoints").select("entity_id").eq("id", tp).maybeSingle();
+      .from("contact_touchpoints")
+      .select("entity_id")
+      .eq("id", tp)
+      .maybeSingle();
     await supabaseAdmin.from("email_deliverability_events").insert({
       touchpoint_id: tp,
       entity_id: touchpoint?.entity_id ?? null,

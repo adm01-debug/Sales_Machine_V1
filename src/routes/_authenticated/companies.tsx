@@ -50,8 +50,10 @@ function CompaniesPage() {
   });
 
   const enqueueMut = useMutation({
-    mutationFn: (payload: { campaign_id: string; companies: Array<{ lux_id: string; display_name: string }> }) =>
-      enqueue({ data: payload }),
+    mutationFn: (payload: {
+      campaign_id: string;
+      companies: Array<{ lux_id: string; display_name: string }>;
+    }) => enqueue({ data: payload }),
     onSuccess: (r) => {
       toast.success(`Enfileirado: ${r.enqueued} · Ignorado: ${r.skipped}`);
       setSelected({});
@@ -65,12 +67,13 @@ function CompaniesPage() {
     const q = filter.toLowerCase();
     return list.filter(
       (c) =>
-        c.name.toLowerCase().includes(q) ||
-        (c.industry ?? "").toString().toLowerCase().includes(q),
+        c.name.toLowerCase().includes(q) || (c.industry ?? "").toString().toLowerCase().includes(q),
     );
   }, [companiesQ.data, filter]);
 
-  const selectedIds = Object.entries(selected).filter(([, v]) => v).map(([k]) => k);
+  const selectedIds = Object.entries(selected)
+    .filter(([, v]) => v)
+    .map(([k]) => k);
   const selectedRows = rows.filter((r) => selectedIds.includes(r.lux_id));
 
   function toggleAll(v: boolean) {
@@ -99,8 +102,16 @@ function CompaniesPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Link to="/campaigns"><Button variant="outline" size="sm">Campanhas</Button></Link>
-            <Link to="/dashboard"><Button variant="outline" size="sm">Cockpit</Button></Link>
+            <Link to="/campaigns">
+              <Button variant="outline" size="sm">
+                Campanhas
+              </Button>
+            </Link>
+            <Link to="/dashboard">
+              <Button variant="outline" size="sm">
+                Cockpit
+              </Button>
+            </Link>
           </div>
         </header>
 
@@ -108,7 +119,8 @@ function CompaniesPage() {
           <CardHeader>
             <CardTitle>Prospecção em lote</CardTitle>
             <CardDescription>
-              Selecione uma campanha ativa e as empresas alvo. O worker roda a cadência automaticamente.
+              Selecione uma campanha ativa e as empresas alvo. O worker roda a cadência
+              automaticamente.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -146,7 +158,8 @@ function CompaniesPage() {
                 <p className="font-medium text-destructive">Não consegui ler do LUX</p>
                 <p className="text-muted-foreground">{companiesQ.data.error}</p>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Configure os secrets <code>LUX_URL</code> e <code>LUX_SERVICE_KEY</code> nas configurações do projeto.
+                  Configure os secrets <code>LUX_URL</code> e <code>LUX_SERVICE_KEY</code> nas
+                  configurações do projeto.
                 </p>
               </div>
             ) : (
@@ -203,7 +216,9 @@ function CompaniesPage() {
                               params={{ id: c.lux_id }}
                               search={{ name: c.name }}
                             >
-                              <Button size="sm" variant="ghost">Dossiê</Button>
+                              <Button size="sm" variant="ghost">
+                                Dossiê
+                              </Button>
                             </Link>
                           </td>
                         </tr>

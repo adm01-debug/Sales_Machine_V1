@@ -75,7 +75,11 @@ describe("decideCadenceAction", () => {
 
   it("opt-out tem precedência sobre cooldown e gate humano", () => {
     const d = decideCadenceAction(
-      facts({ consentAllowed: false, hasRecentAccountTouchpoint: true, requiresHumanApproval: true }),
+      facts({
+        consentAllowed: false,
+        hasRecentAccountTouchpoint: true,
+        requiresHumanApproval: true,
+      }),
     );
     expect(d.action).toBe("stop");
   });
@@ -86,7 +90,11 @@ describe("decideCadenceAction", () => {
 
   it("adia 24h no cooldown de conta", () => {
     const d = decideCadenceAction(facts({ hasRecentAccountTouchpoint: true }));
-    expect(d).toEqual({ action: "defer", reason: "account cooldown 48h", delayMs: COOLDOWN_DEFER_MS });
+    expect(d).toEqual({
+      action: "defer",
+      reason: "account cooldown 48h",
+      delayMs: COOLDOWN_DEFER_MS,
+    });
   });
 
   it("para o target em hard bounce de e-mail", () => {
@@ -100,11 +108,17 @@ describe("decideCadenceAction", () => {
 
   it("adia 1h ao atingir o cap diário de e-mail", () => {
     const d = decideCadenceAction(facts({ currentStep: 1, emailSentToday: 50, emailDailyCap: 50 }));
-    expect(d).toEqual({ action: "defer", reason: "email cap 50 atingido", delayMs: EMAIL_CAP_DEFER_MS });
+    expect(d).toEqual({
+      action: "defer",
+      reason: "email cap 50 atingido",
+      delayMs: EMAIL_CAP_DEFER_MS,
+    });
   });
 
   it("envia quando ainda há folga no cap", () => {
-    expect(decideCadenceAction(facts({ currentStep: 1, emailSentToday: 49, emailDailyCap: 50 })).action).toBe("send");
+    expect(
+      decideCadenceAction(facts({ currentStep: 1, emailSentToday: 49, emailDailyCap: 50 })).action,
+    ).toBe("send");
   });
 
   it("cap tem precedência sobre gate humano", () => {
@@ -158,12 +172,17 @@ describe("decideFailureOutcome", () => {
   });
 
   it("normaliza attempts/maxAttempts inválidos", () => {
-    expect(decideFailureOutcome(Number.NaN, 0, "e", NOW)).toMatchObject({ action: "retry", attempts: 1 });
+    expect(decideFailureOutcome(Number.NaN, 0, "e", NOW)).toMatchObject({
+      action: "retry",
+      attempts: 1,
+    });
     expect(decideFailureOutcome(-3, 5, "e", NOW)).toMatchObject({ attempts: 1 });
   });
 
   it("nextRetryAt satura no último degrau do backoff", () => {
-    expect(nextRetryAt(100, NOW)).toBe(new Date(NOW + BACKOFF_MINUTES.at(-1)! * 60_000).toISOString());
+    expect(nextRetryAt(100, NOW)).toBe(
+      new Date(NOW + BACKOFF_MINUTES.at(-1)! * 60_000).toISOString(),
+    );
     expect(nextRetryAt(0, NOW)).toBe(new Date(NOW + 60_000).toISOString());
   });
 });

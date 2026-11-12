@@ -15,7 +15,10 @@ const Schema = z.object({
   metadata: z.record(z.unknown()).optional(),
 });
 
-const EVENT_MAP: Record<string, "opened" | "clicked" | "hard_bounce" | "complaint" | "unsubscribe"> = {
+const EVENT_MAP: Record<
+  string,
+  "opened" | "clicked" | "hard_bounce" | "complaint" | "unsubscribe"
+> = {
   "email.opened": "opened",
   "email.open": "opened",
   opened: "opened",
@@ -89,7 +92,9 @@ export const Route = createFileRoute("/api/public/webhooks/fuxico")({
         const eventType = EVENT_MAP[parsed.data.event.toLowerCase()];
         const payload = parsed.data.data as Record<string, unknown>;
         const trackingId =
-          (payload.tracking_id as string | undefined) ?? (payload.trackingId as string | undefined) ?? null;
+          (payload.tracking_id as string | undefined) ??
+          (payload.trackingId as string | undefined) ??
+          null;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -185,7 +190,10 @@ export const Route = createFileRoute("/api/public/webhooks/fuxico")({
         }
 
         // Supressão: bounce/complaint/unsubscribe desativam o canal e-mail.
-        if (entityId && (eventType === "hard_bounce" || eventType === "complaint" || eventType === "unsubscribe")) {
+        if (
+          entityId &&
+          (eventType === "hard_bounce" || eventType === "complaint" || eventType === "unsubscribe")
+        ) {
           const { data: em } = await supabaseAdmin
             .from("entity_map")
             .select("metadata")

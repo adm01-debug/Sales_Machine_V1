@@ -14,7 +14,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Sales Machine · Prospecção orquestrada com IA" },
       {
         property: "og:description",
-        content: "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS.",
+        content:
+          "Sales Machine reúne LUX, SINGU e FATOR X em um único cockpit para prospectar decisores no LinkedIn, WhatsApp, Instagram, Email e SMS.",
       },
       { property: "og:type", content: "website" },
     ],
@@ -52,12 +53,10 @@ function Landing() {
         <p className="text-sm font-medium uppercase tracking-widest text-primary">
           Prospecção orquestrada
         </p>
-        <h1 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">
-          Sales Machine
-        </h1>
+        <h1 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">Sales Machine</h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-          O cockpit que integra LUX, SINGU e FATOR X para prospectar decisores em
-          LinkedIn, WhatsApp, Instagram, Email e SMS com agentes de IA treinados.
+          O cockpit que integra LUX, SINGU e FATOR X para prospectar decisores em LinkedIn,
+          WhatsApp, Instagram, Email e SMS com agentes de IA treinados.
         </p>
         <div className="mt-8 flex justify-center gap-3">
           <Button asChild size="lg">

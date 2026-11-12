@@ -76,7 +76,13 @@ export function extractVariables(text: string): string[] {
 
 /** Variáveis escritas que não pertencem ao catálogo. */
 export function unknownVariables(text: string): string[] {
-  return [...new Set(parseVariables(text).filter((v) => !v.key).map((v) => v.raw))];
+  return [
+    ...new Set(
+      parseVariables(text)
+        .filter((v) => !v.key)
+        .map((v) => v.raw),
+    ),
+  ];
 }
 
 /** Dados mínimos de um contato necessários para renderizar. */

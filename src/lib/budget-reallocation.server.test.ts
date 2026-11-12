@@ -23,8 +23,20 @@ function scenario() {
   return createFakeSupabase({
     tables: {
       channel_budgets: [
-        { channel: "whatsapp", daily_limit_brl: 1, monthly_limit_brl: 1000, enabled: true, note: null },
-        { channel: "sms", daily_limit_brl: 100, monthly_limit_brl: 1000, enabled: true, note: null },
+        {
+          channel: "whatsapp",
+          daily_limit_brl: 1,
+          monthly_limit_brl: 1000,
+          enabled: true,
+          note: null,
+        },
+        {
+          channel: "sms",
+          daily_limit_brl: 100,
+          monthly_limit_brl: 1000,
+          enabled: true,
+          note: null,
+        },
       ],
       contact_touchpoints: Array.from({ length: 6 }, (_, i) => tp(`w${i}`, "whatsapp")),
       budget_reallocations: [],
@@ -51,7 +63,13 @@ describe("applyReallocation — trilha de auditoria", () => {
     const client = createFakeSupabase({
       tables: {
         channel_budgets: [
-          { channel: "sms", daily_limit_brl: 100, monthly_limit_brl: 1000, enabled: true, note: null },
+          {
+            channel: "sms",
+            daily_limit_brl: 100,
+            monthly_limit_brl: 1000,
+            enabled: true,
+            note: null,
+          },
         ],
         contact_touchpoints: [],
         budget_reallocations: [],
