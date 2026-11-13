@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import type { Tables } from "@/integrations/supabase/types";
 import { getTemplatePreflightHistory } from "@/lib/preflight-history.functions";
 import {
   LineChart,
@@ -29,11 +30,13 @@ export function PreflightHistoryChart({ templateId }: PreflightHistoryChartProps
 
   if (isLoading || history.length < 2) return null;
 
-  const chartData = history.map((h) => ({
-    date: new Date(h.created_at).getTime(),
-    score: h.score,
-    formattedDate: format(new Date(h.created_at), "dd/MM HH:mm", { locale: ptBR }),
-  }));
+  const chartData = history.map(
+    (h: Pick<Tables<"template_preflight_history">, "score" | "created_at">) => ({
+      date: new Date(h.created_at).getTime(),
+      score: h.score,
+      formattedDate: format(new Date(h.created_at), "dd/MM HH:mm", { locale: ptBR }),
+    }),
+  );
 
   return (
     <Card className="mt-6">

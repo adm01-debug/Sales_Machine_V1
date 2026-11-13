@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import type { Tables } from "@/integrations/supabase/types";
 import { getChannelROI } from "@/lib/ops.functions";
 import { formatBRL } from "@/lib/cost-model";
 import { cn } from "@/lib/utils";
@@ -75,7 +76,7 @@ export function ChannelROIStats() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {data.map((item) => (
+          {data.map((item: Tables<"channel_roi_stats">) => (
             <div
               key={item.channel}
               className="rounded-lg border border-border bg-card p-4 space-y-4"
