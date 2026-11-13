@@ -46,8 +46,7 @@ export function BudgetReallocation() {
   });
 
   const transfers = data?.transfers ?? [];
-  const conserved =
-    data ? Math.abs(data.totalAfter - data.totalBefore) <= 0.01 : true;
+  const conserved = data ? Math.abs(data.totalAfter - data.totalBefore) <= 0.01 : true;
 
   return (
     <Card>
@@ -59,8 +58,8 @@ export function BudgetReallocation() {
               Realocação de saldo entre canais
             </CardTitle>
             <CardDescription>
-              Move teto diário de canais ociosos para canais saturados sem alterar o
-              orçamento total do dia. Doadores mantêm margem de segurança.
+              Move teto diário de canais ociosos para canais saturados sem alterar o orçamento total
+              do dia. Doadores mantêm margem de segurança.
             </CardDescription>
           </div>
           <Button
@@ -113,14 +112,14 @@ export function BudgetReallocation() {
 
         {data && transfers.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Nenhuma transferência recomendada agora: não há canal saturado com saldo
-            ocioso disponível em outro canal.
+            Nenhuma transferência recomendada agora: não há canal saturado com saldo ocioso
+            disponível em outro canal.
           </p>
         ) : null}
 
         {transfers.length > 0 ? (
           <div className="space-y-2">
-            {transfers.map((t: any, i) => (
+            {transfers.map((t, i) => (
               <div
                 key={`${t.from}-${t.to}-${i}`}
                 className="flex flex-wrap items-center gap-2 rounded-lg border p-3 text-sm"
@@ -128,7 +127,9 @@ export function BudgetReallocation() {
                 <span className="font-medium capitalize">{t.from}</span>
                 <ArrowRight className="h-3 w-3 text-muted-foreground" aria-hidden />
                 <span className="font-medium capitalize">{t.to}</span>
-                <Badge variant="secondary" className="ml-auto">{formatBRL(t.amount)}</Badge>
+                <Badge variant="secondary" className="ml-auto">
+                  {formatBRL(t.amount)}
+                </Badge>
               </div>
             ))}
           </div>
@@ -136,7 +137,7 @@ export function BudgetReallocation() {
 
         {data && data.changes.length > 0 ? (
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {data.changes.map((c: any) => (
+            {data.changes.map((c) => (
               <div key={c.channel} className="rounded-lg border p-3 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="font-medium capitalize">{c.channel}</span>
@@ -158,7 +159,7 @@ export function BudgetReallocation() {
           <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm">
             <p className="font-medium">Necessidades não atendidas</p>
             <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
-              {data.unmet.map((u: any, i) => (
+              {data.unmet.map((u, i) => (
                 <li key={`${u.channel}-${i}`}>
                   <span className="capitalize">{u.channel}</span>
                   {u.missing > 0 ? ` — faltam ${formatBRL(u.missing)}` : ""} · {u.reason}
@@ -182,9 +183,9 @@ export function BudgetReallocation() {
               Histórico de realocações
             </p>
             <p className="text-xs text-muted-foreground">
-              A rotina automática revisa os tetos a cada 30 minutos e só aplica quando
-              respeita o intervalo mínimo, o valor mínimo e o limite percentual de
-              remanejamento. Planos maiores ficam para aprovação manual aqui.
+              A rotina automática revisa os tetos a cada 30 minutos e só aplica quando respeita o
+              intervalo mínimo, o valor mínimo e o limite percentual de remanejamento. Planos
+              maiores ficam para aprovação manual aqui.
             </p>
             <ul className="space-y-2">
               {history.map((h) => (

@@ -108,7 +108,8 @@ export function evaluateChannelBudget(
     };
   }
   const nearDaily = usageRate !== null && usageRate >= BUDGET_WARNING_THRESHOLD * 100;
-  const nearMonthly = monthlyUsageRate !== null && monthlyUsageRate >= BUDGET_WARNING_THRESHOLD * 100;
+  const nearMonthly =
+    monthlyUsageRate !== null && monthlyUsageRate >= BUDGET_WARNING_THRESHOLD * 100;
   if (nearDaily || nearMonthly) {
     return { ...base, status: "warning", blocked: false, reason: "acima de 80% do teto" };
   }

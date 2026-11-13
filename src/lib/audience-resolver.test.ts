@@ -12,10 +12,12 @@ function fakeSupabase(rows: Partial<ResolvedContact>[]) {
   const filters: Filter[] = [];
   let limit = 0;
   const builder: Record<string, unknown> = {};
-  const chain = (op: string) => (...args: unknown[]) => {
-    filters.push({ op, args });
-    return builder;
-  };
+  const chain =
+    (op: string) =>
+    (...args: unknown[]) => {
+      filters.push({ op, args });
+      return builder;
+    };
   Object.assign(builder, {
     select: () => builder,
     limit: (n: number) => {
@@ -82,9 +84,9 @@ describe("resolveAudience — filtros delegados ao banco", () => {
       limit: () => builder,
       then: (r: (v: unknown) => unknown) => r({ data: null, error: { message: "boom" } }),
     });
-    await expect(
-      resolveAudience({ from: () => builder } as never, parseRules({})),
-    ).rejects.toThrow("boom");
+    await expect(resolveAudience({ from: () => builder } as never, parseRules({}))).rejects.toThrow(
+      "boom",
+    );
   });
 });
 
@@ -107,10 +109,7 @@ describe("resolveAudience — refino em memória", () => {
       contact({ display_name: "optout", consent_by_channel: { whatsapp: "opted_out" } }),
       contact({ display_name: "outro canal", consent_by_channel: { sms: "opted_out" } }),
     ]);
-    const out = await resolveAudience(
-      client,
-      parseRules({ require_consent_channel: "whatsapp" }),
-    );
+    const out = await resolveAudience(client, parseRules({ require_consent_channel: "whatsapp" }));
     expect(out.map((c) => c.display_name)).toEqual(["sem registro", "optin", "outro canal"]);
   });
 
@@ -137,12 +136,10 @@ describe("resolveAudience — refino em memória", () => {
   });
 
   it("tolera metadata nula sem lançar", async () => {
-    const { client } = fakeSupabase([
-      contact({ display_name: "X", metadata: null as never }),
-    ]);
-    await expect(
-      resolveAudience(client, parseRules({ industries: ["varejo"] })),
-    ).resolves.toEqual([]);
+    const { client } = fakeSupabase([contact({ display_name: "X", metadata: null as never })]);
+    await expect(resolveAudience(client, parseRules({ industries: ["varejo"] }))).resolves.toEqual(
+      [],
+    );
   });
 
   it("devolve lista vazia quando o banco não retorna linhas", async () => {

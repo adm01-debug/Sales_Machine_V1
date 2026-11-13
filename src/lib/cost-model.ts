@@ -9,14 +9,7 @@
  * Podem ser sobrescritos por `overrides` quando o contrato do provedor mudar.
  */
 
-export type CostChannel =
-  | "whatsapp"
-  | "sms"
-  | "mms"
-  | "rcs"
-  | "email"
-  | "linkedin"
-  | "instagram";
+export type CostChannel = "whatsapp" | "sms" | "mms" | "rcs" | "email" | "linkedin" | "instagram";
 
 /** Custo unitário estimado (BRL) por mensagem efetivamente despachada. */
 export const DEFAULT_UNIT_COST_BRL: Record<CostChannel, number> = {
@@ -33,13 +26,7 @@ export const DEFAULT_UNIT_COST_BRL: Record<CostChannel, number> = {
  * Status em que a mensagem já saiu para o provedor — portanto é cobrada.
  * `failed` fica de fora: a falha ocorre antes do aceite do provedor.
  */
-export const BILLABLE_STATUSES = new Set([
-  "sent",
-  "delivered",
-  "read",
-  "replied",
-  "opted_out",
-]);
+export const BILLABLE_STATUSES = new Set(["sent", "delivered", "read", "replied", "opted_out"]);
 
 /**
  * Status que representam dinheiro queimado: a mensagem foi paga mas o
@@ -77,10 +64,7 @@ export interface SpendSummary {
 const round2 = (n: number) => Math.round(n * 100) / 100;
 const round4 = (n: number) => Math.round(n * 10000) / 10000;
 
-export function unitCostFor(
-  channel: string,
-  overrides?: Partial<Record<string, number>>,
-): number {
+export function unitCostFor(channel: string, overrides?: Partial<Record<string, number>>): number {
   const override = overrides?.[channel];
   if (typeof override === "number" && Number.isFinite(override) && override >= 0) {
     return override;
@@ -97,7 +81,10 @@ export function summarizeSpend(
   rows: SpendRow[],
   overrides?: Partial<Record<string, number>>,
 ): SpendSummary {
-  const acc = new Map<string, { billable: number; wasted: number; units: number; wastedUnits: number }>();
+  const acc = new Map<
+    string,
+    { billable: number; wasted: number; units: number; wastedUnits: number }
+  >();
 
   for (const row of rows) {
     const count = Number(row.count);
@@ -105,9 +92,10 @@ export function summarizeSpend(
     if (!BILLABLE_STATUSES.has(row.status)) continue;
 
     const channel = row.channel || "desconhecido";
-    const segments = Number.isFinite(row.segments) && (row.segments as number) > 0
-      ? (row.segments as number)
-      : count;
+    const segments =
+      Number.isFinite(row.segments) && (row.segments as number) > 0
+        ? (row.segments as number)
+        : count;
 
     const entry = acc.get(channel) ?? { billable: 0, wasted: 0, units: 0, wastedUnits: 0 };
     entry.billable += count;

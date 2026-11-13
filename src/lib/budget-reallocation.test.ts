@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  MIN_TRANSFER_BRL,
-  planReallocation,
-  type ReallocationPlan,
-} from "./budget-reallocation";
+import { MIN_TRANSFER_BRL, planReallocation, type ReallocationPlan } from "./budget-reallocation";
 import type { ChannelBudgetState } from "./budget-guard";
 
 function state(partial: Partial<ChannelBudgetState> & { channel: string }): ChannelBudgetState {
@@ -41,7 +37,13 @@ describe("planReallocation", () => {
 
   it("transfere saldo de canal ocioso para canal bloqueado", () => {
     const plan = planReallocation([
-      state({ channel: "whatsapp", dailyLimit: 100, spentToday: 100, status: "exhausted", blocked: true }),
+      state({
+        channel: "whatsapp",
+        dailyLimit: 100,
+        spentToday: 100,
+        status: "exhausted",
+        blocked: true,
+      }),
       state({ channel: "email", dailyLimit: 200, spentToday: 20 }),
     ]);
     expect(plan.transfers).toHaveLength(1);
@@ -66,7 +68,13 @@ describe("planReallocation", () => {
 
   it("ignora canais desativados como doadores e receptores", () => {
     const plan = planReallocation([
-      state({ channel: "instagram", dailyLimit: 100, spentToday: 100, status: "disabled", blocked: true }),
+      state({
+        channel: "instagram",
+        dailyLimit: 100,
+        spentToday: 100,
+        status: "disabled",
+        blocked: true,
+      }),
       state({ channel: "email", dailyLimit: 300, spentToday: 0, status: "disabled" }),
     ]);
     expect(plan.transfers).toEqual([]);

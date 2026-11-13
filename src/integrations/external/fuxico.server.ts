@@ -48,7 +48,9 @@ export const fuxicoClient = {
     return { ...res, wrappedLinks: res.wrappedLinks ?? [] };
   },
 
-  getStats: (params: { limit?: number; status?: "all" | "opened" | "clicked" | "bounced" } = {}) => {
+  getStats: (
+    params: { limit?: number; status?: "all" | "opened" | "clicked" | "bounced" } = {},
+  ) => {
     const qs = new URLSearchParams();
     qs.set("limit", String(params.limit ?? 50));
     qs.set("status", params.status ?? "all");

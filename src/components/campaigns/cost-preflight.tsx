@@ -105,7 +105,12 @@ export function CostPreflightCard({ campaignId, revision }: CostPreflightCardPro
               </ul>
             )}
 
-            <p className={cn("text-xs", data.verdict === "blocked" ? "text-destructive" : "text-muted-foreground")}>
+            <p
+              className={cn(
+                "text-xs",
+                data.verdict === "blocked" ? "text-destructive" : "text-muted-foreground",
+              )}
+            >
               {data.reasons.length > 0 ? data.reasons.join(" · ") : verdict?.text}
             </p>
 
@@ -125,7 +130,12 @@ function Metric({ label, value, strong }: { label: string; value: string; strong
   return (
     <div>
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={cn("tabular-nums", strong ? "text-lg font-semibold text-foreground" : "text-foreground")}>
+      <p
+        className={cn(
+          "tabular-nums",
+          strong ? "text-lg font-semibold text-foreground" : "text-foreground",
+        )}
+      >
         {value}
       </p>
     </div>

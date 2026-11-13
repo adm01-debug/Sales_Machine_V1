@@ -16,8 +16,7 @@ const goodBlocks: EmailBlock[] = [
   {
     id: "2",
     type: "text",
-    text:
-      "Olá {{primeiro_nome|tudo bem}}, separei um estudo com três empresas do seu segmento que reduziram o custo por reunião em 40% ao consolidar prospecção e CRM em um único fluxo. Posso te mostrar em 15 minutos como aplicaríamos isso no seu contexto?",
+    text: "Olá {{primeiro_nome|tudo bem}}, separei um estudo com três empresas do seu segmento que reduziram o custo por reunião em 40% ao consolidar prospecção e CRM em um único fluxo. Posso te mostrar em 15 minutos como aplicaríamos isso no seu contexto?",
   },
   { id: "3", type: "button", text: "Ver agenda", url: "https://acme.com.br/agenda" },
   { id: "4", type: "text", text: "Se preferir, clique para descadastrar desta lista." },
@@ -83,8 +82,7 @@ describe("preflightEmail", () => {
       {
         id: "t",
         type: "text",
-        text:
-          "Clique aqui e ganhe dinheiro com renda extra sem custo. Para descadastrar, responda. Enviamos este conteúdo com base no seu interesse recente em nossos materiais educativos.",
+        text: "Clique aqui e ganhe dinheiro com renda extra sem custo. Para descadastrar, responda. Enviamos este conteúdo com base no seu interesse recente em nossos materiais educativos.",
       },
     ];
     const r = preflightEmail({ subject: "Urgente", blocks });
@@ -131,8 +129,7 @@ describe("preflightEmail", () => {
       {
         id: "t",
         type: "text",
-        text:
-          "Boa tarde, seguem os detalhes combinados na nossa última conversa sobre integração de dados e automação comercial. Para descadastrar, responda esta mensagem.",
+        text: "Boa tarde, seguem os detalhes combinados na nossa última conversa sobre integração de dados e automação comercial. Para descadastrar, responda esta mensagem.",
       },
     ];
     const r = preflightEmail({ subject: "Detalhes", blocks });
@@ -179,8 +176,7 @@ describe("preflightEmailContent", () => {
     const r = preflightEmailContent({
       subject: "Estudo de caso {{empresa|sua empresa}}",
       blocks: [],
-      body:
-        "Olá, separei um estudo com três empresas do seu segmento que reduziram o custo por reunião em 40%. Posso mostrar em 15 minutos? Para descadastrar, responda esta mensagem.",
+      body: "Olá, separei um estudo com três empresas do seu segmento que reduziram o custo por reunião em 40%. Posso mostrar em 15 minutos? Para descadastrar, responda esta mensagem.",
     });
     expect(codes(r)).not.toContain("no_blocks");
     expect(codes(r)).not.toContain("no_unsubscribe");

@@ -61,7 +61,9 @@ export const leadFormSchema = z.object({
   consent_text: z.string().min(1).max(600),
   double_opt_in: z.boolean().default(true),
   confirm_ttl_hours: z.number().int().min(1).max(720).default(48),
-  channel: z.enum(["email", "whatsapp", "sms", "rcs", "mms", "linkedin", "instagram"]).default("email"),
+  channel: z
+    .enum(["email", "whatsapp", "sms", "rcs", "mms", "linkedin", "instagram"])
+    .default("email"),
   journey_id: z.string().uuid().nullable().default(null),
   tags: z.array(z.string().min(1).max(40)).max(20).default([]),
   status: z.enum(LEAD_FORM_STATUSES).default("draft"),

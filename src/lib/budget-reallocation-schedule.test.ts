@@ -23,9 +23,9 @@ describe("decideScheduledReallocation", () => {
   });
 
   it("recusa plano vazio", () => {
-    expect(
-      decideScheduledReallocation({ ...base, channelsChanged: 0, movedTotal: 0 }).code,
-    ).toBe("no_plan");
+    expect(decideScheduledReallocation({ ...base, channelsChanged: 0, movedTotal: 0 }).code).toBe(
+      "no_plan",
+    );
     expect(decideScheduledReallocation({ ...base, movedTotal: 0 }).code).toBe("no_plan");
   });
 
@@ -69,10 +69,7 @@ describe("decideScheduledReallocation", () => {
   });
 
   it("aceita política customizada", () => {
-    const d = decideScheduledReallocation(
-      { ...base, movedTotal: 2 },
-      { minMovedBrl: 1 },
-    );
+    const d = decideScheduledReallocation({ ...base, movedTotal: 2 }, { minMovedBrl: 1 });
     expect(d.shouldApply).toBe(true);
   });
 });

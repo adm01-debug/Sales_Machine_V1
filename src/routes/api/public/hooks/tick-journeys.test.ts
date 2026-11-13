@@ -93,7 +93,13 @@ function baseTables(
     ],
     contact_touchpoints: [],
     message_templates: [
-      { id: "tpl1", subject: "Assunto", body: "Corpo do modelo", media_url: null, rcs_payload: null },
+      {
+        id: "tpl1",
+        subject: "Assunto",
+        body: "Corpo do modelo",
+        media_url: null,
+        rcs_payload: null,
+      },
     ],
   };
 }
@@ -219,7 +225,13 @@ describe("tick-journeys (integração)", () => {
       tables: baseTables({
         nodes: [
           { id: "n1", journey_id: "j1", kind: "trigger", label: "Entrada", config: {} },
-          { id: "nw", journey_id: "j1", kind: "wait", label: "Esperar", config: { delay_hours: 2 } },
+          {
+            id: "nw",
+            journey_id: "j1",
+            kind: "wait",
+            label: "Esperar",
+            config: { delay_hours: 2 },
+          },
           {
             id: "n2",
             journey_id: "j1",

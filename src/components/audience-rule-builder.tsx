@@ -65,7 +65,10 @@ export function AudienceRuleBuilder({ rules, onChange }: AudienceRuleBuilderProp
             onChange={(e) =>
               set(
                 "industries",
-                e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                e.target.value
+                  .split(",")
+                  .map((s) => s.trim())
+                  .filter(Boolean),
               )
             }
           />

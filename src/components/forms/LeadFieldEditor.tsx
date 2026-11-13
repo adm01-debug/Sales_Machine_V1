@@ -1,5 +1,10 @@
 import { GripVertical, Trash2 } from "lucide-react";
-import { FIELD_TYPE_LABEL, LEAD_FIELD_TYPES, type LeadField, type LeadFieldType } from "@/lib/lead-forms";
+import {
+  FIELD_TYPE_LABEL,
+  LEAD_FIELD_TYPES,
+  type LeadField,
+  type LeadFieldType,
+} from "@/lib/lead-forms";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

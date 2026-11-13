@@ -46,9 +46,7 @@ describe("validateCampaign — bloqueios estruturais", () => {
   });
 
   it("bloqueia audiência vazia", () => {
-    expect(
-      errors(base({ audience_size: 0 })).some((i) => i.message.includes("vazia")),
-    ).toBe(true);
+    expect(errors(base({ audience_size: 0 })).some((i) => i.message.includes("vazia"))).toBe(true);
   });
 
   it("exige ao menos uma variante e interrompe as demais checagens", () => {
@@ -96,9 +94,9 @@ describe("validateCampaign — regras por canal", () => {
   });
 
   it("exige assunto no e-mail e avisa quando ele aparece fora do e-mail", () => {
-    expect(
-      errors(base({ channel: "email" })).some((i) => i.message.includes("assunto")),
-    ).toBe(true);
+    expect(errors(base({ channel: "email" })).some((i) => i.message.includes("assunto"))).toBe(
+      true,
+    );
 
     const warnings = validateCampaign(
       base({
@@ -114,9 +112,7 @@ describe("validateCampaign — regras por canal", () => {
       errors(
         base({
           channel: "mms",
-          variants: [
-            { label: "A", body: "oi", media_url: "https://x/y.jpg", split_percent: 100 },
-          ],
+          variants: [{ label: "A", body: "oi", media_url: "https://x/y.jpg", split_percent: 100 }],
         }),
       ),
     ).toEqual([]);
@@ -174,9 +170,7 @@ describe("validateCampaign — variáveis", () => {
   it("avisa quando o template veio de outro canal", () => {
     const issues = validateCampaign(
       base({
-        variants: [
-          { label: "A", body: "oi", source_channel: "sms", split_percent: 100 },
-        ],
+        variants: [{ label: "A", body: "oi", source_channel: "sms", split_percent: 100 }],
       }),
     );
     expect(issues.some((i) => i.message.includes("template de sms"))).toBe(true);

@@ -60,10 +60,7 @@ describe("listManualInterventions", () => {
   it("retorna apenas eventos de operador", async () => {
     const db = createFakeSupabase({
       tables: {
-        campaign_target_events: [
-          event("e1"),
-          event("e2", { actor: "system" }),
-        ],
+        campaign_target_events: [event("e1"), event("e2", { actor: "system" })],
       },
     });
     const rows = await listManualInterventions(db);
@@ -95,7 +92,9 @@ describe("listManualInterventions", () => {
         ],
       },
     });
-    expect((await listManualInterventions(db, { targetId: "aaaa" })).map((r) => r.id)).toEqual(["a"]);
+    expect((await listManualInterventions(db, { targetId: "aaaa" })).map((r) => r.id)).toEqual([
+      "a",
+    ]);
   });
 
   it("ordena do mais recente para o mais antigo e respeita o limite", async () => {
@@ -158,7 +157,9 @@ describe("collectManualInterventions (exportação paginada)", () => {
 
   it("marca truncated ao bater o teto de linhas", async () => {
     const db = createFakeSupabase({
-      tables: { campaign_target_events: manyEvents(AUDIT_EXPORT_MAX_ROWS + AUDIT_EXPORT_PAGE_SIZE) },
+      tables: {
+        campaign_target_events: manyEvents(AUDIT_EXPORT_MAX_ROWS + AUDIT_EXPORT_PAGE_SIZE),
+      },
     });
     const res = await collectManualInterventions(db as never);
     expect(res.rows).toHaveLength(AUDIT_EXPORT_MAX_ROWS);
@@ -166,11 +167,9 @@ describe("collectManualInterventions (exportação paginada)", () => {
   });
 
   it("ignora eventos automáticos do worker", async () => {
-    const db = createFakeSupabase({ tables: { campaign_target_events: [
-        event("a"),
-        event("b", { actor: "system" }),
-      ],
-    } });
+    const db = createFakeSupabase({
+      tables: { campaign_target_events: [event("a"), event("b", { actor: "system" })] },
+    });
     const res = await collectManualInterventions(db as never);
     expect(res.rows.map((r) => r.id)).toEqual(["a"]);
   });
@@ -186,11 +185,14 @@ describe("collectManualInterventions (exportação paginada)", () => {
   });
 
   it("aplica o filtro por prefixo de alvo e ignora curingas", async () => {
-    const db = createFakeSupabase({ tables: { campaign_target_events: [
-        event("x"),
-        event("y", { target_id: "bbbbbbbb-1111-2222-3333-444444444444" }),
-      ],
-    } });
+    const db = createFakeSupabase({
+      tables: {
+        campaign_target_events: [
+          event("x"),
+          event("y", { target_id: "bbbbbbbb-1111-2222-3333-444444444444" }),
+        ],
+      },
+    });
     const filtered = await collectManualInterventions(db as never, { targetId: "aaaaaaaa" });
     expect(filtered.rows.map((r) => r.id)).toEqual(["x"]);
 

@@ -103,11 +103,16 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
             continue;
           }
 
-          const variantIds = [...new Set(sends.map((s) => s.variant_id).filter(Boolean))] as string[];
+          const variantIds = [
+            ...new Set(sends.map((s) => s.variant_id).filter(Boolean)),
+          ] as string[];
           const { data: variantRows } = await supabaseAdmin
             .from("campaign_variants")
             .select("id, label, subject, body, media_url, rcs_payload")
-            .in("id", variantIds.length > 0 ? variantIds : ["00000000-0000-0000-0000-000000000000"]);
+            .in(
+              "id",
+              variantIds.length > 0 ? variantIds : ["00000000-0000-0000-0000-000000000000"],
+            );
           const variants = new Map((variantRows ?? []).map((v) => [v.id, v]));
 
           for (const send of sends) {
@@ -210,7 +215,8 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
                   entity_id: entity.id,
                   message: messageText,
                 });
-                if (res.status === "failed") throw new Error(res.error ?? "falha no adapter social");
+                if (res.status === "failed")
+                  throw new Error(res.error ?? "falha no adapter social");
                 if (tp) {
                   await supabaseAdmin
                     .from("contact_touchpoints")
@@ -225,7 +231,10 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
                 }
                 const { singuClient } = await import("@/integrations/external/singu.server");
                 if (campaign.channel === "whatsapp") {
-                  await singuClient.sendWhatsapp({ contact_id: entity.singu_id, message: messageText });
+                  await singuClient.sendWhatsapp({
+                    contact_id: entity.singu_id,
+                    message: messageText,
+                  });
                 } else if (campaign.channel === "sms") {
                   await singuClient.sendSms({ contact_id: entity.singu_id, message: messageText });
                 } else if (campaign.channel === "mms") {
@@ -247,7 +256,10 @@ export const Route = createFileRoute("/api/public/hooks/tick-marketing")({
                   } catch (rcsErr) {
                     const emsg = rcsErr instanceof Error ? rcsErr.message : String(rcsErr);
                     if (/not[_ ]?support|unavailable|404|405/i.test(emsg)) {
-                      await singuClient.sendSms({ contact_id: entity.singu_id, message: messageText });
+                      await singuClient.sendSms({
+                        contact_id: entity.singu_id,
+                        message: messageText,
+                      });
                     } else {
                       throw rcsErr;
                     }

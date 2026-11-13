@@ -28,16 +28,34 @@ export const Route = createFileRoute("/_authenticated/deliverability")({
   notFoundComponent: () => <div className="p-8">Não encontrado.</div>,
 });
 
-function Row({ label, ok, value, extra }: { label: string; ok: boolean; value: string | null; extra?: string | null }) {
+function Row({
+  label,
+  ok,
+  value,
+  extra,
+}: {
+  label: string;
+  ok: boolean;
+  value: string | null;
+  extra?: string | null;
+}) {
   return (
     <div className="rounded-lg border bg-card p-4">
       <div className="flex items-center justify-between">
         <div className="font-medium text-foreground">{label}</div>
-        <span className={ok ? "text-xs font-semibold text-primary" : "text-xs font-semibold text-destructive"}>
+        <span
+          className={
+            ok ? "text-xs font-semibold text-primary" : "text-xs font-semibold text-destructive"
+          }
+        >
           {ok ? "OK" : "AUSENTE"}
         </span>
       </div>
-      {value ? <pre className="mt-2 whitespace-pre-wrap break-all rounded bg-muted p-2 text-xs text-muted-foreground">{value}</pre> : null}
+      {value ? (
+        <pre className="mt-2 whitespace-pre-wrap break-all rounded bg-muted p-2 text-xs text-muted-foreground">
+          {value}
+        </pre>
+      ) : null}
       {extra ? <p className="mt-2 text-xs text-muted-foreground">{extra}</p> : null}
     </div>
   );
@@ -55,26 +73,62 @@ function Page() {
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Deliverability de E-mail</h1>
-          <p className="text-sm text-muted-foreground">Verifique SPF, DKIM e DMARC do seu domínio.</p>
+          <p className="text-sm text-muted-foreground">
+            Verifique SPF, DKIM e DMARC do seu domínio.
+          </p>
         </div>
-        <Link to="/dashboard" className="text-sm text-primary hover:underline">← Dashboard</Link>
+        <Link to="/dashboard" className="text-sm text-primary hover:underline">
+          ← Dashboard
+        </Link>
       </header>
 
       <form
-        onSubmit={(e) => { e.preventDefault(); if (domain.trim()) check.mutate(domain.trim()); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (domain.trim()) check.mutate(domain.trim());
+        }}
         className="flex gap-2"
       >
-        <Input placeholder="exemplo.com.br" value={domain} onChange={(e) => setDomain(e.target.value)} />
-        <Button type="submit" disabled={check.isPending}>{check.isPending ? "Verificando..." : "Verificar"}</Button>
+        <Input
+          placeholder="exemplo.com.br"
+          value={domain}
+          onChange={(e) => setDomain(e.target.value)}
+        />
+        <Button type="submit" disabled={check.isPending}>
+          {check.isPending ? "Verificando..." : "Verificar"}
+        </Button>
       </form>
 
       {check.data ? (
         <div className="space-y-3">
-          <Row label="SPF" ok={check.data.spf.found} value={check.data.spf.value}
-            extra={check.data.spf.found ? (check.data.spf.strict ? "Política estrita (-all/~all)." : "Encontrado, mas política permissiva.") : "Sem SPF: e-mails podem ir para spam."} />
-          <Row label="DKIM" ok={check.data.dkim.found} value={check.data.dkim.value} extra={check.data.dkim.note} />
-          <Row label={`DMARC ${check.data.dmarc.policy ? `(p=${check.data.dmarc.policy})` : ""}`} ok={check.data.dmarc.found} value={check.data.dmarc.value}
-            extra={check.data.dmarc.found ? "Recomendado: p=quarantine ou reject com rua=." : "Sem DMARC: sem proteção contra spoofing."} />
+          <Row
+            label="SPF"
+            ok={check.data.spf.found}
+            value={check.data.spf.value}
+            extra={
+              check.data.spf.found
+                ? check.data.spf.strict
+                  ? "Política estrita (-all/~all)."
+                  : "Encontrado, mas política permissiva."
+                : "Sem SPF: e-mails podem ir para spam."
+            }
+          />
+          <Row
+            label="DKIM"
+            ok={check.data.dkim.found}
+            value={check.data.dkim.value}
+            extra={check.data.dkim.note}
+          />
+          <Row
+            label={`DMARC ${check.data.dmarc.policy ? `(p=${check.data.dmarc.policy})` : ""}`}
+            ok={check.data.dmarc.found}
+            value={check.data.dmarc.value}
+            extra={
+              check.data.dmarc.found
+                ? "Recomendado: p=quarantine ou reject com rua=."
+                : "Sem DMARC: sem proteção contra spoofing."
+            }
+          />
         </div>
       ) : null}
 
@@ -105,13 +159,13 @@ function SecretRow({
       <div className="min-w-0">
         <code className="rounded bg-muted px-1 text-sm text-foreground">{name}</code>
         <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
-        {value ? (
-          <p className="mt-1 truncate text-xs text-muted-foreground">{value}</p>
-        ) : null}
+        {value ? <p className="mt-1 truncate text-xs text-muted-foreground">{value}</p> : null}
       </div>
       <span
         className={
-          ok ? "shrink-0 text-xs font-semibold text-primary" : "shrink-0 text-xs font-semibold text-destructive"
+          ok
+            ? "shrink-0 text-xs font-semibold text-primary"
+            : "shrink-0 text-xs font-semibold text-destructive"
         }
       >
         {ok ? "CONFIGURADO" : "PENDENTE"}
@@ -180,7 +234,8 @@ function FuxicoConfigSection() {
       {!cfg.isPending && !allSet ? (
         <p className="text-xs text-muted-foreground">
           Os valores são gravados como segredos do backend (nunca ficam no código nem aparecem nesta
-          tela). Peça no chat para cadastrar os segredos pendentes e um formulário seguro será aberto.
+          tela). Peça no chat para cadastrar os segredos pendentes e um formulário seguro será
+          aberto.
         </p>
       ) : null}
     </section>
@@ -191,7 +246,11 @@ function Check({ ok, label }: { ok: boolean; label: string }) {
   return (
     <div className="rounded-lg border bg-card p-3">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={ok ? "text-sm font-semibold text-primary" : "text-sm font-semibold text-destructive"}>
+      <p
+        className={
+          ok ? "text-sm font-semibold text-primary" : "text-sm font-semibold text-destructive"
+        }
+      >
         {ok ? "OK" : "NÃO"}
       </p>
     </div>
@@ -250,7 +309,9 @@ function CampaignReportSection() {
         ].join(","),
       ),
     ].join("\n");
-    const url = URL.createObjectURL(new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" }));
+    const url = URL.createObjectURL(
+      new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" }),
+    );
     const a = document.createElement("a");
     a.href = url;
     a.download = `deliverability-campanhas-${days}d.csv`;
@@ -277,7 +338,13 @@ function CampaignReportSection() {
               {p}d
             </Button>
           ))}
-          <Button type="button" variant="outline" size="sm" onClick={exportCsv} disabled={!rows.length}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={exportCsv}
+            disabled={!rows.length}
+          >
             Exportar CSV
           </Button>
         </div>
@@ -315,10 +382,12 @@ function CampaignReportSection() {
                   <td className="px-3 py-2 text-foreground">{r.campaignName}</td>
                   <td className="px-3 py-2 text-right text-foreground">{r.sends}</td>
                   <td className="px-3 py-2 text-right text-foreground">
-                    {r.opened} <span className="text-xs text-muted-foreground">({r.openRate}%)</span>
+                    {r.opened}{" "}
+                    <span className="text-xs text-muted-foreground">({r.openRate}%)</span>
                   </td>
                   <td className="px-3 py-2 text-right text-foreground">
-                    {r.clicked} <span className="text-xs text-muted-foreground">({r.clickRate}%)</span>
+                    {r.clicked}{" "}
+                    <span className="text-xs text-muted-foreground">({r.clickRate}%)</span>
                   </td>
                   <td className="px-3 py-2 text-right text-foreground">
                     {r.hardBounce}{" "}
@@ -479,8 +548,9 @@ function FuxicoWebhookTestSectionInner() {
       <p className="text-sm text-muted-foreground">
         Envia um evento assinado (HMAC-SHA256) para{" "}
         <code className="rounded bg-muted px-1">/api/public/webhooks/fuxico</code> e confirma se a
-        linha foi gravada em <code className="rounded bg-muted px-1">email_deliverability_events</code>.
-        Use o Tracking ID gerado no teste acima para associar o evento a um contato real.
+        linha foi gravada em{" "}
+        <code className="rounded bg-muted px-1">email_deliverability_events</code>. Use o Tracking
+        ID gerado no teste acima para associar o evento a um contato real.
       </p>
 
       <form
@@ -516,12 +586,17 @@ function FuxicoWebhookTestSectionInner() {
         </Button>
       </form>
 
-      {run.error ? <p className="text-sm text-destructive">{(run.error as Error).message}</p> : null}
+      {run.error ? (
+        <p className="text-sm text-destructive">{(run.error as Error).message}</p>
+      ) : null}
 
       {run.data ? (
         <div className="space-y-2 rounded-lg border bg-card p-4">
           <div className="grid grid-cols-2 gap-3">
-            <Check ok={run.data.status === 200} label={`Webhook (HTTP ${run.data.status ?? "—"})`} />
+            <Check
+              ok={run.data.status === 200}
+              label={`Webhook (HTTP ${run.data.status ?? "—"})`}
+            />
             <Check ok={run.data.persisted} label="Gravado no banco" />
           </div>
           <p className={run.data.ok ? "text-sm text-primary" : "text-sm text-destructive"}>
@@ -553,8 +628,8 @@ function FuxicoE2ESectionInner() {
       <h2 className="text-lg font-semibold text-foreground">Teste ponta a ponta do rastreio</h2>
       <p className="text-sm text-muted-foreground">
         Gera um e-mail de exemplo com dois links pelo mesmo pipeline dos disparos reais e mostra se
-        pixel, links e trackingId foram aplicados. Marque &quot;disparar de verdade&quot; e informe o ID do
-        contato para enviar via SINGU.
+        pixel, links e trackingId foram aplicados. Marque &quot;disparar de verdade&quot; e informe
+        o ID do contato para enviar via SINGU.
       </p>
 
       <form
@@ -610,8 +685,8 @@ function FuxicoE2ESectionInner() {
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">
-              FUXICO indisponível ou não configurado — o envio seguiria com o pixel interno (degradação
-              segura, sem bloquear o disparo).
+              FUXICO indisponível ou não configurado — o envio seguiria com o pixel interno
+              (degradação segura, sem bloquear o disparo).
             </p>
           )}
 
@@ -632,8 +707,8 @@ function FuxicoE2ESectionInner() {
           </details>
 
           <p className="text-xs text-muted-foreground">
-            Depois de abrir o e-mail ou clicar nos links, os eventos aparecem nos contadores acima e na
-            linha do tempo do contato.
+            Depois de abrir o e-mail ou clicar nos links, os eventos aparecem nos contadores acima e
+            na linha do tempo do contato.
           </p>
         </div>
       ) : null}
@@ -676,8 +751,8 @@ function FuxicoSection({
         <p className="text-sm text-muted-foreground">
           Configure os segredos <code className="rounded bg-muted px-1">FUXICO_URL</code>,{" "}
           <code className="rounded bg-muted px-1">FUXICO_SERVICE_KEY</code> e{" "}
-          <code className="rounded bg-muted px-1">FUXICO_WEBHOOK_SECRET</code> para ativar aberturas e
-          cliques. Enquanto isso, os envios continuam usando o pixel interno.
+          <code className="rounded bg-muted px-1">FUXICO_WEBHOOK_SECRET</code> para ativar aberturas
+          e cliques. Enquanto isso, os envios continuam usando o pixel interno.
         </p>
       ) : null}
 
@@ -697,10 +772,14 @@ function FuxicoSection({
           </div>
         ))}
       </div>
-      <p className="text-xs text-muted-foreground">Eventos dos últimos 30 dias recebidos do FUXICO.</p>
+      <p className="text-xs text-muted-foreground">
+        Eventos dos últimos 30 dias recebidos do FUXICO.
+      </p>
 
       <div className="rounded-lg border bg-card p-4">
-        <p className="text-sm font-medium text-foreground">URL de webhook para cadastrar no FUXICO</p>
+        <p className="text-sm font-medium text-foreground">
+          URL de webhook para cadastrar no FUXICO
+        </p>
         <pre className="mt-2 whitespace-pre-wrap break-all rounded bg-muted p-2 text-xs text-muted-foreground">
           {webhookUrl}
         </pre>

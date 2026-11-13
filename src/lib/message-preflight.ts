@@ -63,7 +63,9 @@ const SEVERITY_PENALTY: Record<MessageSeverity, number> = { error: 25, warning: 
 
 const URL_RE = /(https?:\/\/[^\s<>"')]+)/gi;
 // Faixas de emoji/pictogramas — suficiente para medir excesso, sem exatidão Unicode.
-const EMOJI_RE = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{2190}-\u{21FF}]/gu;
+// U+FE0F (seletor de variação) fica fora da classe: dentro dela o ESLint acusa
+// no-misleading-character-class. A alternância conta exatamente os mesmos pontos de código.
+const EMOJI_RE = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}]|\u{FE0F}/gu;
 
 function hostOf(url: string): string {
   try {

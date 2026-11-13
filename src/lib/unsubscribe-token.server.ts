@@ -23,14 +23,24 @@ function getSecret(): string {
   return s;
 }
 
-export function signUnsubscribeToken(entityId: string, channel: string, ttlSeconds = 60 * 60 * 24 * 365): string {
-  const payload: Payload = { e: entityId, c: channel, x: Math.floor(Date.now() / 1000) + ttlSeconds };
+export function signUnsubscribeToken(
+  entityId: string,
+  channel: string,
+  ttlSeconds = 60 * 60 * 24 * 365,
+): string {
+  const payload: Payload = {
+    e: entityId,
+    c: channel,
+    x: Math.floor(Date.now() / 1000) + ttlSeconds,
+  };
   const body = b64urlEncode(Buffer.from(JSON.stringify(payload)));
   const sig = createHmac("sha256", getSecret()).update(body).digest("hex");
   return `${body}.${sig}`;
 }
 
-export function verifyUnsubscribeToken(token: string): { entityId: string; channel: string } | null {
+export function verifyUnsubscribeToken(
+  token: string,
+): { entityId: string; channel: string } | null {
   const [body, sig] = token.split(".");
   if (!body || !sig) return null;
   const expected = createHmac("sha256", getSecret()).update(body).digest("hex");
@@ -53,7 +63,17 @@ export function verifyUnsubscribeToken(token: string): { entityId: string; chann
 }
 
 /** Stop-word patterns per channel. Case-insensitive whole-word match. */
-const STOP_WORDS = ["pare", "parar", "sair", "stop", "cancelar", "cancel", "unsubscribe", "descadastrar", "remover"];
+const STOP_WORDS = [
+  "pare",
+  "parar",
+  "sair",
+  "stop",
+  "cancelar",
+  "cancel",
+  "unsubscribe",
+  "descadastrar",
+  "remover",
+];
 
 export function detectStopWord(text: string | null | undefined): boolean {
   if (!text) return false;

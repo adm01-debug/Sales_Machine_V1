@@ -10,10 +10,12 @@ export const getChurnRiskOverview = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("contact_churn_scores")
-      .select(`
+      .select(
+        `
         *,
         contact:campaign_targets(first_name, last_name, email, company_name)
-      `)
+      `,
+      )
       .order("risk_score", { ascending: false })
       .limit(20);
 

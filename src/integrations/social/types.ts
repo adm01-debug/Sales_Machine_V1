@@ -52,12 +52,20 @@ class UnipileSender implements SocialSender {
       });
       if (!res.ok) {
         const t = await res.text();
-        return { status: "failed", provider: this.provider, error: `${res.status} ${t.slice(0, 200)}` };
+        return {
+          status: "failed",
+          provider: this.provider,
+          error: `${res.status} ${t.slice(0, 200)}`,
+        };
       }
       const body = (await res.json().catch(() => ({}))) as { id?: string };
       return { status: "sent", provider: this.provider, provider_message_id: body.id };
     } catch (err) {
-      return { status: "failed", provider: this.provider, error: err instanceof Error ? err.message : String(err) };
+      return {
+        status: "failed",
+        provider: this.provider,
+        error: err instanceof Error ? err.message : String(err),
+      };
     }
   }
 }
