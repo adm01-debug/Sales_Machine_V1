@@ -109,7 +109,9 @@ export const dispatchAgentTurn = createServerFn({ method: "POST" })
 export const listIcpCompanies = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ icp_id: z.string().optional(), limit: z.number().int().min(1).max(200).optional() }).parse(input ?? {}),
+    z
+      .object({ icp_id: z.string().optional(), limit: z.number().int().min(1).max(200).optional() })
+      .parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
     const { luxClient } = await import("@/integrations/external/lux.server");
@@ -123,9 +125,7 @@ export const listIcpCompanies = createServerFn({ method: "POST" })
       return { companies: [], error: err instanceof Error ? err.message : String(err) };
     }
 
-    const luxIds = companies
-      .map((c) => String(c.id ?? c.company_id ?? ""))
-      .filter(Boolean);
+    const luxIds = companies.map((c) => String(c.id ?? c.company_id ?? "")).filter(Boolean);
 
     const statusByLux = new Map<string, { entity_id: string; in_campaign: boolean }>();
     if (luxIds.length > 0) {
@@ -171,7 +171,9 @@ export const listIcpCompanies = createServerFn({ method: "POST" })
 export const getCompanyDossier = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ lux_company_id: z.string().min(1), display_name: z.string().optional() }).parse(input),
+    z
+      .object({ lux_company_id: z.string().min(1), display_name: z.string().optional() })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     // Ensure entity exists (upsert lightweight)
@@ -220,7 +222,8 @@ export const getCompanyDossier = createServerFn({ method: "POST" })
       entity,
       decisors: luxRes.status === "fulfilled" ? luxRes.value : { error: String(luxRes.reason) },
       singu: singuRes.status === "fulfilled" ? singuRes.value : { error: String(singuRes.reason) },
-      agent_suggestion: fatorxRes.status === "fulfilled" ? fatorxRes.value : { error: String(fatorxRes.reason) },
+      agent_suggestion:
+        fatorxRes.status === "fulfilled" ? fatorxRes.value : { error: String(fatorxRes.reason) },
       recent_touchpoints: recentTouchpoints ?? [],
     };
   });
@@ -255,17 +258,15 @@ export const enqueueBatchProspection = createServerFn({ method: "POST" })
         skipped++;
         continue;
       }
-      const { error: tgtErr } = await context.supabase
-        .from("campaign_targets")
-        .upsert(
-          {
-            campaign_id: data.campaign_id,
-            entity_id: ent.id,
-            next_run_at: new Date().toISOString(),
-            status: "queued",
-          },
-          { onConflict: "campaign_id,entity_id", ignoreDuplicates: true },
-        );
+      const { error: tgtErr } = await context.supabase.from("campaign_targets").upsert(
+        {
+          campaign_id: data.campaign_id,
+          entity_id: ent.id,
+          next_run_at: new Date().toISOString(),
+          status: "queued",
+        },
+        { onConflict: "campaign_id,entity_id", ignoreDuplicates: true },
+      );
       if (tgtErr) {
         skipped++;
         continue;
@@ -398,7 +399,11 @@ export const decideApproval = createServerFn({ method: "POST" })
         });
         await context.supabase
           .from("contact_touchpoints")
-          .update({ status: res.status, error: res.error ?? null, payload: { ...payload, message: finalMessage, provider: res.provider } as never })
+          .update({
+            status: res.status,
+            error: res.error ?? null,
+            payload: { ...payload, message: finalMessage, provider: res.provider } as never,
+          })
           .eq("id", tp.id);
       } else {
         const { data: ent } = await context.supabase

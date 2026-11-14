@@ -171,9 +171,7 @@ export const setJourneyStatus = createServerFn({ method: "POST" })
       });
       const blocking = validateGraphInput(parsed).filter((i) => i.level === "error");
       if (blocking.length > 0) {
-        throw new Error(
-          `Não é possível ativar: ${blocking.map((i) => i.message).join(" ")}`,
-        );
+        throw new Error(`Não é possível ativar: ${blocking.map((i) => i.message).join(" ")}`);
       }
     }
 

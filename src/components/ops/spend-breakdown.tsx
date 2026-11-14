@@ -92,9 +92,7 @@ export function SpendBreakdown() {
             <div className="rounded-lg border border-border bg-card p-4">
               <div className="text-xs uppercase text-muted-foreground">Custo médio</div>
               <div className="mt-1 text-2xl font-semibold text-foreground">
-                {formatBRL(
-                  data.billableMessages > 0 ? data.totalCost / data.billableMessages : 0,
-                )}
+                {formatBRL(data.billableMessages > 0 ? data.totalCost / data.billableMessages : 0)}
               </div>
               <div className="mt-1 text-xs text-muted-foreground">por mensagem</div>
             </div>
@@ -110,11 +108,16 @@ export function SpendBreakdown() {
                   <span className="text-sm text-foreground">{formatBRL(c.cost)}</span>
                 </div>
                 <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${c.share}%` }} />
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${c.share}%` }}
+                  />
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {c.billable} msg · {formatBRL(c.unitCost)}/msg · {c.share}% do custo
-                  {c.wasted > 0 ? ` · ${c.wasted} desperdiçada(s) (${formatBRL(c.wastedCost)})` : ""}
+                  {c.wasted > 0
+                    ? ` · ${c.wasted} desperdiçada(s) (${formatBRL(c.wastedCost)})`
+                    : ""}
                 </p>
               </li>
             ))}

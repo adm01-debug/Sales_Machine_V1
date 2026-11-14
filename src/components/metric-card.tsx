@@ -32,7 +32,11 @@ export function MetricCard({ label, value, hint, loading, accent = "cyan" }: Met
       </CardHeader>
       <CardContent className="pb-5">
         <p className="text-3xl font-bold tabular-nums tracking-tight">
-          {loading ? <span className="inline-block h-7 w-16 animate-pulse rounded bg-muted" /> : value}
+          {loading ? (
+            <span className="inline-block h-7 w-16 animate-pulse rounded bg-muted" />
+          ) : (
+            value
+          )}
         </p>
         {hint ? <p className="mt-1.5 text-xs text-muted-foreground">{hint}</p> : null}
       </CardContent>

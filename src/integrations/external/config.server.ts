@@ -39,8 +39,6 @@ export function getExternalConfig(system: ExternalSystem) {
 export function assertConfigured(system: ExternalSystem): void {
   const cfg = getExternalConfig(system);
   if (!cfg.baseUrl) {
-    throw new Error(
-      `${system.toUpperCase()}_URL not configured. Add it in project secrets.`,
-    );
+    throw new Error(`${system.toUpperCase()}_URL not configured. Add it in project secrets.`);
   }
 }

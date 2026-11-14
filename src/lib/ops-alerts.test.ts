@@ -196,7 +196,10 @@ describe("alertas de orçamento", () => {
 
   it("crítico de orçamento vem antes do aviso", () => {
     const a = buildOpsAlerts({
-      budget: [ch({ status: "warning", usageRate: 90 }), ch({ channel: "email", status: "exhausted" })],
+      budget: [
+        ch({ status: "warning", usageRate: 90 }),
+        ch({ channel: "email", status: "exhausted" }),
+      ],
     });
     expect(a.map((x) => x.level)).toEqual(["critical", "warning"]);
   });

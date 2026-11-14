@@ -13,7 +13,8 @@ export const Route = createFileRoute("/api/public/track/click")({
         let dest: URL;
         try {
           dest = new URL(target);
-          if (dest.protocol !== "http:" && dest.protocol !== "https:") throw new Error("bad protocol");
+          if (dest.protocol !== "http:" && dest.protocol !== "https:")
+            throw new Error("bad protocol");
         } catch {
           return new Response("invalid url", { status: 400 });
         }
@@ -21,7 +22,10 @@ export const Route = createFileRoute("/api/public/track/click")({
           try {
             const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
             const { data: touchpoint } = await supabaseAdmin
-              .from("contact_touchpoints").select("entity_id").eq("id", tp).maybeSingle();
+              .from("contact_touchpoints")
+              .select("entity_id")
+              .eq("id", tp)
+              .maybeSingle();
             await supabaseAdmin.from("email_deliverability_events").insert({
               touchpoint_id: tp,
               entity_id: touchpoint?.entity_id ?? null,
@@ -32,7 +36,11 @@ export const Route = createFileRoute("/api/public/track/click")({
             await supabaseAdmin.from("sales_machine_events").insert({
               source: "singu",
               event_type: "click",
-              payload: { touchpoint_id: tp, url: dest.toString(), entity_id: touchpoint?.entity_id ?? null } as never,
+              payload: {
+                touchpoint_id: tp,
+                url: dest.toString(),
+                entity_id: touchpoint?.entity_id ?? null,
+              } as never,
             });
           } catch (e) {
             console.error("[track/click] failed", e);

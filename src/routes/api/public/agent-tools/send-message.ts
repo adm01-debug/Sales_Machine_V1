@@ -36,7 +36,10 @@ export const Route = createFileRoute("/api/public/agent-tools/send-message")({
         }
         const input = parsed.data;
         if (input.channel === "mms" && !input.media_url) {
-          return Response.json({ ok: false, error: "media_url é obrigatório para MMS" }, { status: 400 });
+          return Response.json(
+            { ok: false, error: "media_url é obrigatório para MMS" },
+            { status: 400 },
+          );
         }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

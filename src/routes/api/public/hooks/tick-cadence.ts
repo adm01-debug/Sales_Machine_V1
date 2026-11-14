@@ -81,7 +81,9 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
 
           const { data: campaign } = await supabaseAdmin
             .from("campaigns_orchestration")
-            .select("id, name, channels, fatorx_agent_id, cadence_rule_id, requires_human_approval, account_cooldown_hours")
+            .select(
+              "id, name, channels, fatorx_agent_id, cadence_rule_id, requires_human_approval, account_cooldown_hours",
+            )
             .eq("id", target.campaign_id)
             .maybeSingle();
           if (!campaign) continue;
@@ -144,7 +146,9 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
             hasRecent = recent === true;
 
             if (pendingStep.channel === "email") {
-              const { data: capData } = await supabaseAdmin.rpc("compute_daily_cap", { _sender_id: senderId });
+              const { data: capData } = await supabaseAdmin.rpc("compute_daily_cap", {
+                _sender_id: senderId,
+              });
               emailDailyCap = typeof capData === "number" ? capData : 50;
               const { data: health } = await supabaseAdmin
                 .from("sender_health")
@@ -212,7 +216,11 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
               agent_id: campaign.fatorx_agent_id ?? undefined,
               thread_id: threadId,
               input: `Passo ${target.current_step + 1}/${steps.length} da cadência "${campaign.name}" para "${entity.display_name}". Canal: ${step.channel}. Gere UMA mensagem curta, natural, adequada ao canal.`,
-              metadata: { campaign_id: campaign.id, entity_id: entity.id, step: target.current_step },
+              metadata: {
+                campaign_id: campaign.id,
+                entity_id: entity.id,
+                step: target.current_step,
+              },
             });
             const extracted =
               (agentRes as { message?: string; output?: string; text?: string } | null)?.message ??
@@ -220,7 +228,10 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
               (agentRes as { message?: string; output?: string; text?: string } | null)?.text;
             if (extracted && typeof extracted === "string") messageText = extracted;
             if (!entity.fatorx_thread_id) {
-              await supabaseAdmin.from("entity_map").update({ fatorx_thread_id: threadId }).eq("id", entity.id);
+              await supabaseAdmin
+                .from("entity_map")
+                .update({ fatorx_thread_id: threadId })
+                .eq("id", entity.id);
             }
           } catch (err) {
             console.error("[tick-cadence] fatorx failed", err);
@@ -277,7 +288,11 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                 .update({
                   status: res.status,
                   error: res.error ?? null,
-                  payload: { message: messageText, current_step: target.current_step, provider: res.provider } as never,
+                  payload: {
+                    message: messageText,
+                    current_step: target.current_step,
+                    provider: res.provider,
+                  } as never,
                 })
                 .eq("id", tp.id);
             }
@@ -292,7 +307,10 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                 const { singuClient } = await import("@/integrations/external/singu.server");
                 const payloadExtras = { media_url: step.media_url, rcs_payload: step.rcs_payload };
                 if (step.channel === "whatsapp") {
-                  await singuClient.sendWhatsapp({ contact_id: ent2.singu_id, message: messageText });
+                  await singuClient.sendWhatsapp({
+                    contact_id: ent2.singu_id,
+                    message: messageText,
+                  });
                 } else if (step.channel === "sms") {
                   await singuClient.sendSms({ contact_id: ent2.singu_id, message: messageText });
                 } else if (step.channel === "mms") {
@@ -315,7 +333,10 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                     // Fallback automático: se provedor RCS falhar por não suportado,
                     // reenvia como SMS reusando o mesmo texto.
                     if (isRcsFallbackError(emsg)) {
-                      await singuClient.sendSms({ contact_id: ent2.singu_id, message: messageText });
+                      await singuClient.sendSms({
+                        contact_id: ent2.singu_id,
+                        message: messageText,
+                      });
                       if (tp) {
                         await supabaseAdmin
                           .from("contact_touchpoints")
@@ -334,12 +355,17 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
                   const subject = `Contato de ${campaign.name}`.slice(0, 120);
                   const { withFuxicoTracking } = await import("@/lib/email-tracking.server");
                   const recipientEmail =
-                    ((entity.metadata as Record<string, unknown>)?.email as string | undefined) ?? null;
+                    ((entity.metadata as Record<string, unknown>)?.email as string | undefined) ??
+                    null;
                   const tracked = await withFuxicoTracking({
                     body: messageText,
                     recipientEmail,
                     subject,
-                    metadata: { campaign_id: campaign.id, entity_id: entity.id, touchpoint_id: tp?.id ?? null },
+                    metadata: {
+                      campaign_id: campaign.id,
+                      entity_id: entity.id,
+                      touchpoint_id: tp?.id ?? null,
+                    },
                   });
                   if (tp && tracked.trackingId) {
                     await supabaseAdmin
@@ -377,18 +403,35 @@ export const Route = createFileRoute("/api/public/hooks/tick-cadence")({
               }
             } catch (err) {
               const emsg = err instanceof Error ? err.message : String(err);
-              const outcome = decideFailureOutcome(target.attempts ?? 0, target.max_attempts ?? 5, emsg);
+              const outcome = decideFailureOutcome(
+                target.attempts ?? 0,
+                target.max_attempts ?? 5,
+                emsg,
+              );
               const attempts = outcome.attempts;
               if (outcome.action === "dead_letter") {
                 dead_lettered++;
-                if (tp) await supabaseAdmin.from("contact_touchpoints").update({ status: "dead_letter", error: emsg }).eq("id", tp.id);
+                if (tp)
+                  await supabaseAdmin
+                    .from("contact_touchpoints")
+                    .update({ status: "dead_letter", error: emsg })
+                    .eq("id", tp.id);
                 await supabaseAdmin
                   .from("campaign_targets")
                   .update({ state: "dead_letter", locked_until: null, attempts, last_error: emsg })
                   .eq("id", target.id);
                 continue;
               }
-              if (tp) await supabaseAdmin.from("contact_touchpoints").update({ status: "failed", error: emsg, attempts, next_retry_at: outcome.nextRunAt }).eq("id", tp.id);
+              if (tp)
+                await supabaseAdmin
+                  .from("contact_touchpoints")
+                  .update({
+                    status: "failed",
+                    error: emsg,
+                    attempts,
+                    next_retry_at: outcome.nextRunAt,
+                  })
+                  .eq("id", tp.id);
               await supabaseAdmin
                 .from("campaign_targets")
                 .update({

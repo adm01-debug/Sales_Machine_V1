@@ -170,7 +170,10 @@ export function validateGraphInput(graph: JourneyGraphInput): JourneyIssue[] {
   }
 
   if (graph.settings.send_window_start >= graph.settings.send_window_end) {
-    issues.push({ level: "error", message: "A janela de envio precisa começar antes de terminar." });
+    issues.push({
+      level: "error",
+      message: "A janela de envio precisa começar antes de terminar.",
+    });
   }
   return issues;
 }

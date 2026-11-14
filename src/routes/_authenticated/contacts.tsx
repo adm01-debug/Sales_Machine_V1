@@ -8,17 +8,45 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PRIORITY_ORDER, type ReplyPriority } from "@/lib/sentiment";
-import { Flame, ThermometerSun, Snowflake, ShieldOff, HelpCircle, Smile, Frown } from "lucide-react";
+import {
+  Flame,
+  ThermometerSun,
+  Snowflake,
+  ShieldOff,
+  HelpCircle,
+  Smile,
+  Frown,
+} from "lucide-react";
 
 const PRIORITY_META: Record<
   ReplyPriority,
   { label: string; icon: typeof Flame; className: string }
 > = {
-  hot: { label: "Alta chance", icon: Flame, className: "border-neon-lime/40 bg-neon-lime/10 text-neon-lime" },
-  warm: { label: "Média chance", icon: ThermometerSun, className: "border-neon-amber/40 bg-neon-amber/10 text-neon-amber" },
-  cold: { label: "Baixa chance", icon: Snowflake, className: "border-neon-cyan/30 bg-neon-cyan/5 text-neon-cyan" },
-  blocked: { label: "Rejeitou", icon: ShieldOff, className: "border-destructive/40 bg-destructive/10 text-destructive" },
-  unknown: { label: "Sem sinal", icon: HelpCircle, className: "border-border bg-muted/30 text-muted-foreground" },
+  hot: {
+    label: "Alta chance",
+    icon: Flame,
+    className: "border-neon-lime/40 bg-neon-lime/10 text-neon-lime",
+  },
+  warm: {
+    label: "Média chance",
+    icon: ThermometerSun,
+    className: "border-neon-amber/40 bg-neon-amber/10 text-neon-amber",
+  },
+  cold: {
+    label: "Baixa chance",
+    icon: Snowflake,
+    className: "border-neon-cyan/30 bg-neon-cyan/5 text-neon-cyan",
+  },
+  blocked: {
+    label: "Rejeitou",
+    icon: ShieldOff,
+    className: "border-destructive/40 bg-destructive/10 text-destructive",
+  },
+  unknown: {
+    label: "Sem sinal",
+    icon: HelpCircle,
+    className: "border-border bg-muted/30 text-muted-foreground",
+  },
 };
 
 const PRIORITY_FILTERS = [
@@ -85,22 +113,31 @@ function ContactsPage() {
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           <div className="flex flex-col gap-2 sm:flex-row">
-          <Input
-            value={search}
-            placeholder="Buscar por nome"
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div className="flex gap-2">
-            <Button variant={kind === undefined ? "default" : "outline"} onClick={() => setKind(undefined)}>
-              Todos
-            </Button>
-            <Button variant={kind === "company" ? "default" : "outline"} onClick={() => setKind("company")}>
-              Empresas
-            </Button>
-            <Button variant={kind === "person" ? "default" : "outline"} onClick={() => setKind("person")}>
-              Pessoas
-            </Button>
-          </div>
+            <Input
+              value={search}
+              placeholder="Buscar por nome"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="flex gap-2">
+              <Button
+                variant={kind === undefined ? "default" : "outline"}
+                onClick={() => setKind(undefined)}
+              >
+                Todos
+              </Button>
+              <Button
+                variant={kind === "company" ? "default" : "outline"}
+                onClick={() => setKind("company")}
+              >
+                Empresas
+              </Button>
+              <Button
+                variant={kind === "person" ? "default" : "outline"}
+                onClick={() => setKind("person")}
+              >
+                Pessoas
+              </Button>
+            </div>
           </div>
           <div className="flex flex-wrap gap-1 rounded-lg border border-border bg-card p-1">
             {PRIORITY_FILTERS.map((f) => (
@@ -132,51 +169,54 @@ function ContactsPage() {
                 const meta = PRIORITY_META[p.reply_priority];
                 const Icon = meta.icon;
                 return (
-                <li key={p.entity_id} className="flex flex-wrap items-center justify-between gap-2 py-3">
-                  <div className="min-w-0">
-                    <Link
-                      to="/contacts/$id"
-                      params={{ id: p.entity_id }}
-                      className="font-medium hover:underline"
-                    >
-                      {p.display_name ?? "Sem nome"}
-                    </Link>
-                    <p className="text-xs text-muted-foreground">
-                      {p.touchpoint_count ?? 0} interações · {p.inbound_count ?? 0} respostas
-                      {p.last_touch_at
-                        ? ` · último contato ${new Date(p.last_touch_at).toLocaleDateString("pt-BR")}`
-                        : ""}
-                    </p>
-                    {p.sentiment.total > 0 ? (
-                      <p className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
-                        {p.sentiment.positive > 0 && (
-                          <span className="flex items-center gap-1 text-neon-lime">
-                            <Smile className="h-3 w-3" /> {p.sentiment.positive}
-                          </span>
-                        )}
-                        {p.sentiment.negative > 0 && (
-                          <span className="flex items-center gap-1 text-destructive">
-                            <Frown className="h-3 w-3" /> {p.sentiment.negative}
-                          </span>
-                        )}
-                        <span>
-                          saldo {p.sentiment.net_score > 0 ? "+" : ""}
-                          {p.sentiment.net_score}
-                        </span>
+                  <li
+                    key={p.entity_id}
+                    className="flex flex-wrap items-center justify-between gap-2 py-3"
+                  >
+                    <div className="min-w-0">
+                      <Link
+                        to="/contacts/$id"
+                        params={{ id: p.entity_id }}
+                        className="font-medium hover:underline"
+                      >
+                        {p.display_name ?? "Sem nome"}
+                      </Link>
+                      <p className="text-xs text-muted-foreground">
+                        {p.touchpoint_count ?? 0} interações · {p.inbound_count ?? 0} respostas
+                        {p.last_touch_at
+                          ? ` · último contato ${new Date(p.last_touch_at).toLocaleDateString("pt-BR")}`
+                          : ""}
                       </p>
-                    ) : null}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="outline" className={meta.className}>
-                      <Icon className="mr-1 h-3 w-3" />
-                      {meta.label} · {p.reply_probability}%
-                    </Badge>
-                    <Badge variant="outline">{p.kind === "company" ? "empresa" : "pessoa"}</Badge>
-                    <Badge variant="secondary">
-                      sinal {Number(p.signal_score ?? 0).toFixed(1)}
-                    </Badge>
-                  </div>
-                </li>
+                      {p.sentiment.total > 0 ? (
+                        <p className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
+                          {p.sentiment.positive > 0 && (
+                            <span className="flex items-center gap-1 text-neon-lime">
+                              <Smile className="h-3 w-3" /> {p.sentiment.positive}
+                            </span>
+                          )}
+                          {p.sentiment.negative > 0 && (
+                            <span className="flex items-center gap-1 text-destructive">
+                              <Frown className="h-3 w-3" /> {p.sentiment.negative}
+                            </span>
+                          )}
+                          <span>
+                            saldo {p.sentiment.net_score > 0 ? "+" : ""}
+                            {p.sentiment.net_score}
+                          </span>
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant="outline" className={meta.className}>
+                        <Icon className="mr-1 h-3 w-3" />
+                        {meta.label} · {p.reply_probability}%
+                      </Badge>
+                      <Badge variant="outline">{p.kind === "company" ? "empresa" : "pessoa"}</Badge>
+                      <Badge variant="secondary">
+                        sinal {Number(p.signal_score ?? 0).toFixed(1)}
+                      </Badge>
+                    </div>
+                  </li>
                 );
               })}
             </ul>

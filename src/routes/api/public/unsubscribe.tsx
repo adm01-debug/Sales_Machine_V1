@@ -18,7 +18,12 @@ async function handle(request: Request): Promise<Response> {
   const url = new URL(request.url);
   const token = url.searchParams.get("token") ?? "";
   const parsed = verifyUnsubscribeToken(token);
-  if (!parsed) return page("Link inválido", "<h1>Link inválido ou expirado</h1><p>Este link de descadastro não é mais válido. Se quiser parar de receber mensagens, responda com PARE na conversa original.</p>", 400);
+  if (!parsed)
+    return page(
+      "Link inválido",
+      "<h1>Link inválido ou expirado</h1><p>Este link de descadastro não é mais válido. Se quiser parar de receber mensagens, responda com PARE na conversa original.</p>",
+      400,
+    );
 
   if (request.method === "POST") {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -30,7 +35,10 @@ async function handle(request: Request): Promise<Response> {
       reason: "user clicked unsubscribe link",
       evidence: { ua: request.headers.get("user-agent") ?? null } as never,
     });
-    return page("Descadastrado", `<h1>Pronto ✅</h1><p>Você não receberá mais mensagens de <b>${parsed.channel}</b>. Se mudar de ideia, é só responder à conversa original.</p>`);
+    return page(
+      "Descadastrado",
+      `<h1>Pronto ✅</h1><p>Você não receberá mais mensagens de <b>${parsed.channel}</b>. Se mudar de ideia, é só responder à conversa original.</p>`,
+    );
   }
 
   return page(

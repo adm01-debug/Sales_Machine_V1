@@ -50,7 +50,10 @@ export const getMarketingCampaign = createServerFn({ method: "POST" })
         .select("*")
         .eq("campaign_id", data.id)
         .order("label"),
-      context.supabase.from("campaign_sends").select("state, variant_id").eq("campaign_id", data.id),
+      context.supabase
+        .from("campaign_sends")
+        .select("state, variant_id")
+        .eq("campaign_id", data.id),
     ]);
 
     const byState: Record<string, number> = {};
@@ -74,7 +77,13 @@ export const saveMarketingCampaign = createServerFn({ method: "POST" })
       .object({
         id: z.string().uuid().optional(),
         name: z.string().min(1).max(120),
-        objective: z.enum(["awareness", "engagement", "conversion", "reactivation", "announcement"]),
+        objective: z.enum([
+          "awareness",
+          "engagement",
+          "conversion",
+          "reactivation",
+          "announcement",
+        ]),
         channel: channelEnum,
         audience_id: z.string().uuid().optional(),
         scheduled_at: z.string().optional(),
@@ -274,9 +283,11 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
         state: "queued",
         next_run_at: startAt,
       }));
-      const { error: insErr, count } = await context.supabase
-        .from("campaign_sends")
-        .upsert(chunk, { onConflict: "campaign_id,entity_id", ignoreDuplicates: true, count: "exact" });
+      const { error: insErr, count } = await context.supabase.from("campaign_sends").upsert(chunk, {
+        onConflict: "campaign_id,entity_id",
+        ignoreDuplicates: true,
+        count: "exact",
+      });
       if (insErr) throw new Error(insErr.message);
       created += count ?? chunk.length;
     }
@@ -416,7 +427,12 @@ export const getVariableCoverage = createServerFn({ method: "POST" })
 export const listAudienceSample = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ audience_id: z.string().uuid(), limit: z.number().int().min(1).max(25).default(10) }).parse(input),
+    z
+      .object({
+        audience_id: z.string().uuid(),
+        limit: z.number().int().min(1).max(25).default(10),
+      })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     const { data: members } = await context.supabase

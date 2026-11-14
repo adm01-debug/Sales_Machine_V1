@@ -2,11 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import {
-  listCampaigns,
-  createCampaign,
-  listCadenceRules,
-} from "@/lib/orchestrator.functions";
+import { listCampaigns, createCampaign, listCadenceRules } from "@/lib/orchestrator.functions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -91,8 +87,16 @@ function CampaignsPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Link to="/companies"><Button variant="outline" size="sm">Empresas</Button></Link>
-            <Link to="/dashboard"><Button variant="outline" size="sm">Cockpit</Button></Link>
+            <Link to="/companies">
+              <Button variant="outline" size="sm">
+                Empresas
+              </Button>
+            </Link>
+            <Link to="/dashboard">
+              <Button variant="outline" size="sm">
+                Cockpit
+              </Button>
+            </Link>
           </div>
         </header>
 
@@ -104,23 +108,39 @@ function CampaignsPage() {
           <CardContent className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label>Nome</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex: Q4 · CTOs Fintech" />
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ex: Q4 · CTOs Fintech"
+              />
             </div>
             <div className="space-y-2">
               <Label>Agente FATOR X (ID)</Label>
-              <Input value={agentId} onChange={(e) => setAgentId(e.target.value)} placeholder="opcional · usa default" />
+              <Input
+                value={agentId}
+                onChange={(e) => setAgentId(e.target.value)}
+                placeholder="opcional · usa default"
+              />
             </div>
             <div className="space-y-2 md:col-span-2">
               <Label>Descrição</Label>
-              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
+              <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={2}
+              />
             </div>
             <div className="space-y-2">
               <Label>Regra de cadência</Label>
               <Select value={cadenceId} onValueChange={setCadenceId}>
-                <SelectTrigger><SelectValue placeholder="Selecione…" /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione…" />
+                </SelectTrigger>
                 <SelectContent>
                   {(rulesQ.data ?? []).map((r) => (
-                    <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
+                    <SelectItem key={r.id} value={r.id}>
+                      {r.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -136,7 +156,9 @@ function CampaignsPage() {
                     />
                     {c}
                     {(c === "linkedin" || c === "instagram") && (
-                      <Badge variant="outline" className="text-xxs">stub</Badge>
+                      <Badge variant="outline" className="text-xxs">
+                        stub
+                      </Badge>
                     )}
                   </label>
                 ))}
@@ -165,7 +187,10 @@ function CampaignsPage() {
             ) : (
               <ul className="space-y-2 text-sm">
                 {(campaignsQ.data ?? []).map((c) => (
-                  <li key={c.id} className="flex items-center justify-between border-b py-2 last:border-0">
+                  <li
+                    key={c.id}
+                    className="flex items-center justify-between border-b py-2 last:border-0"
+                  >
                     <div>
                       <p className="font-medium">{c.name}</p>
                       <p className="text-xs text-muted-foreground">

@@ -94,7 +94,10 @@ export function estimateCampaignCost(input: {
   const audienceSize = Math.max(Math.trunc(Number(input.audienceSize) || 0), 0);
   const unitCost = unitCostFor(channel, input.overrides);
   const variants = input.variants ?? [];
-  const alloc = allocateRecipients(audienceSize, variants.map((v) => v.split_percent));
+  const alloc = allocateRecipients(
+    audienceSize,
+    variants.map((v) => v.split_percent),
+  );
 
   let totalSegments = 0;
   const lines: VariantCostLine[] = variants.map((v, i) => {
@@ -167,8 +170,10 @@ export function evaluateCostPreflight(
 
   const dailyLimit = Number(budget?.dailyLimit) > 0 ? Number(budget?.dailyLimit) : 0;
   const monthlyLimit = Number(budget?.monthlyLimit) > 0 ? Number(budget?.monthlyLimit) : 0;
-  const remainingToday = dailyLimit > 0 ? round2(Math.max(dailyLimit - (budget?.spentToday ?? 0), 0)) : null;
-  const remainingMonth = monthlyLimit > 0 ? round2(Math.max(monthlyLimit - (budget?.spentMonth ?? 0), 0)) : null;
+  const remainingToday =
+    dailyLimit > 0 ? round2(Math.max(dailyLimit - (budget?.spentToday ?? 0), 0)) : null;
+  const remainingMonth =
+    monthlyLimit > 0 ? round2(Math.max(monthlyLimit - (budget?.spentMonth ?? 0), 0)) : null;
   const consumesDailyPct =
     remainingToday !== null && remainingToday > 0
       ? round2((estimate.totalCost / remainingToday) * 100)

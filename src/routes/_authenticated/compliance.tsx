@@ -38,7 +38,13 @@ function CompliancePage() {
 
   const active = useMemo(() => (terms.data ?? []).filter((t) => t.is_active), [terms.data]);
   const rules: ComplianceRule[] = useMemo(
-    () => active.map(({ term, severity, reason, suggestion }) => ({ term, severity, reason, suggestion })),
+    () =>
+      active.map(({ term, severity, reason, suggestion }) => ({
+        term,
+        severity,
+        reason,
+        suggestion,
+      })),
     [active],
   );
   const niches = useMemo<readonly ComplianceNiche[]>(() => {
@@ -61,7 +67,9 @@ function CompliancePage() {
         <Card>
           <CardHeader>
             <CardTitle>Lista do cliente</CardTitle>
-            <CardDescription>Termos específicos do seu negócio, além das listas embutidas.</CardDescription>
+            <CardDescription>
+              Termos específicos do seu negócio, além das listas embutidas.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ComplianceTermsManager />

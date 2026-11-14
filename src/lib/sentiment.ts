@@ -4,8 +4,10 @@
  */
 export type Sentiment = "positive" | "neutral" | "negative";
 
-const POSITIVE_RE = /obrigad|gostei|quero|interessante|interesse|agendar|marcar|reuni|proposta|catálogo|catalogo|bom|ótim|otim|excelente|pode enviar|vamos/i;
-const NEGATIVE_RE = /n[ãa]o quero|n[ãa]o tenho interesse|remover|descadastr|sair|spam|pare|parem|ruim|p[ée]ssim|desinscrever|nunca mais|incomod/i;
+const POSITIVE_RE =
+  /obrigad|gostei|quero|interessante|interesse|agendar|marcar|reuni|proposta|catálogo|catalogo|bom|ótim|otim|excelente|pode enviar|vamos/i;
+const NEGATIVE_RE =
+  /n[ãa]o quero|n[ãa]o tenho interesse|remover|descadastr|sair|spam|pare|parem|ruim|p[ée]ssim|desinscrever|nunca mais|incomod/i;
 
 /** Classifica um texto livre em positivo, negativo ou neutro. */
 export function classifySentiment(text: string | null | undefined): Sentiment {
@@ -26,9 +28,16 @@ export interface LeadSentimentSummary {
 }
 
 /** Agrega uma lista de respostas inbound de um mesmo lead. */
-export function summarizeLeadSentiment(texts: Array<string | null | undefined>): LeadSentimentSummary {
+export function summarizeLeadSentiment(
+  texts: Array<string | null | undefined>,
+): LeadSentimentSummary {
   const summary: LeadSentimentSummary = {
-    positive: 0, neutral: 0, negative: 0, total: 0, net_score: 0, dominant: null,
+    positive: 0,
+    neutral: 0,
+    negative: 0,
+    total: 0,
+    net_score: 0,
+    dominant: null,
   };
   for (const t of texts) {
     summary.total++;
@@ -73,5 +82,9 @@ export function computeReplyPriority(
 }
 
 export const PRIORITY_ORDER: Record<ReplyPriority, number> = {
-  hot: 0, warm: 1, cold: 2, unknown: 3, blocked: 4,
+  hot: 0,
+  warm: 1,
+  cold: 2,
+  unknown: 3,
+  blocked: 4,
 };

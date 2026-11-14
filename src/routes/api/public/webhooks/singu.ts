@@ -44,7 +44,11 @@ export const Route = createFileRoute("/api/public/webhooks/singu")({
           const text = String(p.message ?? p.text ?? p.body ?? "");
           const channelRaw = String(p.channel ?? "");
           const contactId = p.contact_id ?? p.singu_contact_id ?? null;
-          if ((direction === "inbound" || parsed.data.event_type === "reply") && detectStopWord(text) && contactId) {
+          if (
+            (direction === "inbound" || parsed.data.event_type === "reply") &&
+            detectStopWord(text) &&
+            contactId
+          ) {
             const { data: em } = await supabaseAdmin
               .from("entity_map")
               .select("id")

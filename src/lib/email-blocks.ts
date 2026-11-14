@@ -114,7 +114,10 @@ export function validateBlocks(blocks: EmailBlock[]): BlockIssue[] {
         if (!safeUrl(block.url))
           issues.push({ blockId: block.id, message: "URL da imagem inválida (use http/https)." });
         if (!block.alt?.trim())
-          issues.push({ blockId: block.id, message: "Descreva a imagem (alt) para acessibilidade." });
+          issues.push({
+            blockId: block.id,
+            message: "Descreva a imagem (alt) para acessibilidade.",
+          });
         if (block.href && !safeUrl(block.href))
           issues.push({ blockId: block.id, message: "Link da imagem inválido." });
         break;

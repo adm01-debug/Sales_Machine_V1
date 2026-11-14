@@ -83,7 +83,10 @@ function CampaignsPage() {
             placeholder="ex.: Lançamento catálogo Q3"
             onChange={(e) => setName(e.target.value)}
           />
-          <Button onClick={() => createMutation.mutate()} disabled={!name.trim() || createMutation.isPending}>
+          <Button
+            onClick={() => createMutation.mutate()}
+            disabled={!name.trim() || createMutation.isPending}
+          >
             {createMutation.isPending ? "Criando…" : "Criar"}
           </Button>
         </CardContent>
@@ -103,7 +106,11 @@ function CampaignsPage() {
               {(campaigns.data ?? []).map((c) => (
                 <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
                   <div className="min-w-0">
-                    <Link to="/campaigns/$id" params={{ id: c.id }} className="font-medium hover:underline">
+                    <Link
+                      to="/campaigns/$id"
+                      params={{ id: c.id }}
+                      className="font-medium hover:underline"
+                    >
                       {c.name}
                     </Link>
                     <p className="text-xs text-muted-foreground">

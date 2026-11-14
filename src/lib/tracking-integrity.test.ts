@@ -46,9 +46,9 @@ describe("buildTrackingIntegrityReport — estado saudável", () => {
 describe("cobertura de rastreio", () => {
   it("avisa quando a lacuna é pequena e falha quando passa de 10%", () => {
     const nine = [...Array(9)].map((_, i) => tp(`ok${i}`, `t${i}`));
-    expect(check(buildTrackingIntegrityReport([...nine, tp("x", null)], []), "untracked")).toMatchObject(
-      { count: 1, severity: "warning" },
-    );
+    expect(
+      check(buildTrackingIntegrityReport([...nine, tp("x", null)], []), "untracked"),
+    ).toMatchObject({ count: 1, severity: "warning" });
 
     const r = buildTrackingIntegrityReport([tp("a", "t"), tp("b", null)], []);
     expect(check(r, "untracked").severity).toBe("error");

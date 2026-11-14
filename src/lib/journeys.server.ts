@@ -7,11 +7,7 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import {
-  isTempId,
-  validateGraphInput,
-  type JourneyGraphInput,
-} from "./journey-graph";
+import { isTempId, validateGraphInput, type JourneyGraphInput } from "./journey-graph";
 import type { JourneyIssue } from "./journey-engine";
 
 type Db = SupabaseClient<never, "public", never>;
@@ -34,10 +30,7 @@ export interface SaveGraphResult {
  * regrava as ligações e devolve os problemas encontrados (sem bloquear o
  * rascunho — a ativação é que exige grafo sem erros).
  */
-export async function saveJourneyGraph(
-  db: Db,
-  graph: JourneyGraphInput,
-): Promise<SaveGraphResult> {
+export async function saveJourneyGraph(db: Db, graph: JourneyGraphInput): Promise<SaveGraphResult> {
   const issues = validateGraphInput(graph);
 
   const idMap: Record<string, string> = {};

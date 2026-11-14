@@ -10,12 +10,7 @@
  * descadastro, assunto em CAIXA ALTA, gatilhos de spam e encurtadores.
  */
 
-import {
-  renderEmailHtml,
-  renderEmailText,
-  safeUrl,
-  type EmailBlock,
-} from "./email-blocks";
+import { renderEmailHtml, renderEmailText, safeUrl, type EmailBlock } from "./email-blocks";
 import { parseVariables } from "./template-vars";
 
 export type PreflightSeverity = "error" | "warning" | "info";
@@ -78,7 +73,10 @@ const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\
 const SPAM_TRIGGER_MATCHERS: ReadonlyArray<{ term: string; re: RegExp }> = SPAM_TRIGGERS.map(
   (term) => ({
     term,
-    re: new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(normalizeForMatch(term))}(?![\\p{L}\\p{N}])`, "u"),
+    re: new RegExp(
+      `(?<![\\p{L}\\p{N}])${escapeRegExp(normalizeForMatch(term))}(?![\\p{L}\\p{N}])`,
+      "u",
+    ),
   }),
 );
 
@@ -142,10 +140,7 @@ const SEVERITY_PENALTY: Record<PreflightSeverity, number> = {
 };
 
 /** Executa todas as heurísticas e devolve o relatório consolidado. */
-export function preflightEmail(input: {
-  subject: string;
-  blocks: EmailBlock[];
-}): PreflightReport {
+export function preflightEmail(input: { subject: string; blocks: EmailBlock[] }): PreflightReport {
   const { blocks } = input;
   const subject = (input.subject ?? "").trim();
   const findings: PreflightFinding[] = [];
@@ -154,8 +149,9 @@ export function preflightEmail(input: {
   const text = renderEmailText(blocks);
   // Só heading/text contam como "texto real" — legendas de imagem não valem.
   const realText = blocks
-    .filter((b): b is Extract<EmailBlock, { type: "heading" | "text" }> =>
-      b.type === "heading" || b.type === "text",
+    .filter(
+      (b): b is Extract<EmailBlock, { type: "heading" | "text" }> =>
+        b.type === "heading" || b.type === "text",
     )
     .map((b) => b.text.trim())
     .join("\n\n")

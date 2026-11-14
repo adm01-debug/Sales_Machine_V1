@@ -5,12 +5,21 @@
  * Fica separado de `marketing.functions.ts` porque o split de server functions
  * remove os irmãos de módulo do bundle do servidor.
  */
-import { estimateCampaignCost, evaluateCostPreflight, type CostPreflight } from "@/lib/campaign-cost";
+import {
+  estimateCampaignCost,
+  evaluateCostPreflight,
+  type CostPreflight,
+} from "@/lib/campaign-cost";
 import { buildBudgetReport } from "@/lib/budget.server";
+import type { TableClient } from "./table-client";
 
-type Client = {
-  from: (table: string) => any;
-};
+type Client = TableClient;
+
+interface VariantRow {
+  label: string;
+  body: string | null;
+  split_percent: number | null;
+}
 
 /**
  * Monta o pré-voo de uma campanha. Nunca lança por indisponibilidade do
@@ -47,7 +56,7 @@ export async function buildCampaignPreflight(
   const estimate = estimateCampaignCost({
     channel: String(campaign.channel),
     audienceSize,
-    variants: (variants ?? []).map((v: any) => ({
+    variants: (variants ?? []).map((v: VariantRow) => ({
       label: String(v.label),
       body: String(v.body ?? ""),
       split_percent: Number(v.split_percent) || 0,

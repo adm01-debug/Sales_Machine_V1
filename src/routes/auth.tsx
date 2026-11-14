@@ -12,7 +12,10 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Entrar · Sales Machine" },
-      { name: "description", content: "Acesse o cockpit da Sales Machine para orquestrar prospecção multicanal." },
+      {
+        name: "description",
+        content: "Acesse o cockpit da Sales Machine para orquestrar prospecção multicanal.",
+      },
     ],
   }),
   component: AuthPage,

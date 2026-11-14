@@ -7,7 +7,7 @@ import { Link } from "@tanstack/react-router";
 
 export function ChurnRiskWidget() {
   const fetchMetrics = useServerFn(getChurnMetrics);
-  
+
   const { data, isLoading } = useQuery({
     queryKey: ["churn", "metrics"],
     queryFn: () => fetchMetrics(),
@@ -28,14 +28,21 @@ export function ChurnRiskWidget() {
             Saúde da Audiência
           </p>
           <h3 className="text-2xl font-bold tracking-tight text-foreground">
-            {totalAtRisk} <span className="text-sm font-normal text-muted-foreground">Contatos em Risco</span>
+            {totalAtRisk}{" "}
+            <span className="text-sm font-normal text-muted-foreground">Contatos em Risco</span>
           </h3>
         </div>
-        <div className={cn(
-          "rounded-full p-2.5",
-          totalAtRisk > 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"
-        )}>
-          {totalAtRisk > 0 ? <AlertTriangle className="h-5 w-5" /> : <ShieldAlert className="h-5 w-5" />}
+        <div
+          className={cn(
+            "rounded-full p-2.5",
+            totalAtRisk > 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary",
+          )}
+        >
+          {totalAtRisk > 0 ? (
+            <AlertTriangle className="h-5 w-5" />
+          ) : (
+            <ShieldAlert className="h-5 w-5" />
+          )}
         </div>
       </div>
 
@@ -46,9 +53,11 @@ export function ChurnRiskWidget() {
             <span className="text-destructive">{data?.critical ?? 0}</span>
           </div>
           <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-            <div 
-              className="h-full bg-destructive transition-all duration-700" 
-              style={{ width: `${Math.min(((data?.critical ?? 0) / (totalAtRisk || 1)) * 100, 100)}%` }}
+            <div
+              className="h-full bg-destructive transition-all duration-700"
+              style={{
+                width: `${Math.min(((data?.critical ?? 0) / (totalAtRisk || 1)) * 100, 100)}%`,
+              }}
             />
           </div>
         </div>
@@ -58,8 +67,8 @@ export function ChurnRiskWidget() {
             <span className="text-orange-500">{data?.high ?? 0}</span>
           </div>
           <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-            <div 
-              className="h-full bg-orange-500 transition-all duration-700" 
+            <div
+              className="h-full bg-orange-500 transition-all duration-700"
               style={{ width: `${Math.min(((data?.high ?? 0) / (totalAtRisk || 1)) * 100, 100)}%` }}
             />
           </div>
@@ -71,7 +80,7 @@ export function ChurnRiskWidget() {
           <TrendingDown className="h-3.5 w-3.5 text-destructive" />
           <span>+12% vs mês anterior</span>
         </div>
-        <Link 
+        <Link
           to="/ops"
           className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
         >
