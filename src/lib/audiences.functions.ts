@@ -18,7 +18,7 @@ export const listAudiences = createServerFn({ method: "GET" })
 
 export const getAudience = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: audience, error } = await context.supabase
       .from("audiences")
@@ -39,7 +39,7 @@ export const getAudience = createServerFn({ method: "POST" })
 
 export const previewAudience = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ rules: audienceRulesSchema }).parse(input))
+  .validator((input: unknown) => z.object({ rules: audienceRulesSchema }).parse(input))
   .handler(async ({ data, context }) => {
     const { resolveAudience } = await import("@/lib/audience-resolver.server");
     const rows = await resolveAudience(context.supabase, data.rules);
@@ -57,7 +57,7 @@ export const previewAudience = createServerFn({ method: "POST" })
 
 export const saveAudience = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         id: z.string().uuid().optional(),
@@ -93,7 +93,7 @@ export const saveAudience = createServerFn({ method: "POST" })
 
 export const refreshAudience = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: audience, error } = await context.supabase
       .from("audiences")
@@ -134,7 +134,7 @@ export const refreshAudience = createServerFn({ method: "POST" })
 
 export const archiveAudience = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("audiences")

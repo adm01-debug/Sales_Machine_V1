@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getTemplatePreflightHistory = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ templateId: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ templateId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: history, error } = await context.supabase
       .from("template_preflight_history")
@@ -18,7 +18,7 @@ export const getTemplatePreflightHistory = createServerFn({ method: "GET" })
 
 export const recordTemplatePreflight = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         templateId: z.string().uuid(),

@@ -205,7 +205,7 @@ export const getBudgetReport = createServerFn({ method: "GET" })
  */
 export const getSpendBreakdown = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ days: z.number() }).parse(input))
+  .validator((input: unknown) => z.object({ days: z.number() }).parse(input))
   .handler(async ({ data: { days }, context }) => {
     const since = new Date(Date.now() - days * 86400_000).toISOString();
     const { data, error } = await context.supabase
@@ -235,7 +235,7 @@ export const getSpendBreakdown = createServerFn({ method: "POST" })
  */
 export const updateChannelBudget = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         channel: z.string(),
@@ -316,7 +316,7 @@ export const getBudgetReallocationPlan = createServerFn({ method: "GET" })
  */
 export const getManualInterventions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         days: z.number().nullable(),
@@ -349,7 +349,7 @@ export const getManualInterventions = createServerFn({ method: "POST" })
  */
 export const exportManualInterventions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         days: z.number().nullable(),
@@ -400,7 +400,7 @@ export const listComplianceViolations = createServerFn({ method: "GET" })
  */
 export const getChannelROI = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ days: z.number() }).parse(input))
+  .validator((input: unknown) => z.object({ days: z.number() }).parse(input))
   .handler(async ({ data: { days }, context }) => {
     // Tenta atualizar as estatísticas primeiro
     await context.supabase.rpc("fn_refresh_roi_stats", { _days: days });

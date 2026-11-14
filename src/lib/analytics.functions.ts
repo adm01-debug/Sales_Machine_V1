@@ -15,7 +15,7 @@ import { diagnoseCampaign } from "./campaign-diagnostics";
 /** Séries e distribuições que alimentam os gráficos do painel de resultados. */
 export const getAnalyticsCharts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z.object({ days: z.number().int().min(7).max(90).default(30) }).parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
@@ -73,7 +73,7 @@ export const getAnalyticsCharts = createServerFn({ method: "POST" })
  */
 export const getCampaignDrilldown = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         campaignId: z.string().uuid(),

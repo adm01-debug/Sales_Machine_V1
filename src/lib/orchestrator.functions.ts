@@ -31,7 +31,7 @@ export const listCampaigns = createServerFn({ method: "GET" })
 /** Import a company from LUX and stage it as an entity in SALES MACHINE. */
 export const importFromLux = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         lux_company_id: z.string().min(1),
@@ -63,7 +63,7 @@ export const importFromLux = createServerFn({ method: "POST" })
  */
 export const dispatchAgentTurn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         entity_id: z.string().uuid(),
@@ -108,7 +108,7 @@ export const dispatchAgentTurn = createServerFn({ method: "POST" })
 /** List ICP companies from LUX, marking Sales Machine status via entity_map join. */
 export const listIcpCompanies = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({ icp_id: z.string().optional(), limit: z.number().int().min(1).max(200).optional() })
       .parse(input ?? {}),
@@ -170,7 +170,7 @@ export const listIcpCompanies = createServerFn({ method: "POST" })
 /** Full dossier for a company: LUX profile + decisors, SINGU history/NBA, FATOR X suggestion. */
 export const getCompanyDossier = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({ lux_company_id: z.string().min(1), display_name: z.string().optional() })
       .parse(input),
@@ -231,7 +231,7 @@ export const getCompanyDossier = createServerFn({ method: "POST" })
 /** Enqueue a batch of companies (by LUX id) into a campaign as targets. */
 export const enqueueBatchProspection = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         campaign_id: z.string().uuid(),
@@ -297,7 +297,7 @@ export const listCampaignsForPicker = createServerFn({ method: "GET" })
 /** Create a new campaign. */
 export const createCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         name: z.string().min(1).max(120),
@@ -358,7 +358,7 @@ export const listPendingApprovals = createServerFn({ method: "GET" })
 
 export const decideApproval = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         touchpoint_id: z.string().uuid(),
@@ -451,7 +451,7 @@ export const listEvalCases = createServerFn({ method: "GET" })
 
 export const createEvalCase = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         name: z.string().min(1),
@@ -480,7 +480,7 @@ export const createEvalCase = createServerFn({ method: "POST" })
 
 export const runEvalCase = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z.object({ case_id: z.string().uuid(), agent_id: z.string().optional() }).parse(input),
   )
   .handler(async ({ data, context }) => {

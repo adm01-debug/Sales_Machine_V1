@@ -52,7 +52,7 @@ export const listTemplates = createServerFn({ method: "GET" })
 
 export const upsertTemplate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     BaseTemplate.extend({ id: z.string().uuid().optional() }).parse(input),
   )
   .handler(async ({ data, context }) => {
@@ -99,7 +99,7 @@ export const upsertTemplate = createServerFn({ method: "POST" })
 
 export const archiveTemplate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z.object({ id: z.string().uuid(), archived: z.boolean() }).parse(input),
   )
   .handler(async ({ data, context }) => {
@@ -113,7 +113,7 @@ export const archiveTemplate = createServerFn({ method: "POST" })
 
 export const duplicateTemplate = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: src, error } = await context.supabase
       .from("message_templates")
@@ -143,7 +143,7 @@ export const duplicateTemplate = createServerFn({ method: "POST" })
 /** Envia mensagem de teste para um entity específico via SINGU. */
 export const sendTestMessage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         entity_id: z.string().uuid(),
@@ -203,7 +203,7 @@ export const sendTestMessage = createServerFn({ method: "POST" })
 /** URL assinada de 60 minutos para leitura de mídia no bucket message-media. */
 export const getMediaSignedUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ path: z.string().min(1) }).parse(input))
+  .validator((input: unknown) => z.object({ path: z.string().min(1) }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: signed, error } = await context.supabase.storage
       .from("message-media")

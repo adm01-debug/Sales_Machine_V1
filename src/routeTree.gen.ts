@@ -9,50 +9,54 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ConfirmarRouteImport } from './routes/confirmar'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as FSlugRouteImport } from './routes/f.$slug'
-import { Route as AuthenticatedProspectingRouteImport } from './routes/_authenticated/prospecting'
-import { Route as AuthenticatedOpsRouteImport } from './routes/_authenticated/ops'
-import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
-import { Route as AuthenticatedJourneysRouteImport } from './routes/_authenticated/journeys'
-import { Route as AuthenticatedFormsRouteImport } from './routes/_authenticated/forms'
-import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/evals'
-import { Route as AuthenticatedDeliverabilityRouteImport } from './routes/_authenticated/deliverability'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
-import { Route as AuthenticatedComplianceRouteImport } from './routes/_authenticated/compliance'
-import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
-import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
-import { Route as AuthenticatedAudiencesRouteImport } from './routes/_authenticated/audiences'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ConfirmarRouteImport } from './routes/confirmar'
 import { Route as AuthenticatedApprovalsRouteImport } from './routes/_authenticated/approvals'
+import { Route as AuthenticatedAudiencesRouteImport } from './routes/_authenticated/audiences'
+import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
+import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
+import { Route as AuthenticatedComplianceRouteImport } from './routes/_authenticated/compliance'
+import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDeliverabilityRouteImport } from './routes/_authenticated/deliverability'
+import { Route as AuthenticatedEvalsRouteImport } from './routes/_authenticated/evals'
+import { Route as AuthenticatedFormsRouteImport } from './routes/_authenticated/forms'
+import { Route as AuthenticatedJourneysRouteImport } from './routes/_authenticated/journeys'
+import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
+import { Route as AuthenticatedOpsRouteImport } from './routes/_authenticated/ops'
+import { Route as AuthenticatedProspectingRouteImport } from './routes/_authenticated/prospecting'
+import { Route as FSlugRouteImport } from './routes/f.$slug'
+import { Route as AuthenticatedAudiencesIdRouteImport } from './routes/_authenticated/audiences.$id'
+import { Route as AuthenticatedCampaignsIdRouteImport } from './routes/_authenticated/campaigns.$id'
+import { Route as AuthenticatedCompaniesIdRouteImport } from './routes/_authenticated/companies.$id'
+import { Route as AuthenticatedContactsIdRouteImport } from './routes/_authenticated/contacts.$id'
+import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticated/forms.$id'
+import { Route as AuthenticatedJourneysIdRouteImport } from './routes/_authenticated/journeys.$id'
 import { Route as AuthenticatedOpsIndexRouteImport } from './routes/_authenticated/ops/index'
 import { Route as ApiPublicUnsubscribeRouteImport } from './routes/api/public/unsubscribe'
-import { Route as AuthenticatedJourneysIdRouteImport } from './routes/_authenticated/journeys.$id'
-import { Route as AuthenticatedFormsIdRouteImport } from './routes/_authenticated/forms.$id'
-import { Route as AuthenticatedContactsIdRouteImport } from './routes/_authenticated/contacts.$id'
-import { Route as AuthenticatedCompaniesIdRouteImport } from './routes/_authenticated/companies.$id'
-import { Route as AuthenticatedCampaignsIdRouteImport } from './routes/_authenticated/campaigns.$id'
-import { Route as AuthenticatedAudiencesIdRouteImport } from './routes/_authenticated/audiences.$id'
-import { Route as ApiPublicWebhooksSinguBounceRouteImport } from './routes/api/public/webhooks/singu-bounce'
-import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
-import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
-import { Route as ApiPublicWebhooksFuxicoRouteImport } from './routes/api/public/webhooks/fuxico'
-import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
-import { Route as ApiPublicTrackOpenDotgifRouteImport } from './routes/api/public/track/open[.]gif'
-import { Route as ApiPublicTrackClickRouteImport } from './routes/api/public/track/click'
-import { Route as ApiPublicHooksTickMarketingRouteImport } from './routes/api/public/hooks/tick-marketing'
-import { Route as ApiPublicHooksTickJourneysRouteImport } from './routes/api/public/hooks/tick-journeys'
-import { Route as ApiPublicHooksTickCadenceRouteImport } from './routes/api/public/hooks/tick-cadence'
-import { Route as ApiPublicHooksBudgetReallocateRouteImport } from './routes/api/public/hooks/budget-reallocate'
-import { Route as ApiPublicHooksAlertSweepRouteImport } from './routes/api/public/hooks/alert-sweep'
 import { Route as ApiPublicAgentToolsSendMessageRouteImport } from './routes/api/public/agent-tools/send-message'
+import { Route as ApiPublicHooksAlertSweepRouteImport } from './routes/api/public/hooks/alert-sweep'
+import { Route as ApiPublicHooksBudgetReallocateRouteImport } from './routes/api/public/hooks/budget-reallocate'
+import { Route as ApiPublicHooksTickCadenceRouteImport } from './routes/api/public/hooks/tick-cadence'
+import { Route as ApiPublicHooksTickJourneysRouteImport } from './routes/api/public/hooks/tick-journeys'
+import { Route as ApiPublicHooksTickMarketingRouteImport } from './routes/api/public/hooks/tick-marketing'
+import { Route as ApiPublicTrackClickRouteImport } from './routes/api/public/track/click'
+import { Route as ApiPublicTrackOpenDotgifRouteImport } from './routes/api/public/track/open[.]gif'
+import { Route as ApiPublicWebhooksFatorxRouteImport } from './routes/api/public/webhooks/fatorx'
+import { Route as ApiPublicWebhooksFuxicoRouteImport } from './routes/api/public/webhooks/fuxico'
+import { Route as ApiPublicWebhooksLuxRouteImport } from './routes/api/public/webhooks/lux'
+import { Route as ApiPublicWebhooksSinguRouteImport } from './routes/api/public/webhooks/singu'
+import { Route as ApiPublicWebhooksSinguBounceRouteImport } from './routes/api/public/webhooks/singu-bounce'
 
-const ConfirmarRoute = ConfirmarRouteImport.update({
-  id: '/confirmar',
-  path: '/confirmar',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -60,49 +64,44 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const ConfirmarRoute = ConfirmarRouteImport.update({
+  id: '/confirmar',
+  path: '/confirmar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FSlugRoute = FSlugRouteImport.update({
-  id: '/f/$slug',
-  path: '/f/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedProspectingRoute =
-  AuthenticatedProspectingRouteImport.update({
-    id: '/prospecting',
-    path: '/prospecting',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedOpsRoute = AuthenticatedOpsRouteImport.update({
-  id: '/ops',
-  path: '/ops',
+const AuthenticatedApprovalsRoute = AuthenticatedApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedLibraryRoute = AuthenticatedLibraryRouteImport.update({
-  id: '/library',
-  path: '/library',
+const AuthenticatedAudiencesRoute = AuthenticatedAudiencesRouteImport.update({
+  id: '/audiences',
+  path: '/audiences',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedJourneysRoute = AuthenticatedJourneysRouteImport.update({
-  id: '/journeys',
-  path: '/journeys',
+const AuthenticatedCampaignsRoute = AuthenticatedCampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedFormsRoute = AuthenticatedFormsRouteImport.update({
-  id: '/forms',
-  path: '/forms',
+const AuthenticatedCompaniesRoute = AuthenticatedCompaniesRouteImport.update({
+  id: '/companies',
+  path: '/companies',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedEvalsRoute = AuthenticatedEvalsRouteImport.update({
-  id: '/evals',
-  path: '/evals',
+const AuthenticatedComplianceRoute = AuthenticatedComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedContactsRoute = AuthenticatedContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDeliverabilityRoute =
@@ -111,40 +110,74 @@ const AuthenticatedDeliverabilityRoute =
     path: '/deliverability',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthenticatedEvalsRoute = AuthenticatedEvalsRouteImport.update({
+  id: '/evals',
+  path: '/evals',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedContactsRoute = AuthenticatedContactsRouteImport.update({
-  id: '/contacts',
-  path: '/contacts',
+const AuthenticatedFormsRoute = AuthenticatedFormsRouteImport.update({
+  id: '/forms',
+  path: '/forms',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedComplianceRoute = AuthenticatedComplianceRouteImport.update({
-  id: '/compliance',
-  path: '/compliance',
+const AuthenticatedJourneysRoute = AuthenticatedJourneysRouteImport.update({
+  id: '/journeys',
+  path: '/journeys',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedCompaniesRoute = AuthenticatedCompaniesRouteImport.update({
-  id: '/companies',
-  path: '/companies',
+const AuthenticatedLibraryRoute = AuthenticatedLibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedCampaignsRoute = AuthenticatedCampaignsRouteImport.update({
-  id: '/campaigns',
-  path: '/campaigns',
+const AuthenticatedOpsRoute = AuthenticatedOpsRouteImport.update({
+  id: '/ops',
+  path: '/ops',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAudiencesRoute = AuthenticatedAudiencesRouteImport.update({
-  id: '/audiences',
-  path: '/audiences',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const AuthenticatedProspectingRoute =
+  AuthenticatedProspectingRouteImport.update({
+    id: '/prospecting',
+    path: '/prospecting',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const FSlugRoute = FSlugRouteImport.update({
+  id: '/f/$slug',
+  path: '/f/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedApprovalsRoute = AuthenticatedApprovalsRouteImport.update({
-  id: '/approvals',
-  path: '/approvals',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const AuthenticatedAudiencesIdRoute =
+  AuthenticatedAudiencesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAudiencesRoute,
+  } as any)
+const AuthenticatedCampaignsIdRoute =
+  AuthenticatedCampaignsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedCampaignsRoute,
+  } as any)
+const AuthenticatedCompaniesIdRoute =
+  AuthenticatedCompaniesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedCompaniesRoute,
+  } as any)
+const AuthenticatedContactsIdRoute = AuthenticatedContactsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedContactsRoute,
+} as any)
+const AuthenticatedFormsIdRoute = AuthenticatedFormsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedFormsRoute,
+} as any)
+const AuthenticatedJourneysIdRoute = AuthenticatedJourneysIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedJourneysRoute,
 } as any)
 const AuthenticatedOpsIndexRoute = AuthenticatedOpsIndexRouteImport.update({
   id: '/',
@@ -156,98 +189,10 @@ const ApiPublicUnsubscribeRoute = ApiPublicUnsubscribeRouteImport.update({
   path: '/api/public/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedJourneysIdRoute = AuthenticatedJourneysIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AuthenticatedJourneysRoute,
-} as any)
-const AuthenticatedFormsIdRoute = AuthenticatedFormsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AuthenticatedFormsRoute,
-} as any)
-const AuthenticatedContactsIdRoute = AuthenticatedContactsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AuthenticatedContactsRoute,
-} as any)
-const AuthenticatedCompaniesIdRoute =
-  AuthenticatedCompaniesIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedCompaniesRoute,
-  } as any)
-const AuthenticatedCampaignsIdRoute =
-  AuthenticatedCampaignsIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedCampaignsRoute,
-  } as any)
-const AuthenticatedAudiencesIdRoute =
-  AuthenticatedAudiencesIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedAudiencesRoute,
-  } as any)
-const ApiPublicWebhooksSinguBounceRoute =
-  ApiPublicWebhooksSinguBounceRouteImport.update({
-    id: '/api/public/webhooks/singu-bounce',
-    path: '/api/public/webhooks/singu-bounce',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicWebhooksSinguRoute = ApiPublicWebhooksSinguRouteImport.update({
-  id: '/api/public/webhooks/singu',
-  path: '/api/public/webhooks/singu',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicWebhooksLuxRoute = ApiPublicWebhooksLuxRouteImport.update({
-  id: '/api/public/webhooks/lux',
-  path: '/api/public/webhooks/lux',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicWebhooksFuxicoRoute = ApiPublicWebhooksFuxicoRouteImport.update({
-  id: '/api/public/webhooks/fuxico',
-  path: '/api/public/webhooks/fuxico',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicWebhooksFatorxRoute = ApiPublicWebhooksFatorxRouteImport.update({
-  id: '/api/public/webhooks/fatorx',
-  path: '/api/public/webhooks/fatorx',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicTrackOpenDotgifRoute =
-  ApiPublicTrackOpenDotgifRouteImport.update({
-    id: '/api/public/track/open.gif',
-    path: '/api/public/track/open.gif',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicTrackClickRoute = ApiPublicTrackClickRouteImport.update({
-  id: '/api/public/track/click',
-  path: '/api/public/track/click',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicHooksTickMarketingRoute =
-  ApiPublicHooksTickMarketingRouteImport.update({
-    id: '/api/public/hooks/tick-marketing',
-    path: '/api/public/hooks/tick-marketing',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksTickJourneysRoute =
-  ApiPublicHooksTickJourneysRouteImport.update({
-    id: '/api/public/hooks/tick-journeys',
-    path: '/api/public/hooks/tick-journeys',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksTickCadenceRoute =
-  ApiPublicHooksTickCadenceRouteImport.update({
-    id: '/api/public/hooks/tick-cadence',
-    path: '/api/public/hooks/tick-cadence',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksBudgetReallocateRoute =
-  ApiPublicHooksBudgetReallocateRouteImport.update({
-    id: '/api/public/hooks/budget-reallocate',
-    path: '/api/public/hooks/budget-reallocate',
+const ApiPublicAgentToolsSendMessageRoute =
+  ApiPublicAgentToolsSendMessageRouteImport.update({
+    id: '/api/public/agent-tools/send-message',
+    path: '/api/public/agent-tools/send-message',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksAlertSweepRoute =
@@ -256,10 +201,65 @@ const ApiPublicHooksAlertSweepRoute =
     path: '/api/public/hooks/alert-sweep',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicAgentToolsSendMessageRoute =
-  ApiPublicAgentToolsSendMessageRouteImport.update({
-    id: '/api/public/agent-tools/send-message',
-    path: '/api/public/agent-tools/send-message',
+const ApiPublicHooksBudgetReallocateRoute =
+  ApiPublicHooksBudgetReallocateRouteImport.update({
+    id: '/api/public/hooks/budget-reallocate',
+    path: '/api/public/hooks/budget-reallocate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksTickCadenceRoute =
+  ApiPublicHooksTickCadenceRouteImport.update({
+    id: '/api/public/hooks/tick-cadence',
+    path: '/api/public/hooks/tick-cadence',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksTickJourneysRoute =
+  ApiPublicHooksTickJourneysRouteImport.update({
+    id: '/api/public/hooks/tick-journeys',
+    path: '/api/public/hooks/tick-journeys',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksTickMarketingRoute =
+  ApiPublicHooksTickMarketingRouteImport.update({
+    id: '/api/public/hooks/tick-marketing',
+    path: '/api/public/hooks/tick-marketing',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicTrackClickRoute = ApiPublicTrackClickRouteImport.update({
+  id: '/api/public/track/click',
+  path: '/api/public/track/click',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicTrackOpenDotgifRoute =
+  ApiPublicTrackOpenDotgifRouteImport.update({
+    id: '/api/public/track/open.gif',
+    path: '/api/public/track/open.gif',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicWebhooksFatorxRoute = ApiPublicWebhooksFatorxRouteImport.update({
+  id: '/api/public/webhooks/fatorx',
+  path: '/api/public/webhooks/fatorx',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWebhooksFuxicoRoute = ApiPublicWebhooksFuxicoRouteImport.update({
+  id: '/api/public/webhooks/fuxico',
+  path: '/api/public/webhooks/fuxico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWebhooksLuxRoute = ApiPublicWebhooksLuxRouteImport.update({
+  id: '/api/public/webhooks/lux',
+  path: '/api/public/webhooks/lux',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWebhooksSinguRoute = ApiPublicWebhooksSinguRouteImport.update({
+  id: '/api/public/webhooks/singu',
+  path: '/api/public/webhooks/singu',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWebhooksSinguBounceRoute =
+  ApiPublicWebhooksSinguBounceRouteImport.update({
+    id: '/api/public/webhooks/singu-bounce',
+    path: '/api/public/webhooks/singu-bounce',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -537,18 +537,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/confirmar': {
-      id: '/confirmar'
-      path: '/confirmar'
-      fullPath: '/confirmar'
-      preLoaderRoute: typeof ConfirmarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -558,102 +551,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/f/$slug': {
-      id: '/f/$slug'
-      path: '/f/$slug'
-      fullPath: '/f/$slug'
-      preLoaderRoute: typeof FSlugRouteImport
+    '/confirmar': {
+      id: '/confirmar'
+      path: '/confirmar'
+      fullPath: '/confirmar'
+      preLoaderRoute: typeof ConfirmarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/prospecting': {
-      id: '/_authenticated/prospecting'
-      path: '/prospecting'
-      fullPath: '/prospecting'
-      preLoaderRoute: typeof AuthenticatedProspectingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/ops': {
-      id: '/_authenticated/ops'
-      path: '/ops'
-      fullPath: '/ops'
-      preLoaderRoute: typeof AuthenticatedOpsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/library': {
-      id: '/_authenticated/library'
-      path: '/library'
-      fullPath: '/library'
-      preLoaderRoute: typeof AuthenticatedLibraryRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/journeys': {
-      id: '/_authenticated/journeys'
-      path: '/journeys'
-      fullPath: '/journeys'
-      preLoaderRoute: typeof AuthenticatedJourneysRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/forms': {
-      id: '/_authenticated/forms'
-      path: '/forms'
-      fullPath: '/forms'
-      preLoaderRoute: typeof AuthenticatedFormsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/evals': {
-      id: '/_authenticated/evals'
-      path: '/evals'
-      fullPath: '/evals'
-      preLoaderRoute: typeof AuthenticatedEvalsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/deliverability': {
-      id: '/_authenticated/deliverability'
-      path: '/deliverability'
-      fullPath: '/deliverability'
-      preLoaderRoute: typeof AuthenticatedDeliverabilityRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/contacts': {
-      id: '/_authenticated/contacts'
-      path: '/contacts'
-      fullPath: '/contacts'
-      preLoaderRoute: typeof AuthenticatedContactsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/compliance': {
-      id: '/_authenticated/compliance'
-      path: '/compliance'
-      fullPath: '/compliance'
-      preLoaderRoute: typeof AuthenticatedComplianceRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/companies': {
-      id: '/_authenticated/companies'
-      path: '/companies'
-      fullPath: '/companies'
-      preLoaderRoute: typeof AuthenticatedCompaniesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/campaigns': {
-      id: '/_authenticated/campaigns'
-      path: '/campaigns'
-      fullPath: '/campaigns'
-      preLoaderRoute: typeof AuthenticatedCampaignsRouteImport
+    '/_authenticated/approvals': {
+      id: '/_authenticated/approvals'
+      path: '/approvals'
+      fullPath: '/approvals'
+      preLoaderRoute: typeof AuthenticatedApprovalsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/audiences': {
@@ -663,12 +579,138 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAudiencesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/approvals': {
-      id: '/_authenticated/approvals'
-      path: '/approvals'
-      fullPath: '/approvals'
-      preLoaderRoute: typeof AuthenticatedApprovalsRouteImport
+    '/_authenticated/campaigns': {
+      id: '/_authenticated/campaigns'
+      path: '/campaigns'
+      fullPath: '/campaigns'
+      preLoaderRoute: typeof AuthenticatedCampaignsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/companies': {
+      id: '/_authenticated/companies'
+      path: '/companies'
+      fullPath: '/companies'
+      preLoaderRoute: typeof AuthenticatedCompaniesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/compliance': {
+      id: '/_authenticated/compliance'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof AuthenticatedComplianceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/contacts': {
+      id: '/_authenticated/contacts'
+      path: '/contacts'
+      fullPath: '/contacts'
+      preLoaderRoute: typeof AuthenticatedContactsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/deliverability': {
+      id: '/_authenticated/deliverability'
+      path: '/deliverability'
+      fullPath: '/deliverability'
+      preLoaderRoute: typeof AuthenticatedDeliverabilityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/evals': {
+      id: '/_authenticated/evals'
+      path: '/evals'
+      fullPath: '/evals'
+      preLoaderRoute: typeof AuthenticatedEvalsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/forms': {
+      id: '/_authenticated/forms'
+      path: '/forms'
+      fullPath: '/forms'
+      preLoaderRoute: typeof AuthenticatedFormsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/journeys': {
+      id: '/_authenticated/journeys'
+      path: '/journeys'
+      fullPath: '/journeys'
+      preLoaderRoute: typeof AuthenticatedJourneysRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/library': {
+      id: '/_authenticated/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof AuthenticatedLibraryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ops': {
+      id: '/_authenticated/ops'
+      path: '/ops'
+      fullPath: '/ops'
+      preLoaderRoute: typeof AuthenticatedOpsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/prospecting': {
+      id: '/_authenticated/prospecting'
+      path: '/prospecting'
+      fullPath: '/prospecting'
+      preLoaderRoute: typeof AuthenticatedProspectingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/f/$slug': {
+      id: '/f/$slug'
+      path: '/f/$slug'
+      fullPath: '/f/$slug'
+      preLoaderRoute: typeof FSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/audiences/$id': {
+      id: '/_authenticated/audiences/$id'
+      path: '/$id'
+      fullPath: '/audiences/$id'
+      preLoaderRoute: typeof AuthenticatedAudiencesIdRouteImport
+      parentRoute: typeof AuthenticatedAudiencesRoute
+    }
+    '/_authenticated/campaigns/$id': {
+      id: '/_authenticated/campaigns/$id'
+      path: '/$id'
+      fullPath: '/campaigns/$id'
+      preLoaderRoute: typeof AuthenticatedCampaignsIdRouteImport
+      parentRoute: typeof AuthenticatedCampaignsRoute
+    }
+    '/_authenticated/companies/$id': {
+      id: '/_authenticated/companies/$id'
+      path: '/$id'
+      fullPath: '/companies/$id'
+      preLoaderRoute: typeof AuthenticatedCompaniesIdRouteImport
+      parentRoute: typeof AuthenticatedCompaniesRoute
+    }
+    '/_authenticated/contacts/$id': {
+      id: '/_authenticated/contacts/$id'
+      path: '/$id'
+      fullPath: '/contacts/$id'
+      preLoaderRoute: typeof AuthenticatedContactsIdRouteImport
+      parentRoute: typeof AuthenticatedContactsRoute
+    }
+    '/_authenticated/forms/$id': {
+      id: '/_authenticated/forms/$id'
+      path: '/$id'
+      fullPath: '/forms/$id'
+      preLoaderRoute: typeof AuthenticatedFormsIdRouteImport
+      parentRoute: typeof AuthenticatedFormsRoute
+    }
+    '/_authenticated/journeys/$id': {
+      id: '/_authenticated/journeys/$id'
+      path: '/$id'
+      fullPath: '/journeys/$id'
+      preLoaderRoute: typeof AuthenticatedJourneysIdRouteImport
+      parentRoute: typeof AuthenticatedJourneysRoute
     }
     '/_authenticated/ops/': {
       id: '/_authenticated/ops/'
@@ -684,123 +726,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/journeys/$id': {
-      id: '/_authenticated/journeys/$id'
-      path: '/$id'
-      fullPath: '/journeys/$id'
-      preLoaderRoute: typeof AuthenticatedJourneysIdRouteImport
-      parentRoute: typeof AuthenticatedJourneysRoute
-    }
-    '/_authenticated/forms/$id': {
-      id: '/_authenticated/forms/$id'
-      path: '/$id'
-      fullPath: '/forms/$id'
-      preLoaderRoute: typeof AuthenticatedFormsIdRouteImport
-      parentRoute: typeof AuthenticatedFormsRoute
-    }
-    '/_authenticated/contacts/$id': {
-      id: '/_authenticated/contacts/$id'
-      path: '/$id'
-      fullPath: '/contacts/$id'
-      preLoaderRoute: typeof AuthenticatedContactsIdRouteImport
-      parentRoute: typeof AuthenticatedContactsRoute
-    }
-    '/_authenticated/companies/$id': {
-      id: '/_authenticated/companies/$id'
-      path: '/$id'
-      fullPath: '/companies/$id'
-      preLoaderRoute: typeof AuthenticatedCompaniesIdRouteImport
-      parentRoute: typeof AuthenticatedCompaniesRoute
-    }
-    '/_authenticated/campaigns/$id': {
-      id: '/_authenticated/campaigns/$id'
-      path: '/$id'
-      fullPath: '/campaigns/$id'
-      preLoaderRoute: typeof AuthenticatedCampaignsIdRouteImport
-      parentRoute: typeof AuthenticatedCampaignsRoute
-    }
-    '/_authenticated/audiences/$id': {
-      id: '/_authenticated/audiences/$id'
-      path: '/$id'
-      fullPath: '/audiences/$id'
-      preLoaderRoute: typeof AuthenticatedAudiencesIdRouteImport
-      parentRoute: typeof AuthenticatedAudiencesRoute
-    }
-    '/api/public/webhooks/singu-bounce': {
-      id: '/api/public/webhooks/singu-bounce'
-      path: '/api/public/webhooks/singu-bounce'
-      fullPath: '/api/public/webhooks/singu-bounce'
-      preLoaderRoute: typeof ApiPublicWebhooksSinguBounceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/webhooks/singu': {
-      id: '/api/public/webhooks/singu'
-      path: '/api/public/webhooks/singu'
-      fullPath: '/api/public/webhooks/singu'
-      preLoaderRoute: typeof ApiPublicWebhooksSinguRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/webhooks/lux': {
-      id: '/api/public/webhooks/lux'
-      path: '/api/public/webhooks/lux'
-      fullPath: '/api/public/webhooks/lux'
-      preLoaderRoute: typeof ApiPublicWebhooksLuxRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/webhooks/fuxico': {
-      id: '/api/public/webhooks/fuxico'
-      path: '/api/public/webhooks/fuxico'
-      fullPath: '/api/public/webhooks/fuxico'
-      preLoaderRoute: typeof ApiPublicWebhooksFuxicoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/webhooks/fatorx': {
-      id: '/api/public/webhooks/fatorx'
-      path: '/api/public/webhooks/fatorx'
-      fullPath: '/api/public/webhooks/fatorx'
-      preLoaderRoute: typeof ApiPublicWebhooksFatorxRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/track/open.gif': {
-      id: '/api/public/track/open.gif'
-      path: '/api/public/track/open.gif'
-      fullPath: '/api/public/track/open.gif'
-      preLoaderRoute: typeof ApiPublicTrackOpenDotgifRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/track/click': {
-      id: '/api/public/track/click'
-      path: '/api/public/track/click'
-      fullPath: '/api/public/track/click'
-      preLoaderRoute: typeof ApiPublicTrackClickRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/tick-marketing': {
-      id: '/api/public/hooks/tick-marketing'
-      path: '/api/public/hooks/tick-marketing'
-      fullPath: '/api/public/hooks/tick-marketing'
-      preLoaderRoute: typeof ApiPublicHooksTickMarketingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/tick-journeys': {
-      id: '/api/public/hooks/tick-journeys'
-      path: '/api/public/hooks/tick-journeys'
-      fullPath: '/api/public/hooks/tick-journeys'
-      preLoaderRoute: typeof ApiPublicHooksTickJourneysRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/tick-cadence': {
-      id: '/api/public/hooks/tick-cadence'
-      path: '/api/public/hooks/tick-cadence'
-      fullPath: '/api/public/hooks/tick-cadence'
-      preLoaderRoute: typeof ApiPublicHooksTickCadenceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/budget-reallocate': {
-      id: '/api/public/hooks/budget-reallocate'
-      path: '/api/public/hooks/budget-reallocate'
-      fullPath: '/api/public/hooks/budget-reallocate'
-      preLoaderRoute: typeof ApiPublicHooksBudgetReallocateRouteImport
+    '/api/public/agent-tools/send-message': {
+      id: '/api/public/agent-tools/send-message'
+      path: '/api/public/agent-tools/send-message'
+      fullPath: '/api/public/agent-tools/send-message'
+      preLoaderRoute: typeof ApiPublicAgentToolsSendMessageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/alert-sweep': {
@@ -810,11 +740,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksAlertSweepRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/agent-tools/send-message': {
-      id: '/api/public/agent-tools/send-message'
-      path: '/api/public/agent-tools/send-message'
-      fullPath: '/api/public/agent-tools/send-message'
-      preLoaderRoute: typeof ApiPublicAgentToolsSendMessageRouteImport
+    '/api/public/hooks/budget-reallocate': {
+      id: '/api/public/hooks/budget-reallocate'
+      path: '/api/public/hooks/budget-reallocate'
+      fullPath: '/api/public/hooks/budget-reallocate'
+      preLoaderRoute: typeof ApiPublicHooksBudgetReallocateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/tick-cadence': {
+      id: '/api/public/hooks/tick-cadence'
+      path: '/api/public/hooks/tick-cadence'
+      fullPath: '/api/public/hooks/tick-cadence'
+      preLoaderRoute: typeof ApiPublicHooksTickCadenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/tick-journeys': {
+      id: '/api/public/hooks/tick-journeys'
+      path: '/api/public/hooks/tick-journeys'
+      fullPath: '/api/public/hooks/tick-journeys'
+      preLoaderRoute: typeof ApiPublicHooksTickJourneysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/tick-marketing': {
+      id: '/api/public/hooks/tick-marketing'
+      path: '/api/public/hooks/tick-marketing'
+      fullPath: '/api/public/hooks/tick-marketing'
+      preLoaderRoute: typeof ApiPublicHooksTickMarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/track/click': {
+      id: '/api/public/track/click'
+      path: '/api/public/track/click'
+      fullPath: '/api/public/track/click'
+      preLoaderRoute: typeof ApiPublicTrackClickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/track/open.gif': {
+      id: '/api/public/track/open.gif'
+      path: '/api/public/track/open.gif'
+      fullPath: '/api/public/track/open.gif'
+      preLoaderRoute: typeof ApiPublicTrackOpenDotgifRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/fatorx': {
+      id: '/api/public/webhooks/fatorx'
+      path: '/api/public/webhooks/fatorx'
+      fullPath: '/api/public/webhooks/fatorx'
+      preLoaderRoute: typeof ApiPublicWebhooksFatorxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/fuxico': {
+      id: '/api/public/webhooks/fuxico'
+      path: '/api/public/webhooks/fuxico'
+      fullPath: '/api/public/webhooks/fuxico'
+      preLoaderRoute: typeof ApiPublicWebhooksFuxicoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/lux': {
+      id: '/api/public/webhooks/lux'
+      path: '/api/public/webhooks/lux'
+      fullPath: '/api/public/webhooks/lux'
+      preLoaderRoute: typeof ApiPublicWebhooksLuxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/singu': {
+      id: '/api/public/webhooks/singu'
+      path: '/api/public/webhooks/singu'
+      fullPath: '/api/public/webhooks/singu'
+      preLoaderRoute: typeof ApiPublicWebhooksSinguRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/singu-bounce': {
+      id: '/api/public/webhooks/singu-bounce'
+      path: '/api/public/webhooks/singu-bounce'
+      fullPath: '/api/public/webhooks/singu-bounce'
+      preLoaderRoute: typeof ApiPublicWebhooksSinguBounceRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
