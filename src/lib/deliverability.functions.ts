@@ -16,7 +16,7 @@ async function dohQuery(name: string, type: string): Promise<DohAnswer[]> {
 
 export const checkEmailDns = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ domain: z.string().min(3).max(253) }).parse(d))
+  .validator((d: unknown) => z.object({ domain: z.string().min(3).max(253) }).parse(d))
   .handler(async ({ data }) => {
     const domain = data.domain
       .toLowerCase()
@@ -144,7 +144,7 @@ export const testFuxicoConnection = createServerFn({ method: "POST" })
  */
 export const runFuxicoEmailTest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         email: z.string().trim().email().max(255),
@@ -216,7 +216,7 @@ export const runFuxicoEmailTest = createServerFn({ method: "POST" })
  */
 export const sendTestFuxicoWebhook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z
       .object({
         event: z.enum(["email.opened", "email.clicked"]),
@@ -316,7 +316,7 @@ export interface CampaignDeliverabilityRow {
  */
 export const getCampaignDeliverabilityReport = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z.object({ days: z.coerce.number().int().min(1).max(365).default(30) }).parse(d ?? {}),
   )
   .handler(async ({ data, context }) => {
@@ -434,7 +434,7 @@ export const getCampaignDeliverabilityReport = createServerFn({ method: "GET" })
  */
 export const getTrackingIntegrityReport = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
+  .validator((d: unknown) =>
     z.object({ days: z.coerce.number().int().min(1).max(90).default(7) }).parse(d ?? {}),
   )
   .handler(async ({ data, context }) => {

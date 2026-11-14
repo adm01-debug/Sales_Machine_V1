@@ -6,7 +6,7 @@ import { leadFormSchema } from "@/lib/lead-forms";
 const slugInput = z.object({ slug: z.string().min(2).max(63) });
 
 export const getPublicLeadForm = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => slugInput.parse(input))
+  .validator((input: unknown) => slugInput.parse(input))
   .handler(async ({ data }) => {
     const { publicDb } = await import("@/lib/supabase-public.server");
     const { data: form } = await publicDb()
@@ -21,7 +21,7 @@ export const getPublicLeadForm = createServerFn({ method: "GET" })
   });
 
 export const submitLeadForm = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         slug: z.string().min(2).max(63),
@@ -48,7 +48,7 @@ export const submitLeadForm = createServerFn({ method: "POST" })
   });
 
 export const confirmLeadForm = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => z.object({ token: z.string().min(16).max(128) }).parse(input))
+  .validator((input: unknown) => z.object({ token: z.string().min(16).max(128) }).parse(input))
   .handler(async ({ data }) => {
     const [{ supabaseAdmin }, { confirmByToken }] = await Promise.all([
       import("@/integrations/supabase/client.server"),
@@ -74,7 +74,7 @@ export const listLeadForms = createServerFn({ method: "GET" })
 
 export const getLeadForm = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: form, error } = await context.supabase
       .from("lead_forms")
@@ -94,7 +94,7 @@ export const getLeadForm = createServerFn({ method: "POST" })
 
 export const saveLeadForm = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z.object({ id: z.string().uuid().nullable().default(null), form: leadFormSchema }).parse(input),
   )
   .handler(async ({ data, context }) => {

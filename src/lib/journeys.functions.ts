@@ -40,7 +40,7 @@ export const listJourneys = createServerFn({ method: "GET" })
 
 export const getJourney = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: journey, error } = await context.supabase
       .from("journeys")
@@ -78,9 +78,7 @@ export const getJourney = createServerFn({ method: "POST" })
 
 export const createJourney = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
-    z.object({ name: z.string().trim().min(2).max(120) }).parse(input),
-  )
+  .validator((input: unknown) => z.object({ name: z.string().trim().min(2).max(120) }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: journey, error } = await context.supabase
       .from("journeys")
@@ -130,7 +128,7 @@ export const createJourney = createServerFn({ method: "POST" })
 
 export const saveJourney = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => journeyGraphSchema.parse(input))
+  .validator((input: unknown) => journeyGraphSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { saveJourneyGraph } = await import("@/lib/journeys.server");
     return saveJourneyGraph(context.supabase as never, data);
@@ -138,7 +136,7 @@ export const saveJourney = createServerFn({ method: "POST" })
 
 export const setJourneyStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         id: z.string().uuid(),

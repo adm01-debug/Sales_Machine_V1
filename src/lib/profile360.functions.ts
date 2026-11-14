@@ -11,7 +11,7 @@ import {
 /** Lista a base unificada de contatos/contas com métricas 360. */
 export const listContactProfiles = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         search: z.string().max(120).optional(),
@@ -76,7 +76,7 @@ export const listContactProfiles = createServerFn({ method: "POST" })
 /** Ficha 360 consolidada de uma entidade. */
 export const getContactProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ entity_id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ entity_id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: profile, error } = await context.supabase
       .from("v_contact_profiles")

@@ -34,7 +34,7 @@ export const listMarketingCampaigns = createServerFn({ method: "GET" })
 
 export const getMarketingCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: campaign, error } = await context.supabase
       .from("marketing_campaigns")
@@ -72,7 +72,7 @@ export const getMarketingCampaign = createServerFn({ method: "POST" })
 
 export const saveMarketingCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         id: z.string().uuid().optional(),
@@ -180,7 +180,7 @@ export const saveMarketingCampaign = createServerFn({ method: "POST" })
 /** Materializa os envios a partir da audiência e coloca a campanha em execução. */
 export const launchMarketingCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: campaign, error } = await context.supabase
       .from("marketing_campaigns")
@@ -306,7 +306,7 @@ export const launchMarketingCampaign = createServerFn({ method: "POST" })
 
 export const setCampaignStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         id: z.string().uuid(),
@@ -377,7 +377,7 @@ export const getMarketingOverview = createServerFn({ method: "GET" })
  */
 export const getVariableCoverage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         audience_id: z.string().uuid(),
@@ -426,7 +426,7 @@ export const getVariableCoverage = createServerFn({ method: "POST" })
 /** Contatos da audiência para o preview com dados reais. */
 export const listAudienceSample = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z
       .object({
         audience_id: z.string().uuid(),
@@ -461,7 +461,7 @@ export const listAudienceSample = createServerFn({ method: "POST" })
 /** Pré-voo de custo da campanha, cruzado com o guardrail de orçamento do canal. */
 export const getCampaignCostPreflight = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { buildCampaignPreflight } = await import("./campaign-cost.server");
     return buildCampaignPreflight(context.supabase as never, data.id);
