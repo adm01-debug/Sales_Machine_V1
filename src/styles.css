@@ -121,9 +121,11 @@
     color-mix(in oklab, var(--neon-purple) 16%, var(--card)) 100%
   );
   --gradient-primary: linear-gradient(135deg, var(--primary), var(--neon-cyan));
-  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--primary) 18%, transparent),
+  --shadow-glow:
+    0 0 0 1px color-mix(in oklab, var(--primary) 18%, transparent),
     0 18px 40px -22px color-mix(in oklab, var(--primary) 55%, transparent);
-  --shadow-elevated: 0 1px 0 0 color-mix(in oklab, var(--foreground) 6%, transparent),
+  --shadow-elevated:
+    0 1px 0 0 color-mix(in oklab, var(--foreground) 6%, transparent),
     0 20px 44px -28px color-mix(in oklab, var(--foreground) 45%, transparent);
 }
 
@@ -174,8 +176,7 @@
     var(--card) 48%,
     color-mix(in oklab, var(--neon-purple) 26%, var(--card)) 100%
   );
-  --shadow-elevated: 0 1px 0 0 oklch(1 0 0 / 6%),
-    0 24px 48px -30px oklch(0 0 0 / 80%);
+  --shadow-elevated: 0 1px 0 0 oklch(1 0 0 / 6%), 0 24px 48px -30px oklch(0 0 0 / 80%);
 }
 
 @layer base {
@@ -189,7 +190,9 @@
     font-feature-settings: "cv02", "cv03", "cv04", "ss01";
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     letter-spacing: -0.02em;
   }
 }
