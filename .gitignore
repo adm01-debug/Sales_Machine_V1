@@ -45,3 +45,7 @@ docs/contexto/regras/*
 
 # inventario: so banco.json e edges.json sao versionados (PR semanal)
 inventario/estado/tabelas-uso.json
+
+# Estado local privado dos novos adaptadores de automação
+/.tools/repo-automation/
+/.tools/graphify/
