@@ -1,0 +1,39 @@
+# docs:
+#   gatilho: PR para main, push em main e execução manual.
+#   prova: Contratos estáticos e suites locais de automação em fixtures isoladas.
+#   falha: O job falha; nenhum patch, commit, publicação ou deploy é executado.
+#   avisa: O check fica vermelho no GitHub para o autor da PR e mantenedores.
+name: Automação local
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: automation-local-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    name: Contratos da automação local
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout sem credenciais persistentes
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Node 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      - name: Valida perfis, aliases e encadeamentos
+        run: node scripts/automation.mjs doctor --static
+      - name: Executa suites registradas de automação
+        run: node scripts/automation.mjs test
