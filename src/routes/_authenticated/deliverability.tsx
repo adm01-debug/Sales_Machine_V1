@@ -25,7 +25,9 @@ export const Route = createFileRoute("/_authenticated/deliverability")({
   }),
   component: Page,
   errorComponent: ({ error }) => (
-    <div className="p-8 text-destructive">{(error as Error).message}</div>
+    <div className="p-8 text-destructive">
+      {String((error as { message?: string })?.message ?? error)}
+    </div>
   ),
   notFoundComponent: () => <div className="p-8">Não encontrado.</div>,
 });
