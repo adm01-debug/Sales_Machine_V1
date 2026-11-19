@@ -1,0 +1,2277 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "presente": true,
+ "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: bun run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
+ "relatorio": null,
+ "commit_do_grafo": "40909e5de0f816478bea2dd21d8f080fffc1f378",
+ "grafo_atual": true,
+ "nos": 3077,
+ "arestas": 6712,
+ "comunidades_total": 198,
+ "relacoes": {
+  "calls": 1341,
+  "cites": 1,
+  "contains": 2345,
+  "defines": 6,
+  "dynamic_import": 60,
+  "implements": 3,
+  "imports": 1222,
+  "imports_from": 1189,
+  "indexes": 60,
+  "indirect_call": 78,
+  "inherits": 11,
+  "method": 81,
+  "rationale_for": 25,
+  "re_exports": 1,
+  "reads_from": 18,
+  "references": 246,
+  "triggers": 25
+ },
+ "origem": {
+  "EXTRACTED": 6570,
+  "INFERRED": 142
+ },
+ "comunidades": [
+  {
+   "id": 0,
+   "nome": "generate.py",
+   "nos": 103,
+   "callables": 75,
+   "arquivos": 4,
+   "exemplos_arquivos": [
+    "scripts/gerar-dump-arquitetura.py",
+    "scripts/regras_negocio/generate.py",
+    "scripts/regras_negocio/indice.py",
+    "scripts/regras_negocio/test_generate.py"
+   ]
+  },
+  {
+   "id": 1,
+   "nome": "snapshot.py",
+   "nos": 102,
+   "callables": 79,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "scripts/supabase_snapshot/snapshot.py"
+   ]
+  },
+  {
+   "id": 2,
+   "nome": "test_snapshot.py",
+   "nos": 92,
+   "callables": 82,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "scripts/supabase_snapshot/test_snapshot.py"
+   ]
+  },
+  {
+   "id": 3,
+   "nome": "gerar.mjs",
+   "nos": 81,
+   "callables": 14,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "scripts/ai-context/gerar.mjs"
+   ]
+  },
+  {
+   "id": 4,
+   "nome": "routeTree.gen.ts",
+   "nos": 68,
+   "callables": 14,
+   "arquivos": 3,
+   "exemplos_arquivos": [
+    "src/routeTree.gen.ts",
+    "src/router.tsx",
+    "src/start.ts"
+   ]
+  },
+  {
+   "id": 5,
+   "nome": "cn",
+   "nos": 60,
+   "callables": 6,
+   "arquivos": 14,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/campaigns/cost-preflight.tsx",
+    "src/components/dashboard/analytics-charts.tsx",
+    "src/components/ui/accordion.tsx",
+    "src/components/ui/alert.tsx",
+    "src/components/ui/avatar.tsx",
+    "src/components/ui/card.tsx",
+    "src/components/ui/context-menu.tsx"
+   ]
+  },
+  {
+   "id": 6,
+   "nome": "react",
+   "nos": 59,
+   "callables": 13,
+   "arquivos": 22,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/audience-rule-builder.tsx",
+    "src/components/email/EmailBlockEditor.tsx",
+    "src/components/forms/LeadFieldEditor.tsx",
+    "src/components/template-picker-dialog.tsx",
+    "src/components/ui/button.tsx",
+    "src/components/ui/calendar.tsx",
+    "src/components/ui/checkbox.tsx"
+   ]
+  },
+  {
+   "id": 7,
+   "nome": "journey-engine.ts",
+   "nos": 58,
+   "callables": 42,
+   "arquivos": 7,
+   "exemplos_arquivos": [
+    "src/lib/journey-engine.test.ts",
+    "src/lib/journey-engine.ts",
+    "src/lib/journey-graph.ts",
+    "src/lib/journey-triggers.test.ts",
+    "src/lib/journey-triggers.ts",
+    "src/lib/journeys.server.ts",
+    "src/routes/api/public/hooks/tick-journeys.ts"
+   ]
+  },
+  {
+   "id": 8,
+   "nome": "lib.mjs",
+   "nos": 56,
+   "callables": 45,
+   "arquivos": 4,
+   "exemplos_arquivos": [
+    "node:fs/promises",
+    "scripts/maintenance/lib.mjs",
+    "scripts/maintenance/maintenance.unit.mjs",
+    "scripts/maintenance/run.mjs"
+   ]
+  },
+  {
+   "id": 9,
+   "nome": "dependencies",
+   "nos": 55,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "package.json"
+   ]
+  },
+  {
+   "id": 10,
+   "nome": "package.json",
+   "nos": 51,
+   "callables": 0,
+   "arquivos": 8,
+   "exemplos_arquivos": [
+    "eslint.config.js",
+    "package.json",
+    "src/components/ui/aspect-ratio.tsx",
+    "src/components/ui/collapsible.tsx",
+    "src/components/ui/hover-card.tsx",
+    "src/components/ui/popover.tsx",
+    "src/components/ui/slider.tsx",
+    "vite.config.ts"
+   ]
+  },
+  {
+   "id": 11,
+   "nome": "fake-supabase.ts",
+   "nos": 50,
+   "callables": 25,
+   "arquivos": 9,
+   "exemplos_arquivos": [
+    "src/lib/budget-reallocation.server.test.ts",
+    "src/lib/journey-graph.ts",
+    "src/lib/journeys.server.test.ts",
+    "src/routes/api/public/agent-tools/send-message.test.ts",
+    "src/routes/api/public/hooks/alert-sweep.test.ts",
+    "src/routes/api/public/hooks/tick-cadence.test.ts",
+    "src/routes/api/public/hooks/tick-journeys.test.ts",
+    "src/routes/api/public/hooks/tick-marketing.test.ts"
+   ]
+  },
+  {
+   "id": 12,
+   "nome": "sidebar.tsx",
+   "nos": 49,
+   "callables": 6,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/ui/separator.tsx",
+    "src/components/ui/sheet.tsx",
+    "src/components/ui/sidebar.tsx",
+    "src/components/ui/tooltip.tsx",
+    "src/hooks/use-mobile.tsx"
+   ]
+  },
+  {
+   "id": 13,
+   "nome": "scripts",
+   "nos": 47,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "package.json"
+   ]
+  },
+  {
+   "id": 14,
+   "nome": "@tanstack/react-start",
+   "nos": 47,
+   "callables": 16,
+   "arquivos": 18,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/PreflightHistoryChart.tsx",
+    "src/components/campaigns/cost-preflight.tsx",
+    "src/components/metric-card.tsx",
+    "src/components/ops/budget-reallocation.tsx",
+    "src/components/ops/compliance-violations-trail.tsx",
+    "src/components/ui/card.tsx",
+    "src/lib/compliance-terms.ts"
+   ]
+  },
+  {
+   "id": 15,
+   "nome": "contagens",
+   "nos": 45,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "inventario/ia/manifest.json"
+   ]
+  },
+  {
+   "id": 16,
+   "nome": "ref_node_path",
+   "nos": 41,
+   "callables": 11,
+   "arquivos": 10,
+   "exemplos_arquivos": [
+    "scripts/automation.mjs",
+    "scripts/automation.unit.mjs",
+    "scripts/ci/contexto-indice.unit.mjs",
+    "scripts/ci/inventario-mudou.unit.mjs",
+    "scripts/ci/inventario-repo.unit.mjs",
+    "scripts/ci/regras-negocio.unit.mjs",
+    "scripts/ci/supabase-snapshot.unit.mjs",
+    "scripts/inventario/mudou-conteudo.mjs"
+   ]
+  },
+  {
+   "id": 17,
+   "nome": "library.tsx",
+   "nos": 38,
+   "callables": 10,
+   "arquivos": 13,
+   "exemplos_arquivos": [
+    "src/components/PreflightHistoryChart.tsx",
+    "src/components/compliance-audit-panel.tsx",
+    "src/components/compliance-terms-manager.tsx",
+    "src/components/dashboard/churn-risk-widget.tsx",
+    "src/components/message-preflight-panel.tsx",
+    "src/integrations/supabase/auth-middleware.ts",
+    "src/lib/audience-rules.ts",
+    "src/lib/churn.functions.ts"
+   ]
+  },
+  {
+   "id": 18,
+   "nome": "journeys.$id.tsx",
+   "nos": 37,
+   "callables": 18,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "src/components/journeys/journey-settings-card.tsx",
+    "src/components/journeys/node-card.tsx",
+    "src/lib/journey-graph.ts",
+    "src/lib/journeys.functions.ts",
+    "src/routes/_authenticated/journeys.$id.tsx",
+    "src/routes/_authenticated/journeys.tsx"
+   ]
+  },
+  {
+   "id": 19,
+   "nome": "lead-forms.ts",
+   "nos": 37,
+   "callables": 24,
+   "arquivos": 8,
+   "exemplos_arquivos": [
+    "src/lib/lead-forms-delivery.server.ts",
+    "src/lib/lead-forms.functions.ts",
+    "src/lib/lead-forms.server.ts",
+    "src/lib/lead-forms.test.ts",
+    "src/lib/lead-forms.ts",
+    "src/routes/_authenticated/forms.$id.tsx",
+    "src/routes/_authenticated/forms.tsx",
+    "src/routes/f.$slug.tsx"
+   ]
+  },
+  {
+   "id": 20,
+   "nome": "automation.mjs",
+   "nos": 36,
+   "callables": 32,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "scripts/automation.mjs"
+   ]
+  },
+  {
+   "id": 21,
+   "nome": "cenarios.mjs",
+   "nos": 35,
+   "callables": 10,
+   "arquivos": 9,
+   "exemplos_arquivos": [
+    "scripts/ai-context/cenarios.mjs",
+    "scripts/ai-context/lib/y",
+    "scripts/ai-context/pages/C",
+    "scripts/regras_negocio/README.md",
+    "src/components/a/A",
+    "src/components/b/B",
+    "src/pages/A",
+    "src/pages/B"
+   ]
+  },
+  {
+   "id": 22,
+   "nome": "graphify-local.mjs",
+   "nos": 34,
+   "callables": 29,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "scripts/graphify-local.mjs"
+   ]
+  },
+  {
+   "id": 23,
+   "nome": "template-vars.ts",
+   "nos": 33,
+   "callables": 23,
+   "arquivos": 11,
+   "exemplos_arquivos": [
+    "src/components/message-preflight-panel.tsx",
+    "src/components/message-preview.tsx",
+    "src/components/template-picker-dialog.tsx",
+    "src/lib/audience-rules.ts",
+    "src/lib/marketing.functions.ts",
+    "src/lib/sms-segments.test.ts",
+    "src/lib/sms-segments.ts",
+    "src/lib/template-vars.test.ts"
+   ]
+  },
+  {
+   "id": 24,
+   "nome": "email-preflight.ts",
+   "nos": 31,
+   "callables": 20,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "src/components/email/EmailBlockEditor.tsx",
+    "src/components/email/EmailPreflightPanel.tsx",
+    "src/lib/campaign-validation.ts",
+    "src/lib/email-blocks.ts",
+    "src/lib/email-preflight.test.ts",
+    "src/lib/email-preflight.ts"
+   ]
+  },
+  {
+   "id": 25,
+   "nome": "ops.functions.ts",
+   "nos": 30,
+   "callables": 11,
+   "arquivos": 9,
+   "exemplos_arquivos": [
+    "src/components/dashboard/churn-risk-widget.tsx",
+    "src/components/ops/alert-history.tsx",
+    "src/components/ops/budget-guardrails.tsx",
+    "src/components/ops/budget-reallocation.tsx",
+    "src/components/ops/channel-roi-stats.tsx",
+    "src/components/ops/spend-breakdown.tsx",
+    "src/lib/cost-model.ts",
+    "src/lib/ops.functions.ts"
+   ]
+  },
+  {
+   "id": 26,
+   "nome": "20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql",
+   "nos": 29,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "supabase/migrations/20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql"
+   ]
+  },
+  {
+   "id": 27,
+   "nome": "gerar-banco.mjs",
+   "nos": 29,
+   "callables": 17,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "scripts/ci/inventario-banco.unit.mjs",
+    "scripts/inventario/gerar-banco.mjs"
+   ]
+  },
+  {
+   "id": 28,
+   "nome": "compliance-terms.ts",
+   "nos": 28,
+   "callables": 19,
+   "arquivos": 7,
+   "exemplos_arquivos": [
+    "src/components/compliance-audit-panel.tsx",
+    "src/lib/campaign-diagnostics.ts",
+    "src/lib/campaign-validation.ts",
+    "src/lib/compliance-terms.test.ts",
+    "src/lib/compliance-terms.ts",
+    "src/lib/compliance.functions.ts",
+    "src/lib/compliance.server.ts"
+   ]
+  },
+  {
+   "id": 29,
+   "nome": "vitest",
+   "nos": 27,
+   "callables": 16,
+   "arquivos": 5,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/lib/budget-guard.test.ts",
+    "src/lib/budget-guard.ts",
+    "src/lib/budget.server.ts",
+    "src/lib/budget.test.ts"
+   ]
+  },
+  {
+   "id": 30,
+   "nome": "tick-cadence.ts",
+   "nos": 26,
+   "callables": 13,
+   "arquivos": 4,
+   "exemplos_arquivos": [
+    "01-contexto-negocio/02-requisitos-funcionais.md",
+    "src/lib/cadence-engine.test.ts",
+    "src/lib/cadence-engine.ts",
+    "src/routes/api/public/hooks/tick-cadence.ts"
+   ]
+  },
+  {
+   "id": 31,
+   "nome": "audiences.$id.tsx",
+   "nos": 26,
+   "callables": 11,
+   "arquivos": 8,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/audience-rule-builder.tsx",
+    "src/lib/audience-resolver.server.ts",
+    "src/lib/audience-resolver.test.ts",
+    "src/lib/audience-rules.ts",
+    "src/lib/audiences.functions.ts",
+    "src/routes/_authenticated/audiences.$id.tsx",
+    "src/routes/_authenticated/audiences.tsx"
+   ]
+  },
+  {
+   "id": 32,
+   "nome": "marketing.functions.ts",
+   "nos": 26,
+   "callables": 13,
+   "arquivos": 8,
+   "exemplos_arquivos": [
+    "src/components/campaign-validation-panel.tsx",
+    "src/lib/campaign-validation.test.ts",
+    "src/lib/campaign-validation.ts",
+    "src/lib/compliance.server.ts",
+    "src/lib/email-preflight.ts",
+    "src/lib/marketing.functions.ts",
+    "src/lib/template-vars.ts",
+    "src/routes/_authenticated/campaigns.$id.tsx"
+   ]
+  },
+  {
+   "id": 33,
+   "nome": "client.server.ts",
+   "nos": 26,
+   "callables": 6,
+   "arquivos": 9,
+   "exemplos_arquivos": [
+    "src/integrations/supabase/client.server.ts",
+    "src/lib/hmac.server.ts",
+    "src/routes/api/public/hooks/tick-cadence.ts",
+    "src/routes/api/public/track/click.ts",
+    "src/routes/api/public/track/open[.]gif.ts",
+    "src/routes/api/public/webhooks/fatorx.ts",
+    "src/routes/api/public/webhooks/fuxico.ts",
+    "src/routes/api/public/webhooks/lux.ts"
+   ]
+  },
+  {
+   "id": 34,
+   "nome": "cost-model.ts",
+   "nos": 26,
+   "callables": 15,
+   "arquivos": 5,
+   "exemplos_arquivos": [
+    "src/lib/cost-model.test.ts",
+    "src/lib/cost-model.ts",
+    "src/lib/ops-spend.server.ts",
+    "src/lib/ops-spend.test.ts",
+    "src/lib/ops.functions.ts"
+   ]
+  },
+  {
+   "id": 35,
+   "nome": "deliverability.tsx",
+   "nos": 26,
+   "callables": 15,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "src/lib/deliverability.functions.ts",
+    "src/routes/_authenticated/deliverability.tsx"
+   ]
+  },
+  {
+   "id": 36,
+   "nome": "status",
+   "nos": 25,
+   "callables": 2,
+   "arquivos": 5,
+   "exemplos_arquivos": [
+    ".contexto-compartilhado/dicionario-dados.md",
+    ".lovable/plan.md",
+    "docs/SCHEMA_REFERENCE.md",
+    "scripts/graphify-local.mjs",
+    "src/lib/budget-reallocation.test.ts"
+   ]
+  },
+  {
+   "id": 37,
+   "nome": "contexto-publicacao.unit.mjs",
+   "nos": 25,
+   "callables": 7,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "docs/SCHEMA_REFERENCE.md",
+    "scripts/ci/contexto-publicacao.unit.mjs"
+   ]
+  },
+  {
+   "id": 38,
+   "nome": "FileRoutesByPath",
+   "nos": 24,
+   "callables": 1,
+   "arquivos": 24,
+   "exemplos_arquivos": [
+    "src/routeTree.gen.ts",
+    "src/routes/_authenticated/approvals.tsx",
+    "src/routes/_authenticated/audiences.$id.tsx",
+    "src/routes/_authenticated/audiences.tsx",
+    "src/routes/_authenticated/campaigns.$id.tsx",
+    "src/routes/_authenticated/campaigns.tsx",
+    "src/routes/_authenticated/companies.$id.tsx",
+    "src/routes/_authenticated/companies.tsx"
+   ]
+  },
+  {
+   "id": 39,
+   "nome": "pagination.tsx",
+   "nos": 23,
+   "callables": 11,
+   "arquivos": 5,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/ui/alert-dialog.tsx",
+    "src/components/ui/button.tsx",
+    "src/components/ui/calendar.tsx",
+    "src/components/ui/pagination.tsx"
+   ]
+  },
+  {
+   "id": 40,
+   "nome": "budget-reallocation.ts",
+   "nos": 23,
+   "callables": 16,
+   "arquivos": 5,
+   "exemplos_arquivos": [
+    "src/lib/budget-guard.ts",
+    "src/lib/budget-reallocation.server.ts",
+    "src/lib/budget-reallocation.test.ts",
+    "src/lib/budget-reallocation.ts",
+    "src/lib/budget.server.ts"
+   ]
+  },
+  {
+   "id": 41,
+   "nome": "Contexto do projeto para agentes de IA",
+   "nos": 22,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "inventario/ia/INDEX.md"
+   ]
+  },
+  {
+   "id": 42,
+   "nome": "lucide-react",
+   "nos": 22,
+   "callables": 10,
+   "arquivos": 8,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/app-shell.tsx",
+    "src/components/nav-config.tsx",
+    "src/integrations/lovable/index.ts",
+    "src/integrations/supabase/auth-attacher.ts",
+    "src/integrations/supabase/client.ts",
+    "src/integrations/supabase/types.ts",
+    "src/routes/_authenticated/route.tsx"
+   ]
+  },
+  {
+   "id": 43,
+   "nome": "analytics-charts.tsx",
+   "nos": 22,
+   "callables": 8,
+   "arquivos": 5,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/dashboard/analytics-charts.tsx",
+    "src/components/dashboard/campaign-drilldown.tsx",
+    "src/components/ui/skeleton.tsx",
+    "src/lib/analytics-aggregate.ts"
+   ]
+  },
+  {
+   "id": 44,
+   "nome": "ops-audit.test.ts",
+   "nos": 22,
+   "callables": 12,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "src/lib/ops-audit.server.ts",
+    "src/lib/ops-audit.test.ts"
+   ]
+  },
+  {
+   "id": 45,
+   "nome": "20260726144821_9bc55f77-0452-4276-9831-18179fda02a7.sql",
+   "nos": 22,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "supabase/migrations/20260726144821_9bc55f77-0452-4276-9831-18179fda02a7.sql"
+   ]
+  },
+  {
+   "id": 46,
+   "nome": "uniq",
+   "nos": 21,
+   "callables": 11,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "scripts/ai-context/gerar.mjs"
+   ]
+  },
+  {
+   "id": 47,
+   "nome": "utils.ts",
+   "nos": 21,
+   "callables": 4,
+   "arquivos": 7,
+   "exemplos_arquivos": [
+    "src/components/compliance-audit-panel.tsx",
+    "src/components/message-preflight-panel.tsx",
+    "src/components/ops/budget-guardrails.tsx",
+    "src/components/ui/alert.tsx",
+    "src/components/ui/badge.tsx",
+    "src/components/ui/progress.tsx",
+    "src/lib/utils.ts"
+   ]
+  },
+  {
+   "id": 48,
+   "nome": "campaign-cost.ts",
+   "nos": 21,
+   "callables": 16,
+   "arquivos": 4,
+   "exemplos_arquivos": [
+    "src/lib/campaign-cost.server.ts",
+    "src/lib/campaign-cost.test.ts",
+    "src/lib/campaign-cost.ts",
+    "src/lib/marketing.functions.ts"
+   ]
+  },
+  {
+   "id": 49,
+   "nome": "hmac.server.ts",
+   "nos": 20,
+   "callables": 10,
+   "arquivos": 5,
+   "exemplos_arquivos": [
+    "src/lib/hmac.server.ts",
+    "src/lib/security-tokens.test.ts",
+    "src/lib/unsubscribe-token.server.ts",
+    "src/routes/api/public/unsubscribe.tsx",
+    "src/routes/api/public/webhooks/singu.ts"
+   ]
+  },
+  {
+   "id": 50,
+   "nome": "components.json",
+   "nos": 19,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "components.json"
+   ]
+  },
+  {
+   "id": 51,
+   "nome": "command.tsx",
+   "nos": 19,
+   "callables": 4,
+   "arquivos": 3,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/ui/command.tsx",
+    "src/components/ui/dialog.tsx"
+   ]
+  },
+  {
+   "id": 52,
+   "nome": "email-blocks.ts",
+   "nos": 19,
+   "callables": 14,
+   "arquivos": 4,
+   "exemplos_arquivos": [
+    "src/components/email/EmailBlockEditor.tsx",
+    "src/lib/email-blocks.test.ts",
+    "src/lib/email-blocks.ts",
+    "src/routes/_authenticated/library.tsx"
+   ]
+  },
+  {
+   "id": 53,
+   "nome": "ops-alerts.ts",
+   "nos": 19,
+   "callables": 13,
+   "arquivos": 3,
+   "exemplos_arquivos": [
+    "src/lib/ops-alerts.test.ts",
+    "src/lib/ops-alerts.ts",
+    "src/routes/_authenticated/ops.tsx"
+   ]
+  },
+  {
+   "id": 54,
+   "nome": "compilerOptions",
+   "nos": 19,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "tsconfig.json"
+   ]
+  },
+  {
+   "id": 55,
+   "nome": "Findings",
+   "nos": 18,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "docs/qa-report-2026-07-22.md"
+   ]
+  },
+  {
+   "id": 56,
+   "nome": "menubar.tsx",
+   "nos": 18,
+   "callables": 6,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/ui/menubar.tsx"
+   ]
+  },
+  {
+   "id": 57,
+   "nome": "modulos",
+   "nos": 18,
+   "callables": 12,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "scripts/ai-context/gerar.mjs"
+   ]
+  },
+  {
+   "id": 58,
+   "nome": "Tabelas por domínio (36)",
+   "nos": 17,
+   "callables": 1,
+   "arquivos": 4,
+   "exemplos_arquivos": [
+    ".contexto-compartilhado/dicionario-dados.md",
+    "01-contexto-negocio/04-glossario-dominio.md",
+    "docs/SCHEMA_REFERENCE.md",
+    "src/lib/audience-resolver.test.ts"
+   ]
+  },
+  {
+   "id": 59,
+   "nome": "social/types.ts",
+   "nos": 17,
+   "callables": 14,
+   "arquivos": 3,
+   "exemplos_arquivos": [
+    ".lovable/plan.md",
+    "docs/agentes/integracoes.md",
+    "src/integrations/social/types.ts"
+   ]
+  },
+  {
+   "id": 60,
+   "nome": "orchestrator.functions.ts",
+   "nos": 17,
+   "callables": 1,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "src/lib/orchestrator.functions.ts",
+    "src/routes/_authenticated/evals.tsx"
+   ]
+  },
+  {
+   "id": 61,
+   "nome": "20260726182455_7e8f6c52-22a0-4ed1-8a61-d5426b4a6a8b.sql",
+   "nos": 17,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "supabase/migrations/20260726182455_7e8f6c52-22a0-4ed1-8a61-d5426b4a6a8b.sql"
+   ]
+  },
+  {
+   "id": 62,
+   "nome": "manual-interventions.tsx",
+   "nos": 16,
+   "callables": 9,
+   "arquivos": 4,
+   "exemplos_arquivos": [
+    "src/components/ops/compliance-violations-trail.tsx",
+    "src/components/ops/manual-interventions.tsx",
+    "src/lib/csv-export.test.ts",
+    "src/lib/csv-export.ts"
+   ]
+  },
+  {
+   "id": 63,
+   "nome": "singu.server.ts",
+   "nos": 16,
+   "callables": 8,
+   "arquivos": 7,
+   "exemplos_arquivos": [
+    "docs/agentes/integracoes.md",
+    "src/integrations/external/config.server.ts",
+    "src/integrations/external/fatorx.server.ts",
+    "src/integrations/external/fuxico.server.ts",
+    "src/integrations/external/lux.server.ts",
+    "src/integrations/external/singu.server.ts",
+    "src/lib/orchestrator.functions.ts"
+   ]
+  },
+  {
+   "id": 64,
+   "nome": "send-message.ts",
+   "nos": 15,
+   "callables": 3,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "02-arquitetura-engenharia/04-seguranca-autenticacao.md",
+    "docs/agentes/integracoes.md",
+    "src/integrations/external/singu.server.ts",
+    "src/lib/hmac.server.ts",
+    "src/routes/api/public/agent-tools/send-message.test.ts",
+    "src/routes/api/public/agent-tools/send-message.ts"
+   ]
+  },
+  {
+   "id": 65,
+   "nome": "Armadilhas confirmadas (2026-11-08)",
+   "nos": 15,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "docs/agentes/banco.md"
+   ]
+  },
+  {
+   "id": 66,
+   "nome": "carousel.tsx",
+   "nos": 15,
+   "callables": 7,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/ui/carousel.tsx"
+   ]
+  },
+  {
+   "id": 67,
+   "nome": "server.ts",
+   "nos": 15,
+   "callables": 8,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "@tanstack/react-start/server-entry",
+    "src/integrations/supabase/auth-attacher.ts",
+    "src/lib/error-capture.ts",
+    "src/lib/error-page.ts",
+    "src/server.ts",
+    "src/start.ts"
+   ]
+  },
+  {
+   "id": 68,
+   "nome": "alert-sweep.ts",
+   "nos": 15,
+   "callables": 9,
+   "arquivos": 5,
+   "exemplos_arquivos": [
+    "src/lib/alert-dispatch.test.ts",
+    "src/lib/alert-dispatch.ts",
+    "src/lib/ops-alerts.ts",
+    "src/routes/api/public/hooks/alert-sweep.test.ts",
+    "src/routes/api/public/hooks/alert-sweep.ts"
+   ]
+  },
+  {
+   "id": 69,
+   "nome": "analytics.functions.ts",
+   "nos": 15,
+   "callables": 11,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "src/lib/analytics-aggregate.ts",
+    "src/lib/analytics.functions.ts"
+   ]
+  },
+  {
+   "id": 70,
+   "nome": "message-preflight.ts",
+   "nos": 15,
+   "callables": 8,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "src/lib/message-preflight.test.ts",
+    "src/lib/message-preflight.ts"
+   ]
+  },
+  {
+   "id": 71,
+   "nome": "contacts.tsx",
+   "nos": 15,
+   "callables": 7,
+   "arquivos": 3,
+   "exemplos_arquivos": [
+    "src/lib/profile360.functions.ts",
+    "src/lib/sentiment.ts",
+    "src/routes/_authenticated/contacts.tsx"
+   ]
+  },
+  {
+   "id": 72,
+   "nome": "As 12 Leis do Agente — Sales_Machine_V1",
+   "nos": 14,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "00-governanca/01-leis-do-agente.md"
+   ]
+  },
+  {
+   "id": 73,
+   "nome": "form.tsx",
+   "nos": 14,
+   "callables": 4,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "package.json",
+    "src/components/ui/form.tsx"
+   ]
+  },
+  {
+   "id": 74,
+   "nome": "supabase/types.ts",
+   "nos": 14,
+   "callables": 8,
+   "arquivos": 3,
+   "exemplos_arquivos": [
+    "src/components/ops/channel-roi-stats.tsx",
+    "src/integrations/supabase/types.ts",
+    "src/lib/ops.functions.ts"
+   ]
+  },
+  {
+   "id": 75,
+   "nome": "budget-reallocation-schedule.ts",
+   "nos": 14,
+   "callables": 7,
+   "arquivos": 3,
+   "exemplos_arquivos": [
+    "src/lib/budget-reallocation-schedule.test.ts",
+    "src/lib/budget-reallocation-schedule.ts",
+    "src/routes/api/public/hooks/budget-reallocate.ts"
+   ]
+  },
+  {
+   "id": 76,
+   "nome": "AGENTS.md — Sales_Machine_V1",
+   "nos": 13,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "AGENTS.md"
+   ]
+  },
+  {
+   "id": 77,
+   "nome": "Benchmark SALES MACHINE vs. OSS de referência",
+   "nos": 13,
+   "callables": 0,
+   "arquivos": 1,
+   "exemplos_arquivos": [
+    "docs/benchmark-sales-machine.md"
+   ]
+  },
+  {
+   "id": 78,
+   "nome": "__root.tsx",
+   "nos": 13,
+   "callables": 9,
+   "arquivos": 3,
+   "exemplos_arquivos": [
+    "src/lib/lovable-error-reporting.ts",
+    "src/routeTree.gen.ts",
+    "src/routes/__root.tsx"
+   ]
+  },
+  {
+   "id": 79,
+   "nome": "tracking-integrity.test.ts",
+   "nos": 13,
+   "callables": 9,
+   "arquivos": 2,
+   "exemplos_arquivos": [
+    "src/lib/tracking-integrity.test.ts",
+    "src/lib/tracking-integrity.ts"
+   ]
+  }
+ ],
+ "hubs": [
+  {
+   "id": "src_lib_utils_cn",
+   "rotulo": "cn()",
+   "arquivo": "src/lib/utils.ts",
+   "grau": 262,
+   "comunidade": "cn"
+  },
+  {
+   "id": "scripts_ai_context_gerar",
+   "rotulo": "gerar.mjs",
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "grau": 152,
+   "comunidade": "gerar.mjs"
+  },
+  {
+   "id": "src_routetree_gen",
+   "rotulo": "routeTree.gen.ts",
+   "arquivo": "src/routeTree.gen.ts",
+   "grau": 152,
+   "comunidade": "routeTree.gen.ts"
+  },
+  {
+   "id": "scripts_supabase_snapshot_snapshot",
+   "rotulo": "snapshot.py",
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "grau": 91,
+   "comunidade": "snapshot.py"
+  },
+  {
+   "id": "src_routes_authenticated_library",
+   "rotulo": "library.tsx",
+   "arquivo": "src/routes/_authenticated/library.tsx",
+   "grau": 85,
+   "comunidade": "library.tsx"
+  },
+  {
+   "id": "package",
+   "rotulo": "package.json",
+   "arquivo": "package.json",
+   "grau": 79,
+   "comunidade": "package.json"
+  },
+  {
+   "id": "ref_react",
+   "rotulo": "react",
+   "arquivo": "package.json",
+   "grau": 76,
+   "comunidade": "react"
+  },
+  {
+   "id": "scripts_regras_negocio_generate",
+   "rotulo": "generate.py",
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "grau": 71,
+   "comunidade": "generate.py"
+  },
+  {
+   "id": "src_lib_utils",
+   "rotulo": "utils.ts",
+   "arquivo": "src/lib/utils.ts",
+   "grau": 66,
+   "comunidade": "utils.ts"
+  },
+  {
+   "id": "src_routes_authenticated_campaigns_id",
+   "rotulo": "campaigns.$id.tsx",
+   "arquivo": "src/routes/_authenticated/campaigns.$id.tsx",
+   "grau": 59,
+   "comunidade": "react"
+  },
+  {
+   "id": "package_dependencies",
+   "rotulo": "dependencies",
+   "arquivo": "package.json",
+   "grau": 55,
+   "comunidade": "dependencies"
+  },
+  {
+   "id": "ref_tanstack_react_start",
+   "rotulo": "@tanstack/react-start",
+   "arquivo": "package.json",
+   "grau": 55,
+   "comunidade": "@tanstack/react-start"
+  },
+  {
+   "id": "src_components_ui_sidebar",
+   "rotulo": "sidebar.tsx",
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "grau": 54,
+   "comunidade": "sidebar.tsx"
+  },
+  {
+   "id": "scripts_graphify_local",
+   "rotulo": "graphify-local.mjs",
+   "arquivo": "scripts/graphify-local.mjs",
+   "grau": 48,
+   "comunidade": "graphify-local.mjs"
+  },
+  {
+   "id": "src_routes_authenticated_forms_id",
+   "rotulo": "forms.$id.tsx",
+   "arquivo": "src/routes/_authenticated/forms.$id.tsx",
+   "grau": 47,
+   "comunidade": "react"
+  },
+  {
+   "id": "ref_tanstack_react_router",
+   "rotulo": "@tanstack/react-router",
+   "arquivo": "package.json",
+   "grau": 46,
+   "comunidade": "@tanstack/react-start"
+  },
+  {
+   "id": "src_components_ui_button",
+   "rotulo": "button.tsx",
+   "arquivo": "src/components/ui/button.tsx",
+   "grau": 44,
+   "comunidade": "react"
+  },
+  {
+   "id": "scripts_automation",
+   "rotulo": "automation.mjs",
+   "arquivo": "scripts/automation.mjs",
+   "grau": 43,
+   "comunidade": "automation.mjs"
+  },
+  {
+   "id": "ref_lucide_react",
+   "rotulo": "lucide-react",
+   "arquivo": "package.json",
+   "grau": 42,
+   "comunidade": "lucide-react"
+  },
+  {
+   "id": "src_components_ui_card",
+   "rotulo": "card.tsx",
+   "arquivo": "src/components/ui/card.tsx",
+   "grau": 42,
+   "comunidade": "@tanstack/react-start"
+  },
+  {
+   "id": "src_routes_authenticated_journeys_id",
+   "rotulo": "journeys.$id.tsx",
+   "arquivo": "src/routes/_authenticated/journeys.$id.tsx",
+   "grau": 42,
+   "comunidade": "journeys.$id.tsx"
+  },
+  {
+   "id": "src_routetree_gen_fileroutesbypath",
+   "rotulo": "FileRoutesByPath",
+   "arquivo": "src/routeTree.gen.ts",
+   "grau": 42,
+   "comunidade": "FileRoutesByPath"
+  },
+  {
+   "id": "ref_tanstack_react_query",
+   "rotulo": "@tanstack/react-query",
+   "arquivo": "package.json",
+   "grau": 41,
+   "comunidade": "@tanstack/react-start"
+  },
+  {
+   "id": "src_integrations_supabase_client_server",
+   "rotulo": "client.server.ts",
+   "arquivo": "src/integrations/supabase/client.server.ts",
+   "grau": 40,
+   "comunidade": "client.server.ts"
+  },
+  {
+   "id": "src_components_ui_badge",
+   "rotulo": "badge.tsx",
+   "arquivo": "src/components/ui/badge.tsx",
+   "grau": 38,
+   "comunidade": "utils.ts"
+  },
+  {
+   "id": "src_routes_authenticated_prospecting",
+   "rotulo": "prospecting.tsx",
+   "arquivo": "src/routes/_authenticated/prospecting.tsx",
+   "grau": 38,
+   "comunidade": "react"
+  },
+  {
+   "id": "scripts_maintenance_lib",
+   "rotulo": "lib.mjs",
+   "arquivo": "scripts/maintenance/lib.mjs",
+   "grau": 37,
+   "comunidade": "lib.mjs"
+  },
+  {
+   "id": "src_components_ops_budget_guardrails",
+   "rotulo": "budget-guardrails.tsx",
+   "arquivo": "src/components/ops/budget-guardrails.tsx",
+   "grau": 37,
+   "comunidade": "utils.ts"
+  },
+  {
+   "id": "src_components_ui_button_button",
+   "rotulo": "Button",
+   "arquivo": "src/components/ui/button.tsx",
+   "grau": 37,
+   "comunidade": "react"
+  },
+  {
+   "id": "src_lib_ops_functions",
+   "rotulo": "ops.functions.ts",
+   "arquivo": "src/lib/ops.functions.ts",
+   "grau": 36,
+   "comunidade": "ops.functions.ts"
+  },
+  {
+   "id": "src_routes_authenticated_ops",
+   "rotulo": "ops.tsx",
+   "arquivo": "src/routes/_authenticated/ops.tsx",
+   "grau": 36,
+   "comunidade": "ops.functions.ts"
+  },
+  {
+   "id": "ref_vitest",
+   "rotulo": "vitest",
+   "arquivo": "package.json",
+   "grau": 35,
+   "comunidade": "vitest"
+  },
+  {
+   "id": "scripts_regras_negocio_generate_main",
+   "rotulo": "main()",
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "grau": 35,
+   "comunidade": "generate.py"
+  },
+  {
+   "id": "src_components_ui_card_cardcontent",
+   "rotulo": "CardContent",
+   "arquivo": "src/components/ui/card.tsx",
+   "grau": 35,
+   "comunidade": "@tanstack/react-start"
+  },
+  {
+   "id": "src_lib_journey_engine",
+   "rotulo": "journey-engine.ts",
+   "arquivo": "src/lib/journey-engine.ts",
+   "grau": 35,
+   "comunidade": "journey-engine.ts"
+  },
+  {
+   "id": "src_routes_authenticated_deliverability",
+   "rotulo": "deliverability.tsx",
+   "arquivo": "src/routes/_authenticated/deliverability.tsx",
+   "grau": 35,
+   "comunidade": "deliverability.tsx"
+  },
+  {
+   "id": "scripts_maintenance_run_mjs_scripts_maintenance_run",
+   "rotulo": "run.mjs",
+   "arquivo": "scripts/maintenance/run.mjs",
+   "grau": 34,
+   "comunidade": "lib.mjs"
+  },
+  {
+   "id": "src_components_ui_badge_badge",
+   "rotulo": "Badge()",
+   "arquivo": "src/components/ui/badge.tsx",
+   "grau": 34,
+   "comunidade": "utils.ts"
+  },
+  {
+   "id": "src_components_ui_card_card",
+   "rotulo": "Card",
+   "arquivo": "src/components/ui/card.tsx",
+   "grau": 34,
+   "comunidade": "@tanstack/react-start"
+  },
+  {
+   "id": "src_components_ui_card_cardheader",
+   "rotulo": "CardHeader",
+   "arquivo": "src/components/ui/card.tsx",
+   "grau": 34,
+   "comunidade": "@tanstack/react-start"
+  },
+  {
+   "id": "src_components_ui_card_cardtitle",
+   "rotulo": "CardTitle",
+   "arquivo": "src/components/ui/card.tsx",
+   "grau": 34,
+   "comunidade": "@tanstack/react-start"
+  },
+  {
+   "id": "src_lib_email_preflight",
+   "rotulo": "email-preflight.ts",
+   "arquivo": "src/lib/email-preflight.ts",
+   "grau": 34,
+   "comunidade": "email-preflight.ts"
+  },
+  {
+   "id": "src_lib_journey_graph",
+   "rotulo": "journey-graph.ts",
+   "arquivo": "src/lib/journey-graph.ts",
+   "grau": 34,
+   "comunidade": "journeys.$id.tsx"
+  },
+  {
+   "id": "scripts_supabase_snapshot_snapshot_q",
+   "rotulo": "q()",
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "grau": 33,
+   "comunidade": "snapshot.py"
+  },
+  {
+   "id": "src_components_dashboard_analytics_charts",
+   "rotulo": "analytics-charts.tsx",
+   "arquivo": "src/components/dashboard/analytics-charts.tsx",
+   "grau": 33,
+   "comunidade": "analytics-charts.tsx"
+  },
+  {
+   "id": "src_lib_marketing_functions",
+   "rotulo": "marketing.functions.ts",
+   "arquivo": "src/lib/marketing.functions.ts",
+   "grau": 33,
+   "comunidade": "marketing.functions.ts"
+  },
+  {
+   "id": "src_routes_authenticated_forms",
+   "rotulo": "forms.tsx",
+   "arquivo": "src/routes/_authenticated/forms.tsx",
+   "grau": 33,
+   "comunidade": "react"
+  },
+  {
+   "id": "src_routes_authenticated_companies",
+   "rotulo": "companies.tsx",
+   "arquivo": "src/routes/_authenticated/companies.tsx",
+   "grau": 32,
+   "comunidade": "react"
+  },
+  {
+   "id": "scripts_ai_context_cenarios",
+   "rotulo": "cenarios.mjs",
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "grau": 31,
+   "comunidade": "cenarios.mjs"
+  },
+  {
+   "id": "scripts_ci_contexto_publicacao_unit",
+   "rotulo": "contexto-publicacao.unit.mjs",
+   "arquivo": "scripts/ci/contexto-publicacao.unit.mjs",
+   "grau": 31,
+   "comunidade": "contexto-publicacao.unit.mjs"
+  },
+  {
+   "id": "scripts_supabase_snapshot_snapshot_section",
+   "rotulo": "section()",
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "grau": 31,
+   "comunidade": "snapshot.py"
+  },
+  {
+   "id": "src_components_compliance_terms_manager",
+   "rotulo": "compliance-terms-manager.tsx",
+   "arquivo": "src/components/compliance-terms-manager.tsx",
+   "grau": 31,
+   "comunidade": "library.tsx"
+  },
+  {
+   "id": "src_lib_orchestrator_functions",
+   "rotulo": "orchestrator.functions.ts",
+   "arquivo": "src/lib/orchestrator.functions.ts",
+   "grau": 31,
+   "comunidade": "orchestrator.functions.ts"
+  },
+  {
+   "id": "src_routes_authenticated_journeys",
+   "rotulo": "journeys.tsx",
+   "arquivo": "src/routes/_authenticated/journeys.tsx",
+   "grau": 31,
+   "comunidade": "journeys.$id.tsx"
+  },
+  {
+   "id": "scripts_supabase_snapshot_test_snapshot",
+   "rotulo": "test_snapshot.py",
+   "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
+   "grau": 30,
+   "comunidade": "test_snapshot.py"
+  },
+  {
+   "id": "src_routes_authenticated_audiences_id",
+   "rotulo": "audiences.$id.tsx",
+   "arquivo": "src/routes/_authenticated/audiences.$id.tsx",
+   "grau": 30,
+   "comunidade": "audiences.$id.tsx"
+  },
+  {
+   "id": "src_routes_f_slug",
+   "rotulo": "f.$slug.tsx",
+   "arquivo": "src/routes/f.$slug.tsx",
+   "grau": 30,
+   "comunidade": "react"
+  },
+  {
+   "id": "src_components_dashboard_campaign_drilldown",
+   "rotulo": "campaign-drilldown.tsx",
+   "arquivo": "src/components/dashboard/campaign-drilldown.tsx",
+   "grau": 29,
+   "comunidade": "analytics-charts.tsx"
+  },
+  {
+   "id": "src_components_ui_card_carddescription",
+   "rotulo": "CardDescription",
+   "arquivo": "src/components/ui/card.tsx",
+   "grau": 29,
+   "comunidade": "@tanstack/react-start"
+  },
+  {
+   "id": "package_scripts",
+   "rotulo": "scripts",
+   "arquivo": "package.json",
+   "grau": 28,
+   "comunidade": "scripts"
+  }
+ ],
+ "mais_chamados": [
+  {
+   "simbolo": "cn() (src/lib/utils.ts)",
+   "chamadas": 198
+  },
+  {
+   "simbolo": "q() (scripts/supabase_snapshot/snapshot.py)",
+   "chamadas": 30
+  },
+  {
+   "simbolo": ".collect() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 17
+  },
+  {
+   "simbolo": "excluded_sql() (scripts/supabase_snapshot/snapshot.py)",
+   "chamadas": 17
+  },
+  {
+   "simbolo": "fail() (scripts/automation.mjs)",
+   "chamadas": 16
+  },
+  {
+   "simbolo": "fail() (scripts/graphify-local.mjs)",
+   "chamadas": 14
+  },
+  {
+   "simbolo": ".metadata() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 13
+  },
+  {
+   "simbolo": "MaintenanceError (scripts/maintenance/lib.mjs)",
+   "chamadas": 13
+  },
+  {
+   "simbolo": "header() (scripts/regras_negocio/generate.py)",
+   "chamadas": 13
+  },
+  {
+   "simbolo": "uniq() (scripts/ai-context/gerar.mjs)",
+   "chamadas": 13
+  },
+  {
+   "simbolo": "readText() (scripts/ai-context/gerar.mjs)",
+   "chamadas": 12
+  },
+  {
+   "simbolo": "fail() (scripts/maintenance/lib.mjs)",
+   "chamadas": 11
+  },
+  {
+   "simbolo": "md_table() (scripts/regras_negocio/generate.py)",
+   "chamadas": 11
+  },
+  {
+   "simbolo": "function() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 10
+  },
+  {
+   "simbolo": "read_text() (scripts/regras_negocio/generate.py)",
+   "chamadas": 10
+  },
+  {
+   "simbolo": ".callers() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 9
+  },
+  {
+   "simbolo": ".function_sql() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 9
+  },
+  {
+   "simbolo": "git() (scripts/maintenance/lib.mjs)",
+   "chamadas": 9
+  },
+  {
+   "simbolo": "has() (scripts/ai-context/gerar.mjs)",
+   "chamadas": 9
+  },
+  {
+   "simbolo": "log() (scripts/supabase_snapshot/snapshot.py)",
+   "chamadas": 9
+  },
+  {
+   "simbolo": ".migration_sql() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 8
+  },
+  {
+   "simbolo": ".write() (scripts/regras_negocio/test_generate.py)",
+   "chamadas": 8
+  },
+  {
+   "simbolo": "exists() (scripts/maintenance/lib.mjs)",
+   "chamadas": 8
+  },
+  {
+   "simbolo": "git() (scripts/automation.mjs)",
+   "chamadas": 8
+  },
+  {
+   "simbolo": "trunc() (scripts/regras_negocio/generate.py)",
+   "chamadas": 8
+  },
+  {
+   "simbolo": "write() (scripts/supabase_snapshot/snapshot.py)",
+   "chamadas": 8
+  },
+  {
+   "simbolo": ".stats() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 7
+  },
+  {
+   "simbolo": "byCount() (scripts/ai-context/gerar.mjs)",
+   "chamadas": 7
+  },
+  {
+   "simbolo": "md_table() (scripts/supabase_snapshot/snapshot.py)",
+   "chamadas": 7
+  },
+  {
+   "simbolo": "record_error() (scripts/supabase_snapshot/snapshot.py)",
+   "chamadas": 7
+  },
+  {
+   "simbolo": "redact() (scripts/regras_negocio/generate.py)",
+   "chamadas": 7
+  },
+  {
+   "simbolo": ".assert_core_metrics() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 6
+  },
+  {
+   "simbolo": ".schema() (scripts/regras_negocio/test_generate.py)",
+   "chamadas": 6
+  },
+  {
+   "simbolo": "anyFile() (scripts/ai-context/gerar.mjs)",
+   "chamadas": 6
+  },
+  {
+   "simbolo": "exists() (scripts/graphify-local.mjs)",
+   "chamadas": 6
+  },
+  {
+   "simbolo": "locate() (scripts/automation.mjs)",
+   "chamadas": 6
+  },
+  {
+   "simbolo": "rel() (scripts/regras_negocio/generate.py)",
+   "chamadas": 6
+  },
+  {
+   "simbolo": "run() (scripts/maintenance/lib.mjs)",
+   "chamadas": 6
+  },
+  {
+   "simbolo": "squash() (scripts/regras_negocio/generate.py)",
+   "chamadas": 6
+  },
+  {
+   "simbolo": "within() (scripts/automation.mjs)",
+   "chamadas": 6
+  },
+  {
+   "simbolo": ".build() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": ".error_sections() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "auditCompliance() (src/lib/compliance-terms.ts)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "balanced() (scripts/regras_negocio/generate.py)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "buttonVariants (src/components/ui/button.tsx)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "digest() (scripts/graphify-local.mjs)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "digest() (scripts/maintenance/lib.mjs)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "execute() (scripts/automation.mjs)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "files_cell() (scripts/regras_negocio/generate.py)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "getExternalConfig() (src/integrations/external/config.server.ts)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "has_ext() (scripts/supabase_snapshot/snapshot.py)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "json() (scripts/automation.mjs)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "json() (scripts/graphify-local.mjs)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "migration() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "parseVariables() (src/lib/template-vars.ts)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "sha() (scripts/supabase_snapshot/snapshot.py)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "slug() (scripts/supabase_snapshot/snapshot.py)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "usedBy() (scripts/ai-context/gerar.mjs)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": "verifyHmac() (src/lib/hmac.server.ts)",
+   "chamadas": 5
+  },
+  {
+   "simbolo": ".previous_database() (scripts/supabase_snapshot/test_snapshot.py)",
+   "chamadas": 4
+  }
+ ],
+ "arquivos_com_mais_simbolos": [
+  {
+   "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
+   "simbolos": 82
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "simbolos": 79
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "simbolos": 64
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "simbolos": 51
+  },
+  {
+   "arquivo": "scripts/graphify-local.mjs",
+   "simbolos": 36
+  },
+  {
+   "arquivo": "scripts/automation.mjs",
+   "simbolos": 33
+  },
+  {
+   "arquivo": "scripts/maintenance/lib.mjs",
+   "simbolos": 27
+  },
+  {
+   "arquivo": "src/lib/journey-engine.ts",
+   "simbolos": 22
+  },
+  {
+   "arquivo": "src/lib/email-preflight.ts",
+   "simbolos": 15
+  },
+  {
+   "arquivo": "src/routeTree.gen.ts",
+   "simbolos": 15
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-banco.mjs",
+   "simbolos": 14
+  },
+  {
+   "arquivo": "src/integrations/social/types.ts",
+   "simbolos": 14
+  },
+  {
+   "arquivo": "src/lib/email-blocks.ts",
+   "simbolos": 13
+  },
+  {
+   "arquivo": "src/lib/template-vars.ts",
+   "simbolos": 13
+  },
+  {
+   "arquivo": "scripts/maintenance/run.mjs",
+   "simbolos": 12
+  },
+  {
+   "arquivo": "scripts/regras_negocio/test_generate.py",
+   "simbolos": 12
+  },
+  {
+   "arquivo": "src/lib/analytics-aggregate.ts",
+   "simbolos": 12
+  },
+  {
+   "arquivo": "src/lib/campaign-cost.ts",
+   "simbolos": 12
+  },
+  {
+   "arquivo": "src/routes/_authenticated/deliverability.tsx",
+   "simbolos": 12
+  },
+  {
+   "arquivo": "src/lib/cadence-engine.ts",
+   "simbolos": 11
+  },
+  {
+   "arquivo": "src/lib/journey-graph.ts",
+   "simbolos": 11
+  },
+  {
+   "arquivo": "src/lib/journey-triggers.ts",
+   "simbolos": 11
+  },
+  {
+   "arquivo": "src/lib/ops-alerts.ts",
+   "simbolos": 11
+  },
+  {
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "simbolos": 10
+  },
+  {
+   "arquivo": "src/lib/compliance-terms.ts",
+   "simbolos": 10
+  },
+  {
+   "arquivo": "src/lib/lead-forms.ts",
+   "simbolos": 10
+  },
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "simbolos": 9
+  },
+  {
+   "arquivo": "src/lib/cost-model.ts",
+   "simbolos": 9
+  },
+  {
+   "arquivo": "src/lib/lead-forms.server.ts",
+   "simbolos": 9
+  },
+  {
+   "arquivo": "src/lib/ops-audit.server.ts",
+   "simbolos": 9
+  },
+  {
+   "arquivo": "src/test/fake-supabase.ts",
+   "simbolos": 9
+  },
+  {
+   "arquivo": "src/lib/budget-guard.ts",
+   "simbolos": 8
+  },
+  {
+   "arquivo": "src/lib/budget-reallocation.ts",
+   "simbolos": 8
+  },
+  {
+   "arquivo": "src/lib/budget.server.ts",
+   "simbolos": 8
+  },
+  {
+   "arquivo": "scripts/ci/contexto-publicacao.unit.mjs",
+   "simbolos": 7
+  },
+  {
+   "arquivo": "scripts/regras_negocio/indice.py",
+   "simbolos": 7
+  },
+  {
+   "arquivo": "src/components/ui/carousel.tsx",
+   "simbolos": 7
+  },
+  {
+   "arquivo": "src/lib/budget-reallocation-schedule.ts",
+   "simbolos": 7
+  },
+  {
+   "arquivo": "src/lib/journey-dispatch.server.ts",
+   "simbolos": 7
+  },
+  {
+   "arquivo": "src/lib/message-preflight.ts",
+   "simbolos": 7
+  }
+ ],
+ "comunidade_por_arquivo": {
+  ".agents/skills/sales-machine-v1/SKILL.md": "Sales Machine V1 — convenções",
+  ".claude/hooks/pre-tool-index-guard.mjs": "pre-tool-index-guard.mjs",
+  ".claude/hooks/session-start.sh": "session-start.sh",
+  ".claude/skills/sales-machine-v1/SKILL.md": "Sales Machine V1 — convenções",
+  ".codex/AGENTS.md": "Codex CLI — baseline deste repositório",
+  ".contexto-compartilhado/decisoes-recentes.md": "Decisões Recentes — Sales_Machine_V1",
+  ".contexto-compartilhado/dicionario-dados.md": "status",
+  ".contexto-compartilhado/pendencias-conhecidas.md": "Pendências Conhecidas — Sales_Machine_V1",
+  ".hermes.md": "Sales_Machine_V1 — Regras da Casa (Hermes) — suplemento",
+  ".lovable/plan.md": "status",
+  "00-governanca/01-leis-do-agente.md": "As 12 Leis do Agente — Sales_Machine_V1",
+  "00-governanca/02-definition-of-done.md": "Definition of Done — Sales_Machine_V1",
+  "00-governanca/03-matriz-de-autonomia.md": "Matriz de Autonomia — Sales_Machine_V1",
+  "00-governanca/04-changelog-prompts.md": "Changelog de Prompts & Contexto — Sales_Machine_V1",
+  "01-contexto-negocio/01-visao-produto.md": "Visão do Produto — Sales_Machine_V1",
+  "01-contexto-negocio/02-requisitos-funcionais.md": "Requisitos Funcionais — Sales_Machine_V1",
+  "01-contexto-negocio/03-requisitos-nao-funcionais.md": "Requisitos Não-Funcionais — Sales_Machine_V1",
+  "01-contexto-negocio/04-glossario-dominio.md": "Glossário de Domínio — Sales_Machine_V1",
+  "01-contexto-negocio/05-personas-e-jornadas.md": "Personas (atores do sistema)",
+  "02-arquitetura-engenharia/01-stack-tecnologica.md": "Stack Tecnológica — Sales_Machine_V1",
+  "02-arquitetura-engenharia/02-arquitetura-software.md": "Arquitetura de Software — Sales_Machine_V1",
+  "02-arquitetura-engenharia/03-modelagem-dados.md": "Modelagem de Dados — Sales_Machine_V1",
+  "02-arquitetura-engenharia/04-seguranca-autenticacao.md": "Segurança, Autenticação & Autorização — Sales_Machine_V1",
+  "02-arquitetura-engenharia/05-contratos-api.md": "Contratos de API — Sales_Machine_V1",
+  "02-arquitetura-engenharia/06-observabilidade.md": "Observabilidade — Sales_Machine_V1",
+  "02-arquitetura-engenharia/adr/ADR-0001-tanstack-start-unica-fonte-de-endpoints.md": "ADR-0001: TanStack Start como única fonte de endpoints (Postgres como fila)",
+  "02-arquitetura-engenharia/adr/ADR-template.md": "ADR-NNNN: [Título]",
+  "@tanstack/react-start/server-entry": "server.ts",
+  "AGENTS.md": "AGENTS.md — Sales_Machine_V1",
+  "CLAUDE.md": "CLAUDE.md",
+  "components.json": "components.json",
+  "docs/AUTOMACAO_LOCAL.md": "Automação local — Sales_Machine_V1",
+  "docs/SCHEMA_REFERENCE.md": "SALES MACHINE — Schema Reference",
+  "docs/agentes/banco.md": "Armadilhas confirmadas (2026-11-08)",
+  "docs/agentes/deploy-lovable.md": "Deploy (Vercel + Lovable) e \"está no ar?\" — referência para agentes",
+  "docs/agentes/github-ci.md": "GitHub, git e CI — referência para agentes",
+  "docs/agentes/integracoes.md": "social/types.ts",
+  "docs/agentes/mapa-repo.md": "Mapa do repositório — referência para agentes",
+  "docs/agentes/regras-dominio.md": "Consentimento, LGPD e regras de domínio — referência para agentes",
+  "docs/benchmark-sales-machine.md": "6. Recomendações acionáveis",
+  "docs/contexto/regras/manual/README.md": "manual/README.md",
+  "docs/contexto/regras/manual/TEMPLATE-regras-de-negocio.md": "Regras de negócio — preencha o que o código não diz",
+  "docs/qa-report-2026-07-22.md": "Findings",
+  "eslint.config.js": "package.json",
+  "inventario/estado/README.md": "Estado real do projeto — inventário gerado",
+  "inventario/ia/INDEX.md": "Contexto do projeto para agentes de IA",
+  "inventario/ia/manifest.json": "contagens",
+  "node:fs/promises": "lib.mjs",
+  "package.json": "package.json",
+  "scripts/ai-context/README.md": "ai-context — contexto de código para agentes de IA",
+  "scripts/ai-context/cenarios.mjs": "cenarios.mjs",
+  "scripts/ai-context/gerar.mjs": "isSrc",
+  "scripts/ai-context/gerar.unit.mjs": "gerar.unit.mjs",
+  "scripts/ai-context/lib/y": "cenarios.mjs",
+  "scripts/ai-context/pages/C": "cenarios.mjs",
+  "scripts/automation.mjs": "ref_node_path",
+  "scripts/automation.unit.mjs": "ref_node_path",
+  "scripts/ci/README.md": "ci/README.md",
+  "scripts/ci/ai-context-generator.unit.mjs": "gerar.unit.mjs",
+  "scripts/ci/check-agents-md-integrity.mjs": "check-agents-md-integrity.mjs",
+  "scripts/ci/contexto-indice.unit.mjs": "ref_node_path",
+  "scripts/ci/contexto-publicacao.unit.mjs": "contexto-publicacao.unit.mjs",
+  "scripts/ci/inventario-banco.unit.mjs": "gerar-banco.mjs",
+  "scripts/ci/inventario-mudou.unit.mjs": "ref_node_path",
+  "scripts/ci/inventario-repo.unit.mjs": "ref_node_path",
+  "scripts/ci/regras-negocio.unit.mjs": "ref_node_path",
+  "scripts/ci/supabase-snapshot.unit.mjs": "ref_node_path",
+  "scripts/gerar-dump-arquitetura.py": "generate.py",
+  "scripts/graphify-local.mjs": "graphify-local.mjs",
+  "scripts/graphify-local.unit.mjs": "ref_node_fs",
+  "scripts/inventario/banco.sql": "banco.sql",
+  "scripts/inventario/gerar-banco.mjs": "gerar-banco.mjs",
+  "scripts/inventario/gerar-repo.mjs": "gerar-repo.mjs",
+  "scripts/inventario/mudou-conteudo.mjs": "ref_node_path",
+  "scripts/maintenance/README.md": "Manutenção local sem IA",
+  "scripts/maintenance/lib.mjs": "lib.mjs",
+  "scripts/maintenance/maintenance.unit.mjs": "lib.mjs",
+  "scripts/maintenance/run.mjs": "lib.mjs",
+  "scripts/maintenance/run.sh": "run.sh script",
+  "scripts/maintenance/typecheck.mjs": "ref_node_path",
+  "scripts/regras_negocio/README.md": "cenarios.mjs",
+  "scripts/regras_negocio/generate.py": "generate.py",
+  "scripts/regras_negocio/indice.py": "generate.py",
+  "scripts/regras_negocio/publish.sh": "publish.sh",
+  "scripts/regras_negocio/test_generate.py": "CurrentSqlSourcesTests",
+  "scripts/supabase_snapshot/README.md": "supabase-snapshot",
+  "scripts/supabase_snapshot/snapshot.py": "snapshot.py",
+  "scripts/supabase_snapshot/test_snapshot.py": "test_snapshot.py",
+  "src/components/PreflightHistoryChart.tsx": "@tanstack/react-start",
+  "src/components/a/A": "cenarios.mjs",
+  "src/components/achievements/Achievements": "gerar.unit.mjs",
+  "src/components/app-shell.tsx": "lucide-react",
+  "src/components/audience-rule-builder.tsx": "audiences.$id.tsx",
+  "src/components/b/B": "cenarios.mjs",
+  "src/components/campaign-validation-panel.tsx": "marketing.functions.ts",
+  "src/components/campaigns/cost-preflight.tsx": "@tanstack/react-start",
+  "src/components/compliance-audit-panel.tsx": "compliance-terms.ts",
+  "src/components/compliance-terms-manager.tsx": "library.tsx",
+  "src/components/dashboard/analytics-charts.tsx": "analytics-charts.tsx",
+  "src/components/dashboard/campaign-drilldown.tsx": "analytics-charts.tsx",
+  "src/components/dashboard/churn-risk-widget.tsx": "ops.functions.ts",
+  "src/components/email/EmailBlockEditor.tsx": "email-preflight.ts",
+  "src/components/email/EmailPreflightPanel.tsx": "email-preflight.ts",
+  "src/components/forms/LeadFieldEditor.tsx": "react",
+  "src/components/home/Home": "gerar.unit.mjs",
+  "src/components/journeys/journey-settings-card.tsx": "journeys.$id.tsx",
+  "src/components/journeys/node-card.tsx": "journeys.$id.tsx",
+  "src/components/message-preflight-panel.tsx": "template-vars.ts",
+  "src/components/message-preview.tsx": "template-vars.ts",
+  "src/components/metric-card.tsx": "@tanstack/react-start",
+  "src/components/nav-config.tsx": "lucide-react",
+  "src/components/ops/alert-history.tsx": "ops.functions.ts",
+  "src/components/ops/budget-guardrails.tsx": "utils.ts",
+  "src/components/ops/budget-reallocation.tsx": "ops.functions.ts",
+  "src/components/ops/channel-roi-stats.tsx": "ops.functions.ts",
+  "src/components/ops/compliance-violations-trail.tsx": "manual-interventions.tsx",
+  "src/components/ops/manual-interventions.tsx": "manual-interventions.tsx",
+  "src/components/ops/spend-breakdown.tsx": "ops.functions.ts",
+  "src/components/template-picker-dialog.tsx": "template-vars.ts",
+  "src/components/ui/accordion.tsx": "cn",
+  "src/components/ui/alert-dialog.tsx": "pagination.tsx",
+  "src/components/ui/alert.tsx": "utils.ts",
+  "src/components/ui/aspect-ratio.tsx": "package.json",
+  "src/components/ui/avatar.tsx": "cn",
+  "src/components/ui/badge.tsx": "utils.ts",
+  "src/components/ui/breadcrumb.tsx": "breadcrumb.tsx",
+  "src/components/ui/button.tsx": "pagination.tsx",
+  "src/components/ui/calendar.tsx": "pagination.tsx",
+  "src/components/ui/card.tsx": "@tanstack/react-start",
+  "src/components/ui/carousel.tsx": "carousel.tsx",
+  "src/components/ui/chart.tsx": "chart.tsx",
+  "src/components/ui/checkbox.tsx": "react",
+  "src/components/ui/collapsible.tsx": "package.json",
+  "src/components/ui/command.tsx": "command.tsx",
+  "src/components/ui/context-menu.tsx": "cn",
+  "src/components/ui/dialog.tsx": "command.tsx",
+  "src/components/ui/drawer.tsx": "drawer.tsx",
+  "src/components/ui/dropdown-menu.tsx": "cn",
+  "src/components/ui/form.tsx": "form.tsx",
+  "src/components/ui/hover-card.tsx": "package.json",
+  "src/components/ui/input-otp.tsx": "input-otp.tsx",
+  "src/components/ui/input.tsx": "react",
+  "src/components/ui/label.tsx": "react",
+  "src/components/ui/menubar.tsx": "menubar.tsx",
+  "src/components/ui/navigation-menu.tsx": "navigation-menu.tsx",
+  "src/components/ui/pagination.tsx": "pagination.tsx",
+  "src/components/ui/popover.tsx": "package.json",
+  "src/components/ui/progress.tsx": "utils.ts",
+  "src/components/ui/radio-group.tsx": "cn",
+  "src/components/ui/resizable.tsx": "resizable.tsx",
+  "src/components/ui/scroll-area.tsx": "scroll-area.tsx",
+  "src/components/ui/select.tsx": "cn",
+  "src/components/ui/separator.tsx": "sidebar.tsx",
+  "src/components/ui/sheet.tsx": "sidebar.tsx",
+  "src/components/ui/sidebar.tsx": "sidebar.tsx",
+  "src/components/ui/skeleton.tsx": "analytics-charts.tsx",
+  "src/components/ui/slider.tsx": "package.json",
+  "src/components/ui/sonner.tsx": "sonner.tsx",
+  "src/components/ui/switch.tsx": "react",
+  "src/components/ui/table.tsx": "cn",
+  "src/components/ui/tabs.tsx": "cn",
+  "src/components/ui/textarea.tsx": "react",
+  "src/components/ui/toggle-group.tsx": "toggle-group.tsx",
+  "src/components/ui/toggle.tsx": "toggle-group.tsx",
+  "src/components/ui/tooltip.tsx": "sidebar.tsx",
+  "src/hooks/use-mobile.tsx": "sidebar.tsx",
+  "src/integrations/external/config.server.ts": "singu.server.ts",
+  "src/integrations/external/fatorx.server.ts": "singu.server.ts",
+  "src/integrations/external/fuxico.server.ts": "email-tracking.server.ts",
+  "src/integrations/external/lux.server.ts": "singu.server.ts",
+  "src/integrations/external/singu.server.ts": "singu.server.ts",
+  "src/integrations/lovable/index.ts": "lucide-react",
+  "src/integrations/social/types.ts": "social/types.ts",
+  "src/integrations/supabase/auth-attacher.ts": "lucide-react",
+  "src/integrations/supabase/auth-middleware.ts": "library.tsx",
+  "src/integrations/supabase/client.server.ts": "client.server.ts",
+  "src/integrations/supabase/client.ts": "lucide-react",
+  "src/integrations/supabase/types.ts": "lucide-react",
+  "src/lib/alert-dispatch.test.ts": "alert-sweep.ts",
+  "src/lib/alert-dispatch.ts": "alert-sweep.ts",
+  "src/lib/analytics-aggregate.ts": "analytics.functions.ts",
+  "src/lib/analytics.functions.ts": "analytics.functions.ts",
+  "src/lib/audience-resolver.server.ts": "audiences.$id.tsx",
+  "src/lib/audience-resolver.test.ts": "audiences.$id.tsx",
+  "src/lib/audience-rules.ts": "template-vars.ts",
+  "src/lib/audiences.functions.ts": "audiences.$id.tsx",
+  "src/lib/budget-guard.test.ts": "vitest",
+  "src/lib/budget-guard.ts": "vitest",
+  "src/lib/budget-reallocation-schedule.test.ts": "budget-reallocation-schedule.ts",
+  "src/lib/budget-reallocation-schedule.ts": "budget-reallocation-schedule.ts",
+  "src/lib/budget-reallocation.server.test.ts": "fake-supabase.ts",
+  "src/lib/budget-reallocation.server.ts": "budget-reallocation.ts",
+  "src/lib/budget-reallocation.test.ts": "status",
+  "src/lib/budget-reallocation.ts": "budget-reallocation.ts",
+  "src/lib/budget.server.ts": "vitest",
+  "src/lib/budget.test.ts": "vitest",
+  "src/lib/cadence-engine.test.ts": "tick-cadence.ts",
+  "src/lib/cadence-engine.ts": "tick-cadence.ts",
+  "src/lib/campaign-cost.server.ts": "campaign-cost.ts",
+  "src/lib/campaign-cost.test.ts": "campaign-cost.ts",
+  "src/lib/campaign-cost.ts": "campaign-cost.ts",
+  "src/lib/campaign-diagnostics.ts": "compliance-terms.ts",
+  "src/lib/campaign-validation.test.ts": "marketing.functions.ts",
+  "src/lib/campaign-validation.ts": "email-preflight.ts",
+  "src/lib/churn.functions.ts": "library.tsx",
+  "src/lib/compliance-terms.test.ts": "compliance-terms.ts",
+  "src/lib/compliance-terms.ts": "library.tsx",
+  "src/lib/compliance.functions.ts": "compliance-terms.ts",
+  "src/lib/compliance.server.ts": "compliance-terms.ts",
+  "src/lib/cost-model.test.ts": "cost-model.ts",
+  "src/lib/cost-model.ts": "cost-model.ts",
+  "src/lib/csv-export.test.ts": "manual-interventions.tsx",
+  "src/lib/csv-export.ts": "manual-interventions.tsx",
+  "src/lib/deliverability.functions.ts": "deliverability.tsx",
+  "src/lib/email-blocks.test.ts": "email-blocks.ts",
+  "src/lib/email-blocks.ts": "email-preflight.ts",
+  "src/lib/email-preflight.test.ts": "email-preflight.ts",
+  "src/lib/email-preflight.ts": "email-preflight.ts",
+  "src/lib/email-tracking.server.ts": "email-tracking.server.ts",
+  "src/lib/error-capture.ts": "server.ts",
+  "src/lib/error-page.ts": "server.ts",
+  "src/lib/hmac.server.ts": "client.server.ts",
+  "src/lib/journey-dispatch.server.ts": "journey-dispatch.server.ts",
+  "src/lib/journey-engine.test.ts": "journey-engine.ts",
+  "src/lib/journey-engine.ts": "journey-engine.ts",
+  "src/lib/journey-graph.ts": "fake-supabase.ts",
+  "src/lib/journey-triggers.test.ts": "journey-engine.ts",
+  "src/lib/journey-triggers.ts": "journey-engine.ts",
+  "src/lib/journeys.functions.ts": "journeys.$id.tsx",
+  "src/lib/journeys.server.test.ts": "fake-supabase.ts",
+  "src/lib/journeys.server.ts": "journey-engine.ts",
+  "src/lib/lead-forms-delivery.server.ts": "lead-forms.ts",
+  "src/lib/lead-forms.functions.ts": "@supabase/supabase-js",
+  "src/lib/lead-forms.server.ts": "lead-forms.ts",
+  "src/lib/lead-forms.test.ts": "lead-forms.ts",
+  "src/lib/lead-forms.ts": "lead-forms.ts",
+  "src/lib/logger.server.ts": "logger.server.ts",
+  "src/lib/lovable-error-reporting.ts": "__root.tsx",
+  "src/lib/marketing.functions.ts": "template-vars.ts",
+  "src/lib/message-preflight.test.ts": "message-preflight.ts",
+  "src/lib/message-preflight.ts": "message-preflight.ts",
+  "src/lib/ops-alerts.test.ts": "ops-alerts.ts",
+  "src/lib/ops-alerts.ts": "ops-alerts.ts",
+  "src/lib/ops-audit.server.ts": "ops-audit.test.ts",
+  "src/lib/ops-audit.test.ts": "ops-audit.test.ts",
+  "src/lib/ops-recovery.server.ts": "ops-recovery.test.ts",
+  "src/lib/ops-recovery.test.ts": "Deploy (Vercel + Lovable) e \"está no ar?\" — referência para agentes",
+  "src/lib/ops-spend.server.ts": "cost-model.ts",
+  "src/lib/ops-spend.test.ts": "cost-model.ts",
+  "src/lib/ops.functions.ts": "@tanstack/react-start",
+  "src/lib/orchestrator.functions.ts": "orchestrator.functions.ts",
+  "src/lib/preflight-history.functions.ts": "library.tsx",
+  "src/lib/profile360.functions.ts": "contacts.tsx",
+  "src/lib/security-tokens.test.ts": "hmac.server.ts",
+  "src/lib/sentiment.ts": "contacts.tsx",
+  "src/lib/sms-segments.test.ts": "template-vars.ts",
+  "src/lib/sms-segments.ts": "template-vars.ts",
+  "src/lib/supabase-public.server.ts": "@supabase/supabase-js",
+  "src/lib/table-client.ts": "ops-recovery.test.ts",
+  "src/lib/template-vars.test.ts": "template-vars.ts",
+  "src/lib/template-vars.ts": "template-vars.ts",
+  "src/lib/templates.functions.ts": "library.tsx",
+  "src/lib/tracking-integrity.test.ts": "Manutenção local sem IA",
+  "src/lib/tracking-integrity.ts": "tracking-integrity.test.ts",
+  "src/lib/unsubscribe-token.server.ts": "hmac.server.ts",
+  "src/lib/utils.ts": "cn",
+  "src/pages/A": "cenarios.mjs",
+  "src/pages/B": "cenarios.mjs",
+  "src/pages/admin/Admin": "gerar.unit.mjs",
+  "src/routeTree.gen.ts": "FileRoutesByPath",
+  "src/router.tsx": "routeTree.gen.ts",
+  "src/routes/README.md": "Routes",
+  "src/routes/__root.tsx": "__root.tsx",
+  "src/routes/_authenticated/approvals.tsx": "@tanstack/react-start",
+  "src/routes/_authenticated/audiences.$id.tsx": "audiences.$id.tsx",
+  "src/routes/_authenticated/audiences.tsx": "audiences.$id.tsx",
+  "src/routes/_authenticated/campaigns.$id.tsx": "react",
+  "src/routes/_authenticated/campaigns.tsx": "@tanstack/react-start",
+  "src/routes/_authenticated/companies.$id.tsx": "@tanstack/react-start",
+  "src/routes/_authenticated/companies.tsx": "react",
+  "src/routes/_authenticated/compliance.tsx": "@tanstack/react-start",
+  "src/routes/_authenticated/contacts.$id.tsx": "@tanstack/react-start",
+  "src/routes/_authenticated/contacts.tsx": "contacts.tsx",
+  "src/routes/_authenticated/dashboard.tsx": "@tanstack/react-start",
+  "src/routes/_authenticated/deliverability.tsx": "deliverability.tsx",
+  "src/routes/_authenticated/evals.tsx": "orchestrator.functions.ts",
+  "src/routes/_authenticated/forms.$id.tsx": "lead-forms.ts",
+  "src/routes/_authenticated/forms.tsx": "lead-forms.ts",
+  "src/routes/_authenticated/journeys.$id.tsx": "journeys.$id.tsx",
+  "src/routes/_authenticated/journeys.tsx": "journeys.$id.tsx",
+  "src/routes/_authenticated/library.tsx": "library.tsx",
+  "src/routes/_authenticated/ops.tsx": "ops.functions.ts",
+  "src/routes/_authenticated/ops/index.tsx": "@tanstack/react-start",
+  "src/routes/_authenticated/prospecting.tsx": "react",
+  "src/routes/_authenticated/route.tsx": "FileRoutesByPath",
+  "src/routes/api/public/agent-tools/send-message.test.ts": "fake-supabase.ts",
+  "src/routes/api/public/agent-tools/send-message.ts": "send-message.ts",
+  "src/routes/api/public/hooks/alert-sweep.test.ts": "fake-supabase.ts",
+  "src/routes/api/public/hooks/alert-sweep.ts": "alert-sweep.ts",
+  "src/routes/api/public/hooks/budget-reallocate.ts": "budget-reallocation-schedule.ts",
+  "src/routes/api/public/hooks/tick-cadence.test.ts": "fake-supabase.ts",
+  "src/routes/api/public/hooks/tick-cadence.ts": "tick-cadence.ts",
+  "src/routes/api/public/hooks/tick-journeys.test.ts": "fake-supabase.ts",
+  "src/routes/api/public/hooks/tick-journeys.ts": "journey-engine.ts",
+  "src/routes/api/public/hooks/tick-marketing.test.ts": "fake-supabase.ts",
+  "src/routes/api/public/hooks/tick-marketing.ts": "tick-marketing.ts",
+  "src/routes/api/public/track/click.ts": "client.server.ts",
+  "src/routes/api/public/track/open[.]gif.ts": "client.server.ts",
+  "src/routes/api/public/unsubscribe.tsx": "hmac.server.ts",
+  "src/routes/api/public/webhooks/fatorx.ts": "client.server.ts",
+  "src/routes/api/public/webhooks/fuxico.ts": "client.server.ts",
+  "src/routes/api/public/webhooks/lux.ts": "client.server.ts",
+  "src/routes/api/public/webhooks/singu-bounce.ts": "client.server.ts",
+  "src/routes/api/public/webhooks/singu.ts": "hmac.server.ts",
+  "src/routes/auth.tsx": "AuthPage",
+  "src/routes/confirmar.tsx": "@tanstack/react-start",
+  "src/routes/f.$slug.tsx": "lead-forms.ts",
+  "src/routes/index.tsx": "@tanstack/react-start",
+  "src/server.ts": "server.ts",
+  "src/start.ts": "routeTree.gen.ts",
+  "src/test/fake-supabase.ts": "fake-supabase.ts",
+  "src/views/Home.vue": "cenarios.mjs",
+  "supabase/migrations/20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql": "20260720132748_c10bc4b1-46bf-443c-b928-95e2a2291cb7.sql",
+  "supabase/migrations/20260720132837_7b6906af-c38e-4649-aff5-f1bb8079a150.sql": "20260720132837_7b6906af-c38e-4649-aff5-f1bb8079a150.sql",
+  "supabase/migrations/20260720150001_6bbccb50-d5f3-47b2-815d-18d970877ab8.sql": "public.campaign_targets",
+  "supabase/migrations/20260720150133_1883cc0c-e2bc-4345-a7e3-d920d73b19e1.sql": "20260720150133_1883cc0c-e2bc-4345-a7e3-d920d73b19e1.sql",
+  "supabase/migrations/20260720181807_3bda158c-9273-4892-aa48-c833f37fac9d.sql": "20260720181807_3bda158c-9273-4892-aa48-c833f37fac9d.sql",
+  "supabase/migrations/20260720181832_d80322d0-25e2-4a5e-93ad-73a376c63239.sql": "20260720181832_d80322d0-25e2-4a5e-93ad-73a376c63239.sql",
+  "supabase/migrations/20260720181850_49b7f4a0-cc79-4c4e-801d-7c1456a306ac.sql": "idx_contact_touchpoints_retry",
+  "supabase/migrations/20260720182029_f17d6bf5-d788-40ec-aa16-5aa5be861de6.sql": "20260720182029_f17d6bf5-d788-40ec-aa16-5aa5be861de6.sql",
+  "supabase/migrations/20260720230000_009_consent_identity_templates_bugfixes.sql": "20260720230000_009_consent_identity_templates_bugfixes.sql",
+  "supabase/migrations/20260721090000_010_tick_support_functions.sql": "20260721090000_010_tick_support_functions.sql",
+  "supabase/migrations/20260721142041_495c7c10-7551-405a-99dd-47a1e0b57707.sql": "20260721142041_495c7c10-7551-405a-99dd-47a1e0b57707.sql",
+  "supabase/migrations/20260721230000_012_hardening_fmea_fixes.sql": "20260721230000_012_hardening_fmea_fixes.sql",
+  "supabase/migrations/20260722114305_ceef56dc-4f0b-4e8c-a51f-6da9a17200fc.sql": "20260722114305_ceef56dc-4f0b-4e8c-a51f-6da9a17200fc.sql",
+  "supabase/migrations/20260722193221_3976e689-7897-4286-9494-33f2dd289540.sql": "20260722193221_3976e689-7897-4286-9494-33f2dd289540.sql",
+  "supabase/migrations/20260722193244_78152eba-58c5-41f9-a9e4-3da82471f470.sql": "20260722193244_78152eba-58c5-41f9-a9e4-3da82471f470.sql",
+  "supabase/migrations/20260722193310_eaafe47c-dd8f-4e4d-a2fd-c563db8f0c7c.sql": "20260722193310_eaafe47c-dd8f-4e4d-a2fd-c563db8f0c7c.sql",
+  "supabase/migrations/20260722200408_810b0704-8917-45fe-872f-34ad95c20b06.sql": "public.consent_ledger",
+  "supabase/migrations/20260722200434_58fb2d3e-102f-49eb-950e-9c8a9edc1cd0.sql": "public.check_consent",
+  "supabase/migrations/20260722200557_1817b23e-199b-4699-8a47-19a41d432710.sql": "public.email_deliverability_events",
+  "supabase/migrations/20260722200744_56c3243d-ab3f-4259-a248-8929ccff9018.sql": "20260722200744_56c3243d-ab3f-4259-a248-8929ccff9018.sql",
+  "supabase/migrations/20260726144821_9bc55f77-0452-4276-9831-18179fda02a7.sql": "20260726144821_9bc55f77-0452-4276-9831-18179fda02a7.sql",
+  "supabase/migrations/20260726144852_df9caee6-56e0-43a9-ab14-5fa6f46bc66e.sql": "20260726144852_df9caee6-56e0-43a9-ab14-5fa6f46bc66e.sql",
+  "supabase/migrations/20260726145822_0809391e-18de-4ad8-abb1-3020b2670db8.sql": "20260726145822_0809391e-18de-4ad8-abb1-3020b2670db8.sql",
+  "supabase/migrations/20260726151122_843eefd4-3628-4023-ac6d-78d7b6414932.sql": "20260726151122_843eefd4-3628-4023-ac6d-78d7b6414932.sql",
+  "supabase/migrations/20260726161018_b6d07d7c-1fee-4c45-b4c6-2fdd07da2338.sql": "20260726161018_b6d07d7c-1fee-4c45-b4c6-2fdd07da2338.sql",
+  "supabase/migrations/20260726162143_baf908ae-c0ba-4d41-9b7d-695e0b703773.sql": "20260726162143_baf908ae-c0ba-4d41-9b7d-695e0b703773.sql",
+  "supabase/migrations/20260726162911_843efbb2-71b5-474d-bcc0-e99ec1e2478b.sql": "20260726162911_843efbb2-71b5-474d-bcc0-e99ec1e2478b.sql",
+  "supabase/migrations/20260726164336_34c2aef7-9e5b-4fd6-89ac-4722f6decee9.sql": "20260726164336_34c2aef7-9e5b-4fd6-89ac-4722f6decee9.sql",
+  "supabase/migrations/20260726164407_4c2ecdbe-a9c9-401b-96d1-89d68e9c815a.sql": "20260726164407_4c2ecdbe-a9c9-401b-96d1-89d68e9c815a.sql",
+  "supabase/migrations/20260726170010_e45b5b84-b961-4a56-ba55-c7a6065a1c74.sql": "20260726170010_e45b5b84-b961-4a56-ba55-c7a6065a1c74.sql",
+  "supabase/migrations/20260726170321_72c3ed66-5a95-4965-87d8-90736e771b60.sql": "idx_campaign_targets_dead_letter_recovery",
+  "supabase/migrations/20260726170639_41319c63-e979-46f8-b857-84dba168113c.sql": "20260726170639_41319c63-e979-46f8-b857-84dba168113c.sql",
+  "supabase/migrations/20260726171009_1b2c32c4-99a0-48b9-91f3-c81e8be276d6.sql": "idx_campaign_target_events_operator",
+  "supabase/migrations/20260726174932_6d46bce8-9104-4fce-9c19-bfa9bc2457ba.sql": "20260726174932_6d46bce8-9104-4fce-9c19-bfa9bc2457ba.sql",
+  "supabase/migrations/20260726175000_f817bcaa-d011-4c7a-b4d6-313ce80400cf.sql": "20260726175000_f817bcaa-d011-4c7a-b4d6-313ce80400cf.sql",
+  "supabase/migrations/20260726180549_54a43d43-fb92-4efb-a982-ac22f3bdbdf5.sql": "20260726180549_54a43d43-fb92-4efb-a982-ac22f3bdbdf5.sql",
+  "supabase/migrations/20260726182455_7e8f6c52-22a0-4ed1-8a61-d5426b4a6a8b.sql": "20260726182455_7e8f6c52-22a0-4ed1-8a61-d5426b4a6a8b.sql",
+  "supabase/migrations/20260726184515_4bf8c992-fb49-4971-8a81-708b6f0fa051.sql": "20260726184515_4bf8c992-fb49-4971-8a81-708b6f0fa051.sql",
+  "supabase/migrations/20260726185354_bc78dd3f-6ea5-4be2-86d1-a40f8bf81283.sql": "20260726185354_bc78dd3f-6ea5-4be2-86d1-a40f8bf81283.sql",
+  "supabase/migrations/20260726190405_973dd33e-dc10-4498-94f5-bc3caeaf31d7.sql": "20260726190405_973dd33e-dc10-4498-94f5-bc3caeaf31d7.sql",
+  "supabase/migrations/20260802111602_2a558c0f-0e67-4457-bccd-c5cdbf474034.sql": "public.template_preflight_history",
+  "supabase/migrations/20260802121142_9906b653-8ded-491a-9115-8a2659487779.sql": "20260802121142_9906b653-8ded-491a-9115-8a2659487779.sql",
+  "supabase/migrations/20260802123233_26c8cfdc-0f1b-4f9f-9798-02dfa4777ef9.sql": "public.compliance_violations_log",
+  "supabase/migrations/20260802124518_be42ee28-381a-41c1-8b90-19d41d7bba5e.sql": "public.fn_refresh_roi_stats",
+  "supabase/migrations/20260802125202_8d7bc5b1-c4b2-4f75-9151-ddf9ed5d31b0.sql": "20260802125202_8d7bc5b1-c4b2-4f75-9151-ddf9ed5d31b0.sql",
+  "tsconfig.json": "compilerOptions",
+  "vercel.json": "vercel.json",
+  "vite.config.ts": "package.json",
+  "vitest.config.ts": "ref_node_path"
+ }
+}

@@ -1,0 +1,663 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "git": {
+  "commit": "40909e5de0f816478bea2dd21d8f080fffc1f378",
+  "branch": "main",
+  "data_commit": "2026-11-19T19:02:29-03:00",
+  "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
+  "ultimos_commits": [
+   {
+    "sha": "40909e5",
+    "data": "2026-11-19",
+    "assunto": "fix(automacao): formata motor recuperado conforme prettier do repo (#18)"
+   },
+   {
+    "sha": "42373d1",
+    "data": "2026-11-19",
+    "assunto": "chore(security): remove .env do versionamento e adiciona ao .gitignore (#16)"
+   },
+   {
+    "sha": "f1377a4",
+    "data": "2026-11-19",
+    "assunto": "fix(automacao): recupera motor de automacao local do Sales (PR #3 foi fechada sem merge) (#15)"
+   },
+   {
+    "sha": "978b0c3",
+    "data": "2026-11-19",
+    "assunto": "Porta os scripts autônomos de contexto do Zapp Web V2 (3 produtores + índice + inventário do estado real) (#2)"
+   },
+   {
+    "sha": "bdc6bab",
+    "data": "2026-11-19",
+    "assunto": "Replica o padrão de instruções de agente do Zapp Web V2 (AGENTS.md como fonte única + docs/agentes + skills + guard) (#1"
+   },
+   {
+    "sha": "32b0b1a",
+    "data": "2026-11-19",
+    "assunto": "infra(ci): pipeline de qualidade (bun), dependency review e dependabot agrupado (#8)"
+   },
+   {
+    "sha": "bd9aa1c",
+    "data": "2026-11-14",
+    "assunto": "fix(ssr): createServerFn usa .validator() — o site de produção dava HTTP 500 (#7)"
+   },
+   {
+    "sha": "fa9a480",
+    "data": "2026-11-14",
+    "assunto": "chore(lint): zerar erros do ESLint (2649 → 0) (#5)"
+   },
+   {
+    "sha": "ec89dca",
+    "data": "2026-11-13",
+    "assunto": "Merge pull request #6 from adm01-debug/claude/remove-migrate-helper-261113"
+   },
+   {
+    "sha": "2f1d518",
+    "data": "2026-11-13",
+    "assunto": "security: remove a edge function migrate-helper"
+   },
+   {
+    "sha": "9ece056",
+    "data": "2026-11-12",
+    "assunto": "Merge pull request #4 from adm01-debug/claude/fix-vercel-lockfile-261111"
+   },
+   {
+    "sha": "d0d574c",
+    "data": "2026-11-11",
+    "assunto": "fix(seguranca): atualiza TanStack Start para corrigir CVE-2026-102989"
+   },
+   {
+    "sha": "e1e4366",
+    "data": "2026-11-11",
+    "assunto": "fix(vercel): instala pelo bun.lock e atualiza o routeTree gerado"
+   },
+   {
+    "sha": "ae912a3",
+    "data": "2026-08-30",
+    "assunto": "docs(contexto): atualiza ref de commit no decisoes-recentes e regera dump pós-rebase"
+   },
+   {
+    "sha": "34453a0",
+    "data": "2026-08-30",
+    "assunto": "docs(contexto): corrige enums no dicionario de dados — sm_channel ganhou rcs/mms e sm_source ganhou fuxico via ALTER TYP"
+   },
+   {
+    "sha": "f2f9939",
+    "data": "2026-08-30",
+    "assunto": "docs(negocio+arquitetura): 01-contexto-negocio/ (visao, 32 RFs reais, RNFs, glossario LUX/SINGU/FATORX/FUXICO, personas "
+   },
+   {
+    "sha": "59425bf",
+    "data": "2026-08-30",
+    "assunto": "docs(governanca): 00-governanca/ — 12 leis do agente, definition of done (adaptado a baseline vermelha), matriz de auton"
+   },
+   {
+    "sha": "7372541",
+    "data": "2026-08-30",
+    "assunto": "docs(contexto): memoria operacional PromptOps — CLAUDE.md (formato 3.2, stack real, env vars reais), AGENTS.md (ponte Pr"
+   },
+   {
+    "sha": "5609fa4",
+    "data": "2026-08-30",
+    "assunto": "docs(contexto): decodifica CLAUDE.md e SCHEMA_REFERENCE.md de base64 para markdown"
+   },
+   {
+    "sha": "338899a",
+    "data": "2026-08-28",
+    "assunto": "Visual edit in Lovable"
+   },
+   {
+    "sha": "51f658f",
+    "data": "2026-08-18",
+    "assunto": "chore(hermes): adiciona .hermes.md (regras da casa Hermes)"
+   },
+   {
+    "sha": "388dc5f",
+    "data": "2026-08-02",
+    "assunto": "Adicionou suporte a emojis"
+   },
+   {
+    "sha": "1fcf792",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "7235600",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   },
+   {
+    "sha": "84f8e41",
+    "data": "2026-08-02",
+    "assunto": "Changes"
+   }
+  ],
+  "arquivos_mudados_7d": 273,
+  "pastas_mais_mudadas_30d": [
+   {
+    "pasta": "src/routes/_authenticated",
+    "mudancas": 22
+   },
+   {
+    "pasta": "src/routes/api",
+    "mudancas": 22
+   },
+   {
+    "pasta": "src/components/ops",
+    "mudancas": 7
+   },
+   {
+    "pasta": "src/integrations/external",
+    "mudancas": 5
+   },
+   {
+    "pasta": "src/integrations/supabase",
+    "mudancas": 5
+   },
+   {
+    "pasta": ".gitignore",
+    "mudancas": 3
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 3
+   },
+   {
+    "pasta": "src/components/dashboard",
+    "mudancas": 3
+   },
+   {
+    "pasta": "src/lib/orchestrator.functions.ts",
+    "mudancas": 3
+   },
+   {
+    "pasta": ".agents/skills/sales-machine-v1",
+    "mudancas": 2
+   },
+   {
+    "pasta": "docs/contexto/regras",
+    "mudancas": 2
+   },
+   {
+    "pasta": "scripts/automation.mjs",
+    "mudancas": 2
+   },
+   {
+    "pasta": "scripts/automation.unit.mjs",
+    "mudancas": 2
+   },
+   {
+    "pasta": "scripts/graphify-local.mjs",
+    "mudancas": 2
+   },
+   {
+    "pasta": "scripts/graphify-local.unit.mjs",
+    "mudancas": 2
+   }
+  ],
+  "arquivos_mais_mudados_90d": [
+   {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "package.json",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "src/lib/orchestrator.functions.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "supabase/config.toml",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "00-governanca/01-leis-do-agente.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "00-governanca/03-matriz-de-autonomia.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "00-governanca/04-changelog-prompts.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "AGENTS.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/automation.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/automation.unit.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/gerar-dump-arquitetura.py",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/graphify-local.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/graphify-local.unit.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/maintenance/lib.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/maintenance/maintenance.unit.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/maintenance/run.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/maintenance/typecheck.mjs",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "src/lib/analytics.functions.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "src/lib/audiences.functions.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "src/lib/compliance.functions.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "src/lib/deliverability.functions.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "src/lib/journeys.functions.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "src/lib/lead-forms.functions.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "src/lib/marketing.functions.ts",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "src/lib/ops.functions.ts",
+    "mudancas": 2
+   }
+  ],
+  "autores_30d": [
+   {
+    "autor": "adm01-debug",
+    "commits": 10
+   },
+   {
+    "autor": "Joaquim Ataides",
+    "commits": 3
+   }
+  ]
+ },
+ "contagens": {
+  "arquivos_total": 390,
+  "arquivos_codigo": 258,
+  "linhas_codigo": 52013,
+  "rotas": 40,
+  "rotas_http_backend": 27,
+  "vistas_por_id": 0,
+  "itens_menu": 13,
+  "modulos": 18,
+  "componentes": 98,
+  "hooks": 4,
+  "edge_functions": 0,
+  "tabelas": 38,
+  "migrations": 45,
+  "cron_jobs": 4,
+  "testes": 48,
+  "workflows": 6,
+  "scripts": 18,
+  "docs_md": 40
+ },
+ "por_pasta": {
+  ".claude/hooks": {
+   "arquivos": 1,
+   "linhas": 201
+  },
+  "eslint.config.js": {
+   "arquivos": 1,
+   "linhas": 41
+  },
+  "scripts/ai-context": {
+   "arquivos": 3,
+   "linhas": 1529
+  },
+  "scripts/automation.mjs": {
+   "arquivos": 1,
+   "linhas": 1006
+  },
+  "scripts/automation.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 639
+  },
+  "scripts/ci": {
+   "arquivos": 9,
+   "linhas": 1435
+  },
+  "scripts/gerar-dump-arquitetura.py": {
+   "arquivos": 1,
+   "linhas": 182
+  },
+  "scripts/graphify-local.mjs": {
+   "arquivos": 1,
+   "linhas": 1113
+  },
+  "scripts/graphify-local.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 467
+  },
+  "scripts/inventario": {
+   "arquivos": 3,
+   "linhas": 488
+  },
+  "scripts/maintenance": {
+   "arquivos": 4,
+   "linhas": 2513
+  },
+  "scripts/regras_negocio": {
+   "arquivos": 3,
+   "linhas": 2539
+  },
+  "scripts/supabase_snapshot": {
+   "arquivos": 2,
+   "linhas": 2669
+  },
+  "src/components": {
+   "arquivos": 73,
+   "linhas": 8798
+  },
+  "src/hooks": {
+   "arquivos": 1,
+   "linhas": 20
+  },
+  "src/integrations": {
+   "arquivos": 12,
+   "linhas": 2776
+  },
+  "src/lib": {
+   "arquivos": 88,
+   "linhas": 14272
+  },
+  "src/routeTree.gen.ts": {
+   "arquivos": 1,
+   "linhas": 984
+  },
+  "src/router.tsx": {
+   "arquivos": 1,
+   "linhas": 17
+  },
+  "src/routes": {
+   "arquivos": 46,
+   "linhas": 9964
+  },
+  "src/server.ts": {
+   "arquivos": 1,
+   "linhas": 62
+  },
+  "src/start.ts": {
+   "arquivos": 1,
+   "linhas": 25
+  },
+  "src/test": {
+   "arquivos": 1,
+   "linhas": 237
+  },
+  "vite.config.ts": {
+   "arquivos": 1,
+   "linhas": 16
+  },
+  "vitest.config.ts": {
+   "arquivos": 1,
+   "linhas": 20
+  }
+ },
+ "maiores_arquivos": [
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linhas": 2138
+  },
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "linhas": 2056
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "linhas": 1791
+  },
+  {
+   "arquivo": "scripts/graphify-local.mjs",
+   "linhas": 1113
+  },
+  {
+   "arquivo": "scripts/automation.mjs",
+   "linhas": 1006
+  },
+  {
+   "arquivo": "src/routeTree.gen.ts",
+   "linhas": 984
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linhas": 957
+  },
+  {
+   "arquivo": "scripts/maintenance/lib.mjs",
+   "linhas": 801
+  },
+  {
+   "arquivo": "src/routes/_authenticated/deliverability.tsx",
+   "linhas": 794
+  },
+  {
+   "arquivo": "src/routes/_authenticated/library.tsx",
+   "linhas": 755
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "linhas": 745
+  },
+  {
+   "arquivo": "scripts/maintenance/run.mjs",
+   "linhas": 721
+  },
+  {
+   "arquivo": "src/components/dashboard/campaign-drilldown.tsx",
+   "linhas": 659
+  },
+  {
+   "arquivo": "src/lib/campaign-diagnostics.ts",
+   "linhas": 590
+  },
+  {
+   "arquivo": "src/routes/_authenticated/campaigns.$id.tsx",
+   "linhas": 570
+  },
+  {
+   "arquivo": "src/lib/orchestrator.functions.ts",
+   "linhas": 545
+  },
+  {
+   "arquivo": "src/lib/journey-engine.ts",
+   "linhas": 524
+  },
+  {
+   "arquivo": "src/routes/api/public/hooks/tick-journeys.ts",
+   "linhas": 508
+  },
+  {
+   "arquivo": "src/components/dashboard/analytics-charts.tsx",
+   "linhas": 507
+  },
+  {
+   "arquivo": "src/routes/api/public/hooks/tick-cadence.ts",
+   "linhas": 497
+  },
+  {
+   "arquivo": "src/lib/marketing.functions.ts",
+   "linhas": 469
+  },
+  {
+   "arquivo": "src/lib/deliverability.functions.ts",
+   "linhas": 467
+  },
+  {
+   "arquivo": "src/lib/ops.functions.ts",
+   "linhas": 419
+  },
+  {
+   "arquivo": "src/routes/api/public/hooks/tick-marketing.ts",
+   "linhas": 360
+  },
+  {
+   "arquivo": "src/lib/email-preflight.ts",
+   "linhas": 348
+  }
+ ],
+ "qualidade": {
+  "any": 46,
+  "console_log": 27,
+  "ts_ignore": 0,
+  "eslint_disable": 1,
+  "todos": 3,
+  "arquivos_acima_500_linhas": 19
+ },
+ "todos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 188,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(line); if (m) todos.push({ linha: ln, tipo: m[1], text"
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 222,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linha": 570,
+   "tipo": "TODO",
+   "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
+  }
+ ],
+ "alertas": {
+  "rotas_sem_arquivo": [],
+  "componentes_ambiguos": [],
+  "menu_sem_destino": [],
+  "edges_orfas": [],
+  "edges_chamadas_sem_pasta": [
+   "agent-workflow-runner",
+   "cerebro-query",
+   "create-tracking",
+   "enrich-contacts",
+   "evolution-api",
+   "get-tracking-history",
+   "get-tracking-stats",
+   "incoming-webhook",
+   "next-best-action",
+   "oracle-enrich-contact",
+   "oracle-search-decisors",
+   "playbook-generator",
+   "public-api",
+   "quick-agent-test",
+   "send-email",
+   "send-sms-campaign",
+   "sequence-processor"
+  ],
+  "tabelas_sem_rls": [],
+  "tabelas_usadas_sem_definicao": [
+   "v_pipeline_health"
+  ],
+  "tabelas_com_drift_migration_vs_types": [],
+  "rpcs_sem_definicao": [],
+  "componentes_orfaos": [
+   "src/components/ui/accordion.tsx",
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/breadcrumb.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/carousel.tsx",
+   "src/components/ui/chart.tsx",
+   "src/components/ui/command.tsx",
+   "src/components/ui/context-menu.tsx",
+   "src/components/ui/drawer.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/form.tsx",
+   "src/components/ui/hover-card.tsx",
+   "src/components/ui/input-otp.tsx",
+   "src/components/ui/menubar.tsx",
+   "src/components/ui/navigation-menu.tsx",
+   "src/components/ui/pagination.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/radio-group.tsx",
+   "src/components/ui/resizable.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/sidebar.tsx",
+   "src/components/ui/slider.tsx",
+   "src/components/ui/sonner.tsx",
+   "src/components/ui/table.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/components/ui/toggle-group.tsx"
+  ],
+  "componentes_com_nome_duplicado": [
+   "Route"
+  ],
+  "scripts_orfaos": [],
+  "env_usadas_nao_declaradas": [
+   "AGENT_TOOL_TOKEN",
+   "FATORX_AGENT_ID_DEFAULT",
+   "FATORX_SERVICE_KEY",
+   "FATORX_URL",
+   "FATORX_WEBHOOK_SECRET",
+   "FUXICO_SERVICE_KEY",
+   "FUXICO_URL",
+   "FUXICO_WEBHOOK_SECRET",
+   "LUX_SERVICE_KEY",
+   "LUX_URL",
+   "LUX_WEBHOOK_SECRET",
+   "OPS_ALERT_WEBHOOK_SECRET",
+   "OPS_ALERT_WEBHOOK_URL",
+   "PHANTOMBUSTER_API_KEY",
+   "PUBLIC_SITE_URL",
+   "SINGU_SERVICE_KEY",
+   "SINGU_URL",
+   "SINGU_WEBHOOK_SECRET",
+   "SM_WEBHOOK_SECRET",
+   "SUPABASE_ANON_KEY",
+   "SUPABASE_PUBLISHABLE_KEY",
+   "SUPABASE_SERVICE_ROLE_KEY",
+   "SUPABASE_URL",
+   "UNIPILE_API_KEY",
+   "UNIPILE_URL",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL"
+  ],
+  "ciclos_de_import": 1,
+  "possiveis_segredos_no_codigo": [
+   "scripts/ai-context/cenarios.mjs:102",
+   "scripts/ci/inventario-banco.unit.mjs:138"
+  ]
+ },
+ "erros_do_gerador": []
+}

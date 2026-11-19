@@ -1,0 +1,79 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "onde_ficam": {
+  "telas": [
+   "src/routes (40)"
+  ],
+  "componentes": [
+   "src/components (70)",
+   "src/routes (28)"
+  ],
+  "hooks": [
+   "src/components (2)",
+   "scripts/ai-context (1)",
+   "src/hooks (1)"
+  ],
+  "servicos_logica": [
+   "src/lib (60)",
+   "src/integrations (12)",
+   "scripts/regras_negocio (2)"
+  ],
+  "testes": [
+   "co-localizado (*.test) (33)",
+   "outro (15)"
+  ],
+  "edge_functions": null,
+  "migrations": "supabase/migrations",
+  "scripts": [
+   "scripts/inventario (4)",
+   "scripts/maintenance (4)",
+   "scripts/regras_negocio (3)"
+  ],
+  "docs": [
+   "docs (4)",
+   "(raiz) (2)"
+  ]
+ },
+ "nomenclatura": {
+  "componentes": "camelCase (56%)",
+  "hooks": "use + PascalCase",
+  "servicos": "outro (47%)",
+  "edge_functions": null,
+  "tabelas": "snake_case (89%)"
+ },
+ "barrels_index": 0,
+ "extensao_componentes": [
+  ".tsx (98)"
+ ],
+ "alias_imports": {
+  "(raiz)": {
+   "@/": "src/",
+   "~/": "src/"
+  }
+ },
+ "commits": {
+  "convencao": "livre",
+  "exemplos": [
+   "fix(automacao): formata motor recuperado conforme prettier do repo (#18)",
+   "chore(security): remove .env do versionamento e adiciona ao .gitignore (#16)",
+   "fix(automacao): recupera motor de automacao local do Sales (PR #3 foi fechada sem merge) (#15)",
+   "Porta os scripts autônomos de contexto do Zapp Web V2 (3 produtores + índice + inventário do estado real) (#2)",
+   "Replica o padrão de instruções de agente do Zapp Web V2 (AGENTS.md como fonte única + docs/agentes + skills + guard) (#1)"
+  ]
+ },
+ "pr_template": null,
+ "codeowners": null,
+ "contributing": null,
+ "instrucoes_agentes": [
+  "AGENTS.md",
+  "CLAUDE.md"
+ ],
+ "typescript": {
+  "strict": false,
+  "noImplicitAny": null,
+  "tsconfigs": [
+   "tsconfig.json"
+  ]
+ }
+}
