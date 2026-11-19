@@ -7,10 +7,16 @@
     "scripts/maintenance/maintenance.unit.mjs",
     "scripts/graphify-local.unit.mjs"
   ],
-  "motor": ["sh", "scripts/maintenance/run.sh"],
+  "motor": [
+    "sh",
+    "scripts/maintenance/run.sh"
+  ],
   "motorConfig": "scripts/maintenance/config.json",
   "motorSource": "scripts/maintenance/run.sh",
-  "graph": ["node", "scripts/graphify-local.mjs"],
+  "graph": [
+    "node",
+    "scripts/graphify-local.mjs"
+  ],
   "graphConfig": "graphify.local.json",
   "aliases": {
     "automation:doctor": "node scripts/automation.mjs doctor",
@@ -27,9 +33,22 @@
     {
       "id": "core",
       "kind": "tool",
-      "files": ["scripts/automation.mjs"],
-      "manual": ["node", "scripts/automation.mjs", "doctor"],
-      "triggers": ["manual", "precommit", "prepush", "PR", "pushmain", "nightly"]
+      "files": [
+        "scripts/automation.mjs"
+      ],
+      "manual": [
+        "node",
+        "scripts/automation.mjs",
+        "doctor"
+      ],
+      "triggers": [
+        "manual",
+        "precommit",
+        "prepush",
+        "PR",
+        "pushmain",
+        "nightly"
+      ]
     },
     {
       "id": "automation-suites",
@@ -39,8 +58,18 @@
         "scripts/maintenance/maintenance.unit.mjs",
         "scripts/graphify-local.unit.mjs"
       ],
-      "manual": ["node", "scripts/automation.mjs", "test"],
-      "triggers": ["manual", "precommit", "prepush", "PR", "pushmain"]
+      "manual": [
+        "node",
+        "scripts/automation.mjs",
+        "test"
+      ],
+      "triggers": [
+        "manual",
+        "precommit",
+        "prepush",
+        "PR",
+        "pushmain"
+      ]
     },
     {
       "id": "motor-isolado",
@@ -51,34 +80,168 @@
         "scripts/maintenance/lib.mjs",
         "scripts/maintenance/typecheck.mjs"
       ],
-      "manual": ["node", "scripts/automation.mjs", "heal", "--ref", "origin/main"],
-      "triggers": ["manual", "nightly"]
+      "manual": [
+        "node",
+        "scripts/automation.mjs",
+        "heal",
+        "--ref",
+        "origin/main"
+      ],
+      "triggers": [
+        "manual",
+        "nightly"
+      ]
     },
     {
       "id": "graph-local",
       "kind": "graph",
-      "files": ["scripts/graphify-local.mjs"],
-      "manual": ["node", "scripts/automation.mjs", "graph", "status"],
-      "triggers": ["manual", "precommit", "postcommit", "postmerge", "postcheckout", "nightly"]
+      "files": [
+        "scripts/graphify-local.mjs"
+      ],
+      "manual": [
+        "node",
+        "scripts/automation.mjs",
+        "graph",
+        "status"
+      ],
+      "triggers": [
+        "manual",
+        "precommit",
+        "postcommit",
+        "postmerge",
+        "postcheckout",
+        "nightly"
+      ]
     },
     {
       "id": "legacy-624270bf9763110b",
       "kind": "legacy",
-      "files": ["scripts/gerar-dump-arquitetura.py"],
-      "manual": ["python3", "scripts/gerar-dump-arquitetura.py"],
-      "triggers": ["manual"],
+      "files": [
+        "scripts/gerar-dump-arquitetura.py"
+      ],
+      "manual": [
+        "python3",
+        "scripts/gerar-dump-arquitetura.py"
+      ],
+      "triggers": [
+        "manual"
+      ],
       "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "main-ai-context",
+      "kind": "legacy",
+      "files": [
+        "scripts/ai-context/cenarios.mjs",
+        "scripts/ai-context/gerar.mjs",
+        "scripts/ai-context/gerar.unit.mjs"
+      ],
+      "manual": [
+        "node",
+        "scripts/ai-context/gerar.mjs",
+        "--help"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Scripts de contexto da main (PR #2), orquestrados por contexto.yml; fora do dispatcher do motor."
+    },
+    {
+      "id": "main-ci",
+      "kind": "legacy",
+      "files": [
+        "scripts/ci/ai-context-generator.unit.mjs",
+        "scripts/ci/check-agents-md-integrity.mjs",
+        "scripts/ci/contexto-indice.unit.mjs",
+        "scripts/ci/contexto-publicacao.unit.mjs",
+        "scripts/ci/inventario-banco.unit.mjs",
+        "scripts/ci/inventario-mudou.unit.mjs",
+        "scripts/ci/inventario-repo.unit.mjs",
+        "scripts/ci/regras-negocio.unit.mjs",
+        "scripts/ci/supabase-snapshot.unit.mjs"
+      ],
+      "manual": [
+        "node",
+        "--test",
+        "scripts/ci/check-agents-md-integrity.mjs"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Checks de CI da main (PR #1/#2), disparados por workflows próprios (contexto.yml, inventario-estado-semanal.yml); fora do dispatcher."
+    },
+    {
+      "id": "main-inventario",
+      "kind": "legacy",
+      "files": [
+        "scripts/inventario/gerar-banco.mjs",
+        "scripts/inventario/gerar-repo.mjs",
+        "scripts/inventario/mudou-conteudo.mjs"
+      ],
+      "manual": [
+        "node",
+        "scripts/inventario/gerar-repo.mjs"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Geradores de inventário da main (PR #2), orquestrados por inventario-estado-semanal.yml; fora do dispatcher."
+    },
+    {
+      "id": "main-regras-negocio",
+      "kind": "legacy",
+      "files": [
+        "scripts/regras_negocio/generate.py",
+        "scripts/regras_negocio/indice.py",
+        "scripts/regras_negocio/publish.sh",
+        "scripts/regras_negocio/test_generate.py"
+      ],
+      "manual": [
+        "python3",
+        "scripts/regras_negocio/generate.py",
+        "--help"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Pipeline de regras de negócio da main (PR #2), executado por contexto.yml; protegido e fora do dispatcher."
+    },
+    {
+      "id": "main-supabase-snapshot",
+      "kind": "legacy",
+      "files": [
+        "scripts/supabase_snapshot/snapshot.py",
+        "scripts/supabase_snapshot/test_snapshot.py"
+      ],
+      "manual": [
+        "python3",
+        "scripts/supabase_snapshot/snapshot.py",
+        "--help"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Snapshot do schema da main (PR #2), usado por contexto.yml e check da CI; fora do dispatcher do motor."
     }
   ],
   "ci": [
     {
       "file": ".github/workflows/automation-local.yml",
-      "events": ["PR", "pushmain"],
+      "events": [
+        "PR",
+        "pushmain"
+      ],
       "command": "node scripts/automation.mjs test"
     }
   ],
   "nightly": {
-    "command": ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"]
+    "command": [
+      "node",
+      "scripts/automation.mjs",
+      "nightly",
+      "--ref",
+      "origin/main"
+    ]
   },
   "timeoutMs": 900000,
   "toolingPatterns": [
@@ -89,5 +252,12 @@
     "*lock*",
     "graphify.local.json"
   ],
-  "sourcePatterns": ["src/**", "tests/**", "e2e/**", "api/**", "shared/**", "supabase/functions/**"]
+  "sourcePatterns": [
+    "src/**",
+    "tests/**",
+    "e2e/**",
+    "api/**",
+    "shared/**",
+    "supabase/functions/**"
+  ]
 }

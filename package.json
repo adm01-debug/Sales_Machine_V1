@@ -30,7 +30,7 @@
     "automation:graph": "node scripts/automation.mjs graph",
     "automation:status": "node scripts/automation.mjs graph status",
     "automation:install-hooks": "node scripts/automation.mjs install-hooks",
-    "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks" (chore(automacao): conecta testes grafo e manutenção aos gatilhos)
+    "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
