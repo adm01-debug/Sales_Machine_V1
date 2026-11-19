@@ -169,7 +169,7 @@ export function CampaignDrilldown({ campaignId, campaignName, onClose }: Campaig
           {campaignId && (
             <div className="mt-4 border-t border-border pt-4">
               <Button asChild variant="outline" size="sm" className="w-full sm:w-auto gap-2">
-                <Link to="/campaigns/wizard" search={{ campaignId }} className="flex items-center">
+                <Link to="/campaigns/$id" params={{ id: campaignId }} className="flex items-center">
                   <ExternalLink className="h-4 w-4" />
                   Ajustar e Revisar Campanha no Wizard
                 </Link>

@@ -28,7 +28,9 @@ export const Route = createFileRoute("/_authenticated/ops")({
     ],
   }),
   component: OpsPage,
-  errorComponent: ({ error }) => <div className="p-8 text-destructive">{error.message}</div>,
+  errorComponent: ({ error }) => (
+    <div className="p-8 text-destructive">{(error as Error).message}</div>
+  ),
   notFoundComponent: () => <div className="p-8">Não encontrado.</div>,
 });
 
