@@ -19,11 +19,81 @@
 
 ## 🟡 Código & dados
 
-- ~~**Edge functions Deno duplicadas** (F9 do QA 2026-07-22)~~ **RESOLVIDA**: `supabase/functions/` não existe mais no working tree (verificado 2026-08-29). Fonte da verdade = rotas TSS (ver ADR-0001).
+- **Edge functions Deno** (F9 do QA 2026-07-22) — as duplicatas dos workers foram removidas e a fonte da verdade é TSS (ADR-0001). `supabase/functions/migrate-helper/index.ts` **foi removida do repo em 2026-11-09** (ver item 🔴 de segurança); a pasta ainda pode existir se houver funções futuras adicionadas. Reintroduzir edge function Deno exige ADR.
 - **`channel_quotas` vazia** (F11 do QA): seed da migration 012 falhou silenciosamente (insert sem `user_id` NOT NULL). Sem efeito hoje (worker usa `compute_daily_cap` + `sender_health`); quando quotas por usuário forem ativadas, exigirá seed corrigido.
 - **UNIPILE/social senders são stubs** — canais LinkedIn/Instagram sem envio real (por design); aguardando adapter `SocialSender` (benchmark item 7). Chaves UNIPILE não configuradas.
-- **`agent_eval_cases` não roda em CI** — harness do FATOR X existe (10 cases semeados), mas não há `.github/workflows` no repo; evals e testes não rodam em CI ainda (fora do escopo da fundação PromptOps — Fatia futura).
+- **`agent_eval_cases` não roda em CI** — harness do FATOR X existe (10 cases semeados). Desde 2026-11-08 existe `.github/workflows/agents-md-guard.yml`, mas ele só vigia a integridade das instruções de agente: evals, testes, lint e typecheck continuam sem CI.
 - **`docs/SCHEMA_REFERENCE.md` desatualizado** — diz "009 migrations" (há 45), cita enums aspiracionais inexistentes (`sm_consent_status`, `sm_legal_basis`, `sm_template_status`, `sm_calendar_status`) e tabelas inexistentes (`stop_word_lists`, `agent_identity_config`, `unsubscribe_tokens`, `content_calendar`). Contém typos originais ("atualizaçóo", "canönica", "OBRiGATÓRIO"). Fonte canônica hoje: `dump-arquitetura.json` + `dicionario-dados.md`. *Ação: reescrever ou aposentar.*
+
+## 🔴 Segurança e integridade do schema (achados verificados em 2026-11-08)
+
+- ~~**`supabase/functions/migrate-helper/` entrega o `service_role`.**~~ **CORRIGIDO (código) em 2026-11-09**:
+  `supabase/functions/migrate-helper/index.ts` e entrada `[functions.migrate-helper]` em `supabase/config.toml`
+  removidos do repositório. **Ação pendente do dono (dashboard)**:
+  (a) Supabase Dashboard → Edge Functions → deletar `migrate-helper` se ainda publicada;
+  (b) Project Settings → API → Reset `service_role` key e atualizar a variável em todos os ambientes
+  (Vercel env `SUPABASE_SERVICE_ROLE_KEY`). Função estava publicada? **NÃO VERIFICADO** — nenhum MCP
+  desta sessão alcança `twkajyybcwvideusutsb`.
+- **Três migrations gravadas em base64, nunca aplicadas.**
+  `20260720230000_009_consent_identity_templates_bugfixes.sql`,
+  `20260721090000_010_tick_support_functions.sql` e `20260721230000_012_hardening_fmea_fixes.sql` são
+  uma linha de base64 (`wc -l` = 0). Logo **não existem no banco**: tabelas `stop_word_lists`,
+  `agent_identity_config`, `marketing_templates`, `content_calendar` (nenhuma em `types.ts`, nenhuma
+  referência em `src/`); funções `fn_claim_cadence_batch`, `fn_recover_stale_locks`,
+  `validate_template_vars`, `export_entity_personal_data`, `delete_entity_personal_data`,
+  `fn_archive_old_target_events`, `fn_try_decrement_quota`, `increment_sender_health`,
+  `fn_reset_daily_quotas`; view `v_security_audit`. *Ação: decidir com o dono o que reaplicar — é DDL
+  em produção, e parte redefine funções que já existem.*
+- ~~**`agent-tools/send-message.ts` envia sem `check_consent()`**~~ **CORRIGIDO em 2026-11-08**:
+  gate fail-closed antes do insert do touchpoint, cobrindo também canal stub
+  (`src/routes/api/public/agent-tools/send-message.ts:63-77`). Teste em
+  `send-message.test.ts` (3 casos: opt-out, RPC indisponível, stub).
+- ~~**`tick-marketing.ts` é fail-open no consentimento**~~ **CORRIGIDO em 2026-11-08**: agora captura
+  `error: consentErr` e, em erro, devolve o envio para `queued` com retry em 15min — mesmo padrão de
+  `tick-cadence`/`tick-journeys` (`tick-marketing.ts:137-155`). Teste de regressão em
+  `tick-marketing.test.ts` ("falha fechado... quando check_consent fica indisponível").
+- **Disclosure de IA não existe no código** (regra crítica 8): `grep -rn "disclosure|agent_identity|identity_config" src/` = 0.
+- **Nenhum cron para `tick-cadence`.** `grep -rl tick-cadence supabase/migrations` = vazio; os
+  schedules `sm-cadence-tick`/`sm-quota-reset`/`sm-archive-events` estão comentados dentro da migration
+  base64 `010`. O worker 1:1 só roda se algo externo chamar o endpoint. Idem `budget-reallocate`
+  (sem job; o arquivo só sugere "a cada 30 minutos", `budget-reallocate.ts:9`). *Estado ao vivo do
+  `cron.job`: **NÃO VERIFICADO**.*
+- **`.env` está versionado** (`git ls-files .env` devolve `.env`) e **não** está no `.gitignore`. Hoje
+  tem só dados públicos do Supabase (6 variáveis), mas qualquer chave de servidor escrita ali vai para
+  o repositório. *Ação: adicionar `.env` ao `.gitignore` e remover do índice — mexe em histórico de
+  arquivo rastreado, decisão do dono.*
+- **Hooks do pg_cron autenticam com chave pública e comparação não constant-time.** Header `apikey`
+  comparado com `SUPABASE_PUBLISHABLE_KEY ?? SUPABASE_ANON_KEY` por `!==` em `tick-cadence.ts:32-37`,
+  `tick-journeys.ts:30-36`, `tick-marketing.ts:27-33`, `alert-sweep.ts:23-28`,
+  `budget-reallocate.ts:19-24`. A publishable key vai no bundle do front (`client.ts:34`) e está em
+  texto claro nas migrations de cron. Endurecer exige trocar o header nos três `cron.schedule` no
+  mesmo ciclo.
+- **Migrations de cron com URL de preview e chave embutidas.** Os três `net.http_post` apontam para
+  `https://project--c4a241c3-…lovable.app` com a publishable key no header
+  (`20260726145822_….sql:6-9`, `20260726170010_….sql:33`, `20260726184515_….sql:14`). Trocar domínio ou
+  rotacionar a chave quebra os jobs e exige migration nova.
+- **Eventos de tracking são forjáveis.** `track/click.ts` e `track/open[.]gif.ts` são GET sem auth e o
+  parâmetro `tp` não é assinado; os eventos entram em `email_deliverability_events` e
+  `sales_machine_events` via service role. O click só valida o protocolo do destino (L13-19).
+- **Três listas de stop words divergentes** — código (`unsubscribe-token.server.ts:56`, a que vale),
+  regex do preflight (`message-preflight.ts:47-49`) e `stop_word_lists` no banco (não aplicada, com
+  termos que o código não detecta: `CHEGA`, `0`, `NÃO QUERO`, `QUIT`, `END`, `REMOVE ME`…).
+- **`check_consent` tem 3 definições** (`20260722200408_….sql:29` DEFINER → `20260722200434_….sql:1`
+  INVOKER, vigente → uma na base64 `009`) e `tg_validate_target_state_transition` tem 2 (ambas em
+  base64, logo **ausente do banco**: a validação de transição de estado não existe).
+- **Nomenclatura de triggers inconsistente** (`trg_*` domina, há `tg_*` e alguns sem prefixo, como
+  `journeys_touch`); `20260721142041_….sql:3,8,14` recria três triggers de `campaign_targets` (F2 do QA).
+
+- **O preview do Vercel falha em qualquer branch (não é regressão de PR).** Medido em 2026-11-08 com
+  três deployments: `59a1e3f` (docs) → `ERROR`, `0e115ed` (docs) → `ERROR` e um commit de controle
+  (`fd3f0ef`, `main` + um arquivo de 1 linha, branch descartada depois) → `ERROR`, enquanto o
+  deployment de **produção** da `main` (`ae912a3`) está `READY`. Ou seja: a integração Git do projeto
+  `sales-machine-v1` (team `juca1`) não consegue construir *preview*, e toda PR deste repo nasce com o
+  commit status `Vercel` vermelho. *Causa: **NÃO VERIFICADO** — o conector Vercel desta sessão só
+  responde `list_projects`/`list_deployments`; `get_deployment`, o log de build e `filter_project_envs`
+  devolvem 404 por escopo. O log fica em `https://vercel.com/juca1/sales-machine-v1/<id>` (acesso do
+  dono). Hipóteses não confirmadas: variável de ambiente só existente em Production, ou o
+  `minimumReleaseAge` do `bunfig.toml` durante o `bun install` do build.*
 
 ## 🔵 Aceitos com justificativa
 
