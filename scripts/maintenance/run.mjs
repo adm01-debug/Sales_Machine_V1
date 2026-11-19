@@ -1,13 +1,5 @@
 #!/usr/bin/env node
-import {
-  readFile,
-  writeFile,
-  mkdir,
-  rm,
-  rename,
-  lstat,
-  readlink,
-} from "node:fs/promises";
+import { readFile, writeFile, mkdir, rm, rename, lstat, readlink } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -45,8 +37,7 @@ const exits = {
 };
 export function parseArgs(args) {
   const [action, ...rest] = args;
-  if (!["doctor", "check", "heal"].includes(action))
-    fail("Use doctor, check ou heal");
+  if (!["doctor", "check", "heal"].includes(action)) fail("Use doctor, check ou heal");
   const options = { action };
   for (let i = 0; i < rest.length; i += 2) {
     const key = rest[i];
@@ -65,15 +56,9 @@ export function parseArgs(args) {
 }
 function redact(output) {
   return output
-    .replace(
-      /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g,
-      "[JWT REDIGIDO]",
-    )
+    .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, "[JWT REDIGIDO]")
     .replace(/\bBearer\s+\S+/gi, "Bearer [REDIGIDO]")
-    .replace(
-      /\b(?:gh[pousr]_|github_pat_|sk-)[A-Za-z0-9_-]{12,}/g,
-      "[TOKEN REDIGIDO]",
-    )
+    .replace(/\b(?:gh[pousr]_|github_pat_|sk-)[A-Za-z0-9_-]{12,}/g, "[TOKEN REDIGIDO]")
     .replace(
       /\b([A-Z][A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL)[A-Z0-9_]*\s*[=:]\s*)[^\s,;]+/g,
       "$1[REDIGIDO]",
@@ -84,10 +69,7 @@ export async function networkPrefix(root) {
   try {
     host = await readlink("/proc/self/ns/net");
   } catch {
-    throw new MaintenanceError(
-      "blocked_network_sandbox",
-      "Isolamento de rede Linux indisponível",
-    );
+    throw new MaintenanceError("blocked_network_sandbox", "Isolamento de rede Linux indisponível");
   }
   const probe = await run(
     [
@@ -141,32 +123,17 @@ async function quarantine(root, jobDir, prefix = []) {
 }
 export async function allowedSourceFiles(root, config, prefix = []) {
   const modes = (
-    await git(
-      root,
-      ["ls-files", "-s", "-z", "--", ...config.fix.roots],
-      undefined,
-      prefix,
-    )
+    await git(root, ["ls-files", "-s", "-z", "--", ...config.fix.roots], undefined, prefix)
   )
     .split("\0")
     .filter(Boolean);
   if (modes.some((line) => line.startsWith("120000 ")))
     fail("Symlink em src impede correção autônoma");
-  const files = (
-    await git(
-      root,
-      ["ls-files", "-z", "--", ...config.fix.roots],
-      undefined,
-      prefix,
-    )
-  )
+  const files = (await git(root, ["ls-files", "-z", "--", ...config.fix.roots], undefined, prefix))
     .split("\0")
     .filter(Boolean);
-  const excluded = [
-    "src/integrations/supabase/types.ts",
-    ...(config.fix.exclude || []),
-  ].map((file) =>
-    path.posix.normalize(file.replaceAll("\\", "/")).replace(/\/+$/, ""),
+  const excluded = ["src/integrations/supabase/types.ts", ...(config.fix.exclude || [])].map(
+    (file) => path.posix.normalize(file.replaceAll("\\", "/")).replace(/\/+$/, ""),
   );
   const allowed = new Set();
   for (const file of files) {
@@ -185,24 +152,14 @@ export async function allowedSourceFiles(root, config, prefix = []) {
     )
       continue;
     if (/[\r\n]/.test(file))
-      fail(
-        "Nome de arquivo com quebra de linha não suportado pelos scans de formatação",
-      );
+      fail("Nome de arquivo com quebra de linha não suportado pelos scans de formatação");
     allowed.add(file);
   }
   return allowed;
 }
 async function changed(root, config, prefix = [], allowed) {
   const staged = await run(
-    [
-      ...prefix,
-      "git",
-      "-c",
-      "core.hooksPath=/dev/null",
-      "diff",
-      "--cached",
-      "--quiet",
-    ],
+    [...prefix, "git", "-c", "core.hooksPath=/dev/null", "diff", "--cached", "--quiet"],
     root,
     config.timeoutMs,
   );
@@ -221,63 +178,36 @@ async function changed(root, config, prefix = [], allowed) {
   if (
     status
       .split("\0")
-      .some(
-        (line) =>
-          line.startsWith("??") &&
-          !(modulesLink && line.slice(3) === "node_modules"),
-      )
+      .some((line) => line.startsWith("??") && !(modulesLink && line.slice(3) === "node_modules"))
   )
     fail("Arquivo não rastreado criado por correção/gate");
-  const files = (
-    await git(
-      root,
-      ["diff", "--name-only", "-z", "--no-renames"],
-      undefined,
-      prefix,
-    )
-  )
+  const files = (await git(root, ["diff", "--name-only", "-z", "--no-renames"], undefined, prefix))
     .split("\0")
     .filter(Boolean);
   if (files.some((f) => !config.fix.roots.some((r) => f.startsWith(`${r}/`))))
     fail("Correção alterou arquivo fora do escopo autorizado");
   if (allowed && files.some((file) => !allowed.has(file)))
     fail("Correção alterou arquivo gerado ou excluído do escopo");
-  const raw = (
-    await git(root, ["diff", "--raw", "-z", "--no-renames"], undefined, prefix)
-  )
+  const raw = (await git(root, ["diff", "--raw", "-z", "--no-renames"], undefined, prefix))
     .split("\0")
     .filter(Boolean);
   if (
     raw.some(
-      (entry) =>
-        entry.startsWith(":") &&
-        entry.split(" ")[0].slice(1) !== entry.split(" ")[1],
+      (entry) => entry.startsWith(":") && entry.split(" ")[0].slice(1) !== entry.split(" ")[1],
     )
   )
-    fail(
-      "Correção alterou modo/tipo ou removeu arquivo; apenas conteúdo de texto é permitido",
-    );
-  const stats = (
-    await git(
-      root,
-      ["diff", "--numstat", "-z", "--no-renames"],
-      undefined,
-      prefix,
-    )
-  )
+    fail("Correção alterou modo/tipo ou removeu arquivo; apenas conteúdo de texto é permitido");
+  const stats = (await git(root, ["diff", "--numstat", "-z", "--no-renames"], undefined, prefix))
     .split("\0")
     .filter(Boolean);
   let lines = 0;
   for (const row of stats) {
     const [add, remove] = row.split("\t");
-    if (!/^\d+$/.test(add) || !/^\d+$/.test(remove))
-      fail("Alteração binária não autorizada");
+    if (!/^\d+$/.test(add) || !/^\d+$/.test(remove)) fail("Alteração binária não autorizada");
     lines += Number(add) + Number(remove);
   }
   if (files.length > config.maxFiles || lines > config.maxChangedLines)
-    fail(
-      `Limite de alteração excedido: ${files.length} arquivos, ${lines} linhas`,
-    );
+    fail(`Limite de alteração excedido: ${files.length} arquivos, ${lines} linhas`);
   return { files, lines };
 }
 const batches = (files, size = 16) =>
@@ -309,18 +239,10 @@ async function fixes(root, config, jobDir, execute, prefix = [], tracked) {
       const scan = await execute(
         "scan",
         `prettier_${index}`,
-        [
-          process.execPath,
-          prettierBin,
-          "--list-different",
-          "--ignore-unknown",
-          "--",
-          ...batch,
-        ],
+        [process.execPath, prettierBin, "--list-different", "--ignore-unknown", "--", ...batch],
         true,
       );
-      for (const file of prettierCandidates(scan, new Set(batch)))
-        candidates.add(file);
+      for (const file of prettierCandidates(scan, new Set(batch))) candidates.add(file);
     }
   }
   if (config.fix.eslintRules.length) {
@@ -338,9 +260,7 @@ async function fixes(root, config, jobDir, execute, prefix = [], tracked) {
       "object-curly-spacing": ["error", "always"],
       "array-bracket-spacing": ["error", "never"],
     };
-    const rules = Object.fromEntries(
-      config.fix.eslintRules.map((r) => [r, settings[r]]),
-    );
+    const rules = Object.fromEntries(config.fix.eslintRules.map((r) => [r, settings[r]]));
     await writeFile(
       override,
       `import {createRequire} from 'node:module';\nconst req=createRequire(${JSON.stringify(path.join(root, "package.json"))});\nexport default [{files:['**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}'],languageOptions:{parser:req('typescript-eslint').parser,parserOptions:{ecmaFeatures:{jsx:true}}},rules:${JSON.stringify(rules)}}];\n`,
@@ -386,21 +306,15 @@ async function fixes(root, config, jobDir, execute, prefix = [], tracked) {
         )
           fail("ESLint retornou resultado inválido");
         const file = path.relative(root, item.filePath).replaceAll("\\", "/");
-        if (
-          !batch.includes(file) ||
-          scanned.has(file) ||
-          item.fatalErrorCount > 0
-        )
+        if (!batch.includes(file) || scanned.has(file) || item.fatalErrorCount > 0)
           fail("ESLint alterou o escopo ou encontrou erro de análise");
         scanned.add(file);
         if (item.output !== undefined) {
-          if (typeof item.output !== "string")
-            fail("ESLint retornou correção inválida");
+          if (typeof item.output !== "string") fail("ESLint retornou correção inválida");
           candidates.add(file);
         }
       }
-      if (scanned.size !== batch.length)
-        fail("ESLint não analisou todos os arquivos do lote");
+      if (scanned.size !== batch.length) fail("ESLint não analisou todos os arquivos do lote");
     }
   }
   const selected = [],
@@ -421,24 +335,13 @@ async function fixes(root, config, jobDir, execute, prefix = [], tracked) {
       ]);
     if (eslintArgs && /\.[cm]?[jt]sx?$/.test(file))
       await execute("fix", "eslint_layout", [...eslintArgs, "--fix", file]);
-    const row = await git(
-      root,
-      ["diff", "--numstat", "--", file],
-      undefined,
-      prefix,
-    );
+    const row = await git(root, ["diff", "--numstat", "--", file], undefined, prefix);
     if (!row) continue;
     const [add, remove] = row.split("\t");
-    if (!/^\d+$/.test(add) || !/^\d+$/.test(remove))
-      fail("Correção binária não autorizada");
+    if (!/^\d+$/.test(add) || !/^\d+$/.test(remove)) fail("Correção binária não autorizada");
     const count = Number(add) + Number(remove);
     if (lines + count > config.maxChangedLines) {
-      await git(
-        root,
-        ["restore", "--source=HEAD", "--worktree", "--", file],
-        undefined,
-        prefix,
-      );
+      await git(root, ["restore", "--source=HEAD", "--worktree", "--", file], undefined, prefix);
       skippedBudget.push(file);
       continue;
     }
@@ -479,13 +382,8 @@ export async function main(args = process.argv.slice(2)) {
     source = path.resolve(options.root);
     report.root = source;
     const top = await git(source, ["rev-parse", "--show-toplevel"]);
-    if (path.resolve(top) !== source)
-      fail("--root deve ser a raiz Git do projeto");
-    const common = await git(source, [
-      "rev-parse",
-      "--path-format=absolute",
-      "--git-common-dir",
-    ]);
+    if (path.resolve(top) !== source) fail("--root deve ser a raiz Git do projeto");
+    const common = await git(source, ["rev-parse", "--path-format=absolute", "--git-common-dir"]);
     stateDir = path.join(
       path.resolve(
         options.state ||
@@ -506,10 +404,7 @@ export async function main(args = process.argv.slice(2)) {
         await readFile(
           path.resolve(
             options.config ||
-              path.join(
-                path.dirname(fileURLToPath(import.meta.url)),
-                "config.json",
-              ),
+              path.join(path.dirname(fileURLToPath(import.meta.url)), "config.json"),
           ),
           "utf8",
         ),
@@ -534,22 +429,12 @@ export async function main(args = process.argv.slice(2)) {
     if (await exists(pendingFile)) {
       pending = JSON.parse(await readFile(pendingFile, "utf8"));
       const integrated = await run(
-        [
-          ...prefix,
-          "git",
-          "merge-base",
-          "--is-ancestor",
-          pending.commit,
-          report.base,
-        ],
+        [...prefix, "git", "merge-base", "--is-ancestor", pending.commit, report.base],
         source,
         config.timeoutMs,
       );
       if (integrated.code === 0) {
-        await writeJson(
-          path.join(stateDir, "integrated", `${pending.commit}.json`),
-          pending,
-        );
+        await writeJson(path.join(stateDir, "integrated", `${pending.commit}.json`), pending);
         await rm(pendingFile);
         pending = null;
       } else {
@@ -569,10 +454,7 @@ export async function main(args = process.argv.slice(2)) {
         );
         const tree = await git(source, ["rev-parse", `${report.base}^{tree}`]);
         if (merge.code === 0 && merge.output.split("\n")[0] === tree) {
-          await writeJson(
-            path.join(stateDir, "integrated", `${pending.commit}.json`),
-            pending,
-          );
+          await writeJson(path.join(stateDir, "integrated", `${pending.commit}.json`), pending);
           await rm(pendingFile);
           pending = null;
         }
@@ -588,20 +470,9 @@ export async function main(args = process.argv.slice(2)) {
     report.dependencies = await reuseDependencies(source, workspace);
     const allowed = await allowedSourceFiles(workspace, config, prefix);
     const restore = await quarantine(workspace, jobDir, prefix);
-    const execute = async (
-      phase,
-      name,
-      command,
-      allowOne = false,
-      environment = {},
-    ) => {
+    const execute = async (phase, name, command, allowOne = false, environment = {}) => {
       if (interrupted) fail("Execução interrompida por sinal");
-      const result = await run(
-        [...prefix, ...command],
-        workspace,
-        config.timeoutMs,
-        environment,
-      );
+      const result = await run([...prefix, ...command], workspace, config.timeoutMs, environment);
       const output = redact(result.output);
       const logFile = `${report.steps.length}-${phase}-${name}.log`;
       await writeFile(path.join(jobDir, logFile), output, { mode: 0o600 });
@@ -613,9 +484,7 @@ export async function main(args = process.argv.slice(2)) {
         log: logFile,
         diagnostics: output
           .split("\n")
-          .filter((s) =>
-            /error TS\d+:|^Error:|^error:|FAIL|failed|Error \[/.test(s),
-          )
+          .filter((s) => /error TS\d+:|^Error:|^error:|FAIL|failed|Error \[/.test(s))
           .slice(0, 5),
       });
       if (
@@ -634,12 +503,7 @@ export async function main(args = process.argv.slice(2)) {
       report.doctor = { ...report.isolatedDoctor, scope: "reference" };
       for (const g of config.gates)
         await execute("baseline", g.name, g.command, false, {
-          nodeEnv:
-            g.name === "test"
-              ? "test"
-              : g.name === "build"
-                ? "production"
-                : undefined,
+          nodeEnv: g.name === "test" ? "test" : g.name === "build" ? "production" : undefined,
           publicEnv: g.env,
         });
     } finally {
@@ -653,20 +517,9 @@ export async function main(args = process.argv.slice(2)) {
       report.status = "checked";
       return await finish();
     }
-    const restoreFix = await quarantine(
-      workspace,
-      path.join(jobDir, "fix"),
-      prefix,
-    );
+    const restoreFix = await quarantine(workspace, path.join(jobDir, "fix"), prefix);
     try {
-      report.scope = await fixes(
-        workspace,
-        config,
-        jobDir,
-        execute,
-        prefix,
-        allowed,
-      );
+      report.scope = await fixes(workspace, config, jobDir, execute, prefix, allowed);
     } finally {
       await restoreFix();
     }
@@ -698,44 +551,25 @@ export async function main(args = process.argv.slice(2)) {
       return result.output;
     };
     const fixedDiff = await snapshotDiff();
-    const restoreAgain = await quarantine(
-      workspace,
-      path.join(jobDir, "after"),
-      prefix,
-    );
+    const restoreAgain = await quarantine(workspace, path.join(jobDir, "after"), prefix);
     try {
       for (const g of config.gates)
         await execute("patched", g.name, g.command, false, {
-          nodeEnv:
-            g.name === "test"
-              ? "test"
-              : g.name === "build"
-                ? "production"
-                : undefined,
+          nodeEnv: g.name === "test" ? "test" : g.name === "build" ? "production" : undefined,
           publicEnv: g.env,
         });
     } finally {
       await restoreAgain();
     }
-    if ((await snapshotDiff()) !== fixedDiff)
-      fail("Gate alterou o patch; resultado descartado");
+    if ((await snapshotDiff()) !== fixedDiff) fail("Gate alterou o patch; resultado descartado");
     report.change = await changed(workspace, config, prefix, allowed);
-    if (!report.change.files.length)
-      fail("Gate removeu o patch depois da correção");
+    if (!report.change.files.length) fail("Gate removeu o patch depois da correção");
     if ((await dependencyFingerprint(source)).hash !== report.dependencies.hash)
       fail("Dependências do clone mudaram durante a execução");
     if (interrupted) fail("Execução interrompida por sinal");
     await git(workspace, ["diff", "--check"]);
     const patchResult = await run(
-      [
-        ...prefix,
-        "git",
-        "-c",
-        "core.hooksPath=/dev/null",
-        "diff",
-        "--binary",
-        "--no-ext-diff",
-      ],
+      [...prefix, "git", "-c", "core.hooksPath=/dev/null", "diff", "--binary", "--no-ext-diff"],
       workspace,
       config.timeoutMs,
     );
@@ -749,11 +583,7 @@ export async function main(args = process.argv.slice(2)) {
     await git(workspace, ["add", "--", ...report.change.files]);
     if ((await snapshotDiff(true)) !== fixedDiff)
       fail("Filtro Git alterou o patch ao preparar o commit");
-    const restoreHooks = await quarantine(
-      workspace,
-      path.join(jobDir, "hooks"),
-      prefix,
-    );
+    const restoreHooks = await quarantine(workspace, path.join(jobDir, "hooks"), prefix);
     try {
       const hookResult = await commitWithHooks(
         source,
@@ -828,9 +658,7 @@ export async function main(args = process.argv.slice(2)) {
       (await git(workspace, ["log", "-1", "--format=%s"])) !==
       "style(manutencao): aplica correcoes locais verificadas"
     )
-      fail(
-        "Hook alterou a mensagem obrigatória do commit; resultado descartado",
-      );
+      fail("Hook alterou a mensagem obrigatória do commit; resultado descartado");
     if ((await changed(workspace, config, prefix, allowed)).files.length)
       fail("Hook alterou a worktree depois da validação");
     if ((await dependencyFingerprint(source)).hash !== report.dependencies.hash)
@@ -850,9 +678,7 @@ export async function main(args = process.argv.slice(2)) {
   } catch (e) {
     report.status = e instanceof MaintenanceError ? e.code : "failed";
     report.message = redact(
-      e instanceof MaintenanceError
-        ? e.message
-        : `Falha interna: ${e.code || e.name}`,
+      e instanceof MaintenanceError ? e.message : `Falha interna: ${e.code || e.name}`,
     );
   }
   return await finish();
@@ -866,8 +692,7 @@ export async function main(args = process.argv.slice(2)) {
       }
       workspace = null;
     }
-    if (branch && !keepBranch)
-      await git(source, ["branch", "-D", branch]).catch(() => {});
+    if (branch && !keepBranch) await git(source, ["branch", "-D", branch]).catch(() => {});
     if (release) {
       try {
         await release();
@@ -888,10 +713,7 @@ export async function main(args = process.argv.slice(2)) {
     return { exitCode: exits[report.status] ?? 1, report };
   }
 }
-if (
-  process.argv[1] &&
-  import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
-) {
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const result = await main();
   console.log(JSON.stringify(result.report));
   process.exitCode = result.exitCode;

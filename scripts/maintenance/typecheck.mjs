@@ -8,12 +8,7 @@ const configs = process.argv.slice(2),
   root = process.cwd();
 if (
   !configs.length ||
-  configs.some(
-    (c) =>
-      path.isAbsolute(c) ||
-      c.startsWith("-") ||
-      c.split(/[\\/]/).includes(".."),
-  )
+  configs.some((c) => path.isAbsolute(c) || c.startsWith("-") || c.split(/[\\/]/).includes(".."))
 ) {
   console.error("Projetos TypeScript explícitos obrigatórios");
   process.exit(1);
@@ -29,27 +24,15 @@ try {
   for (const [index, config] of configs.entries()) {
     const filename = path.resolve(root, config);
     let options = {};
-    const prefix = hasApi
-      ? []
-      : ["unshare", "--user", "--map-root-user", "--net", "--"];
-    const compiler = [
-      process.execPath,
-      path.join(dir, "bin/tsc"),
-      "--noEmit",
-      "--project",
-      config,
-    ];
+    const prefix = hasApi ? [] : ["unshare", "--user", "--map-root-user", "--net", "--"];
+    const compiler = [process.execPath, path.join(dir, "bin/tsc"), "--noEmit", "--project", config];
     if (hasApi) {
       const parsed = ts.readConfigFile(filename, ts.sys.readFile);
       if (parsed.error) {
         process.exitCode = 1;
         break;
       }
-      const resolved = ts.parseJsonConfigFileContent(
-        parsed.config,
-        ts.sys,
-        path.dirname(filename),
-      );
+      const resolved = ts.parseJsonConfigFileContent(parsed.config, ts.sys, path.dirname(filename));
       if (resolved.errors.length || !resolved.fileNames.length) {
         console.error(`Projeto TypeScript vazio ou inválido: ${config}`);
         process.exitCode = 1;
@@ -78,10 +61,7 @@ try {
         listed.status !== 0 ||
         !listed.stdout
           .split("\n")
-          .some(
-            (f) =>
-              path.isAbsolute(f.trim()) && /\.[cm]?[jt]sx?$/.test(f.trim()),
-          )
+          .some((f) => path.isAbsolute(f.trim()) && /\.[cm]?[jt]sx?$/.test(f.trim()))
       ) {
         console.error(`Projeto TypeScript vazio ou inválido na CLI: ${config}`);
         process.exitCode = listed.status || 1;
@@ -89,10 +69,7 @@ try {
       }
     }
     if (!hasApi || options.incremental || options.composite)
-      compiler.push(
-        "--tsBuildInfoFile",
-        path.join(temporary, `${index}.tsbuildinfo`),
-      );
+      compiler.push("--tsBuildInfoFile", path.join(temporary, `${index}.tsbuildinfo`));
     const command = [...prefix, ...compiler];
     const result = spawnSync(command[0], command.slice(1), {
       cwd: root,
