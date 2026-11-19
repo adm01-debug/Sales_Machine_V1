@@ -1,4 +1,4 @@
-# Automação local — Task_Gifts_V2
+# Automação local — Sales_Machine_V1
 
 O dispatcher `scripts/automation.mjs` liga as suites, o motor de manutenção e o adaptador de grafo. O perfil versionado `scripts/automation.config.json` é a fonte dos aliases e do registro exato de scripts. Apenas ferramentas determinísticas locais: não há chamadas de IA nem cobrança de API de IA. O CI usa minutos do GitHub Actions sujeitos ao plano da conta; execução local usa os recursos da máquina.
 
@@ -42,40 +42,18 @@ As suites usam fixtures descartáveis e não executam os scripts operacionais do
 
 Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores; não são incluídos automaticamente no novo pipeline. Para arquivos TypeScript de apoio sem runner comprovado, o comando listado só valida o inventário; os chamadores originais continuam sendo a referência de execução. Referência literal indica onde o arquivo é citado, sem garantir que esse caminho rode nem autorização para executar operações contra serviços. Sem referência, o arquivo é mantido manual porque função, parâmetros e ambiente precisam de revisão antes de ativar qualquer gatilho. Scripts novos não cobertos por registro fazem `doctor --static` falhar; não existe registro genérico `scripts/**` para ocultá-los.
 
-| Arquivo exato                                | Invocação manual de inventário                          | Chamadores literais / justificativa                                            |
-| -------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `scripts/ai-context/cenarios.mjs`            | `node scripts/ai-context/cenarios.mjs`                  | .github/workflows/contexto.yml                                                 |
-| `scripts/ai-context/gerar.mjs`               | `node scripts/ai-context/gerar.mjs`                     | package.json:scripts, .github/workflows/contexto.yml                           |
-| `scripts/ai-context/gerar.unit.mjs`          | `node --test scripts/ai-context/gerar.unit.mjs`         | package.json:scripts, .github/workflows/ci.yml, .github/workflows/contexto.yml |
-| `scripts/ci/check-claude-md-integrity.mjs`   | `node scripts/ci/check-claude-md-integrity.mjs`         | .github/workflows/ci.yml, .github/workflows/contexto.yml                       |
-| `scripts/ci/check-migration-drift.unit.mjs`  | `node --test scripts/ci/check-migration-drift.unit.mjs` | package.json:scripts, .github/workflows/ci.yml, .github/workflows/contexto.yml |
-| `scripts/ci/commit-msg-lint.mjs`             | `node scripts/ci/commit-msg-lint.mjs`                   | .github/workflows/contexto.yml, .husky/commit-msg                              |
-| `scripts/ci/contexto-indice.unit.mjs`        | `node --test scripts/ci/contexto-indice.unit.mjs`       | package.json:scripts, .github/workflows/ci.yml, .github/workflows/contexto.yml |
-| `scripts/ci/contexto-publicacao.unit.mjs`    | `node --test scripts/ci/contexto-publicacao.unit.mjs`   | package.json:scripts, .github/workflows/ci.yml, .github/workflows/contexto.yml |
-| `scripts/ci/regras-negocio.unit.mjs`         | `node --test scripts/ci/regras-negocio.unit.mjs`        | package.json:scripts, .github/workflows/ci.yml, .github/workflows/contexto.yml |
-| `scripts/ci/supabase-snapshot.unit.mjs`      | `node --test scripts/ci/supabase-snapshot.unit.mjs`     | package.json:scripts, .github/workflows/ci.yml, .github/workflows/contexto.yml |
-| `scripts/db-audit/check-migration-drift.mjs` | `node scripts/db-audit/check-migration-drift.mjs`       | package.json:scripts, .github/workflows/ci.yml                                 |
-| `scripts/graphify/setup.sh`                  | `sh scripts/graphify/setup.sh`                          | package.json:scripts                                                           |
-| `scripts/patch-recharts.cjs`                 | `node scripts/patch-recharts.cjs`                       | package.json:scripts                                                           |
-| `scripts/regras_negocio/generate.py`         | `python3 scripts/regras_negocio/generate.py`            | package.json:scripts, .github/workflows/contexto.yml                           |
-| `scripts/regras_negocio/indice.py`           | `python3 scripts/regras_negocio/indice.py`              | .github/workflows/contexto.yml                                                 |
-| `scripts/regras_negocio/publish.sh`          | `sh scripts/regras_negocio/publish.sh`                  | .github/workflows/contexto.yml                                                 |
-| `scripts/regras_negocio/test_generate.py`    | `python3 scripts/regras_negocio/test_generate.py`       | .github/workflows/contexto.yml                                                 |
-| `scripts/supabase_snapshot/snapshot.py`      | `python3 scripts/supabase_snapshot/snapshot.py`         | .github/workflows/contexto.yml                                                 |
-| `scripts/supabase_snapshot/test_snapshot.py` | `python3 scripts/supabase_snapshot/test_snapshot.py`    | .github/workflows/contexto.yml                                                 |
+| Arquivo exato                       | Invocação manual de inventário              | Chamadores literais / justificativa                                                  |
+| ----------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `scripts/gerar-dump-arquitetura.py` | `python3 scripts/gerar-dump-arquitetura.py` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 
 ## Hooks e workflows anteriores
 
-Hooks inventariados: `.husky/_` era o hooksPath observado. A tabela registra os arquivos, sem afirmar bootstrap instalado ou execução efetiva em outro clone. O registro legacy desses hooks limita apenas execução arbitrária pelo dispatcher; o Git e a ponte preservam os gatilhos originais.
+Hooks inventariados: `(default do Git)` era o hooksPath observado. A tabela registra os arquivos, sem afirmar bootstrap instalado ou execução efetiva em outro clone. O registro legacy desses hooks limita apenas execução arbitrária pelo dispatcher; o Git e a ponte preservam os gatilhos originais.
 
-| Hook exato          | Gatilho Git original | Referência de inventário                              |
-| ------------------- | -------------------- | ----------------------------------------------------- |
-| `.husky/commit-msg` | `commit-msg`         | Hook preservado e encadeado antes do novo dispatcher. |
-| `.husky/pre-commit` | `pre-commit`         | Hook preservado e encadeado antes do novo dispatcher. |
+| Hook exato                          | Gatilho Git original | Referência de inventário                 |
+| ----------------------------------- | -------------------- | ---------------------------------------- |
+| Nenhum hook versionado inventariado | —                    | A instalação do novo kit é independente. |
 
-Workflows anteriores preservados: 2. Os gatilhos e condições de cada arquivo continuam definidos no YAML original; esta listagem não os promove ao novo pipeline e não executa suas operações.
-
-- `.github/workflows/ci.yml`
-- `.github/workflows/contexto.yml`
+Workflows anteriores preservados: 0. Os gatilhos e condições de cada arquivo continuam definidos no YAML original; esta listagem não os promove ao novo pipeline e não executa suas operações.
 
 Os helpers dos corretores anteriores são cobertos por suites de regressão em fixtures; a chamada operacional original continua no respectivo hook/workflow. Os quatro registros principais e helpers ficam explícitos no JSON, sem globs para novos arquivos.
