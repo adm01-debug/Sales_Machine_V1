@@ -7,10 +7,16 @@
     "scripts/maintenance/maintenance.unit.mjs",
     "scripts/graphify-local.unit.mjs"
   ],
-  "motor": ["sh", "scripts/maintenance/run.sh"],
+  "motor": [
+    "sh",
+    "scripts/maintenance/run.sh"
+  ],
   "motorConfig": "scripts/maintenance/config.json",
   "motorSource": "scripts/maintenance/run.sh",
-  "graph": ["node", "scripts/graphify-local.mjs"],
+  "graph": [
+    "node",
+    "scripts/graphify-local.mjs"
+  ],
   "graphConfig": "graphify.local.json",
   "aliases": {
     "automation:doctor": "node scripts/automation.mjs doctor",
@@ -27,9 +33,22 @@
     {
       "id": "core",
       "kind": "tool",
-      "files": ["scripts/automation.mjs"],
-      "manual": ["node", "scripts/automation.mjs", "doctor"],
-      "triggers": ["manual", "precommit", "prepush", "PR", "pushmain", "nightly"]
+      "files": [
+        "scripts/automation.mjs"
+      ],
+      "manual": [
+        "node",
+        "scripts/automation.mjs",
+        "doctor"
+      ],
+      "triggers": [
+        "manual",
+        "precommit",
+        "prepush",
+        "PR",
+        "pushmain",
+        "nightly"
+      ]
     },
     {
       "id": "automation-suites",
@@ -39,8 +58,18 @@
         "scripts/maintenance/maintenance.unit.mjs",
         "scripts/graphify-local.unit.mjs"
       ],
-      "manual": ["node", "scripts/automation.mjs", "test"],
-      "triggers": ["manual", "precommit", "prepush", "PR", "pushmain"]
+      "manual": [
+        "node",
+        "scripts/automation.mjs",
+        "test"
+      ],
+      "triggers": [
+        "manual",
+        "precommit",
+        "prepush",
+        "PR",
+        "pushmain"
+      ]
     },
     {
       "id": "motor-isolado",
@@ -51,34 +80,388 @@
         "scripts/maintenance/lib.mjs",
         "scripts/maintenance/typecheck.mjs"
       ],
-      "manual": ["node", "scripts/automation.mjs", "heal", "--ref", "origin/main"],
-      "triggers": ["manual", "nightly"]
+      "manual": [
+        "node",
+        "scripts/automation.mjs",
+        "heal",
+        "--ref",
+        "origin/main"
+      ],
+      "triggers": [
+        "manual",
+        "nightly"
+      ]
     },
     {
       "id": "graph-local",
       "kind": "graph",
-      "files": ["scripts/graphify-local.mjs"],
-      "manual": ["node", "scripts/automation.mjs", "graph", "status"],
-      "triggers": ["manual", "precommit", "postcommit", "postmerge", "postcheckout", "nightly"]
+      "files": [
+        "scripts/graphify-local.mjs"
+      ],
+      "manual": [
+        "node",
+        "scripts/automation.mjs",
+        "graph",
+        "status"
+      ],
+      "triggers": [
+        "manual",
+        "precommit",
+        "postcommit",
+        "postmerge",
+        "postcheckout",
+        "nightly"
+      ]
     },
     {
       "id": "legacy-624270bf9763110b",
       "kind": "legacy",
-      "files": ["scripts/gerar-dump-arquitetura.py"],
-      "manual": ["python3", "scripts/gerar-dump-arquitetura.py"],
-      "triggers": ["manual"],
+      "files": [
+        "scripts/gerar-dump-arquitetura.py"
+      ],
+      "manual": [
+        "python3",
+        "scripts/gerar-dump-arquitetura.py"
+      ],
+      "triggers": [
+        "manual"
+      ],
       "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-cac78e0a4578fcbb",
+      "kind": "legacy",
+      "files": [
+        "scripts/ai-context/cenarios.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido sem referência literal em workflows/package.json; revisar chamador antes de ativar gatilho. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-d7cb6b51ce58499f",
+      "kind": "legacy",
+      "files": [
+        "scripts/ai-context/gerar.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/contexto.yml, package.json. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-ac9e14a43aebfb27",
+      "kind": "legacy",
+      "files": [
+        "scripts/ai-context/gerar.unit.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/contexto.yml, package.json, scripts/ci/ai-context-generator.unit.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-fd982d6024c8e66b",
+      "kind": "legacy",
+      "files": [
+        "scripts/ci/ai-context-generator.unit.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido sem referência literal em workflows/package.json; revisar chamador antes de ativar gatilho. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-4a0422adc6502982",
+      "kind": "legacy",
+      "files": [
+        "scripts/ci/check-agents-md-integrity.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/agents-md-guard.yml, scripts/ci/check-agents-md-integrity.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-743b4361b49a5411",
+      "kind": "legacy",
+      "files": [
+        "scripts/ci/contexto-indice.unit.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido sem referência literal em workflows/package.json; revisar chamador antes de ativar gatilho. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-0653480751a1beab",
+      "kind": "legacy",
+      "files": [
+        "scripts/ci/contexto-publicacao.unit.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido sem referência literal em workflows/package.json; revisar chamador antes de ativar gatilho. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-fa3e6a207a80f663",
+      "kind": "legacy",
+      "files": [
+        "scripts/ci/inventario-banco.unit.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido sem referência literal em workflows/package.json; revisar chamador antes de ativar gatilho. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-a1ea2a8f2a1d4422",
+      "kind": "legacy",
+      "files": [
+        "scripts/ci/inventario-mudou.unit.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido sem referência literal em workflows/package.json; revisar chamador antes de ativar gatilho. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-9c14ee83b8cb7d3d",
+      "kind": "legacy",
+      "files": [
+        "scripts/ci/inventario-repo.unit.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido sem referência literal em workflows/package.json; revisar chamador antes de ativar gatilho. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-4f2da1f7f60dca5f",
+      "kind": "legacy",
+      "files": [
+        "scripts/ci/regras-negocio.unit.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido sem referência literal em workflows/package.json; revisar chamador antes de ativar gatilho. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-eca78df1d1913539",
+      "kind": "legacy",
+      "files": [
+        "scripts/ci/supabase-snapshot.unit.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido sem referência literal em workflows/package.json; revisar chamador antes de ativar gatilho. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-68cae5fc95bfe528",
+      "kind": "legacy",
+      "files": [
+        "scripts/inventario/gerar-banco.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/inventario-estado-semanal.yml, package.json, scripts/ci/inventario-banco.unit.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-56b5f90d4f8afc35",
+      "kind": "legacy",
+      "files": [
+        "scripts/inventario/gerar-repo.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/inventario-estado-semanal.yml, package.json, scripts/ci/inventario-repo.unit.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-fd1c962a8dd907cf",
+      "kind": "legacy",
+      "files": [
+        "scripts/inventario/mudou-conteudo.mjs"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/inventario-estado-semanal.yml, scripts/ci/inventario-mudou.unit.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-6add96711eef222b",
+      "kind": "legacy",
+      "files": [
+        "scripts/regras_negocio/generate.py"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/contexto.yml, package.json, scripts/ci/regras-negocio.unit.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-cb7e8f79aa5ae356",
+      "kind": "legacy",
+      "files": [
+        "scripts/regras_negocio/indice.py"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/contexto.yml, package.json, scripts/ci/contexto-indice.unit.mjs, scripts/ci/contexto-publicacao.unit.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-374636fa80eccbb2",
+      "kind": "legacy",
+      "files": [
+        "scripts/regras_negocio/publish.sh"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: scripts/ci/regras-negocio.unit.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-f24d5fbdddb2b362",
+      "kind": "legacy",
+      "files": [
+        "scripts/regras_negocio/test_generate.py"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/contexto.yml, scripts/ci/regras-negocio.unit.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-fe3157cf160e24f3",
+      "kind": "legacy",
+      "files": [
+        "scripts/supabase_snapshot/snapshot.py"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/contexto.yml, scripts/ci/contexto-publicacao.unit.mjs, scripts/ci/supabase-snapshot.unit.mjs. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-5b3736bc4f83232f",
+      "kind": "legacy",
+      "files": [
+        "scripts/supabase_snapshot/test_snapshot.py"
+      ],
+      "manual": [
+        "echo",
+        "legacy mantido; ver pacote.json/workflows para gatilho real"
+      ],
+      "triggers": [
+        "manual"
+      ],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/contexto.yml, scripts/ci/supabase-snapshot.unit.mjs. O dispatcher não executa esta operação."
     }
   ],
   "ci": [
     {
       "file": ".github/workflows/automation-local.yml",
-      "events": ["PR", "pushmain"],
+      "events": [
+        "PR",
+        "pushmain"
+      ],
       "command": "node scripts/automation.mjs test"
     }
   ],
   "nightly": {
-    "command": ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"]
+    "command": [
+      "node",
+      "scripts/automation.mjs",
+      "nightly",
+      "--ref",
+      "origin/main"
+    ]
   },
   "timeoutMs": 900000,
   "toolingPatterns": [
@@ -89,5 +472,12 @@
     "*lock*",
     "graphify.local.json"
   ],
-  "sourcePatterns": ["src/**", "tests/**", "e2e/**", "api/**", "shared/**", "supabase/functions/**"]
+  "sourcePatterns": [
+    "src/**",
+    "tests/**",
+    "e2e/**",
+    "api/**",
+    "shared/**",
+    "supabase/functions/**"
+  ]
 }
