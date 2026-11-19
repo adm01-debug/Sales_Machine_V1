@@ -49,3 +49,8 @@ inventario/estado/tabelas-uso.json
 # Estado local privado dos novos adaptadores de automação
 /.tools/repo-automation/
 /.tools/graphify/
+
+# Env (segredos) - removido do versionamento em 2026-11-19
+.env
+.env.*
+!.env.example
