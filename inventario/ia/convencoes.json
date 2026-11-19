@@ -1,0 +1,79 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "onde_ficam": {
+  "telas": [
+   "src/routes (40)"
+  ],
+  "componentes": [
+   "src/components (70)",
+   "src/routes (28)"
+  ],
+  "hooks": [
+   "src/components (2)",
+   "scripts/ai-context (1)",
+   "src/hooks (1)"
+  ],
+  "servicos_logica": [
+   "src/lib (59)",
+   "src/integrations (12)",
+   "scripts/regras_negocio (2)"
+  ],
+  "testes": [
+   "co-localizado (*.test) (32)",
+   "outro (12)"
+  ],
+  "edge_functions": null,
+  "migrations": "supabase/migrations",
+  "scripts": [
+   "scripts/inventario (4)",
+   "scripts/regras_negocio (3)",
+   "scripts/ai-context (2)"
+  ],
+  "docs": [
+   "docs (3)",
+   "(raiz) (2)"
+  ]
+ },
+ "nomenclatura": {
+  "componentes": "camelCase (56%)",
+  "hooks": "use + PascalCase",
+  "servicos": "outro (48%)",
+  "edge_functions": null,
+  "tabelas": "snake_case (89%)"
+ },
+ "barrels_index": 0,
+ "extensao_componentes": [
+  ".tsx (98)"
+ ],
+ "alias_imports": {
+  "(raiz)": {
+   "@/": "src/",
+   "~/": "src/"
+  }
+ },
+ "commits": {
+  "convencao": "livre",
+  "exemplos": [
+   "fix(inventario): corrige ENOENT em edgesNoRepo quando supabase/functions/ ausente",
+   "security(functions): remove migrate-helper (vazava service_role e DB_URL sem auth real)",
+   "feat(contexto): porta os scripts autônomos de contexto do Zapp_Web_V2",
+   "docs(contexto): atualiza ref de commit no decisoes-recentes e regera dump pós-rebase",
+   "docs(contexto): corrige enums no dicionario de dados — sm_channel ganhou rcs/mms e sm_source ganhou fuxico via ALTER TYPE nas migrations (dump estava certo, doc estava desatualizado)"
+  ]
+ },
+ "pr_template": null,
+ "codeowners": null,
+ "contributing": null,
+ "instrucoes_agentes": [
+  "AGENTS.md",
+  "CLAUDE.md"
+ ],
+ "typescript": {
+  "strict": false,
+  "noImplicitAny": null,
+  "tsconfigs": [
+   "tsconfig.json"
+  ]
+ }
+}

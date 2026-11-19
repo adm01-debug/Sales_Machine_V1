@@ -1,0 +1,878 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "arestas": {
+  "src/components/PreflightHistoryChart.tsx": [
+   "src/components/ui/card.tsx",
+   "src/lib/preflight-history.functions.ts"
+  ],
+  "src/components/app-shell.tsx": [
+   "src/components/nav-config.tsx",
+   "src/components/ui/button.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/audience-rule-builder.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/lib/audience-rules.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/campaign-validation-panel.tsx": [
+   "src/lib/campaign-validation.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/campaigns/cost-preflight.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/marketing.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/compliance-audit-panel.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/compliance-terms.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/compliance-terms-manager.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/compliance-terms.ts",
+   "src/lib/compliance.functions.ts"
+  ],
+  "src/components/dashboard/analytics-charts.tsx": [
+   "src/components/dashboard/campaign-drilldown.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/lib/analytics-aggregate.ts",
+   "src/lib/analytics.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/campaign-drilldown.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/lib/analytics.functions.ts"
+  ],
+  "src/components/dashboard/churn-risk-widget.tsx": [
+   "src/lib/churn.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/email/EmailBlockEditor.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/email-blocks.ts"
+  ],
+  "src/components/email/EmailPreflightPanel.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/progress.tsx",
+   "src/lib/email-blocks.ts",
+   "src/lib/email-preflight.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/LeadFieldEditor.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/switch.tsx",
+   "src/lib/lead-forms.ts"
+  ],
+  "src/components/journeys/journey-settings-card.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/switch.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/journey-graph.ts"
+  ],
+  "src/components/journeys/node-card.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/journey-graph.ts"
+  ],
+  "src/components/message-preflight-panel.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/progress.tsx",
+   "src/lib/audience-rules.ts",
+   "src/lib/email-preflight.ts",
+   "src/lib/message-preflight.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/message-preview.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/audience-rules.ts",
+   "src/lib/campaign-validation.ts",
+   "src/lib/sms-segments.ts",
+   "src/lib/template-vars.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/metric-card.tsx": [
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ops/alert-history.tsx": [
+   "src/lib/ops.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ops/budget-guardrails.tsx": [
+   "src/components/ui/alert.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/switch.tsx",
+   "src/lib/budget-guard.ts",
+   "src/lib/cost-model.ts",
+   "src/lib/ops.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ops/budget-reallocation.tsx": [
+   "src/components/ui/alert.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/cost-model.ts",
+   "src/lib/ops.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ops/channel-roi-stats.tsx": [
+   "src/lib/cost-model.ts",
+   "src/lib/ops.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ops/compliance-violations-trail.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/compliance-terms.ts",
+   "src/lib/ops.functions.ts"
+  ],
+  "src/components/ops/manual-interventions.tsx": [
+   "src/components/ops/compliance-violations-trail.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/csv-export.ts",
+   "src/lib/ops.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ops/spend-breakdown.tsx": [
+   "src/lib/cost-model.ts",
+   "src/lib/ops.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/template-picker-dialog.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/audience-rules.ts",
+   "src/lib/templates.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/accordion.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/alert-dialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/alert.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/avatar.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/badge.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/breadcrumb.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/button.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/calendar.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/card.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/carousel.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/chart.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/checkbox.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/command.tsx": [
+   "src/components/ui/dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/context-menu.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/dialog.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/drawer.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/dropdown-menu.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/form.tsx": [
+   "src/components/ui/label.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/hover-card.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/input-otp.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/input.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/label.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/menubar.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/navigation-menu.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/pagination.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/popover.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/progress.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/radio-group.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/resizable.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/scroll-area.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/select.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/separator.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/sheet.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/sidebar.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/separator.tsx",
+   "src/components/ui/sheet.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/hooks/use-mobile.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/skeleton.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/slider.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/switch.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/table.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/tabs.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/textarea.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/toggle-group.tsx": [
+   "src/components/ui/toggle.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/toggle.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/tooltip.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/integrations/external/fatorx.server.ts": [
+   "src/integrations/external/config.server.ts"
+  ],
+  "src/integrations/external/fuxico.server.ts": [
+   "src/integrations/external/config.server.ts"
+  ],
+  "src/integrations/external/lux.server.ts": [
+   "src/integrations/external/config.server.ts"
+  ],
+  "src/integrations/external/singu.server.ts": [
+   "src/integrations/external/config.server.ts"
+  ],
+  "src/integrations/lovable/index.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/integrations/supabase/auth-attacher.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/integrations/supabase/auth-middleware.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/integrations/supabase/client.server.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/integrations/supabase/client.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/lib/alert-dispatch.ts": [
+   "src/lib/ops-alerts.ts"
+  ],
+  "src/lib/analytics.functions.ts": [
+   "src/integrations/supabase/auth-middleware.ts",
+   "src/lib/analytics-aggregate.ts",
+   "src/lib/campaign-diagnostics.ts"
+  ],
+  "src/lib/audience-resolver.server.ts": [
+   "src/integrations/supabase/types.ts",
+   "src/lib/audience-rules.ts"
+  ],
+  "src/lib/audiences.functions.ts": [
+   "src/integrations/supabase/auth-middleware.ts",
+   "src/lib/audience-resolver.server.ts",
+   "src/lib/audience-rules.ts"
+  ],
+  "src/lib/budget-reallocation.server.ts": [
+   "src/lib/budget-reallocation.ts",
+   "src/lib/budget.server.ts"
+  ],
+  "src/lib/budget-reallocation.ts": [
+   "src/lib/budget-guard.ts"
+  ],
+  "src/lib/budget.server.ts": [
+   "src/lib/budget-guard.ts",
+   "src/lib/cost-model.ts"
+  ],
+  "src/lib/campaign-cost.server.ts": [
+   "src/lib/budget.server.ts",
+   "src/lib/campaign-cost.ts"
+  ],
+  "src/lib/campaign-cost.ts": [
+   "src/lib/cost-model.ts",
+   "src/lib/sms-segments.ts"
+  ],
+  "src/lib/campaign-diagnostics.ts": [
+   "src/lib/compliance-terms.ts"
+  ],
+  "src/lib/campaign-validation.ts": [
+   "src/lib/audience-rules.ts",
+   "src/lib/compliance-terms.ts",
+   "src/lib/email-blocks.ts",
+   "src/lib/email-preflight.ts",
+   "src/lib/message-preflight.ts",
+   "src/lib/template-vars.ts"
+  ],
+  "src/lib/churn.functions.ts": [
+   "src/integrations/supabase/auth-middleware.ts"
+  ],
+  "src/lib/compliance.functions.ts": [
+   "src/integrations/supabase/auth-middleware.ts",
+   "src/lib/compliance-terms.ts"
+  ],
+  "src/lib/compliance.server.ts": [
+   "src/lib/compliance-terms.ts"
+  ],
+  "src/lib/deliverability.functions.ts": [
+   "src/integrations/external/fuxico.server.ts",
+   "src/integrations/external/singu.server.ts",
+   "src/integrations/supabase/auth-middleware.ts",
+   "src/lib/email-tracking.server.ts",
+   "src/lib/hmac.server.ts",
+   "src/lib/tracking-integrity.ts"
+  ],
+  "src/lib/email-preflight.ts": [
+   "src/lib/email-blocks.ts",
+   "src/lib/template-vars.ts"
+  ],
+  "src/lib/email-tracking.server.ts": [
+   "src/integrations/external/fuxico.server.ts"
+  ],
+  "src/lib/journey-dispatch.server.ts": [
+   "src/integrations/external/singu.server.ts",
+   "src/integrations/social/types.ts",
+   "src/lib/email-blocks.ts",
+   "src/lib/email-tracking.server.ts",
+   "src/lib/template-vars.ts"
+  ],
+  "src/lib/journey-engine.ts": [
+   "src/lib/email-preflight.ts"
+  ],
+  "src/lib/journey-graph.ts": [
+   "src/lib/journey-engine.ts"
+  ],
+  "src/lib/journey-triggers.ts": [
+   "src/lib/journey-engine.ts"
+  ],
+  "src/lib/journeys.functions.ts": [
+   "src/integrations/supabase/auth-middleware.ts",
+   "src/lib/journey-graph.ts",
+   "src/lib/journeys.server.ts"
+  ],
+  "src/lib/journeys.server.ts": [
+   "src/lib/journey-engine.ts",
+   "src/lib/journey-graph.ts"
+  ],
+  "src/lib/lead-forms.functions.ts": [
+   "src/integrations/supabase/auth-middleware.ts",
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/lead-forms-delivery.server.ts",
+   "src/lib/lead-forms.server.ts",
+   "src/lib/lead-forms.ts",
+   "src/lib/supabase-public.server.ts"
+  ],
+  "src/lib/lead-forms.server.ts": [
+   "src/lib/lead-forms.ts"
+  ],
+  "src/lib/marketing.functions.ts": [
+   "src/integrations/supabase/auth-middleware.ts",
+   "src/lib/audience-rules.ts",
+   "src/lib/campaign-cost.server.ts",
+   "src/lib/campaign-validation.ts",
+   "src/lib/compliance-terms.ts",
+   "src/lib/compliance.server.ts",
+   "src/lib/template-vars.ts"
+  ],
+  "src/lib/message-preflight.ts": [
+   "src/lib/audience-rules.ts",
+   "src/lib/email-preflight.ts",
+   "src/lib/sms-segments.ts",
+   "src/lib/template-vars.ts"
+  ],
+  "src/lib/ops-spend.server.ts": [
+   "src/lib/cost-model.ts"
+  ],
+  "src/lib/ops.functions.ts": [
+   "src/integrations/supabase/auth-middleware.ts",
+   "src/lib/cost-model.ts"
+  ],
+  "src/lib/orchestrator.functions.ts": [
+   "src/integrations/external/fatorx.server.ts",
+   "src/integrations/external/lux.server.ts",
+   "src/integrations/external/singu.server.ts",
+   "src/integrations/social/types.ts",
+   "src/integrations/supabase/auth-middleware.ts"
+  ],
+  "src/lib/preflight-history.functions.ts": [
+   "src/integrations/supabase/auth-middleware.ts"
+  ],
+  "src/lib/profile360.functions.ts": [
+   "src/integrations/supabase/auth-middleware.ts",
+   "src/lib/sentiment.ts"
+  ],
+  "src/lib/templates.functions.ts": [
+   "src/integrations/external/singu.server.ts",
+   "src/integrations/supabase/auth-middleware.ts",
+   "src/lib/audience-rules.ts",
+   "src/lib/template-vars.ts"
+  ],
+  "src/routeTree.gen.ts": [
+   "src/routes/__root.tsx",
+   "src/routes/_authenticated/approvals.tsx",
+   "src/routes/_authenticated/audiences.$id.tsx",
+   "src/routes/_authenticated/audiences.tsx",
+   "src/routes/_authenticated/campaigns.$id.tsx",
+   "src/routes/_authenticated/campaigns.tsx",
+   "src/routes/_authenticated/companies.$id.tsx",
+   "src/routes/_authenticated/companies.tsx",
+   "src/routes/_authenticated/compliance.tsx",
+   "src/routes/_authenticated/contacts.$id.tsx",
+   "src/routes/_authenticated/contacts.tsx",
+   "src/routes/_authenticated/dashboard.tsx",
+   "src/routes/_authenticated/deliverability.tsx",
+   "src/routes/_authenticated/evals.tsx",
+   "src/routes/_authenticated/forms.$id.tsx",
+   "src/routes/_authenticated/forms.tsx",
+   "src/routes/_authenticated/journeys.$id.tsx",
+   "src/routes/_authenticated/journeys.tsx",
+   "src/routes/_authenticated/library.tsx",
+   "src/routes/_authenticated/ops.tsx",
+   "src/routes/_authenticated/ops/index.tsx",
+   "src/routes/_authenticated/prospecting.tsx",
+   "src/routes/_authenticated/route.tsx",
+   "src/routes/api/public/agent-tools/send-message.ts",
+   "src/routes/api/public/hooks/alert-sweep.ts",
+   "src/routes/api/public/hooks/budget-reallocate.ts",
+   "src/routes/api/public/hooks/tick-cadence.ts",
+   "src/routes/api/public/hooks/tick-journeys.ts",
+   "src/routes/api/public/hooks/tick-marketing.ts",
+   "src/routes/api/public/track/click.ts",
+   "src/routes/api/public/track/open[.]gif.ts",
+   "src/routes/api/public/unsubscribe.tsx",
+   "src/routes/api/public/webhooks/fatorx.ts",
+   "src/routes/api/public/webhooks/fuxico.ts",
+   "src/routes/api/public/webhooks/lux.ts",
+   "src/routes/api/public/webhooks/singu-bounce.ts",
+   "src/routes/api/public/webhooks/singu.ts",
+   "src/routes/auth.tsx",
+   "src/routes/confirmar.tsx",
+   "src/routes/f.$slug.tsx",
+   "src/routes/index.tsx"
+  ],
+  "src/router.tsx": [
+   "src/routeTree.gen.ts"
+  ],
+  "src/routes/__root.tsx": [
+   "src/lib/lovable-error-reporting.ts"
+  ],
+  "src/routes/_authenticated/approvals.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/orchestrator.functions.ts"
+  ],
+  "src/routes/_authenticated/audiences.$id.tsx": [
+   "src/components/audience-rule-builder.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/audience-rules.ts",
+   "src/lib/audiences.functions.ts"
+  ],
+  "src/routes/_authenticated/audiences.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/audience-rules.ts",
+   "src/lib/audiences.functions.ts"
+  ],
+  "src/routes/_authenticated/campaigns.$id.tsx": [
+   "src/components/campaign-validation-panel.tsx",
+   "src/components/campaigns/cost-preflight.tsx",
+   "src/components/message-preview.tsx",
+   "src/components/template-picker-dialog.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/audience-rules.ts",
+   "src/lib/audiences.functions.ts",
+   "src/lib/campaign-validation.ts",
+   "src/lib/marketing.functions.ts",
+   "src/lib/template-vars.ts",
+   "src/lib/templates.functions.ts"
+  ],
+  "src/routes/_authenticated/campaigns.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/marketing.functions.ts"
+  ],
+  "src/routes/_authenticated/companies.$id.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/orchestrator.functions.ts"
+  ],
+  "src/routes/_authenticated/companies.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/orchestrator.functions.ts"
+  ],
+  "src/routes/_authenticated/compliance.tsx": [
+   "src/components/compliance-audit-panel.tsx",
+   "src/components/compliance-terms-manager.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/compliance-terms.ts",
+   "src/lib/compliance.functions.ts"
+  ],
+  "src/routes/_authenticated/contacts.$id.tsx": [
+   "src/components/metric-card.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/profile360.functions.ts"
+  ],
+  "src/routes/_authenticated/contacts.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/profile360.functions.ts",
+   "src/lib/sentiment.ts"
+  ],
+  "src/routes/_authenticated/dashboard.tsx": [
+   "src/components/dashboard/analytics-charts.tsx",
+   "src/components/metric-card.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/marketing.functions.ts",
+   "src/lib/orchestrator.functions.ts"
+  ],
+  "src/routes/_authenticated/deliverability.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/deliverability.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/routes/_authenticated/evals.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/orchestrator.functions.ts"
+  ],
+  "src/routes/_authenticated/forms.$id.tsx": [
+   "src/components/forms/LeadFieldEditor.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/switch.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/journeys.functions.ts",
+   "src/lib/lead-forms.functions.ts",
+   "src/lib/lead-forms.ts"
+  ],
+  "src/routes/_authenticated/forms.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/lib/lead-forms.functions.ts",
+   "src/lib/lead-forms.ts"
+  ],
+  "src/routes/_authenticated/journeys.$id.tsx": [
+   "src/components/journeys/journey-settings-card.tsx",
+   "src/components/journeys/node-card.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/lib/journey-engine.ts",
+   "src/lib/journey-graph.ts",
+   "src/lib/journeys.functions.ts"
+  ],
+  "src/routes/_authenticated/journeys.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/lib/journey-graph.ts",
+   "src/lib/journeys.functions.ts"
+  ],
+  "src/routes/_authenticated/library.tsx": [
+   "src/components/PreflightHistoryChart.tsx",
+   "src/components/compliance-audit-panel.tsx",
+   "src/components/email/EmailBlockEditor.tsx",
+   "src/components/email/EmailPreflightPanel.tsx",
+   "src/components/message-preflight-panel.tsx",
+   "src/components/message-preview.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/audience-rules.ts",
+   "src/lib/campaign-validation.ts",
+   "src/lib/compliance.functions.ts",
+   "src/lib/email-blocks.ts",
+   "src/lib/email-preflight.ts",
+   "src/lib/message-preflight.ts",
+   "src/lib/preflight-history.functions.ts",
+   "src/lib/sms-segments.ts",
+   "src/lib/template-vars.ts",
+   "src/lib/templates.functions.ts"
+  ],
+  "src/routes/_authenticated/ops.tsx": [
+   "src/components/dashboard/churn-risk-widget.tsx",
+   "src/components/ops/alert-history.tsx",
+   "src/components/ops/budget-guardrails.tsx",
+   "src/components/ops/budget-reallocation.tsx",
+   "src/components/ops/channel-roi-stats.tsx",
+   "src/components/ops/manual-interventions.tsx",
+   "src/components/ops/spend-breakdown.tsx",
+   "src/lib/deliverability.functions.ts",
+   "src/lib/ops-alerts.ts",
+   "src/lib/ops.functions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/routes/_authenticated/ops/index.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/compliance-terms.ts",
+   "src/lib/ops.functions.ts"
+  ],
+  "src/routes/_authenticated/prospecting.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/orchestrator.functions.ts"
+  ],
+  "src/routes/_authenticated/route.tsx": [
+   "src/components/app-shell.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/routes/api/public/agent-tools/send-message.ts": [
+   "src/integrations/external/singu.server.ts",
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/hmac.server.ts"
+  ],
+  "src/routes/api/public/hooks/alert-sweep.ts": [
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/alert-dispatch.ts",
+   "src/lib/budget.server.ts",
+   "src/lib/hmac.server.ts",
+   "src/lib/ops-alerts.ts",
+   "src/lib/tracking-integrity.ts"
+  ],
+  "src/routes/api/public/hooks/budget-reallocate.ts": [
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/budget-reallocation-schedule.ts",
+   "src/lib/budget-reallocation.server.ts"
+  ],
+  "src/routes/api/public/hooks/tick-cadence.ts": [
+   "src/integrations/external/fatorx.server.ts",
+   "src/integrations/external/singu.server.ts",
+   "src/integrations/social/types.ts",
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/budget.server.ts",
+   "src/lib/cadence-engine.ts",
+   "src/lib/email-tracking.server.ts",
+   "src/lib/template-vars.ts"
+  ],
+  "src/routes/api/public/hooks/tick-journeys.ts": [
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/budget.server.ts",
+   "src/lib/journey-dispatch.server.ts",
+   "src/lib/journey-engine.ts"
+  ],
+  "src/routes/api/public/hooks/tick-marketing.ts": [
+   "src/integrations/external/singu.server.ts",
+   "src/integrations/social/types.ts",
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/email-tracking.server.ts",
+   "src/lib/template-vars.ts"
+  ],
+  "src/routes/api/public/track/click.ts": [
+   "src/integrations/supabase/client.server.ts"
+  ],
+  "src/routes/api/public/track/open[.]gif.ts": [
+   "src/integrations/supabase/client.server.ts"
+  ],
+  "src/routes/api/public/unsubscribe.tsx": [
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/unsubscribe-token.server.ts"
+  ],
+  "src/routes/api/public/webhooks/fatorx.ts": [
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/hmac.server.ts"
+  ],
+  "src/routes/api/public/webhooks/fuxico.ts": [
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/hmac.server.ts"
+  ],
+  "src/routes/api/public/webhooks/lux.ts": [
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/hmac.server.ts"
+  ],
+  "src/routes/api/public/webhooks/singu-bounce.ts": [
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/hmac.server.ts"
+  ],
+  "src/routes/api/public/webhooks/singu.ts": [
+   "src/integrations/supabase/client.server.ts",
+   "src/lib/hmac.server.ts",
+   "src/lib/unsubscribe-token.server.ts"
+  ],
+  "src/routes/auth.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/integrations/lovable/index.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/routes/confirmar.tsx": [
+   "src/components/ui/card.tsx",
+   "src/lib/lead-forms.functions.ts"
+  ],
+  "src/routes/f.$slug.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/lead-forms.functions.ts",
+   "src/lib/lead-forms.ts"
+  ],
+  "src/routes/index.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/server.ts": [
+   "src/lib/error-capture.ts",
+   "src/lib/error-page.ts"
+  ],
+  "src/start.ts": [
+   "src/integrations/supabase/auth-attacher.ts",
+   "src/lib/error-page.ts"
+  ]
+ }
+}
