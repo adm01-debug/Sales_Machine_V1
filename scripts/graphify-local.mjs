@@ -61,10 +61,7 @@ const canonical = (v) =>
 const digest = (v) => hash(JSON.stringify(canonical(v)));
 const inside = (root, file) => {
   const rel = path.relative(root, file);
-  return (
-    rel === "" ||
-    (rel !== ".." && !rel.startsWith(`..${path.sep}`) && !path.isAbsolute(rel))
-  );
+  return rel === "" || (rel !== ".." && !rel.startsWith(`..${path.sep}`) && !path.isAbsolute(rel));
 };
 const safeRelative = (v) =>
   typeof v === "string" &&
@@ -79,15 +76,9 @@ const secretPath = (file) =>
   );
 const redact = (text) =>
   String(text)
-    .replace(
-      /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g,
-      "[JWT REDIGIDO]",
-    )
+    .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, "[JWT REDIGIDO]")
     .replace(/\bBearer\s+\S+/gi, "Bearer [REDIGIDO]")
-    .replace(
-      /\b(?:gh[pousr]_|github_pat_|sk-|sb_secret_)[A-Za-z0-9_-]{12,}/g,
-      "[TOKEN REDIGIDO]",
-    )
+    .replace(/\b(?:gh[pousr]_|github_pat_|sk-|sb_secret_)[A-Za-z0-9_-]{12,}/g, "[TOKEN REDIGIDO]")
     .replace(
       /\b([A-Z][A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL)[A-Z0-9_]*\s*[=:]\s*)[^\s,;]+/g,
       "$1[REDIGIDO]",
@@ -135,16 +126,16 @@ export function run(command, cwd, env, timeoutMs = 120000) {
       stdio: ["ignore", "pipe", "pipe"],
     });
     let bytes = 0,
-          output = "",
+      output = "",
       timedOut = false,
       overflow = false,
       canceled = false,
       settled = false,
       hard;
-        const decoders = {
-          stdout: new StringDecoder("utf8"),
-          stderr: new StringDecoder("utf8"),
-        };
+    const decoders = {
+      stdout: new StringDecoder("utf8"),
+      stderr: new StringDecoder("utf8"),
+    };
     const kill = (signal) => {
       if (child.pid)
         try {
@@ -161,8 +152,8 @@ export function run(command, cwd, env, timeoutMs = 120000) {
       active.delete(cancel);
       kill("SIGKILL");
       decoders.stdout.end();
-            decoders.stderr.end();
-            child.stdout.destroy();
+      decoders.stderr.end();
+      child.stdout.destroy();
       child.stderr.destroy();
       resolve({
         code: timedOut || overflow || canceled ? 1 : (code ?? 1),
@@ -189,16 +180,16 @@ export function run(command, cwd, env, timeoutMs = 120000) {
       stop();
     }, timeoutMs);
     const collect = (stream) => (chunk) => {
-          if (bytes + chunk.length > 4 * 1024 * 1024) {
+      if (bytes + chunk.length > 4 * 1024 * 1024) {
         overflow = true;
         stop();
-          } else {
-            bytes += chunk.length;
-            output += decoders[stream].write(chunk);
-          }
+      } else {
+        bytes += chunk.length;
+        output += decoders[stream].write(chunk);
+      }
     };
-        child.stdout.on("data", collect("stdout"));
-        child.stderr.on("data", collect("stderr"));
+    child.stdout.on("data", collect("stdout"));
+    child.stderr.on("data", collect("stderr"));
     child.once("error", () => finish(1));
     child.once("close", finish);
   });
@@ -223,9 +214,7 @@ function environment(extra = {}) {
 async function checked(command, root, env, timeout) {
   const r = await run(command, root, env, timeout);
   if (r.code !== 0 || r.timedOut || r.overflow || r.canceled)
-    fail(
-      `Comando ${path.basename(command[0])} falhou (exit=${r.code}, timeout=${r.timedOut})`,
-    );
+    fail(`Comando ${path.basename(command[0])} falhou (exit=${r.code}, timeout=${r.timedOut})`);
   return r.output.trim();
 }
 const git = async (root, args) => {
@@ -235,8 +224,7 @@ const git = async (root, args) => {
     environment(),
     30000,
   );
-  if (r.code !== 0 || r.timedOut || r.overflow || r.canceled)
-    fail("Leitura Git falhou");
+  if (r.code !== 0 || r.timedOut || r.overflow || r.canceled) fail("Leitura Git falhou");
   return args.includes("-z") ? r.output : r.output.trim();
 };
 async function atomic(file, value) {
@@ -247,9 +235,7 @@ async function atomic(file, value) {
 }
 async function staleDirectory(directory) {
   try {
-    const owner = JSON.parse(
-      await readFile(path.join(directory, "owner.json"), "utf8"),
-    );
+    const owner = JSON.parse(await readFile(path.join(directory, "owner.json"), "utf8"));
     if (Number.isSafeInteger(owner.pid) && owner.pid > 1) {
       try {
         process.kill(owner.pid, 0);
@@ -259,8 +245,7 @@ async function staleDirectory(directory) {
       }
     }
   } catch (error) {
-    if (!["ENOENT", "SyntaxError"].includes(error.code || error.name))
-      throw error;
+    if (!["ENOENT", "SyntaxError"].includes(error.code || error.name)) throw error;
   }
   const info = await lstat(directory).catch((error) => {
     if (error.code === "ENOENT") return null;
@@ -284,8 +269,7 @@ export async function acquire(dir) {
       await mkdir(recovery, { mode: 0o700 });
     }
     try {
-      if (!(await staleDirectory(dir)))
-        fail("Outra execução usa o grafo", "busy");
+      if (!(await staleDirectory(dir))) fail("Outra execução usa o grafo", "busy");
       const old = `${dir}.stale-${randomUUID()}`;
       await rename(dir, old);
       try {
@@ -330,8 +314,7 @@ export function validateConfig(c) {
   )
     fail("Configuração Graphify inválida");
   for (const key of ["environment", "state", "output"])
-    if (!safeRelative(c[key]))
-      fail("Caminho da configuração deve ser relativo e confinado");
+    if (!safeRelative(c[key])) fail("Caminho da configuração deve ser relativo e confinado");
   if (
     !["generic", "finance", "champions"].includes(c.adapter) ||
     !Array.isArray(c.scope) ||
@@ -376,22 +359,11 @@ function parse(args) {
     else options.terms.push(value);
   }
   const { action } = options;
-  if (
-    ![
-      "install",
-      "status",
-      "mark",
-      "ensure",
-      "query",
-      "path",
-      "explain",
-    ].includes(action)
-  )
+  if (!["install", "status", "mark", "ensure", "query", "path", "explain"].includes(action))
     fail("Use install/status/mark/ensure/query/path/explain");
   if (options.terms.some((term) => term.startsWith("-") || term.includes("\0")))
     fail("Termo de consulta inválido");
-  const count =
-    action === "path" ? 2 : ["query", "explain"].includes(action) ? 1 : 0;
+  const count = action === "path" ? 2 : ["query", "explain"].includes(action) ? 1 : 0;
   if (options.terms.length !== count) fail("Quantidade de argumentos inválida");
   return options;
 }
@@ -425,15 +397,7 @@ async function confined(root, relative, { ignored = false } = {}) {
   return target;
 }
 export async function fingerprint(root, config) {
-  const names = (
-    await git(root, [
-      "ls-files",
-      "--cached",
-      "--others",
-      "--exclude-standard",
-      "-z",
-    ])
-  )
+  const names = (await git(root, ["ls-files", "--cached", "--others", "--exclude-standard", "-z"]))
     .split("\0")
     .filter(Boolean);
   const files = {},
@@ -445,12 +409,7 @@ export async function fingerprint(root, config) {
       secretPath(file)
     )
       continue;
-    if (
-      !config.scope.some(
-        (s) => s === "." || file === s || file.startsWith(`${s}/`),
-      )
-    )
-      continue;
+    if (!config.scope.some((s) => s === "." || file === s || file.startsWith(`${s}/`))) continue;
     const full = path.join(root, file);
     if (!inside(root, full)) fail("Git retornou caminho fora da raiz");
     const info = await lstat(full).catch((e) => {
@@ -458,16 +417,11 @@ export async function fingerprint(root, config) {
       throw e;
     });
     if (!info) continue;
-    if (
-      !info.isFile() ||
-      info.isSymbolicLink() ||
-      !inside(root, await realpath(full))
-    ) {
+    if (!info.isFile() || info.isSymbolicLink() || !inside(root, await realpath(full))) {
       skipped.push(file);
       continue;
     }
-    if (info.size > 512 * 1024 * 1024)
-      fail("Arquivo de código excede o limite de512MB");
+    if (info.size > 512 * 1024 * 1024) fail("Arquivo de código excede o limite de512MB");
     files[file] = await fileHash(full);
   }
   if (!Object.keys(files).length) fail("Corpus permitido não contém código");
@@ -477,14 +431,9 @@ export async function fingerprint(root, config) {
       if (e.code === "ENOENT") return null;
       throw e;
     });
-    if (
-      info?.isSymbolicLink() ||
-      (info && !inside(root, await realpath(path.join(root, file))))
-    )
+    if (info?.isSymbolicLink() || (info && !inside(root, await realpath(path.join(root, file)))))
       fail("Metadado do corpus não pode atravessar symlink");
-    metadata[file] = info?.isFile()
-      ? await fileHash(path.join(root, file))
-      : null;
+    metadata[file] = info?.isFile() ? await fileHash(path.join(root, file)) : null;
   }
   const head = await git(root, ["rev-parse", "HEAD"]),
     configHash = digest(config);
@@ -507,24 +456,16 @@ async function runtime(ctx) {
   const python = path.join(ctx.envRoot, envBin(ctx), isWin ? "python.exe" : "python"),
     binary = path.join(ctx.envRoot, envBin(ctx), isWin ? "graphify.exe" : "graphify");
   if ((await exists(binary)) && (await lstat(binary)).isSymbolicLink())
-    fail(
-      "Executável local não pode apontar para CLI compartilhada",
-      "missing_runtime",
-    );
+    fail("Executável local não pode apontar para CLI compartilhada", "missing_runtime");
   if (!(await exists(python)) || !(await exists(binary)))
     fail("Ambiente individual ausente; execute install", "missing_runtime");
   const script =
     'import importlib.metadata as m,sys,json,pathlib;import graphify,networkx,tree_sitter,tree_sitter_sql;assert tree_sitter_sql.language() is not None;print(json.dumps({"version":m.version("graphifyy"),"prefix":sys.prefix,"module":str(pathlib.Path(graphify.__file__).resolve())}))';
   let value;
   try {
-    value = JSON.parse(
-      await checked([python, "-I", "-c", script], ctx.root, ctx.env, 30000),
-    );
+    value = JSON.parse(await checked([python, "-I", "-c", script], ctx.root, ctx.env, 30000));
   } catch {
-    fail(
-      "Ambiente individual não passou no smoke de imports",
-      "missing_runtime",
-    );
+    fail("Ambiente individual não passou no smoke de imports", "missing_runtime");
   }
   if (
     value.version !== ctx.config.pin ||
@@ -532,15 +473,8 @@ async function runtime(ctx) {
     !inside(ctx.envRoot, value.module)
   )
     fail("Runtime não corresponde ao ambiente e pin locais", "missing_runtime");
-  const version = await checked(
-    [binary, "--version"],
-    ctx.root,
-    ctx.env,
-    30000,
-  );
-  if (
-    !version.split("\n").some((s) => s.trim() === `graphify ${ctx.config.pin}`)
-  )
+  const version = await checked([binary, "--version"], ctx.root, ctx.env, 30000);
+  if (!version.split("\n").some((s) => s.trim() === `graphify ${ctx.config.pin}`))
     fail("Executável local tem versão divergente", "missing_runtime");
   return { version: value.version, python, binary, prefix: value.prefix };
 }
@@ -563,8 +497,7 @@ export async function validateGraph(file, partial = false) {
     )
       fail("Artefato do grafo mudou durante a leitura");
     const graph = JSON.parse(bytes.toString("utf8"));
-    if (!Array.isArray(graph.nodes) || !graph.nodes.length)
-      fail("Grafo vazio ou inválido");
+    if (!Array.isArray(graph.nodes) || !graph.nodes.length) fail("Grafo vazio ou inválido");
     const ids = new Set(graph.nodes.map((n) => String(n.id)));
     if (
       ids.size !== graph.nodes.length ||
@@ -580,14 +513,11 @@ export async function validateGraph(file, partial = false) {
     if (!Array.isArray(edges)) fail("Relações do grafo inválidas");
     let unresolvedImports = 0;
     for (const edge of edges) {
-      if (ids.has(String(edge.source)) && ids.has(String(edge.target)))
-        continue;
+      if (ids.has(String(edge.source)) && ids.has(String(edge.target))) continue;
       if (
         partial &&
         ids.has(String(edge.source)) &&
-        ["imports", "imports_from", "dynamic_import", "re_exports"].includes(
-          edge.relation,
-        )
+        ["imports", "imports_from", "dynamic_import", "re_exports"].includes(edge.relation)
       ) {
         unresolvedImports++;
         continue;
@@ -615,8 +545,7 @@ async function status(ctx, currentFingerprint) {
       partial: ctx.config.partial,
       scope: ctx.config.scope,
     };
-  if ((await lstat(ctx.graph)).isSymbolicLink())
-    fail("Grafo não pode ser symlink");
+  if ((await lstat(ctx.graph)).isSymbolicLink()) fail("Grafo não pode ser symlink");
   const graph = await validateGraph(ctx.graph, ctx.config.partial);
   if (!(await exists(ctx.provenance)))
     return {
@@ -627,8 +556,7 @@ async function status(ctx, currentFingerprint) {
       partial: ctx.config.partial,
       scope: ctx.config.scope,
     };
-  if ((await lstat(ctx.provenance)).isSymbolicLink())
-    fail("Proveniência não pode ser symlink");
+  if ((await lstat(ctx.provenance)).isSymbolicLink()) fail("Proveniência não pode ser symlink");
   const meta = await json(ctx.provenance);
   const valid =
     meta.version === 1 &&
@@ -647,14 +575,8 @@ async function status(ctx, currentFingerprint) {
 }
 async function offline(ctx) {
   if (ctx.fixtureOfflinePrefix !== undefined) return ctx.fixtureOfflinePrefix; // Injeção só da API de testes; nenhuma flag/config permite isso.
-  const script =
-    'process.stdout.write(require("node:fs").readlinkSync("/proc/self/ns/net"))';
-  const host = await checked(
-    [process.execPath, "-e", script],
-    ctx.root,
-    ctx.env,
-    5000,
-  );
+  const script = 'process.stdout.write(require("node:fs").readlinkSync("/proc/self/ns/net"))';
+  const host = await checked([process.execPath, "-e", script], ctx.root, ctx.env, 5000);
   const prefix = ["unshare", "--user", "--map-root-user", "--net", "--"];
   const isolated = await checked(
     [...prefix, process.execPath, "-e", script],
@@ -662,8 +584,7 @@ async function offline(ctx) {
     ctx.env,
     5000,
   );
-  if (isolated === host || !isolated.startsWith("net:["))
-    fail("Namespace offline indisponível");
+  if (isolated === host || !isolated.startsWith("net:[")) fail("Namespace offline indisponível");
   return prefix;
 }
 export function assertResources(sample, minAvailableMb) {
@@ -686,10 +607,7 @@ async function resourceProbe() {
   };
 }
 async function resources(ctx) {
-  assertResources(
-    await (ctx.resourceProbe || resourceProbe)(),
-    ctx.config.minAvailableMb,
-  );
+  assertResources(await (ctx.resourceProbe || resourceProbe)(), ctx.config.minAvailableMb);
 }
 
 async function generate(ctx, fp, expectedGraph) {
@@ -700,33 +618,20 @@ async function generate(ctx, fp, expectedGraph) {
   let step = 0;
   const execute = async (argv, env = ctx.env) => {
     if (ctx.interrupted()) fail("Execução interrompida");
-    const result = await run(
-      [...prefix, ...argv],
-      ctx.root,
-      env,
-      ctx.config.timeoutMs,
-    );
+    const result = await run([...prefix, ...argv], ctx.root, env, ctx.config.timeoutMs);
     const log = path.join(job, `${step++}.log`);
     await writeFile(log, redact(result.output), { mode: 0o600 });
-    if (
-      result.code !== 0 ||
-      result.timedOut ||
-      result.overflow ||
-      result.canceled
-    )
+    if (result.code !== 0 || result.timedOut || result.overflow || result.canceled)
       fail(`Extração/validação falhou; log privado ${log}`);
     return result.output;
   };
   try {
     let candidate, wrapperEvidence;
     if (ctx.config.adapter === "finance") {
-      const wrapperConfig = await json(
-        path.join(ctx.root, "scripts/graphify/config.json"),
-      );
+      const wrapperConfig = await json(path.join(ctx.root, "scripts/graphify/config.json"));
       if (
         wrapperConfig.version !== ctx.config.pin ||
-        digest(wrapperConfig.profiles?.pilot?.files) !==
-          digest(ctx.config.scope)
+        digest(wrapperConfig.profiles?.pilot?.files) !== digest(ctx.config.scope)
       )
         fail("Perfil Finance diverge do wrapper pilot versionado");
       const shims = path.join(job, "bin");
@@ -738,31 +643,20 @@ async function generate(ctx, fp, expectedGraph) {
         { mode: 0o700 },
       );
       const previous = new Set(
-        await readdir(path.join(ctx.root, "graphify-out/pilot")).catch(
-          () => [],
-        ),
+        await readdir(path.join(ctx.root, "graphify-out/pilot")).catch(() => []),
       );
-      await execute(
-        [ctx.python, "scripts/graphify/run.py", "pilot", "--profile", "pilot"],
-        { ...ctx.env, PATH: `${shims}:${ctx.env.PATH}` },
+      await execute([ctx.python, "scripts/graphify/run.py", "pilot", "--profile", "pilot"], {
+        ...ctx.env,
+        PATH: `${shims}:${ctx.env.PATH}`,
+      });
+      const runs = (await readdir(path.join(ctx.root, "graphify-out/pilot"))).filter(
+        (n) => n.startsWith("execucao-") && !previous.has(n),
       );
-      const runs = (
-        await readdir(path.join(ctx.root, "graphify-out/pilot"))
-      ).filter((n) => n.startsWith("execucao-") && !previous.has(n));
-      if (runs.length !== 1)
-        fail("Wrapper Finance não produziu execução única verificável");
-      wrapperEvidence = path.join(
-        ctx.root,
-        "graphify-out/pilot",
-        runs[0],
-        "evidencia.json",
-      );
+      if (runs.length !== 1) fail("Wrapper Finance não produziu execução única verificável");
+      wrapperEvidence = path.join(ctx.root, "graphify-out/pilot", runs[0], "evidencia.json");
       if ((await json(wrapperEvidence)).status !== "validado_com_limitacoes")
         fail("Wrapper Finance recusou o corpus");
-      candidate = path.join(
-        path.dirname(wrapperEvidence),
-        "graphify-out/graph.json",
-      );
+      candidate = path.join(path.dirname(wrapperEvidence), "graphify-out/graph.json");
     } else if (ctx.config.adapter === "champions") {
       await confined(ctx.root, ".graphify-local", { ignored: true });
       const destination = `.graphify-local/local-${Date.now()}-${randomUUID()}`;
@@ -788,18 +682,9 @@ async function generate(ctx, fp, expectedGraph) {
         await mkdir(path.dirname(target), { recursive: true, mode: 0o700 });
         await copyFile(path.join(ctx.root, file), target);
         await chmod(target, 0o600);
-        if ((await fileHash(target)) !== expected)
-          fail("Fonte mudou ao preparar corpus isolado");
+        if ((await fileHash(target)) !== expected) fail("Fonte mudou ao preparar corpus isolado");
       }
-      await execute([
-        "git",
-        "-c",
-        "core.hooksPath=/dev/null",
-        "-C",
-        corpus,
-        "init",
-        "--quiet",
-      ]);
+      await execute(["git", "-c", "core.hooksPath=/dev/null", "-C", corpus, "init", "--quiet"]);
       await execute([
         ctx.binary,
         "extract",
@@ -811,13 +696,7 @@ async function generate(ctx, fp, expectedGraph) {
         "--out",
         staging,
       ]);
-      await execute([
-        ctx.binary,
-        "cluster-only",
-        staging,
-        "--no-label",
-        "--no-viz",
-      ]);
+      await execute([ctx.binary, "cluster-only", staging, "--no-label", "--no-viz"]);
       candidate = path.join(staging, "graphify-out/graph.json");
     }
     const graph = await validateGraph(candidate, ctx.config.partial),
@@ -842,8 +721,7 @@ async function generate(ctx, fp, expectedGraph) {
         ctx.env,
         30000,
       );
-      if (tracked.code === 0)
-        fail("Saída é rastreada pelo Git; promoção exige fluxo versionado");
+      if (tracked.code === 0) fail("Saída é rastreada pelo Git; promoção exige fluxo versionado");
     }
     let backup;
     const currentGraph = (await exists(ctx.graph))
@@ -859,12 +737,8 @@ async function generate(ctx, fp, expectedGraph) {
       if (await exists(ctx.provenance))
         await copyFile(ctx.provenance, path.join(backup, "provenance.json"));
     }
-    if (ctx.lockAlive && !ctx.lockAlive())
-      fail("Lease global perdeu a trava durante extração");
-    const temp = path.join(
-      ctx.outputRoot,
-      `.graphify-local-${randomUUID()}.tmp`,
-    );
+    if (ctx.lockAlive && !ctx.lockAlive()) fail("Lease global perdeu a trava durante extração");
+    const temp = path.join(ctx.outputRoot, `.graphify-local-${randomUUID()}.tmp`);
     await copyFile(candidate, temp);
     await chmod(temp, 0o600);
     if (!currentGraph) {
@@ -914,10 +788,7 @@ async function generate(ctx, fp, expectedGraph) {
   }
 }
 export async function adoptInitial(ctx, fp) {
-  const file = path.join(
-    ctx.outputRoot,
-    "graphify-local-initial-provenance.json",
-  );
+  const file = path.join(ctx.outputRoot, "graphify-local-initial-provenance.json");
   if (!(await exists(file)) || (await exists(ctx.provenance))) return false;
   if ((await lstat(file)).isSymbolicLink()) return false;
   const initial = await json(file);
@@ -980,10 +851,7 @@ export async function main(args = process.argv.slice(2), options = {}) {
       root = await realpath(path.resolve(parsed.root || process.cwd()));
     report.action = parsed.action;
     report.root = root;
-    if (
-      (await realpath(await git(root, ["rev-parse", "--show-toplevel"]))) !==
-      root
-    )
+    if ((await realpath(await git(root, ["rev-parse", "--show-toplevel"]))) !== root)
       fail("--root deve apontar para a raiz Git");
     const config = validateConfig(
       await json(path.resolve(root, parsed.config || "graphify.local.json")),
@@ -1007,10 +875,7 @@ export async function main(args = process.argv.slice(2), options = {}) {
         : `${ctx.envRoot}/bin:${path.dirname(process.execPath)}:/usr/local/bin:/usr/bin:/bin`,
     });
     ctx.graph = path.join(ctx.outputRoot, "graph.json");
-    ctx.provenance = path.join(
-      ctx.outputRoot,
-      "graphify-local-provenance.json",
-    );
+    ctx.provenance = path.join(ctx.outputRoot, "graphify-local-provenance.json");
     await mkdir(ctx.state, { recursive: true, mode: 0o700 });
     if (parsed.action === "mark") {
       await atomic(path.join(ctx.state, "dirty.json"), {
@@ -1024,19 +889,9 @@ export async function main(args = process.argv.slice(2), options = {}) {
         report.status = "installed";
       } else {
         if (await exists(path.join(ctx.envRoot, "pyvenv.cfg")))
-          fail(
-            "Ambiente incompleto preservado; reparo precisa ser explícito",
-            "missing_runtime",
-          );
+          fail("Ambiente incompleto preservado; reparo precisa ser explícito", "missing_runtime");
         await checked(
-          [
-            "uv",
-            "venv",
-            "--allow-existing",
-            "--python",
-            config.pythonVersion,
-            ctx.envRoot,
-          ],
+          ["uv", "venv", "--allow-existing", "--python", config.pythonVersion, ctx.envRoot],
           root,
           environment(),
           config.timeoutMs,
@@ -1079,10 +934,7 @@ export async function main(args = process.argv.slice(2), options = {}) {
         } else {
           const lock =
             config.adapter === "finance"
-              ? path.join(
-                  root,
-                  "scripts/graphify/requirements-linux-py311.lock",
-                )
+              ? path.join(root, "scripts/graphify/requirements-linux-py311.lock")
               : path.join(root, "scripts/graphify/requirements.lock");
           if (await exists(lock))
             await checked(
@@ -1130,17 +982,13 @@ export async function main(args = process.argv.slice(2), options = {}) {
         if (state.status === "current") {
           Object.assign(report, state);
           await rm(path.join(ctx.state, "dirty.json"), { force: true });
-        } else if (
-          state.status === "unverified" &&
-          (await adoptInitial(ctx, fp))
-        )
+        } else if (state.status === "unverified" && (await adoptInitial(ctx, fp)))
           Object.assign(report, await status(ctx, fp), {
             adoptedInitial: true,
           });
         else {
           globalRelease = await acquireGlobal(
-            options.globalLock ||
-              path.join(homedir(), ".cache/repo-maintenance/fleet.lock"),
+            options.globalLock || path.join(homedir(), ".cache/repo-maintenance/fleet.lock"),
           );
           ctx.lockAlive = globalRelease.alive;
           Object.assign(report, await generate(ctx, fp, state.graph));
@@ -1155,12 +1003,7 @@ export async function main(args = process.argv.slice(2), options = {}) {
             ctx.graph,
             ...(parsed.action === "query" ? ["--budget", "1500"] : []),
           ];
-          const output = await checked(
-            [...prefix, ...command],
-            root,
-            ctx.env,
-            config.timeoutMs,
-          );
+          const output = await checked([...prefix, ...command], root, ctx.env, config.timeoutMs);
           report.output = redact(output);
           report.status = "queried";
         }
@@ -1168,10 +1011,7 @@ export async function main(args = process.argv.slice(2), options = {}) {
     }
   } catch (e) {
     report.status = e instanceof GraphError ? e.status : "failed";
-    report.message =
-      e instanceof GraphError
-        ? e.message
-        : `Falha interna: ${e.code || e.name}`;
+    report.message = e instanceof GraphError ? e.message : `Falha interna: ${e.code || e.name}`;
   } finally {
     try {
       if (globalRelease) await globalRelease();
@@ -1194,10 +1034,7 @@ export async function main(args = process.argv.slice(2), options = {}) {
   }
   return { exitCode: codes[report.status] ?? 1, report };
 }
-if (
-  process.argv[1] &&
-  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
-) {
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const result = await main();
   console.log(JSON.stringify(result.report));
   process.exitCode = result.exitCode;
@@ -1233,8 +1070,7 @@ export async function acquireGlobal(file) {
     };
     const timer = setTimeout(() => {
       kill();
-      if (!ready)
-        reject(new GraphError("failed", "Timeout ao adquirir trava global"));
+      if (!ready) reject(new GraphError("failed", "Timeout ao adquirir trava global"));
     }, 5000);
     child.stderr.resume();
     child.stdout.on("data", (part) => {
@@ -1269,10 +1105,7 @@ export async function acquireGlobal(file) {
       clearTimeout(timer);
       if (!ready)
         reject(
-          new GraphError(
-            code === 75 ? "busy" : "failed",
-            "Outra manutenção usa a trava global",
-          ),
+          new GraphError(code === 75 ? "busy" : "failed", "Outra manutenção usa a trava global"),
         );
     });
   });

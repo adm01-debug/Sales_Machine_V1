@@ -18,23 +18,13 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  appendExclude,
-  removeExclude,
-  execute,
-  parseArgs,
-  validateConfig,
-} from "./automation.mjs";
+import { appendExclude, removeExclude, execute, parseArgs, validateConfig } from "./automation.mjs";
 
 const kit = dirname(fileURLToPath(import.meta.url));
 const text = (p) => readFileSync(p, "utf8");
 function fixture(
   t,
-  {
-    originalHook = "",
-    hookName = "pre-commit",
-    previous = ".original-hooks",
-  } = {},
+  { originalHook = "", hookName = "pre-commit", previous = ".original-hooks" } = {},
 ) {
   const root = mkdtempSync(join(tmpdir(), "repo-automation-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -117,13 +107,7 @@ process.exit(Number(process.env.FIXTURE_GRAPH_EXIT||0));\n`,
         kind: "graph",
         files: ["scripts/graph.mjs"],
         manual: ["node", "scripts/automation.mjs", "graph", "status"],
-        triggers: [
-          "manual",
-          "postcommit",
-          "postmerge",
-          "postcheckout",
-          "nightly",
-        ],
+        triggers: ["manual", "postcommit", "postmerge", "postcheckout", "nightly"],
       },
     ],
     ci: [
@@ -134,23 +118,13 @@ process.exit(Number(process.env.FIXTURE_GRAPH_EXIT||0));\n`,
       },
     ],
     nightly: {
-      command: [
-        "node",
-        "scripts/automation.mjs",
-        "nightly",
-        "--ref",
-        "origin/main",
-      ],
+      command: ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"],
     },
     timeoutMs: 5000,
   };
-  const save = () =>
-    write("scripts/automation.config.json", JSON.stringify(config, null, 2));
+  const save = () => write("scripts/automation.config.json", JSON.stringify(config, null, 2));
   save();
-  write(
-    "package.json",
-    JSON.stringify({ type: "module", scripts: config.aliases }),
-  );
+  write("package.json", JSON.stringify({ type: "module", scripts: config.aliases }));
   write(
     ".github/workflows/ci.yml",
     "name: fixture\non:\n  pull_request: {}\n  push:\n    branches: [main]\njobs:\n  tools:\n    runs-on: ubuntu-latest\n    steps:\n      - run: node scripts/automation.mjs test\n",
@@ -218,13 +192,7 @@ test("doctor não confunde comentário de workflow com execução", (t) => {
 
 test("CLI/config desconhecidos falham e check/heal exigem ref explícita", (t) => {
   const f = fixture(t);
-  for (const args of [
-    ["unknown"],
-    ["doctor", "--oops"],
-    ["check"],
-    ["heal"],
-    ["nightly"],
-  ])
+  for (const args of [["unknown"], ["doctor", "--oops"], ["check"], ["heal"], ["nightly"]])
     assert.notEqual(f.cli(...args).status, 0);
   f.config.secretEscape = true;
   f.save();
@@ -249,18 +217,15 @@ test("check/heal preservam root/ref e encaminham configuração do motor", (t) =
   for (const action of ["check", "heal"]) {
     const r = f.cli(action, "--ref", "HEAD");
     assert.equal(r.status, 0, r.stderr);
-    assert.deepEqual(
-      text(join(f.root, "fixture-motor.log")).trim().split("\n"),
-      [
-        action,
-        "--root",
-        f.root,
-        "--ref",
-        "HEAD",
-        "--config",
-        join(f.root, "motor.json"),
-      ],
-    );
+    assert.deepEqual(text(join(f.root, "fixture-motor.log")).trim().split("\n"), [
+      action,
+      "--root",
+      f.root,
+      "--ref",
+      "HEAD",
+      "--config",
+      join(f.root, "motor.json"),
+    ]);
   }
 });
 
@@ -284,11 +249,9 @@ test("graph usa seu próprio config e traduz doctor/build, sem instalar implicit
 
 test("nightly tenta grafo e heal independentes e agrega falha", (t) => {
   const f = fixture(t);
-  const r = f.run(
-    process.execPath,
-    ["scripts/automation.mjs", "nightly", "--ref", "origin/main"],
-    { env: { ...process.env, FIXTURE_GRAPH_EXIT: "3" } },
-  );
+  const r = f.run(process.execPath, ["scripts/automation.mjs", "nightly", "--ref", "origin/main"], {
+    env: { ...process.env, FIXTURE_GRAPH_EXIT: "3" },
+  });
   assert.equal(r.status, 1);
   assert.ok(existsSync(join(f.root, "fixture-motor.log")));
   const report = JSON.parse(r.stdout);
@@ -320,11 +283,7 @@ test("uninstall funciona se o config versionado foi removido e não apaga mudan�
   f.git("config", "core.hooksPath", ".third-party");
   assert.notEqual(f.cli("uninstall-hooks").status, 0);
   assert.equal(f.git("config", "core.hooksPath"), ".third-party");
-  f.git(
-    "config",
-    "core.hooksPath",
-    join(f.root, ".tools/repo-automation/hooks"),
-  );
+  f.git("config", "core.hooksPath", join(f.root, ".tools/repo-automation/hooks"));
   rmSync(join(f.root, "scripts/automation.config.json"));
   assert.equal(f.cli("uninstall-hooks").status, 0);
   assert.equal(f.git("config", "core.hooksPath"), ".original-hooks");
@@ -359,16 +318,10 @@ test("commit-msg original também permanece obrigatório", (t) => {
 test("ponte preserva argumentos e stdin completos do pre-push", (t) => {
   const f = fixture(t, {
     hookName: "pre-push",
-    originalHook:
-      'printf "%s\\n" "$@" > fixture-args.log\ncat > fixture-stdin.log\n',
+    originalHook: 'printf "%s\\n" "$@" > fixture-args.log\ncat > fixture-stdin.log\n',
   });
   f.install();
-  const input =
-    "refs/heads/main " +
-    "1".repeat(40) +
-    " refs/heads/main " +
-    "0".repeat(40) +
-    "\n";
+  const input = "refs/heads/main " + "1".repeat(40) + " refs/heads/main " + "0".repeat(40) + "\n";
   const r = f.run(
     join(f.root, ".tools/repo-automation/hooks/pre-push"),
     ["origin", "remote fixture"],
@@ -376,10 +329,7 @@ test("ponte preserva argumentos e stdin completos do pre-push", (t) => {
   );
   assert.equal(r.status, 0, r.stderr);
   assert.equal(text(join(f.root, "fixture-stdin.log")), input);
-  assert.equal(
-    text(join(f.root, "fixture-args.log")),
-    "origin\nremote fixture\n",
-  );
+  assert.equal(text(join(f.root, "fixture-args.log")), "origin\nremote fixture\n");
 });
 
 test("hook versionado Husky executa via sh quando bootstrap não existe", (t) => {
@@ -441,7 +391,11 @@ test("hook original que atualiza ref (lint-staged git stash store) não é confu
 test("recursão indireta (pre-commit → post-checkout → pre-commit) é bloqueada", (t) => {
   const f = fixture(t, { originalHook: "git hook run --ignore-missing post-checkout -- 0 0 0\n" });
   f.install();
-  writeFileSync(join(f.root, ".original-hooks/post-checkout"), "#!/bin/sh\ngit hook run pre-commit\n", { mode: 0o755 });
+  writeFileSync(
+    join(f.root, ".original-hooks/post-checkout"),
+    "#!/bin/sh\ngit hook run pre-commit\n",
+    { mode: 0o755 },
+  );
   f.write("src/source.txt", "novo\n");
   f.git("add", "src/source.txt");
   const r = f.run("git", ["commit", "-m", "indireta"]);
@@ -452,11 +406,7 @@ test("recursão indireta (pre-commit → post-checkout → pre-commit) é bloque
 test("timeout encerra subprocesso e retorna 124 em prazo finito", async () => {
   const before = Date.now();
   const r = await execute(
-    [
-      process.execPath,
-      "-e",
-      "process.on('SIGTERM',()=>{});setInterval(()=>{},1000)",
-    ],
+    [process.execPath, "-e", "process.on('SIGTERM',()=>{});setInterval(()=>{},1000)"],
     { timeout: 100, capture: true },
   );
   assert.equal(r.code, 124);
@@ -499,12 +449,7 @@ test("snapshot aprovado atende pré-merge sem afirmar source/CI integrados", (t)
     store = join(home, ".local/share/repo-maintenance"),
     snapshot = join(store, "snapshots/fixture");
   mkdirSync(snapshot, { recursive: true });
-  for (const rel of [
-    "scripts",
-    ".github",
-    "package.json",
-    "graphify.local.json",
-  ])
+  for (const rel of ["scripts", ".github", "package.json", "graphify.local.json"])
     cpSync(join(f.root, rel), join(snapshot, rel), { recursive: true });
   f.write("package.json", '{"scripts":{}}');
   const config = {
@@ -556,10 +501,7 @@ test("não sobrescreve arquivos de terceiros na instalação nem na reversão", 
   const f = fixture(t);
   f.write(".tools/repo-automation/foreign.txt", "preservar\n");
   assert.notEqual(f.cli("install-hooks").status, 0);
-  assert.equal(
-    text(join(f.root, ".tools/repo-automation/foreign.txt")),
-    "preservar\n",
-  );
+  assert.equal(text(join(f.root, ".tools/repo-automation/foreign.txt")), "preservar\n");
   rmSync(join(f.root, ".tools/repo-automation/foreign.txt"));
   f.install();
   const bridge = join(f.root, ".tools/repo-automation/hooks/pre-commit");
@@ -582,27 +524,21 @@ test("dependência ausente falha no doctor local sem instalação automática", 
 
 test("registro operacional manual não é executado por hooks ou nightly", (t) => {
   const f = fixture(t);
-  f.write(
-    "scripts/legacy-danger.sh",
-    "#!/bin/sh\nprintf indevido > fixture-legacy.log\nexit 9\n",
-  );
+  f.write("scripts/legacy-danger.sh", "#!/bin/sh\nprintf indevido > fixture-legacy.log\nexit 9\n");
   f.config.registrations.push({
     id: "legacy-op",
     kind: "legacy",
     files: ["scripts/legacy-danger.sh"],
     manual: ["sh", "scripts/legacy-danger.sh"],
     triggers: ["manual"],
-    reason:
-      "Operação operacional exige seleção manual explícita; não pertence aos gates.",
+    reason: "Operação operacional exige seleção manual explícita; não pertence aos gates.",
   });
   f.save();
   f.install();
   assert.equal(f.cli("nightly", "--ref", "HEAD").status, 0);
-  const hook = f.run(
-    join(f.root, ".tools/repo-automation/hooks/pre-push"),
-    ["origin", "fixture"],
-    { input: "" },
-  );
+  const hook = f.run(join(f.root, ".tools/repo-automation/hooks/pre-push"), ["origin", "fixture"], {
+    input: "",
+  });
   assert.equal(hook.status, 0, hook.stderr);
   assert.equal(existsSync(join(f.root, "fixture-legacy.log")), false);
 });
@@ -659,16 +595,12 @@ test("info/exclude append e reversao preservam inode e linhas concorrentes", (t)
   const file = join(dir, "exclude");
   writeFileSync(file, "# contexto original\n*.local\n");
   const inode = statSync(file).ino;
-  const addition = appendExclude(file, () =>
-    appendFileSync(file, "concurrent-before\n"),
-  );
+  const addition = appendExclude(file, () => appendFileSync(file, "concurrent-before\n"));
   appendFileSync(file, "concurrent-after\n");
   assert.ok(text(file).includes("/.tools/repo-automation/"));
   assert.equal(removeExclude(file, addition), true);
   assert.equal(statSync(file).ino, inode);
-  assert.ok(
-    text(file).startsWith("# contexto original\n*.local\nconcurrent-before\n"),
-  );
+  assert.ok(text(file).startsWith("# contexto original\n*.local\nconcurrent-before\n"));
   assert.ok(text(file).endsWith("concurrent-after\n"));
   assert.equal(text(file).includes("/.tools/repo-automation/"), false);
   assert.equal(removeExclude(file, addition), false);
@@ -683,10 +615,7 @@ test("info/exclude recusa symlink sem modificar destino em install ou reversao",
   writeFileSync(target, "conteudo alheio\n");
   symlinkSync(target, link);
   assert.throws(() => appendExclude(link), /ELOOP|symbolic|links/i);
-  assert.throws(
-    () => removeExclude(link, "bloco proprio"),
-    /ELOOP|symbolic|links/i,
-  );
+  assert.throws(() => removeExclude(link, "bloco proprio"), /ELOOP|symbolic|links/i);
   assert.equal(text(target), "conteudo alheio\n");
 });
 
