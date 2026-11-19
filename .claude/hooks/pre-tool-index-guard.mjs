@@ -129,7 +129,10 @@ const registra = (nome, texto) => {
 
 for (const [tabela, def] of Object.entries(tabelas)) {
   const cols = Object.keys(def?.colunas ?? {});
-  registra(tabela, `tabela \`${tabela}\` (${cols.length} colunas): ${cols.slice(0, 12).join(", ")}`);
+  registra(
+    tabela,
+    `tabela \`${tabela}\` (${cols.length} colunas): ${cols.slice(0, 12).join(", ")}`,
+  );
 }
 // Uma coluna com o mesmo nome aparece em varias tabelas (`locked_until`, `entity_id`): registrar
 // so a primeira apontaria para a tabela errada, entao agrega todas.
@@ -151,7 +154,9 @@ for (const assinatura of funcoes) {
   registra(String(assinatura).split("(")[0], `funcao SQL \`${assinatura}\``);
 }
 for (const rota of rotas) {
-  const segmentos = String(rota.path ?? "").split("/").filter(Boolean);
+  const segmentos = String(rota.path ?? "")
+    .split("/")
+    .filter(Boolean);
   const ultimo = segmentos[segmentos.length - 1];
   if (ultimo) {
     registra(

@@ -30,7 +30,7 @@ const TOKEN = "test-agent-token";
 
 function baseTables(over: { entity?: Row } = {}): Tables {
   return {
-    entity_map: [{ id: "e1", singu_id: "sg1", ...over.entity }],
+    entity_map: [{ id: "11111111-1111-1111-1111-111111111111", singu_id: "sg1", ...over.entity }],
     contact_touchpoints: [],
   };
 }
@@ -63,7 +63,11 @@ afterEach(() => {
   vi.resetModules();
 });
 
-const BODY = { entity_id: "e1", channel: "whatsapp", message: "Olá!" };
+const BODY = {
+  entity_id: "11111111-1111-1111-1111-111111111111",
+  channel: "whatsapp",
+  message: "Olá!",
+};
 
 describe("agent-tools/send-message (integração)", () => {
   it("rejeita sem bearer válido", async () => {
