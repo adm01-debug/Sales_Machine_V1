@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "40909e5de0f816478bea2dd21d8f080fffc1f378",
+  "commit": "dd28f3e8bb7046d27a1d1d15bc32f2433fbc8d24",
   "branch": "main",
-  "data_commit": "2026-11-19T19:02:29-03:00",
+  "data_commit": "2026-11-19T19:26:23-03:00",
   "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
   "ultimos_commits": [
+   {
+    "sha": "dd28f3e",
+    "data": "2026-11-19",
+    "assunto": "fix(ci): corrige 6 erros de tipo que quebravam o typecheck do main (#19)"
+   },
    {
     "sha": "40909e5",
     "data": "2026-11-19",
@@ -126,18 +131,13 @@
     "sha": "7235600",
     "data": "2026-08-02",
     "assunto": "Changes"
-   },
-   {
-    "sha": "84f8e41",
-    "data": "2026-08-02",
-    "assunto": "Changes"
    }
   ],
   "arquivos_mudados_7d": 273,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/routes/_authenticated",
-    "mudancas": 22
+    "mudancas": 24
    },
    {
     "pasta": "src/routes/api",
@@ -156,15 +156,15 @@
     "mudancas": 5
    },
    {
+    "pasta": "src/components/dashboard",
+    "mudancas": 4
+   },
+   {
     "pasta": ".gitignore",
     "mudancas": 3
    },
    {
     "pasta": "package.json",
-    "mudancas": 3
-   },
-   {
-    "pasta": "src/components/dashboard",
     "mudancas": 3
    },
    {
@@ -266,6 +266,10 @@
     "mudancas": 2
    },
    {
+    "arquivo": "src/components/dashboard/campaign-drilldown.tsx",
+    "mudancas": 2
+   },
+   {
     "arquivo": "src/lib/analytics.functions.ts",
     "mudancas": 2
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": "src/lib/marketing.functions.ts",
     "mudancas": 2
-   },
-   {
-    "arquivo": "src/lib/ops.functions.ts",
-    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 10
+    "commits": 11
    },
    {
     "autor": "Joaquim Ataides",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 390,
   "arquivos_codigo": 258,
-  "linhas_codigo": 52013,
+  "linhas_codigo": 52017,
   "rotas": 40,
   "rotas_http_backend": 27,
   "vistas_por_id": 0,
@@ -408,7 +408,7 @@
   },
   "src/routes": {
    "arquivos": 46,
-   "linhas": 9964
+   "linhas": 9968
   },
   "src/server.ts": {
    "arquivos": 1,
@@ -466,7 +466,7 @@
   },
   {
    "arquivo": "src/routes/_authenticated/deliverability.tsx",
-   "linhas": 794
+   "linhas": 796
   },
   {
    "arquivo": "src/routes/_authenticated/library.tsx",

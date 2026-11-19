@@ -1404,7 +1404,7 @@
     "Route"
    ],
    "export_default": null,
-   "linhas": 794,
+   "linhas": 796,
    "dominio": "routes/_authenticated",
    "hooks_locais": [],
    "tabelas": [],
@@ -1502,7 +1502,7 @@
     "Route"
    ],
    "export_default": null,
-   "linhas": 302,
+   "linhas": 304,
    "dominio": "routes/_authenticated",
    "hooks_locais": [],
    "tabelas": [],

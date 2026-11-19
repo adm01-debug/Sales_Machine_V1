@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "40909e5de0f816478bea2dd21d8f080fffc1f378",
+  "sha": "dd28f3e8bb7046d27a1d1d15bc32f2433fbc8d24",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
-  "generated_at": "2026-11-19 22:14 UTC",
+  "generated_at": "2026-11-19 22:26 UTC",
   "files_total": 401,
   "code_files": 304,
-  "code_lines": 53871
+  "code_lines": 53875
  },
  "version": "1.3.2",
- "facts_hash": "2d40dacb54f8135c",
+ "facts_hash": "b43646c45f7de97e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -6820,7 +6820,7 @@
   {
    "module": "src/routes",
    "files": 46,
-   "lines": 9964,
+   "lines": 9968,
    "tables": [
     "cadence_rules",
     "campaign_sends",
@@ -26597,7 +26597,7 @@
   },
   "src/routes/_authenticated/deliverability.tsx": {
    "path": "src/routes/_authenticated/deliverability.tsx",
-   "lines": 794,
+   "lines": 796,
    "exports": [
     "const Route"
    ]
@@ -26766,7 +26766,7 @@
   },
   "src/routes/_authenticated/ops.tsx": {
    "path": "src/routes/_authenticated/ops.tsx",
-   "lines": 302,
+   "lines": 304,
    "exports": [
     "const Route"
    ]
@@ -28524,10 +28524,22 @@
   }
  },
  "git": {
-  "sha": "40909e5de0f816478bea2dd21d8f080fffc1f378",
+  "sha": "dd28f3e8bb7046d27a1d1d15bc32f2433fbc8d24",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
   "commits": [
+   {
+    "sha": "dd28f3e",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix(ci): corrige 6 erros de tipo que quebravam o typecheck do main (#19)",
+    "files": [
+     "src/components/dashboard/campaign-drilldown.tsx",
+     "src/routes/__root.tsx",
+     "src/routes/_authenticated/deliverability.tsx",
+     "src/routes/_authenticated/ops.tsx"
+    ]
+   },
    {
     "sha": "40909e5",
     "date": "2026-11-19",
@@ -29100,15 +29112,6 @@
     "files": [
      "src/routeTree.gen.ts"
     ]
-   },
-   {
-    "sha": "b910f6f",
-    "date": "2026-08-02",
-    "author": "gpt-engineer-app[bot]",
-    "subject": "Changes",
-    "files": [
-     "src/lib/campaign-diagnostics.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -29118,7 +29121,7 @@
    ],
    [
     "src/lib/campaign-diagnostics.ts",
-    5
+    4
    ],
    [
     ".gitignore",
@@ -29149,6 +29152,22 @@
     3
    ],
    [
+    "src/components/dashboard/campaign-drilldown.tsx",
+    2
+   ],
+   [
+    "src/routes/__root.tsx",
+    2
+   ],
+   [
+    "src/routes/_authenticated/deliverability.tsx",
+    2
+   ],
+   [
+    "src/routes/_authenticated/ops.tsx",
+    2
+   ],
+   [
     "scripts/automation.mjs",
     2
    ],
@@ -29174,22 +29193,6 @@
    ],
    [
     "scripts/maintenance/run.mjs",
-    2
-   ],
-   [
-    "scripts/maintenance/typecheck.mjs",
-    2
-   ],
-   [
-    ".contexto-compartilhado/pendencias-conhecidas.md",
-    2
-   ],
-   [
-    "00-governanca/01-leis-do-agente.md",
-    2
-   ],
-   [
-    "00-governanca/03-matriz-de-autonomia.md",
     2
    ]
   ]
