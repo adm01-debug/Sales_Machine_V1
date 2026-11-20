@@ -55,11 +55,11 @@
  "commits": {
   "convencao": "livre",
   "exemplos": [
+   "fix: corrige rota do wizard, tipos de error e dual-package do zod nos testes (#24)",
    "fix(ci): corrige 6 erros de tipo que quebravam o typecheck do main (#19)",
    "fix(automacao): formata motor recuperado conforme prettier do repo (#18)",
    "chore(security): remove .env do versionamento e adiciona ao .gitignore (#16)",
-   "fix(automacao): recupera motor de automacao local do Sales (PR #3 foi fechada sem merge) (#15)",
-   "Porta os scripts autônomos de contexto do Zapp Web V2 (3 produtores + índice + inventário do estado real) (#2)"
+   "fix(automacao): recupera motor de automacao local do Sales (PR #3 foi fechada sem merge) (#15)"
   ]
  },
  "pr_template": null,

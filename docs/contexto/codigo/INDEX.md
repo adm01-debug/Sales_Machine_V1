@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada hora pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `dd28f3e8bb7046d27a1d1d15bc32f2433fbc8d24` (2026-11-19T19:26:23-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada hora pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c87ee589ce83d27aef357ad41aacd1dc91dc1014` (2026-11-19T21:00:55-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 390 |
 | arquivos_codigo | 258 |
-| linhas_codigo | 52017 |
+| linhas_codigo | 52026 |
 | rotas | 40 |
 | rotas_http_backend | 27 |
 | vistas_por_id | 0 |
@@ -192,7 +192,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:138
 
 ## Grafo de código (graphify)
-- 3077 nós · 6712 arestas · 198 comunidades · grafo do commit `dd28f3e8`
+- 3077 nós · 6712 arestas · 198 comunidades · grafo do commit `c87ee589`
 - comunidades maiores: generate.py (103), snapshot.py (102), test_snapshot.py (92), gerar.mjs (81), routeTree.gen.ts (68), cn (60), react (59), journey-engine.ts (58), lib.mjs (56), dependencies (55), package.json (51), fake-supabase.ts (50)
 - símbolos mais chamados: cn() (src/lib/utils.ts), q() (scripts/supabase_snapshot/snapshot.py), .collect() (scripts/supabase_snapshot/test_snapshot.py), excluded_sql() (scripts/supabase_snapshot/snapshot.py), fail() (scripts/automation.mjs), fail() (scripts/graphify-local.mjs), .metadata() (scripts/supabase_snapshot/test_snapshot.py), MaintenanceError (scripts/maintenance/lib.mjs), header() (scripts/regras_negocio/generate.py), uniq() (scripts/ai-context/gerar.mjs), readText() (scripts/ai-context/gerar.mjs), fail() (scripts/maintenance/lib.mjs)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -201,6 +201,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CLAUDE.md (3)
 - package.json (3)
 - src/lib/orchestrator.functions.ts (3)
+- src/routes/_authenticated/deliverability.tsx (3)
+- src/routes/_authenticated/ops.tsx (3)
 - supabase/config.toml (3)
 - 00-governanca/01-leis-do-agente.md (2)
 - 00-governanca/03-matriz-de-autonomia.md (2)
@@ -211,8 +213,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - scripts/gerar-dump-arquitetura.py (2)
 - scripts/graphify-local.mjs (2)
 - scripts/graphify-local.unit.mjs (2)
-- scripts/maintenance/lib.mjs (2)
-- scripts/maintenance/maintenance.unit.mjs (2)
 
 ## Workflows
 - `agents-md-guard.yml` — Guarda das instrucoes de agente (pull_request, push, workflow_dispatch)
@@ -262,6 +262,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 
 ## Últimos commits
+- 2026-11-19 `c87ee58` fix: corrige rota do wizard, tipos de error e dual-package do zod nos testes (#24)
 - 2026-11-19 `dd28f3e` fix(ci): corrige 6 erros de tipo que quebravam o typecheck do main (#19)
 - 2026-11-19 `40909e5` fix(automacao): formata motor recuperado conforme prettier do repo (#18)
 - 2026-11-19 `42373d1` chore(security): remove .env do versionamento e adiciona ao .gitignore (#16)
@@ -276,7 +277,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-12 `9ece056` Merge pull request #4 from adm01-debug/claude/fix-vercel-lockfile-261111
 - 2026-11-11 `d0d574c` fix(seguranca): atualiza TanStack Start para corrigir CVE-2026-102989
 - 2026-11-11 `e1e4366` fix(vercel): instala pelo bun.lock e atualiza o routeTree gerado
-- 2026-08-30 `ae912a3` docs(contexto): atualiza ref de commit no decisoes-recentes e regera dump pós-rebase
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

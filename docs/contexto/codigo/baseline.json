@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "dd28f3e8bb7046d27a1d1d15bc32f2433fbc8d24",
+  "commit": "c87ee589ce83d27aef357ad41aacd1dc91dc1014",
   "branch": "main",
-  "data_commit": "2026-11-19T19:26:23-03:00",
+  "data_commit": "2026-11-19T21:00:55-03:00",
   "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
   "ultimos_commits": [
+   {
+    "sha": "c87ee58",
+    "data": "2026-11-19",
+    "assunto": "fix: corrige rota do wizard, tipos de error e dual-package do zod nos testes (#24)"
+   },
    {
     "sha": "dd28f3e",
     "data": "2026-11-19",
@@ -126,18 +131,13 @@
     "sha": "1fcf792",
     "data": "2026-08-02",
     "assunto": "Changes"
-   },
-   {
-    "sha": "7235600",
-    "data": "2026-08-02",
-    "assunto": "Changes"
    }
   ],
   "arquivos_mudados_7d": 273,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/routes/_authenticated",
-    "mudancas": 24
+    "mudancas": 26
    },
    {
     "pasta": "src/routes/api",
@@ -207,6 +207,14 @@
    },
    {
     "arquivo": "src/lib/orchestrator.functions.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "src/routes/_authenticated/deliverability.tsx",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "src/routes/_authenticated/ops.tsx",
     "mudancas": 3
    },
    {
@@ -288,20 +296,12 @@
    {
     "arquivo": "src/lib/journeys.functions.ts",
     "mudancas": 2
-   },
-   {
-    "arquivo": "src/lib/lead-forms.functions.ts",
-    "mudancas": 2
-   },
-   {
-    "arquivo": "src/lib/marketing.functions.ts",
-    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 11
+    "commits": 12
    },
    {
     "autor": "Joaquim Ataides",
@@ -312,7 +312,7 @@
  "contagens": {
   "arquivos_total": 390,
   "arquivos_codigo": 258,
-  "linhas_codigo": 52017,
+  "linhas_codigo": 52026,
   "rotas": 40,
   "rotas_http_backend": 27,
   "vistas_por_id": 0,
@@ -408,7 +408,7 @@
   },
   "src/routes": {
    "arquivos": 46,
-   "linhas": 9968
+   "linhas": 9972
   },
   "src/server.ts": {
    "arquivos": 1,
@@ -428,7 +428,7 @@
   },
   "vitest.config.ts": {
    "arquivos": 1,
-   "linhas": 20
+   "linhas": 25
   }
  },
  "maiores_arquivos": [
@@ -466,7 +466,7 @@
   },
   {
    "arquivo": "src/routes/_authenticated/deliverability.tsx",
-   "linhas": 796
+   "linhas": 798
   },
   {
    "arquivo": "src/routes/_authenticated/library.tsx",

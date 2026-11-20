@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "dd28f3e8bb7046d27a1d1d15bc32f2433fbc8d24",
+  "sha": "c87ee589ce83d27aef357ad41aacd1dc91dc1014",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
-  "generated_at": "2026-11-19 22:26 UTC",
+  "generated_at": "2026-11-20 00:02 UTC",
   "files_total": 401,
   "code_files": 304,
-  "code_lines": 53875
+  "code_lines": 53884
  },
  "version": "1.3.2",
- "facts_hash": "b43646c45f7de97e",
+ "facts_hash": "c5cbc0eba29138b8",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -6227,7 +6227,7 @@
   {
    "module": "(raiz)",
    "files": 3,
-   "lines": 77,
+   "lines": 82,
    "tables": [],
    "exports": [
     "eslint.config.js: tseslint",
@@ -6820,7 +6820,7 @@
   {
    "module": "src/routes",
    "files": 46,
-   "lines": 9968,
+   "lines": 9972,
    "tables": [
     "cadence_rules",
     "campaign_sends",
@@ -19761,7 +19761,7 @@
   },
   "vitest.config.ts": {
    "path": "vitest.config.ts",
-   "lines": 20,
+   "lines": 25,
    "exports": [
     "default defineConfig"
    ],
@@ -26597,7 +26597,7 @@
   },
   "src/routes/_authenticated/deliverability.tsx": {
    "path": "src/routes/_authenticated/deliverability.tsx",
-   "lines": 796,
+   "lines": 798,
    "exports": [
     "const Route"
    ]
@@ -26766,7 +26766,7 @@
   },
   "src/routes/_authenticated/ops.tsx": {
    "path": "src/routes/_authenticated/ops.tsx",
-   "lines": 304,
+   "lines": 306,
    "exports": [
     "const Route"
    ]
@@ -28524,10 +28524,21 @@
   }
  },
  "git": {
-  "sha": "dd28f3e8bb7046d27a1d1d15bc32f2433fbc8d24",
+  "sha": "c87ee589ce83d27aef357ad41aacd1dc91dc1014",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
   "commits": [
+   {
+    "sha": "c87ee58",
+    "date": "2026-11-19",
+    "author": "adm01-debug",
+    "subject": "fix: corrige rota do wizard, tipos de error e dual-package do zod nos testes (#24)",
+    "files": [
+     "src/routes/_authenticated/deliverability.tsx",
+     "src/routes/_authenticated/ops.tsx",
+     "vitest.config.ts"
+    ]
+   },
    {
     "sha": "dd28f3e",
     "date": "2026-11-19",
@@ -29103,25 +29114,24 @@
     "files": [
      "src/routeTree.gen.ts"
     ]
-   },
-   {
-    "sha": "b847e62",
-    "date": "2026-08-02",
-    "author": "gpt-engineer-app[bot]",
-    "subject": "Changes",
-    "files": [
-     "src/routeTree.gen.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "src/routeTree.gen.ts",
-    6
+    5
    ],
    [
     "src/lib/campaign-diagnostics.ts",
     4
+   ],
+   [
+    "src/routes/_authenticated/deliverability.tsx",
+    3
+   ],
+   [
+    "src/routes/_authenticated/ops.tsx",
+    3
    ],
    [
     ".gitignore",
@@ -29152,19 +29162,15 @@
     3
    ],
    [
+    "vitest.config.ts",
+    2
+   ],
+   [
     "src/components/dashboard/campaign-drilldown.tsx",
     2
    ],
    [
     "src/routes/__root.tsx",
-    2
-   ],
-   [
-    "src/routes/_authenticated/deliverability.tsx",
-    2
-   ],
-   [
-    "src/routes/_authenticated/ops.tsx",
     2
    ],
    [
@@ -29189,10 +29195,6 @@
    ],
    [
     "scripts/maintenance/maintenance.unit.mjs",
-    2
-   ],
-   [
-    "scripts/maintenance/run.mjs",
     2
    ]
   ]
