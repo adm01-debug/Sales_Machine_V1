@@ -1,5 +1,5 @@
 # docs:
-#   gatilho: push em main que toque código, banco, scripts das automações ou docs/contexto/regras/manual/; a cada hora (minuto 7); dispatch
+#   gatilho: push em main que toque código, banco, scripts das automações ou docs/contexto/regras/manual/; 2x/dia (03:07 e 15:07 UTC); dispatch
 #   prova: branch contexto com docs/contexto/{codigo,supabase,regras}/ regerados das três fontes de verdade (código em main, banco oficial, código+migrations+manual/) e docs/contexto/00-INDEX.md montado a partir dos manifests
 #   falha: falha fatal de produtor reprova o workflow; fontes com artefato publicam e as demais mantêm a última versão; erro de download impede a publicação
 #   avisa: ninguém (a branch contexto é a prova; errors.md em supabase/ e erros_do_gerador em codigo/ listam seções com falha)
@@ -24,8 +24,8 @@ name: Contexto para agentes de IA (horário)
 # Como ler: git fetch origin contexto && git show origin/contexto:docs/contexto/00-INDEX.md, ou MCP
 # get_file(ref=contexto), ou raw.githubusercontent.com/<owner>/<repo>/contexto/docs/contexto/00-INDEX.md.
 # Custo: no agendamento, codigo/ e regras/ saem em segundos se a main não mudou; supabase/ sempre coleta.
-# Cadência de 1 h (no Zapp_Web_V2 é 10 min): este repo não tem CI e o banco muda devagar; para voltar a
-# 10 min troque o cron por '3-59/10 * * * *'.
+# Cadência: 2x/dia (03:07 e 15:07 UTC) para reduzir execuções desnecessárias.
+# Para voltar a 1 h use '7 * * * *'.
 
 on:
   push:
@@ -42,7 +42,7 @@ on:
       - 'tsconfig*.json'
       - '.github/workflows/**'
   schedule:
-    - cron: '7 * * * *' # minuto 7: fora do minuto 0 (fila do GitHub)
+    - cron: '7 3,15 * * *' # 2x/dia (03:07 e 15:07 UTC) para reduzir execuções desnecessárias
   workflow_dispatch:
     inputs:
       graphify:
