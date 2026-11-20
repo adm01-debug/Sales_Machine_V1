@@ -20,15 +20,7 @@ import {
   chmodSync,
 } from "node:fs";
 import { homedir } from "node:os";
-import {
-  basename,
-  dirname,
-  isAbsolute,
-  join,
-  relative,
-  resolve,
-  sep,
-} from "node:path";
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash, randomUUID } from "node:crypto";
 
@@ -74,15 +66,13 @@ const TRIGGERS = [
   "pushmain",
   "nightly",
 ];
-const digest = (path) =>
-  createHash("sha256").update(readFileSync(path)).digest("hex");
+const digest = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
 const nonempty = (dir) =>
   readdirSync(dir, { withFileTypes: true }).some(
     (e) => !e.isDirectory() || nonempty(join(dir, e.name)),
   );
 const fail = (message, code = 1) => Object.assign(new Error(message), { code });
-const within = (base, target) =>
-  target === base || target.startsWith(base + sep);
+const within = (base, target) => target === base || target.startsWith(base + sep);
 const json = (path) => JSON.parse(readFileSync(path, "utf8"));
 const atomic = (path, data, mode = 0o600) => {
   mkdirSync(dirname(path), { recursive: true });
@@ -98,9 +88,7 @@ const pattern = (glob) =>
         .map((p) =>
           p
             .split("*")
-            .map((s) =>
-              s.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\?/g, "."),
-            )
+            .map((s) => s.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\?/g, "."))
             .join("[^/]*"),
         )
         .join(".*") +
@@ -115,9 +103,7 @@ const relativePath = (value) =>
 const command = (value) =>
   Array.isArray(value) &&
   value.length > 0 &&
-  value.every(
-    (p) => typeof p === "string" && p.length > 0 && !p.includes("\0"),
-  );
+  value.every((p) => typeof p === "string" && p.length > 0 && !p.includes("\0"));
 function onlyKeys(value, keys, label) {
   if (!value || typeof value !== "object" || Array.isArray(value))
     throw fail(`${label}: objeto obrigatório`);
@@ -145,8 +131,7 @@ export function parseArgs(argv) {
       else if (a === "--config") config = v;
       else ref = v;
     } else if (a === "--static") staticOnly = true;
-    else if (a.startsWith("--") && action !== "graph")
-      throw fail(`opção desconhecida ${a}`);
+    else if (a.startsWith("--") && action !== "graph") throw fail(`opção desconhecida ${a}`);
     else if (!action) action = a;
     else positional.push(a);
   }
@@ -164,8 +149,7 @@ export function parseArgs(argv) {
     ].includes(action)
   )
     throw fail("comando desconhecido");
-  if (staticOnly && action !== "doctor")
-    throw fail("--static só é aceito em doctor");
+  if (staticOnly && action !== "doctor") throw fail("--static só é aceito em doctor");
   if (ref && !["check", "heal", "nightly"].includes(action))
     throw fail("--ref só é aceito em check/heal/nightly");
   if (["check", "heal", "nightly"].includes(action) && !ref)
@@ -209,8 +193,7 @@ export function validateConfig(c) {
   );
   if (c.version !== 1 || typeof c.name !== "string" || !c.name)
     throw fail("config: version 1 e name obrigatórios");
-  if (typeof c.entrypoint !== "string" || !c.entrypoint)
-    throw fail("entrypoint obrigatório");
+  if (typeof c.entrypoint !== "string" || !c.entrypoint) throw fail("entrypoint obrigatório");
   if (
     !Array.isArray(c.testSuites) ||
     !c.testSuites.length ||
@@ -240,33 +223,20 @@ export function validateConfig(c) {
     throw fail("registrations obrigatório");
   const ids = new Set();
   for (const r of c.registrations) {
-    onlyKeys(
-      r,
-      ["id", "kind", "files", "manual", "triggers", "reason", "callers"],
-      "registro",
-    );
+    onlyKeys(r, ["id", "kind", "files", "manual", "triggers", "reason", "callers"], "registro");
     if (!r.id || ids.has(r.id)) throw fail("id de registro vazio/duplicado");
     ids.add(r.id);
     if (
-      !["test", "motor", "graph", "tool", "helper", "legacy"].includes(
-        r.kind,
-      ) ||
+      !["test", "motor", "graph", "tool", "helper", "legacy"].includes(r.kind) ||
       !Array.isArray(r.files) ||
       !r.files.length ||
       r.files.some((p) => !relativePath(p))
     )
       throw fail(`registro ${r.id}: files/kind inválidos`);
-    if (
-      !Array.isArray(r.triggers) ||
-      r.triggers.some((t) => !TRIGGERS.includes(t))
-    )
+    if (!Array.isArray(r.triggers) || r.triggers.some((t) => !TRIGGERS.includes(t)))
       throw fail(`registro ${r.id}: gatilhos inválidos`);
     if (r.kind === "helper") {
-      if (
-        !Array.isArray(r.callers) ||
-        !r.callers.length ||
-        r.callers.some((p) => !relativePath(p))
-      )
+      if (!Array.isArray(r.callers) || !r.callers.length || r.callers.some((p) => !relativePath(p)))
         throw fail(`helper ${r.id}: callers explícitos obrigatórios`);
     } else if (!command(r.manual) || !r.triggers.includes("manual"))
       throw fail(`registro ${r.id}: comando/gatilho manual obrigatório`);
@@ -276,16 +246,13 @@ export function validateConfig(c) {
         typeof r.reason !== "string" ||
         r.reason.length < 12
       )
-        throw fail(
-          `legado ${r.id}: arquivos exatos e justificativa obrigatórios`,
-        );
+        throw fail(`legado ${r.id}: arquivos exatos e justificativa obrigatórios`);
       if (r.triggers.some((t) => t !== "manual"))
         throw fail(`legado ${r.id}: execução automática proibida`);
     } else if (r.kind !== "helper" && !r.triggers.some((t) => t !== "manual"))
       throw fail(`registro ${r.id}: gatilho automático obrigatório`);
   }
-  if (!Array.isArray(c.ci) || !c.ci.length)
-    throw fail("ci: vínculo de workflow obrigatório");
+  if (!Array.isArray(c.ci) || !c.ci.length) throw fail("ci: vínculo de workflow obrigatório");
   for (const x of c.ci) {
     onlyKeys(x, ["file", "events", "command"], "ci");
     if (
@@ -301,9 +268,7 @@ export function validateConfig(c) {
   onlyKeys(c.nightly, ["command", "file"], "nightly");
   if (
     !command(c.nightly.command) ||
-    (c.nightly.file &&
-      !relativePath(c.nightly.file) &&
-      !isAbsolute(c.nightly.file))
+    (c.nightly.file && !relativePath(c.nightly.file) && !isAbsolute(c.nightly.file))
   )
     throw fail("nightly: comando obrigatório");
   for (const k of ["toolingPatterns", "sourcePatterns", "requirements"])
@@ -311,17 +276,12 @@ export function validateConfig(c) {
       throw fail(`${k}: caminhos/globs relativos obrigatórios`);
   if (
     c.timeoutMs !== undefined &&
-    (!Number.isInteger(c.timeoutMs) ||
-      c.timeoutMs < 100 ||
-      c.timeoutMs > 900000)
+    (!Number.isInteger(c.timeoutMs) || c.timeoutMs < 100 || c.timeoutMs > 900000)
   )
     throw fail("timeoutMs inválido");
   if (c.snapshot) {
     onlyKeys(c.snapshot, ["root", "ref"], "snapshot");
-    if (
-      !isAbsolute(c.snapshot.root || "") ||
-      !/^[a-f0-9]{40}$/i.test(c.snapshot.ref || "")
-    )
+    if (!isAbsolute(c.snapshot.root || "") || !/^[a-f0-9]{40}$/i.test(c.snapshot.ref || ""))
       throw fail("snapshot: root absoluto/ref SHA obrigatórios");
   }
   return c;
@@ -332,8 +292,7 @@ export async function execute(
   { cwd, timeout = 300000, capture = false, env = process.env } = {},
 ) {
   return new Promise((done) => {
-    const args =
-      argv[0] === "node" ? [process.execPath, ...argv.slice(1)] : argv;
+    const args = argv[0] === "node" ? [process.execPath, ...argv.slice(1)] : argv;
     const child = spawn(args[0], args.slice(1), {
       cwd,
       env,
@@ -349,10 +308,7 @@ export async function execute(
       forced;
     const kill = (signal) => {
       try {
-        process.kill(
-          process.platform === "win32" ? child.pid : -child.pid,
-          signal,
-        );
+        process.kill(process.platform === "win32" ? child.pid : -child.pid, signal);
       } catch {
         /* O processo já pode ter encerrado. */
       }
@@ -395,12 +351,10 @@ export async function execute(
       }, 500);
     }, timeout);
     child.stdout?.on("data", (x) => {
-      if (chunks.reduce((a, b) => a + b.length, 0) < 4 * 1024 * 1024)
-        chunks.push(x);
+      if (chunks.reduce((a, b) => a + b.length, 0) < 4 * 1024 * 1024) chunks.push(x);
     });
     child.stderr?.on("data", (x) => {
-      if (errors.reduce((a, b) => a + b.length, 0) < 4 * 1024 * 1024)
-        errors.push(x);
+      if (errors.reduce((a, b) => a + b.length, 0) < 4 * 1024 * 1024) errors.push(x);
     });
     child.once("error", (e) => finish(127, e.code || "spawn_failed"));
     child.once("close", (code, signal) => {
@@ -416,8 +370,7 @@ async function git(root, args, allowed = [0]) {
     capture: true,
     timeout: 15000,
   });
-  if (!allowed.includes(r.code))
-    throw fail(`git ${args[0]} falhou (${r.code})`);
+  if (!allowed.includes(r.code)) throw fail(`git ${args[0]} falhou (${r.code})`);
   return r;
 }
 function approved(path, configPath) {
@@ -457,9 +410,7 @@ function scan(dir, prefix = "") {
   const out = [];
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     if (
-      ["node_modules", "__pycache__", ".venv", ".venv-graphify"].includes(
-        e.name,
-      ) ||
+      ["node_modules", "__pycache__", ".venv", ".venv-graphify"].includes(e.name) ||
       e.isSymbolicLink()
     )
       continue;
@@ -474,10 +425,7 @@ function workflowEvent(text, event) {
     .split("\n")
     .filter((l) => !/^\s*#/.test(l))
     .join("\n");
-  const on =
-    /^(?:on|'on'|"on"):\s*([^\n]*)(?:\n([\s\S]*?))?(?=^\S|(?![\s\S]))/m.exec(
-      plain,
-    );
+  const on = /^(?:on|'on'|"on"):\s*([^\n]*)(?:\n([\s\S]*?))?(?=^\S|(?![\s\S]))/m.exec(plain);
   const block = on ? on[0] : "";
   return event === "PR"
     ? /\bpull_request\b/.test(block)
@@ -502,31 +450,22 @@ function workflowRuns(text, commandText) {
     }
     if (indent >= 0 && line.trim()) {
       if (line.search(/\S/) <= indent) indent = -1;
-      else if (
-        line.trim() === commandText ||
-        line.trim().startsWith(commandText + " ")
-      )
+      else if (line.trim() === commandText || line.trim().startsWith(commandText + " "))
         return true;
     }
   }
   return false;
 }
 async function statePath(root) {
-  const value = (
-    await git(root, ["config", "--get", "core.hooksPath"], [0, 1])
-  ).stdout.trim();
+  const value = (await git(root, ["config", "--get", "core.hooksPath"], [0, 1])).stdout.trim();
   const hooks = value ? resolve(root, value) : "";
-  if (hooks.endsWith("/.tools/repo-automation/hooks"))
-    return join(dirname(hooks), "state.json");
+  if (hooks.endsWith("/.tools/repo-automation/hooks")) return join(dirname(hooks), "state.json");
   const local = join(root, ".tools/repo-automation/state.json");
   if (existsSync(local)) return local;
   const common = (
     await git(root, ["rev-parse", "--path-format=absolute", "--git-common-dir"])
   ).stdout.trim();
-  const candidate = join(
-    dirname(common),
-    ".tools/repo-automation/state.json",
-  );
+  const candidate = join(dirname(common), ".tools/repo-automation/state.json");
   if (existsSync(candidate)) return candidate;
   return local;
 }
@@ -552,17 +491,12 @@ async function doctor(ctx, staticOnly) {
   const packageFile = check(() => locate(root, c, config, "package.json"));
   const pkg = packageFile ? check(() => json(packageFile)) : null;
   for (const [name, value] of Object.entries(c.aliases))
-    if (pkg?.scripts?.[name] !== value)
-      issues.push(`alias não encadeado: ${name}`);
+    if (pkg?.scripts?.[name] !== value) issues.push(`alias não encadeado: ${name}`);
   const roots = [
     root,
-    ...(c.snapshot
-      ? [check(() => approved(c.snapshot.root, config))].filter(Boolean)
-      : []),
+    ...(c.snapshot ? [check(() => approved(c.snapshot.root, config))].filter(Boolean) : []),
   ];
-  const scripts = [
-    ...new Set(roots.flatMap((r) => scan(join(r, "scripts"), "scripts"))),
-  ];
+  const scripts = [...new Set(roots.flatMap((r) => scan(join(r, "scripts"), "scripts")))];
   const matches = (p, glob) => pattern(glob).test(p);
   for (const path of scripts)
     if (!c.registrations.some((r) => r.files.some((g) => matches(path, g))))
@@ -579,15 +513,9 @@ async function doctor(ctx, staticOnly) {
       for (const arg of r.manual)
         if (/^scripts\/.+\.(?:mjs|cjs|js|ts|tsx|sh|py)$/.test(arg))
           check(() => locate(root, c, config, arg));
-    if (
-      r.kind === "test" &&
-      !c.testSuites.some((p) => r.files.some((g) => matches(p, g)))
-    )
+    if (r.kind === "test" && !c.testSuites.some((p) => r.files.some((g) => matches(p, g))))
       issues.push(`suite sem ligação ao runner: ${r.id}`);
-    if (
-      r.kind === "motor" &&
-      !r.files.some((g) => matches(c.motorSource || c.motor[1], g))
-    )
+    if (r.kind === "motor" && !r.files.some((g) => matches(c.motorSource || c.motor[1], g)))
       issues.push(`motor não encadeado: ${r.id}`);
     if (r.kind === "graph" && !r.files.some((g) => matches(c.graph[1], g)))
       issues.push(`grafo não encadeado: ${r.id}`);
@@ -595,13 +523,9 @@ async function doctor(ctx, staticOnly) {
       for (const caller of r.callers) {
         const path = check(() => locate(root, c, config, caller));
         if (
-          !c.registrations.some(
-            (x) => x.id !== r.id && x.files.some((g) => matches(caller, g)),
-          ) ||
+          !c.registrations.some((x) => x.id !== r.id && x.files.some((g) => matches(caller, g))) ||
           !path ||
-          !r.files.some((g) =>
-            readFileSync(path, "utf8").includes(g.split("/").at(-1)),
-          )
+          !r.files.some((g) => readFileSync(path, "utf8").includes(g.split("/").at(-1)))
         )
           issues.push(`helper sem caller encadeado: ${r.id}/${caller}`);
       }
@@ -617,24 +541,18 @@ async function doctor(ctx, staticOnly) {
       ([name, cmd]) =>
         cmd.includes(basename(c.entrypoint) + " test") &&
         new RegExp(
-          "(?:npm|bun) run " +
-            name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") +
-            "(?:\\s|$)",
+          "(?:npm|bun) run " + name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?:\\s|$)",
         ).test(value),
     );
   for (const event of ["PR", "pushmain"])
-    if (!c.ci.some((x) => x.events.includes(event)))
-      issues.push(`testes sem gatilho CI ${event}`);
+    if (!c.ci.some((x) => x.events.includes(event))) issues.push(`testes sem gatilho CI ${event}`);
   for (const item of c.ci) {
     const path = check(() => locate(root, c, config, item.file));
     const text = path ? readFileSync(path, "utf8") : "";
     for (const event of item.events)
-      if (!workflowEvent(text, event))
-        issues.push(`workflow sem evento ${event}: ${item.file}`);
-    if (!testCommand(item.command))
-      issues.push(`CI não chama runner de testes: ${item.file}`);
-    if (!workflowRuns(text, item.command))
-      issues.push(`workflow sem run encadeado: ${item.file}`);
+      if (!workflowEvent(text, event)) issues.push(`workflow sem evento ${event}: ${item.file}`);
+    if (!testCommand(item.command)) issues.push(`CI não chama runner de testes: ${item.file}`);
+    if (!workflowRuns(text, item.command)) issues.push(`workflow sem run encadeado: ${item.file}`);
     ci.push({
       file: item.file,
       declaredEvents: item.events,
@@ -643,10 +561,7 @@ async function doctor(ctx, staticOnly) {
   }
   if (c.nightly.file) {
     const path = check(() => locate(root, c, config, c.nightly.file));
-    if (
-      path &&
-      !readFileSync(path, "utf8").includes(c.nightly.command.join(" "))
-    )
+    if (path && !readFileSync(path, "utf8").includes(c.nightly.command.join(" ")))
       issues.push("nightly não encadeado");
   }
   const stateFile = await statePath(root);
@@ -660,8 +575,7 @@ async function doctor(ctx, staticOnly) {
     else issues.push("ponte instalada não é o hooksPath efetivo");
     if (state)
       for (const event of EVENTS)
-        if (!existsSync(join(state.hooks, event)))
-          issues.push(`ponte ausente: ${event}`);
+        if (!existsSync(join(state.hooks, event))) issues.push(`ponte ausente: ${event}`);
     if (state)
       for (const [path, hash] of Object.entries(state.files || {}))
         check(() => {
@@ -675,9 +589,7 @@ async function doctor(ctx, staticOnly) {
             throw fail(`ponte divergente: ${path}`);
         });
   } else if (!staticOnly)
-    issues.push(
-      "hooks não instalados; use install-hooks após validar o snapshot",
-    );
+    issues.push("hooks não instalados; use install-hooks após validar o snapshot");
   if (!staticOnly)
     for (const path of c.requirements || [])
       check(() => locate(root, { ...c, snapshot: undefined }, config, path));
@@ -685,17 +597,13 @@ async function doctor(ctx, staticOnly) {
     ? check(() => json(join(root, "package.json")))
     : null;
   const sourceIntegrated =
-    Object.entries(c.aliases).every(
-      ([k, v]) => sourcePackage?.scripts?.[k] === v,
-    ) &&
+    Object.entries(c.aliases).every(([k, v]) => sourcePackage?.scripts?.[k] === v) &&
     paths.every(
       (p) =>
         !isAbsolute(p) &&
         existsSync(join(root, p)) &&
         (!c.snapshot ||
-          readFileSync(join(root, p)).equals(
-            readFileSync(locate(root, c, config, p)),
-          )),
+          readFileSync(join(root, p)).equals(readFileSync(locate(root, c, config, p)))),
     );
   return {
     ok: issues.length === 0,
@@ -710,23 +618,20 @@ async function doctor(ctx, staticOnly) {
   };
 }
 async function runTests(ctx) {
-  const files = ctx.c.testSuites.map((p) =>
-    locate(ctx.root, ctx.c, ctx.config, p),
-  );
+  const files = ctx.c.testSuites.map((p) => locate(ctx.root, ctx.c, ctx.config, p));
   const env = { ...process.env };
   delete env.NODE_TEST_CONTEXT;
   delete env.NODE_TEST_REPORTER;
   // Fixtures Git não podem herdar o índice/working tree do hook chamador.
-  for (const key of (
-    await git(ctx.root, ["rev-parse", "--local-env-vars"])
-  ).stdout
+  for (const key of (await git(ctx.root, ["rev-parse", "--local-env-vars"])).stdout
     .trim()
     .split(/\r?\n/))
     delete env[key];
-  return execute(
-    [process.execPath, "--test", "--test-concurrency=1", ...files],
-    { cwd: ctx.root, timeout: ctx.c.timeoutMs || 300000, env },
-  );
+  return execute([process.execPath, "--test", "--test-concurrency=1", ...files], {
+    cwd: ctx.root,
+    timeout: ctx.c.timeoutMs || 300000,
+    env,
+  });
 }
 function adapter(ctx, key) {
   const result = [...ctx.c[key]];
@@ -735,19 +640,8 @@ function adapter(ctx, key) {
 }
 async function graph(ctx, args) {
   const action = args[0] || "status";
-  const mapped =
-    { doctor: "status", build: "ensure", update: "ensure" }[action] || action;
-  if (
-    ![
-      "install",
-      "status",
-      "mark",
-      "ensure",
-      "query",
-      "path",
-      "explain",
-    ].includes(mapped)
-  )
+  const mapped = { doctor: "status", build: "ensure", update: "ensure" }[action] || action;
+  if (!["install", "status", "mark", "ensure", "query", "path", "explain"].includes(mapped))
     throw fail("subcomando graph desconhecido");
   return execute(
     [
@@ -793,8 +687,7 @@ function excludeIdentity(path, fd) {
 }
 function excludeFlags(append) {
   const hasNoFollow =
-    typeof constants.O_NOFOLLOW === "number" &&
-    typeof constants.O_NONBLOCK === "number";
+    typeof constants.O_NOFOLLOW === "number" && typeof constants.O_NONBLOCK === "number";
   if (!hasNoFollow && process.platform !== "win32")
     throw fail("O_NOFOLLOW indisponível; alteração de info/exclude bloqueada");
   return (
@@ -842,15 +735,10 @@ export function removeExclude(path, addition) {
     if (offset < 0) return false;
     excludeIdentity(path, fd);
     const current = Buffer.alloc(block.length);
-    if (
-      readSync(fd, current, 0, current.length, offset) !== block.length ||
-      !current.equals(block)
-    )
+    if (readSync(fd, current, 0, current.length, offset) !== block.length || !current.equals(block))
       throw fail("bloco próprio de info/exclude mudou; remoção recusada");
     // Não trunque: um append concorrente deve sobreviver à reversão.
-    const blank = Buffer.from(
-      block.map((byte) => (byte === 10 || byte === 13 ? byte : 32)),
-    );
+    const blank = Buffer.from(block.map((byte) => (byte === 10 || byte === 13 ? byte : 32)));
     if (writeSync(fd, blank, 0, blank.length, offset) !== blank.length)
       throw fail("remoção incompleta de bloco próprio");
     excludeIdentity(path, fd);
@@ -868,13 +756,9 @@ async function install(ctx) {
   for (const path of [base, hooks, join(base, "runtime")])
     if (existsSync(path) && lstatSync(path).isSymbolicLink())
       throw fail("diretório da ponte não pode ser symlink");
-  const tracked = (
-    await git(root, ["ls-files", "-z", "--", ".tools/repo-automation"])
-  ).stdout;
+  const tracked = (await git(root, ["ls-files", "-z", "--", ".tools/repo-automation"])).stdout;
   if (tracked) throw fail("diretório da ponte contém arquivos rastreados");
-  const effective = (
-    await git(root, ["config", "--get", "core.hooksPath"], [0, 1])
-  ).stdout.trim();
+  const effective = (await git(root, ["config", "--get", "core.hooksPath"], [0, 1])).stdout.trim();
   let state;
   if (existsSync(stateFile)) {
     state = json(stateFile);
@@ -888,38 +772,26 @@ async function install(ctx) {
       const target = resolve(base, path);
       if (
         !within(base, target) ||
-        (existsSync(target) &&
-          (lstatSync(target).isSymbolicLink() || digest(target) !== hash))
+        (existsSync(target) && (lstatSync(target).isSymbolicLink() || digest(target) !== hash))
       )
         throw fail("ponte alterada por terceiro; reinstalação recusada");
     }
   } else {
     if (existsSync(base) && nonempty(base))
-      throw fail(
-        "diretório da ponte contém arquivos sem estado de propriedade",
-      );
-    if (effective === hooks)
-      throw fail("hooksPath aponta à ponte sem estado de restauração");
+      throw fail("diretório da ponte contém arquivos sem estado de propriedade");
+    if (effective === hooks) throw fail("hooksPath aponta à ponte sem estado de restauração");
     const previousLocal = (
-      await git(
-        root,
-        ["config", "--local", "--get-all", "core.hooksPath"],
-        [0, 1],
-      )
+      await git(root, ["config", "--local", "--get-all", "core.hooksPath"], [0, 1])
     ).stdout
       .split("\n")
       .filter(Boolean);
     const effectivePath = (
       await git(root, ["config", "--path", "--get", "core.hooksPath"], [0, 1])
     ).stdout.trim();
-    const defaultHooks = (
-      await git(root, ["rev-parse", "--git-path", "hooks"])
-    ).stdout.trim();
+    const defaultHooks = (await git(root, ["rev-parse", "--git-path", "hooks"])).stdout.trim();
     const exclude = resolve(
       root,
-      (
-        await git(root, ["rev-parse", "--git-path", "info/exclude"])
-      ).stdout.trim(),
+      (await git(root, ["rev-parse", "--git-path", "info/exclude"])).stdout.trim(),
     );
     state = {
       version: 1,
@@ -930,10 +802,7 @@ async function install(ctx) {
       previousEffective: effective,
       previousPath: effectivePath || resolve(root, defaultHooks),
       common: realpathSync(
-        resolve(
-          root,
-          (await git(root, ["rev-parse", "--git-common-dir"])).stdout.trim(),
-        ),
+        resolve(root, (await git(root, ["rev-parse", "--git-common-dir"])).stdout.trim()),
       ),
       exclude,
       addition: "",
@@ -981,17 +850,10 @@ async function uninstall(ctx) {
   if (!existsSync(stateFile)) return { ok: true, status: "not_installed" };
   const state = json(stateFile),
     expected = join(ctx.root, ".tools/repo-automation/hooks");
-  if (state.root !== ctx.root || state.hooks !== expected)
-    throw fail("estado de hooks inválido");
-  for (const path of [
-    dirname(expected),
-    expected,
-    join(dirname(expected), "runtime"),
-  ])
+  if (state.root !== ctx.root || state.hooks !== expected) throw fail("estado de hooks inválido");
+  for (const path of [dirname(expected), expected, join(dirname(expected), "runtime")])
     if (existsSync(path) && lstatSync(path).isSymbolicLink())
-      throw fail(
-        "diretório da ponte alterado para symlink; restauração recusada",
-      );
+      throw fail("diretório da ponte alterado para symlink; restauração recusada");
   const effective = (
     await git(ctx.root, ["config", "--get", "core.hooksPath"], [0, 1])
   ).stdout.trim();
@@ -1001,33 +863,17 @@ async function uninstall(ctx) {
     const target = resolve(dirname(expected), path);
     if (
       !within(dirname(expected), target) ||
-      (existsSync(target) &&
-        (lstatSync(target).isSymbolicLink() || digest(target) !== hash))
+      (existsSync(target) && (lstatSync(target).isSymbolicLink() || digest(target) !== hash))
     )
-      throw fail(
-        "arquivo da ponte alterado por terceiro; desinstalação recusada",
-      );
+      throw fail("arquivo da ponte alterado por terceiro; desinstalação recusada");
   }
   removeExclude(state.exclude, state.addition);
-  await git(
-    ctx.root,
-    ["config", "--local", "--unset-all", "core.hooksPath"],
-    [0, 5],
-  );
+  await git(ctx.root, ["config", "--local", "--unset-all", "core.hooksPath"], [0, 5]);
   for (const value of state.previousLocal)
-    await git(ctx.root, [
-      "config",
-      "--local",
-      "--add",
-      "core.hooksPath",
-      value,
-    ]);
+    await git(ctx.root, ["config", "--local", "--add", "core.hooksPath", value]);
   // Remove somente os arquivos conhecidos criados por esta instalação.
   for (const event of EVENTS) rmSync(join(expected, event), { force: true });
-  for (const file of [
-    "runtime/automation.mjs",
-    "runtime/automation.config.json",
-  ])
+  for (const file of ["runtime/automation.mjs", "runtime/automation.config.json"])
     rmSync(join(dirname(expected), file), { force: true });
   rmSync(stateFile);
   return { ok: true, status: "uninstalled" };
@@ -1039,20 +885,13 @@ async function hook(ctx, args) {
   if (!existsSync(savedPath)) throw fail("ponte sem estado instalado");
   const state = json(savedPath);
   const common = realpathSync(
-    resolve(
-      ctx.root,
-      (await git(ctx.root, ["rev-parse", "--git-common-dir"])).stdout.trim(),
-    ),
+    resolve(ctx.root, (await git(ctx.root, ["rev-parse", "--git-common-dir"])).stdout.trim()),
   );
-  if (state.common !== common)
-    throw fail("estado pertence a outro repositório");
+  if (state.common !== common) throw fail("estado pertence a outro repositório");
   // Cadeia "id:evento,id:evento": só o MESMO evento já na cadeia é recursão. Antes só o último elo era comparado,
   // então pre-commit → post-checkout → pre-commit (recursão indireta) passava e repetia sem fim.
-  const chain = (process.env.REPO_AUTOMATION_CHAINING || "")
-    .split(",")
-    .filter(Boolean);
-  if (chain.includes(state.id + ":" + event))
-    throw fail("recursão de hook recusada");
+  const chain = (process.env.REPO_AUTOMATION_CHAINING || "").split(",").filter(Boolean);
+  if (chain.includes(state.id + ":" + event)) throw fail("recursão de hook recusada");
   let original = isAbsolute(state.previousPath)
       ? join(state.previousPath, event)
       : resolve(ctx.root, state.previousPath, event),
@@ -1067,17 +906,14 @@ async function hook(ctx, args) {
   if (existsSync(original) && (viaSh || statSync(original).mode & 0o111)) {
     if (within(realpathSync(state.hooks), realpathSync(original)))
       throw fail("hook original recursivo");
-    const r = await execute(
-      [...(viaSh ? ["sh"] : []), original, ...args.slice(1)],
-      {
-        cwd: ctx.root,
-        timeout: ctx.c.timeoutMs || 300000,
-        env: {
-          ...process.env,
-          REPO_AUTOMATION_CHAINING: [...chain, state.id + ":" + event].join(","),
-        },
+    const r = await execute([...(viaSh ? ["sh"] : []), original, ...args.slice(1)], {
+      cwd: ctx.root,
+      timeout: ctx.c.timeoutMs || 300000,
+      env: {
+        ...process.env,
+        REPO_AUTOMATION_CHAINING: [...chain, state.id + ":" + event].join(","),
       },
-    );
+    });
     if (r.code !== 0) return { ...r, status: "original_hook_failed" };
   }
   if (event === "pre-push") {
@@ -1090,13 +926,7 @@ async function hook(ctx, args) {
   }
   if (event === "pre-commit") {
     const files = (
-      await git(ctx.root, [
-        "diff",
-        "--cached",
-        "--name-only",
-        "-z",
-        "--diff-filter=ACMRD",
-      ])
+      await git(ctx.root, ["diff", "--cached", "--name-only", "-z", "--diff-filter=ACMRD"])
     ).stdout
       .split("\0")
       .filter(Boolean);
@@ -1113,23 +943,16 @@ async function hook(ctx, args) {
       if (r.code !== 0) return r;
     }
     const sources = ctx.c.sourcePatterns || ["src/**"];
-    if (files.some((f) => sources.some((g) => pattern(g).test(f))))
-      return graph(ctx, ["mark"]);
+    if (files.some((f) => sources.some((g) => pattern(g).test(f)))) return graph(ctx, ["mark"]);
   }
-  if (["post-commit", "post-merge", "post-checkout"].includes(event))
-    return graph(ctx, ["mark"]);
+  if (["post-commit", "post-merge", "post-checkout"].includes(event)) return graph(ctx, ["mark"]);
   return { code: 0, status: "hook_chained" };
 }
 
 export async function main(argv) {
   const opts = parseArgs(argv);
-  const c =
-    opts.action === "uninstall-hooks"
-      ? null
-      : validateConfig(json(opts.config));
-  const root = (
-    await git(opts.root, ["rev-parse", "--show-toplevel"])
-  ).stdout.trim();
+  const c = opts.action === "uninstall-hooks" ? null : validateConfig(json(opts.config));
+  const root = (await git(opts.root, ["rev-parse", "--show-toplevel"])).stdout.trim();
   if (realpathSync(root) !== realpathSync(opts.root))
     throw fail("--root deve ser a raiz do repositório");
   const ctx = { root: opts.root, config: opts.config, c };
@@ -1157,9 +980,7 @@ export async function main(argv) {
     }
     console.log(
       JSON.stringify({
-        status: Object.values(results).every((r) => r.code === 0)
-          ? "completed"
-          : "failed",
+        status: Object.values(results).every((r) => r.code === 0) ? "completed" : "failed",
         results,
       }),
     );
@@ -1167,12 +988,9 @@ export async function main(argv) {
   }
   if (opts.action === "install-hooks") {
     const health = await doctor(ctx, true);
-    if (!health.ok)
-      throw fail("instalação bloqueada: " + health.issues.join("; "));
+    if (!health.ok) throw fail("instalação bloqueada: " + health.issues.join("; "));
   }
-  const r = await (opts.action === "install-hooks"
-    ? install(ctx)
-    : uninstall(ctx));
+  const r = await (opts.action === "install-hooks" ? install(ctx) : uninstall(ctx));
   console.log(JSON.stringify(r));
   return 0;
 }

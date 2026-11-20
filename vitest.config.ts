@@ -15,5 +15,10 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],
+    // Fix do dual-package hazard do zod: zod 3.25.76 publica entrada com
+    // source-dialect (@zod/source, apontando para TS), que o pipeline SSR do
+    // vitest nao interopera, deixando o named export `z` undefined no runtime.
+    // Inline do zod faz o vite processar o pacote como codigo fonte.
+    server: { deps: { inline: ["zod"] } },
   },
 });
