@@ -1,7 +1,7 @@
-# Graph Report - Sales_Machine_V1  (2026-11-20)
+# Graph Report - Sales_Machine_V1  (2026-11-24)
 
 ## Corpus Check
-- 384 files · ~280,610 words
+- 384 files · ~280,598 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 12 file(s) not represented in the graph (top: .toml 6, (none) 3, .lock 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c87ee589`
+- Built from commit: `bbb55e3e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

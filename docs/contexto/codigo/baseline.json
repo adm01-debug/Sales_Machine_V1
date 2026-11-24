@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c87ee589ce83d27aef357ad41aacd1dc91dc1014",
+  "commit": "bbb55e3e671bdc20573f3cbba656d5fda26e69bf",
   "branch": "main",
-  "data_commit": "2026-11-19T21:00:55-03:00",
+  "data_commit": "2026-11-24T05:52:55-03:00",
   "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
   "ultimos_commits": [
+   {
+    "sha": "bbb55e3",
+    "data": "2026-11-24",
+    "assunto": "chore(ci): reduz cron do contexto para 2x/dia (#17)"
+   },
    {
     "sha": "c87ee58",
     "data": "2026-11-19",
@@ -126,14 +131,9 @@
     "sha": "388dc5f",
     "data": "2026-08-02",
     "assunto": "Adicionou suporte a emojis"
-   },
-   {
-    "sha": "1fcf792",
-    "data": "2026-08-02",
-    "assunto": "Changes"
    }
   ],
-  "arquivos_mudados_7d": 273,
+  "arquivos_mudados_7d": 114,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/routes/_authenticated",
@@ -176,6 +176,10 @@
     "mudancas": 2
    },
    {
+    "pasta": ".github/workflows/contexto.yml",
+    "mudancas": 2
+   },
+   {
     "pasta": "docs/contexto/regras",
     "mudancas": 2
    },
@@ -189,10 +193,6 @@
    },
    {
     "pasta": "scripts/graphify-local.mjs",
-    "mudancas": 2
-   },
-   {
-    "pasta": "scripts/graphify-local.unit.mjs",
     "mudancas": 2
    }
   ],
@@ -220,6 +220,10 @@
    {
     "arquivo": "supabase/config.toml",
     "mudancas": 3
+   },
+   {
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 2
    },
    {
     "arquivo": "00-governanca/01-leis-do-agente.md",
@@ -292,16 +296,12 @@
    {
     "arquivo": "src/lib/deliverability.functions.ts",
     "mudancas": 2
-   },
-   {
-    "arquivo": "src/lib/journeys.functions.ts",
-    "mudancas": 2
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 12
+    "commits": 13
    },
    {
     "autor": "Joaquim Ataides",

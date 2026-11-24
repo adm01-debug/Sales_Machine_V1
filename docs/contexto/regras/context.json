@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c87ee589ce83d27aef357ad41aacd1dc91dc1014",
+  "sha": "bbb55e3e671bdc20573f3cbba656d5fda26e69bf",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
-  "generated_at": "2026-11-20 00:02 UTC",
+  "generated_at": "2026-11-24 08:53 UTC",
   "files_total": 401,
   "code_files": 304,
   "code_lines": 53884
  },
  "version": "1.3.2",
- "facts_hash": "c5cbc0eba29138b8",
+ "facts_hash": "17cd53a028408862",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -6191,7 +6191,7 @@
    },
    {
     "kind": "GitHub Actions cron",
-    "detail": "7 * * * *",
+    "detail": "7 3,15 * * *",
     "file": ".github/workflows/contexto.yml"
    },
    {
@@ -28524,10 +28524,19 @@
   }
  },
  "git": {
-  "sha": "c87ee589ce83d27aef357ad41aacd1dc91dc1014",
+  "sha": "bbb55e3e671bdc20573f3cbba656d5fda26e69bf",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Sales_Machine_V1",
   "commits": [
+   {
+    "sha": "bbb55e3",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "chore(ci): reduz cron do contexto para 2x/dia (#17)",
+    "files": [
+     ".github/workflows/contexto.yml"
+    ]
+   },
    {
     "sha": "c87ee58",
     "date": "2026-11-19",
@@ -29105,21 +29114,12 @@
     "author": "gpt-engineer-app[bot]",
     "subject": "Classificou adiamento como neutro",
     "files": []
-   },
-   {
-    "sha": "442bcc7",
-    "date": "2026-08-02",
-    "author": "gpt-engineer-app[bot]",
-    "subject": "Changes",
-    "files": [
-     "src/routeTree.gen.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "src/routeTree.gen.ts",
-    5
+    4
    ],
    [
     "src/lib/campaign-diagnostics.ts",
@@ -29162,6 +29162,10 @@
     3
    ],
    [
+    ".github/workflows/contexto.yml",
+    2
+   ],
+   [
     "vitest.config.ts",
     2
    ],
@@ -29191,10 +29195,6 @@
    ],
    [
     "scripts/maintenance/lib.mjs",
-    2
-   ],
-   [
-    "scripts/maintenance/maintenance.unit.mjs",
     2
    ]
   ]
